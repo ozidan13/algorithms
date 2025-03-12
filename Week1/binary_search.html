@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Algorithm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .array-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .array-element {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .array-element.current {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .array-element.low {
+            background-color: #2ecc71;
+        }
+        .array-element.high {
+            background-color: #f39c12;
+        }
+        .array-element.mid {
+            background-color: #9b59b6;
+        }
+        .array-element.found {
+            background-color: #27ae60;
+            animation: pulse 1s infinite;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100px;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log p {
+            margin: 5px 0;
+        }
+        .code-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
+        }
+        .complexity {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .complexity-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .explanation {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .step-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Binary Search Algorithm</h1>
+    
+    <div class="container">
+        <h2>Interactive Demonstration</h2>
+        <p>Binary search is an efficient algorithm for finding an element in a sorted array. It works by repeatedly dividing the search interval in half.</p>
+        
+        <div class="controls">
+            <input type="number" id="search-input" placeholder="Number to find">
+            <button id="search-btn">Search</button>
+            <button id="reset-btn">Reset</button>
+            <button id="new-array-btn">New Array</button>
+            <button id="step-btn" disabled>Step Through</button>
+        </div>
+        
+        <div class="array-container" id="array-container"></div>
+        
+        <div class="step-controls">
+            <button id="prev-step-btn" disabled>Previous Step</button>
+            <button id="next-step-btn" disabled>Next Step</button>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+    
+    <div class="container">
+        <h2>How Binary Search Works</h2>
+        <div class="explanation">
+            <p>Binary search follows these steps:</p>
+            <ol>
+                <li>Start with the middle element of the sorted array.</li>
+                <li>If the target value is equal to the middle element, we've found it!</li>
+                <li>If the target value is less than the middle element, search the left half.</li>
+                <li>If the target value is greater than the middle element, search the right half.</li>
+                <li>Repeat steps 1-4 until the element is found or the search space is empty.</li>
+            </ol>
+        </div>
+        
+        <h3>Time and Space Complexity</h3>
+        <div class="complexity">
+            <div class="complexity-item">
+                <h4>Time Complexity</h4>
+                <p><strong>O(log n)</strong> - With each step, we eliminate half of the remaining elements.</p>
+            </div>
+            <div class="complexity-item">
+                <h4>Space Complexity</h4>
+                <p><strong>O(1)</strong> - We only need a constant amount of space regardless of input size.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Implementation</h2>
+        <div class="code-container">
+            <pre><code>function binarySearch(arr, target) {
+    let low = 0;
+    let high = arr.length - 1;
+    
+    while (low <= high) {
+        let mid = Math.floor((low + high) / 2);
+        let guess = arr[mid];
+        
+        if (guess === target) {
+            return mid; // Found the item
+        }
+        if (guess > target) {
+            high = mid - 1; // Target is in the left half
+        } else {
+            low = mid + 1; // Target is in the right half
+        }
+    }
+    
+    return -1; // Item not found
+}</code></pre>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const arrayContainer = document.getElementById('array-container');
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const newArrayBtn = document.getElementById('new-array-btn');
+        const stepBtn = document.getElementById('step-btn');
+        const prevStepBtn = document.getElementById('prev-step-btn');
+        const nextStepBtn = document.getElementById('next-step-btn');
+        const logElement = document.getElementById('log');
+        
+        // Variables
+        let array = [];
+        let searchSteps = [];
+        let currentStepIndex = -1;
+        let searchTarget = null;
+        let searchInProgress = false;
+        
+        // Initialize
+        generateArray();
+        
+        // Event listeners
+        searchBtn.addEventListener('click', startSearch);
+        resetBtn.addEventListener('click', resetSearch);
+        newArrayBtn.addEventListener('click', generateArray);
+        stepBtn.addEventListener('click', toggleStepMode);
+        prevStepBtn.addEventListener('click', showPreviousStep);
+        nextStepBtn.addEventListener('click', showNextStep);
+        
+        // Functions
+        function generateArray() {
+            // Generate a sorted array of random numbers
+            const size = Math.floor(Math.random() * 10) + 10; // 10-19 elements
+            array = [];
+            let current = Math.floor(Math.random() * 10);
+            
+            for (let i = 0; i < size; i++) {
+                current += Math.floor(Math.random() * 5) + 1;
+                array.push(current);
+            }
+            
+            renderArray();
+            resetSearch();
+            log('New sorted array generated.');
+        }
+        
+        function renderArray(low = -1, high = -1, mid = -1, found = -1) {
+            arrayContainer.innerHTML = '';
+            
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                
+                if (index === found) {
+                    element.classList.add('found');
+                } else if (index === mid) {
+                    element.classList.add('mid');
+                } else if (index === low) {
+                    element.classList.add('low');
+                } else if (index === high) {
+                    element.classList.add('high');
+                }
+                
+                arrayContainer.appendChild(element);
+            });
+        }
+        
+        function startSearch() {
+            const target = parseInt(searchInput.value);
+            if (isNaN(target)) {
+                log('Please enter a valid number.');
+                return;
+            }
+            
+            searchTarget = target;
+            searchInProgress = true;
+            stepBtn.disabled = false;
+            
+            // Perform binary search and collect steps
+            searchSteps = [];
+            let low = 0;
+            let high = array.length - 1;
+            
+            // Initial state
+            searchSteps.push({
+                low,
+                high,
+                mid: -1,
+                found: -1,
+                message: `Starting binary search for ${target}. Search range: [${low}, ${high}]`
+            });
+            
+            while (low <= high) {
+                let mid = Math.floor((low + high) / 2);
+                let guess = array[mid];
+                
+                if (guess === target) {
+                    searchSteps.push({
+                        low,
+                        high,
+                        mid,
+                        found: mid,
+                        message: `Found ${target} at index ${mid}!`
+                    });
+                    break;
+                }
+                
+                searchSteps.push({
+                    low,
+                    high,
+                    mid,
+                    found: -1,
+                    message: `Checking mid=${mid}, value=${guess}. ${guess > target ? 'Too high, search left half.' : 'Too low, search right half.'}`
+                });
+                
+                if (guess > target) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+                
+                if (low > high) {
+                    searchSteps.push({
+                        low: -1,
+                        high: -1,
+                        mid: -1,
+                        found: -1,
+                        message: `${target} not found in the array.`
+                    });
+                }
+            }
+            
+            // Show first step
+            currentStepIndex = 0;
+            showCurrentStep();
+            
+            // Enable step controls
+            prevStepBtn.disabled = true;
+            nextStepBtn.disabled = searchSteps.length <= 1;
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= searchSteps.length) return;
+            
+            const step = searchSteps[currentStepIndex];
+            renderArray(step.low, step.high, step.mid, step.found);
+            log(step.message);
+            
+            // Update step controls
+            prevStepBtn.disabled = currentStepIndex <= 0;
+            nextStepBtn.disabled = currentStepIndex >= searchSteps.length - 1;
+        }
+        
+        function showNextStep() {
+            if (currentStepIndex < searchSteps.length - 1) {
+                currentStepIndex++;
+                showCurrentStep();
+            }
+        }
+        
+        function showPreviousStep() {
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                showCurrentStep();
+            }
+        }
+        
+        function toggleStepMode() {
+            if (searchSteps.length > 0) {
+                prevStepBtn.disabled = false;
+                nextStepBtn.disabled = false;
+            }
+        }
+        
+        function resetSearch() {
+            searchInProgress = false;
+            searchTarget = null;
+            searchSteps = [];
+            currentStepIndex = -1;
+            renderArray();
+            stepBtn.disabled = true;
+            prevStepBtn.disabled = true;
+            nextStepBtn.disabled = true;
+            log('Search reset.');
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>

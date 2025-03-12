@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selection Sort Algorithm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .array-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px 0;
+            height: 300px;
+            align-items: flex-end;
+            position: relative;
+        }
+        .array-bar {
+            flex: 1;
+            background-color: #3498db;
+            transition: height 0.3s ease, background-color 0.3s ease;
+            position: relative;
+            min-width: 20px;
+            border-radius: 4px 4px 0 0;
+        }
+        .array-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        .array-bar.current {
+            background-color: #e74c3c;
+        }
+        .array-bar.min {
+            background-color: #2ecc71;
+        }
+        .array-bar.sorted {
+            background-color: #27ae60;
+        }
+        .array-bar.comparing {
+            background-color: #f39c12;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log p {
+            margin: 5px 0;
+        }
+        .code-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
+        }
+        .complexity {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .complexity-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .explanation {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .speed-control label {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selection Sort Algorithm</h1>
+    
+    <div class="container">
+        <h2>Interactive Demonstration</h2>
+        <p>Selection sort is a simple sorting algorithm that repeatedly finds the minimum element from the unsorted part of the array and puts it at the beginning.</p>
+        
+        <div class="controls">
+            <button id="sort-btn">Sort</button>
+            <button id="reset-btn">Reset</button>
+            <button id="new-array-btn">New Array</button>
+            <button id="step-btn">Step Through</button>
+            <button id="pause-btn" disabled>Pause</button>
+        </div>
+        
+        <div class="speed-control">
+            <label for="speed-slider">Speed:</label>
+            <input type="range" id="speed-slider" min="1" max="100" value="50">
+            <span id="speed-value">50%</span>
+        </div>
+        
+        <div class="array-container" id="array-container"></div>
+        
+        <div class="log" id="log"></div>
+    </div>
+    
+    <div class="container">
+        <h2>How Selection Sort Works</h2>
+        <div class="explanation">
+            <p>Selection sort follows these steps:</p>
+            <ol>
+                <li>Find the minimum element in the unsorted part of the array.</li>
+                <li>Swap it with the element at the beginning of the unsorted part.</li>
+                <li>Move the boundary between sorted and unsorted parts one element to the right.</li>
+                <li>Repeat steps 1-3 until the entire array is sorted.</li>
+            </ol>
+        </div>
+        
+        <h3>Time and Space Complexity</h3>
+        <div class="complexity">
+            <div class="complexity-item">
+                <h4>Time Complexity</h4>
+                <p><strong>O(n²)</strong> - For each element, we need to scan through the rest of the array to find the minimum.</p>
+            </div>
+            <div class="complexity-item">
+                <h4>Space Complexity</h4>
+                <p><strong>O(1)</strong> - Selection sort is an in-place algorithm, requiring only a constant amount of extra space.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Implementation</h2>
+        <div class="code-container">
+            <pre><code>function selectionSort(arr) {
+    const n = arr.length;
+    
+    for (let i = 0; i < n - 1; i++) {
+        // Find the minimum element in the unsorted part
+        let minIndex = i;
+        
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        
+        // Swap the found minimum element with the first element
+        if (minIndex !== i) {
+            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+        }
+    }
+    
+    return arr;
+}</code></pre>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const arrayContainer = document.getElementById('array-container');
+        const sortBtn = document.getElementById('sort-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const newArrayBtn = document.getElementById('new-array-btn');
+        const stepBtn = document.getElementById('step-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const speedSlider = document.getElementById('speed-slider');
+        const speedValue = document.getElementById('speed-value');
+        const logElement = document.getElementById('log');
+        
+        // Variables
+        let array = [];
+        let sortingSteps = [];
+        let currentStepIndex = -1;
+        let sortingInProgress = false;
+        let sortingInterval = null;
+        let stepMode = false;
+        
+        // Initialize
+        generateArray();
+        
+        // Event listeners
+        sortBtn.addEventListener('click', startSort);
+        resetBtn.addEventListener('click', resetSort);
+        newArrayBtn.addEventListener('click', generateArray);
+        stepBtn.addEventListener('click', toggleStepMode);
+        pauseBtn.addEventListener('click', togglePause);
+        speedSlider.addEventListener('input', updateSpeed);
+        
+        // Functions
+        function generateArray() {
+            // Generate a random array
+            const size = Math.floor(Math.random() * 10) + 10; // 10-19 elements
+            array = [];
+            
+            for (let i = 0; i < size; i++) {
+                array.push(Math.floor(Math.random() * 100) + 1); // 1-100
+            }
+            
+            renderArray();
+            resetSort();
+            log('New array generated.');
+        }
+        
+        function renderArray(current = -1, min = -1, sorted = [], comparing = -1) {
+            arrayContainer.innerHTML = '';
+            const maxValue = Math.max(...array);
+            
+            array.forEach((value, index) => {
+                const bar = document.createElement('div');
+                bar.className = 'array-bar';
+                bar.style.height = `${(value / maxValue) * 250}px`;
+                bar.setAttribute('data-value', value);
+                
+                if (sorted.includes(index)) {
+                    bar.classList.add('sorted');
+                } else if (index === min) {
+                    bar.classList.add('min');
+                } else if (index === current) {
+                    bar.classList.add('current');
+                } else if (index === comparing) {
+                    bar.classList.add('comparing');
+                }
+                
+                arrayContainer.appendChild(bar);
+            });
+        }
+        
+        function startSort() {
+            if (sortingInProgress) return;
+            
+            sortingInProgress = true;
+            sortBtn.disabled = true;
+            pauseBtn.disabled = false;
+            stepBtn.disabled = true;
+            
+            // Generate sorting steps
+            generateSortingSteps();
+            
+            if (stepMode) {
+                currentStepIndex = 0;
+                showCurrentStep();
+            } else {
+                // Start automatic animation
+                currentStepIndex = 0;
+                const speed = 101 - speedSlider.value; // Invert so higher value = faster
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        stepBtn.disabled = false;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20); // Adjust timing based on speed
+            }
+        }
+        
+        function generateSortingSteps() {
+            sortingSteps = [];
+            const arrCopy = [...array];
+            const n = arrCopy.length;
+            const sorted = [];
+            
+            // Initial state
+            sortingSteps.push({
+                array: [...arrCopy],
+                current: -1,
+                min: -1,
+                sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                comparing: -1,
+                message: 'Starting selection sort.'
+            });
+            
+            for (let i = 0; i < n - 1; i++) {
+                let minIndex = i;
+                
+                sortingSteps.push({
+                    array: [...arrCopy],
+                    current: i,
+                    min: minIndex,
+                    sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                    comparing: -1,
+                    message: `Looking for minimum element starting from index ${i}.`
+                });
+                
+                for (let j = i + 1; j < n; j++) {
+                    sortingSteps.push({
+                        array: [...arrCopy],
+                        current: i,
+                        min: minIndex,
+                        sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                        comparing: j,
+                        message: `Comparing ${arrCopy[j]} with current minimum ${arrCopy[minIndex]}.`
+                    });
+                    
+                    if (arrCopy[j] < arrCopy[minIndex]) {
+                        minIndex = j;
+                        sortingSteps.push({
+                            array: [...arrCopy],
+                            current: i,
+                            min: minIndex,
+                            sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                            comparing: -1,
+                            message: `Found new minimum ${arrCopy[minIndex]} at index ${minIndex}.`
+                        });
+                    }
+                }
+                
+                if (minIndex !== i) {
+                    // Swap
+                    [arrCopy[i], arrCopy[minIndex]] = [arrCopy[minIndex], arrCopy[i]];
+                    sortingSteps.push({
+                        array: [...arrCopy],
+                        current: i,
+                        min: -1,
+                        sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                        comparing: -1,
+                        message: `Swapped ${arrCopy[i]} and ${arrCopy[minIndex]}.`
+                    });
+                } else {
+                    sortingSteps.push({
+                        array: [...arrCopy],
+                        current: i,
+                        min: -1,
+                        sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                        comparing: -1,
+                        message: `Element ${arrCopy[i]} is already in the correct position.`
+                    });
+                }
+                
+                sorted.push(i);
+                sortingSteps.push({
+                    array: [...arrCopy],
+                    current: -1,
+                    min: -1,
+                    sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
+                    comparing: -1,
+                    message: `Element ${arrCopy[i]} is now in its sorted position.`
+                });
+            }
+            
+            // Mark the last element as sorted
+            sorted.push(n - 1);
+            sortingSteps.push({
+                array: [...arrCopy],
+                current: -1,
+                min: -1,
+                sorted: [...sorted],
+                comparing: -1,
+                message: 'Sorting completed!'
+            });
+        }
+        
+        function showCurrentStep() {
+            if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
+            
+            const step = sortingSteps[currentStepIndex];
+            array = [...step.array]; // Update the current array state
+            renderArray(step.current, step.min, step.sorted, step.comparing);
+            log(step.message);
+        }
+        
+        function toggleStepMode() {
+            stepMode = !stepMode;
+            stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
+            
+            if (sortingInProgress) {
+                if (stepMode) {
+                    // Switch to step mode
+                    clearInterval(sortingInterval);
+                    pauseBtn.disabled = true;
+                } else {
+                    // Switch to auto mode
+                    const speed = 101 - speedSlider.value;
+                    pauseBtn.disabled = false;
+                    sortingInterval = setInterval(() => {
+                        if (currentStepIndex < sortingSteps.length) {
+                            showCurrentStep();
+                            currentStepIndex++;
+                        } else {
+                            clearInterval(sortingInterval);
+                            sortingInProgress = false;
+                            pauseBtn.disabled = true;
+                            log('Sorting completed!');
+                        }
+                    }, speed * 20);
+                }
+            }
+        }
+        
+        function togglePause() {
+            if (!sortingInProgress || stepMode) return;
+            
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+                pauseBtn.textContent = 'Resume';
+            } else {
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        pauseBtn.textContent = 'Pause';
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+                pauseBtn.textContent = 'Pause';
+            }
+        }
+        
+        function resetSort() {
+            if (sortingInterval) {
+                clearInterval(sortingInterval);
+                sortingInterval = null;
+            }
+            
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = -1;
+            stepMode = false;
+            stepBtn.textContent = 'Step Through';
+            sortBtn.disabled = false;
+            pauseBtn.disabled = true;
+            pauseBtn.textContent = 'Pause';
+            stepBtn.disabled = false;
+            
+            renderArray();
+            log('Sort reset.');
+        }
+        
+        function updateSpeed() {
+            speedValue.textContent = `${speedSlider.value}%`;
+            
+            if (sortingInterval && !stepMode) {
+                clearInterval(sortingInterval);
+                const speed = 101 - speedSlider.value;
+                sortingInterval = setInterval(() => {
+                    if (currentStepIndex < sortingSteps.length) {
+                        showCurrentStep();
+                        currentStepIndex++;
+                    } else {
+                        clearInterval(sortingInterval);
+                        sortingInProgress = false;
+                        pauseBtn.disabled = true;
+                        log('Sorting completed!');
+                    }
+                }, speed * 20);
+            }
+        }
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            logElement.prepend(p);
+            
+            // Limit log entries
+            if (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>

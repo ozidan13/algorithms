@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursion Examples</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .example-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+        .visualization {
+            margin-top: 20px;
+            min-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            position: relative;
+        }
+        .call-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .call-node {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            margin: 5px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .call-node.active {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .call-node.completed {
+            background-color: #2ecc71;
+        }
+        .call-children {
+            display: flex;
+            position: relative;
+        }
+        .call-children::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background-color: #95a5a6;
+        }
+        .code-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
+        }
+        .explanation {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log p {
+            margin: 5px 0;
+        }
+        .step-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recursion Examples</h1>
+    
+    <div class="container">
+        <h2>What is Recursion?</h2>
+        <div class="explanation">
+            <p>Recursion is a programming technique where a function calls itself to solve a problem. It consists of:</p>
+            <ol>
+                <li><strong>Base case:</strong> The condition that stops the recursion</li>
+                <li><strong>Recursive case:</strong> The function calling itself with a simpler version of the problem</li>
+            </ol>
+            <p>Recursion is particularly useful for problems that can be broken down into smaller, similar subproblems.</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Factorial Example</h2>
+        <div class="example-container">
+            <p>The factorial of a non-negative integer n is the product of all positive integers less than or equal to n.</p>
+            <p>For example: 5! = 5 × 4 × 3 × 2 × 1 = 120</p>
+            
+            <div class="code-container">
+                <pre><code>function factorial(n) {
+    // Base case
+    if (n === 0 || n === 1) {
+        return 1;
+    }
+    // Recursive case
+    return n * factorial(n - 1);
+}</code></pre>
+            </div>
+            
+            <div class="controls">
+                <label for="factorial-input">Enter a number:</label>
+                <input type="number" id="factorial-input" min="0" max="20" value="5">
+                <button id="factorial-btn">Calculate Factorial</button>
+                <button id="factorial-step-btn">Step Through</button>
+            </div>
+            
+            <div class="result" id="factorial-result"></div>
+            
+            <div class="step-controls">
+                <button id="factorial-prev-btn" disabled>Previous Step</button>
+                <button id="factorial-next-btn" disabled>Next Step</button>
+            </div>
+            
+            <div class="visualization" id="factorial-visualization">
+                <div class="call-tree" id="factorial-tree"></div>
+            </div>
+            
+            <div class="log" id="factorial-log"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Fibonacci Sequence Example</h2>
+        <div class="example-container">
+            <p>The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, starting from 0 and 1.</p>
+            <p>For example: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</p>
+            
+            <div class="code-container">
+                <pre><code>function fibonacci(n) {
+    // Base cases
+    if (n === 0) return 0;
+    if (n === 1) return 1;
+    
+    // Recursive case
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}</code></pre>
+            </div>
+            
+            <div class="controls">
+                <label for="fibonacci-input">Enter a position:</label>
+                <input type="number" id="fibonacci-input" min="0" max="15" value="6">
+                <button id="fibonacci-btn">Calculate Fibonacci</button>
+                <button id="fibonacci-step-btn">Step Through</button>
+            </div>
+            
+            <div class="result" id="fibonacci-result"></div>
+            
+            <div class="step-controls">
+                <button id="fibonacci-prev-btn" disabled>Previous Step</button>
+                <button id="fibonacci-next-btn" disabled>Next Step</button>
+            </div>
+            
+            <div class="visualization" id="fibonacci-visualization">
+                <div class="call-tree" id="fibonacci-tree"></div>
+            </div>
+            
+            <div class="log" id="fibonacci-log"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Recursive Countdown Example</h2>
+        <div class="example-container">
+            <p>A simple countdown function that demonstrates recursion by counting down from a given number to 1.</p>
+            
+            <div class="code-container">
+                <pre><code>function countdown(n) {
+    // Base case
+    if (n <= 0) {
+        return;
+    }
+    console.log(n);
+    // Recursive case
+    countdown(n - 1);
+}</code></pre>
+            </div>
+            
+            <div class="controls">
+                <label for="countdown-input">Start from:</label>
+                <input type="number" id="countdown-input" min="1" max="20" value="5">
+                <button id="countdown-btn">Start Countdown</button>
+                <button id="countdown-step-btn">Step Through</button>
+            </div>
+            
+            <div class="result" id="countdown-result"></div>
+            
+            <div class="step-controls">
+                <button id="countdown-prev-btn" disabled>Previous Step</button>
+                <button id="countdown-next-btn" disabled>Next Step</button>
+            </div>
+            
+            <div class="visualization" id="countdown-visualization">
+                <div class="call-tree" id="countdown-tree"></div>
+            </div>
+            
+            <div class="log" id="countdown-log"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Factorial implementation
+        const factorialInput = document.getElementById('factorial-input');
+        const factorialBtn = document.getElementById('factorial-btn');
+        const factorialStepBtn = document.getElementById('factorial-step-btn');
+        const factorialResult = document.getElementById('factorial-result');
+        const factorialPrevBtn = document.getElementById('factorial-prev-btn');
+        const factorialNextBtn = document.getElementById('factorial-next-btn');
+        const factorialTree = document.getElementById('factorial-tree');
+        const factorialLog = document.getElementById('factorial-log');
+        
+        let factorialSteps = [];
+        let factorialCurrentStep = -1;
+        
+        factorialBtn.addEventListener('click', () => {
+            const n = parseInt(factorialInput.value);
+            if (isNaN(n) || n < 0 || n > 20) {
+                factorialResult.textContent = 'Please enter a number between 0 and 20.';
+                return;
+            }
+            
+            const result = factorial(n);
+            factorialResult.textContent = `${n}! = ${result}`;
+            
+            // Generate visualization
+            factorialTree.innerHTML = '';
+            generateFactorialTree(n);
+        });
+        
+        factorialStepBtn.addEventListener('click', () => {
+            const n = parseInt(factorialInput.value);
+            if (isNaN(n) || n < 0 || n > 20) {
+                factorialResult.textContent = 'Please enter a number between 0 and 20.';
+                return;
+            }
+            
+            // Generate steps
+            factorialSteps = [];
+            factorialLog.innerHTML = '';
+            generateFactorialSteps(n);
+            
+            factorialCurrentStep = 0;
+            factorialPrevBtn.disabled = true;
+            factorialNextBtn.disabled = factorialSteps.length <= 1;
+            
+            showFactorialStep();
+        });
+        
+        factorialPrevBtn.addEventListener('click', () => {
+            if (factorialCurrentStep > 0) {
+                factorialCurrentStep--;
+                showFactorialStep();
+            }
+        });
+        
+        factorialNextBtn.addEventListener('click', () => {
+            if (factorialCurrentStep < factorialSteps.length - 1) {
+                factorialCurrentStep++;
+                showFactorialStep();
+            }
+        });
+        
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+            return n * factorial(n - 1);
+        }
+        
+        function generateFactorialTree(n) {
+            const node = document.createElement('div');
+            node.className = 'call-node completed';
+            node.textContent = `factorial(${n})`;
+            factorialTree.appendChild(node);
+            
+            if (n > 1) {
+                const children = document.createElement('div');
+                children.className = 'call-children';
+                factorialTree.appendChild(children);
+                
+                const childTree = document.createElement('div');
+                childTree.className = 'call-tree';
+                children.appendChild(childTree);
+                
+                const childNode = document.createElement('div');
+                childNode.className = 'call-node completed';
+                childNode.textContent = `factorial(${n-1})`;
+                childTree.appendChild(childNode);
+                
+                if (n > 2) {
+                    const grandchildren = document.createElement('div');
+                    grandchildren.className = 'call-children';
+                    childTree.appendChild(grandchildren);
+                    
+                    const grandchildTree = document.createElement('div');
+                    grandchildTree.className = 'call-tree';
+                    grandchildren.appendChild(grandchildTree);
+                    
+                    const grandchildNode = document.createElement('div');
+                    grandchildNode.className = 'call-node completed';
+                    grandchildNode.textContent = `factorial(${n-2})`;
+                    grandchildTree.appendChild(grandchildNode);
+                    
+                    if (n > 3) {
+                        const ellipsis = document.createElement('div');
+                        ellipsis.className = 'call-node';
+                        ellipsis.textContent = '...';
+                        ellipsis.style.backgroundColor = '#95a5a6';
+                        grandchildTree.appendChild(ellipsis);
+                    }
+                }
+            }
+        }
+        
+        function generateFactorialSteps(n) {
+            // Generate steps for factorial calculation
+            factorialSteps = [];
+            generateFactorialStepsRecursive(n);
+        }
+        
+        function generateFactorialStepsRecursive(n, depth = 0) {
+            // Add call step
+            factorialSteps.push({
+                type: 'call',
+                n: n,
+                depth: depth,
+                message: `Calling factorial(${n})`
+            });
+            
+            let result;
+            if (n === 0 || n === 1) {
+                // Base case
+                result = 1;
+                factorialSteps.push({
+                    type: 'base',
+                    n: n,
+                    depth: depth,
+                    result: result,
+                    message: `Base case: factorial(${n}) = 1`
+                });
+            } else {
+                // Recursive case
+                const subResult = generateFactorialStepsRecursive(n - 1, depth + 1);
+                result = n * subResult;
+                factorialSteps.push({
+                    type: 'return',
+                    n: n,
+                    depth: depth,
+                    result: result,
+                    message: `Return: factorial(${n}) = ${n} × factorial(${n-1}) = ${n} × ${subResult} = ${result}`
+                });
+            }
+            
+            return result;
+        }
+        
+        function showFactorialStep() {
+            if (factorialCurrentStep < 0 || factorialCurrentStep >= factorialSteps.length) return;
+            
+            const step = factorialSteps[factorialCurrentStep];
+            
+            // Update tree visualization
+            factorialTree.innerHTML = '';
+            for (let i = 0; i <= factorialCurrentStep; i++) {
+                const s = factorialSteps[i];
+                if (s.type === 'call') {
+                    const node = document.createElement('div');
+                    node.className = 'call-node';
+                    if (i === factorialCurrentStep) node.classList.add('active');
+                    node.textContent = `factorial(${s.n})`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    factorialTree.appendChild(node);
+                } else if (s.type === 'base' || s.type === 'return') {
+                    const node = document.createElement('div');
+                    node.className = 'call-node completed';
+                    node.textContent = `factorial(${s.n}) = ${s.result}`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    factorialTree.appendChild(node);
+                }
+            }
+            
+            // Update log
+            const logEntry = document.createElement('p');
+            logEntry.textContent = step.message;
+            factorialLog.prepend(logEntry);
+            
+            // Update result if it's the final step
+            if (factorialCurrentStep === factorialSteps.length - 1) {
+                factorialResult.textContent = `${step.n}! = ${step.result}`;
+            }
+            
+            // Update buttons
+            factorialPrevBtn.disabled = factorialCurrentStep <= 0;
+            factorialNextBtn.disabled = factorialCurrentStep >= factorialSteps.length - 1;
+        }
+        
+        // Fibonacci implementation
+        const fibonacciInput = document.getElementById('fibonacci-input');
+        const fibonacciBtn = document.getElementById('fibonacci-btn');
+        const fibonacciStepBtn = document.getElementById('fibonacci-step-btn');
+        const fibonacciResult = document.getElementById('fibonacci-result');
+        const fibonacciPrevBtn = document.getElementById('fibonacci-prev-btn');
+        const fibonacciNextBtn = document.getElementById('fibonacci-next-btn');
+        const fibonacciTree = document.getElementById('fibonacci-tree');
+        const fibonacciLog = document.getElementById('fibonacci-log');
+        
+        let fibonacciSteps = [];
+        let fibonacciCurrentStep = -1;
+        
+        fibonacciBtn.addEventListener('click', () => {
+            const n = parseInt(fibonacciInput.value);
+            if (isNaN(n) || n < 0 || n > 15) {
+                fibonacciResult.textContent = 'Please enter a number between 0 and 15.';
+                return;
+            }
+            
+            const result = fibonacci(n);
+            fibonacciResult.textContent = `fibonacci(${n}) = ${result}`;
+            
+            // Simple visualization
+            fibonacciTree.innerHTML = '';
+            const node = document.createElement('div');
+            node.className = 'call-node completed';
+            node.textContent = `fibonacci(${n}) = ${result}`;
+            fibonacciTree.appendChild(node);
+        });
+        
+        fibonacciStepBtn.addEventListener('click', () => {
+            const n = parseInt(fibonacciInput.value);
+            if (isNaN(n) || n < 0 || n > 15) {
+                fibonacciResult.textContent = 'Please enter a number between 0 and 15.';
+                return;
+            }
+            
+            // Generate steps
+            fibonacciSteps = [];
+            fibonacciLog.innerHTML = '';
+            fibonacciMemoization = {};
+            generateFibonacciSteps(n);
+            
+            fibonacciCurrentStep = 0;
+            fibonacciPrevBtn.disabled = true;
+            fibonacciNextBtn.disabled = fibonacciSteps.length <= 1;
+            
+            showFibonacciStep();
+        });
+        
+        fibonacciPrevBtn.addEventListener('click', () => {
+            if (fibonacciCurrentStep > 0) {
+                fibonacciCurrentStep--;
+                showFibonacciStep();
+            }
+        });
+        
+        fibonacciNextBtn.addEventListener('click', () => {
+            if (fibonacciCurrentStep < fibonacciSteps.length - 1) {
+                fibonacciCurrentStep++;
+                showFibonacciStep();
+            }
+        });
+        
+        let fibonacciMemoization = {};
+        
+        function fibonacci(n) {
+            if (n === 0) return 0;
+            if (n === 1) return 1;
+            return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+        
+        function generateFibonacciSteps(n) {
+            // Generate steps for fibonacci calculation
+            fibonacciSteps = [];
+            generateFibonacciStepsRecursive(n);
+        }
+        
+        function generateFibonacciStepsRecursive(n, depth = 0) {
+            // Check memoization
+            if (fibonacciMemoization[n] !== undefined) {
+                fibonacciSteps.push({
+                    type: 'memo',
+                    n: n,
+                    depth: depth,
+                    result: fibonacciMemoization[n],
+                    message: `Using memoized value: fibonacci(${n}) = ${fibonacciMemoization[n]}`
+                });
+                return fibonacciMemoization[n];
+            }
+            
+            // Add call step
+            fibonacciSteps.push({
+                type: 'call',
+                n: n,
+                depth: depth,
+                message: `Calling fibonacci(${n})`
+            });
+            
+            let result;
+            if (n === 0) {
+                result = 0;
+                fibonacciSteps.push({
+                    type: 'base',
+                    n: n,
+                    depth: depth,
+                    result: result,
+                    message: `Base case: fibonacci(0) = 0`
+                });
+            } else if (n === 1) {
+                result = 1;
+                fibonacciSteps.push({
+                    type: 'base',
+                    n: n,
+                    depth: depth,
+                    result: result,
+                    message: `Base case: fibonacci(1) = 1`
+                });
+            } else {
+                const subResult1 = generateFibonacciStepsRecursive(n - 1, depth + 1);
+                const subResult2 = generateFibonacciStepsRecursive(n - 2, depth + 1);
+                result = subResult1 + subResult2;
+                
+                fibonacciSteps.push({
+                    type: 'return',
+                    n: n,
+                    depth: depth,
+                    result: result,
+                    message: `Return: fibonacci(${n}) = fibonacci(${n-1}) + fibonacci(${n-2}) = ${subResult1} + ${subResult2} = ${result}`
+                });
+            }
+            
+            // Store in memoization
+            fibonacciMemoization[n] = result;
+            return result;
+        }
+        
+        function showFibonacciStep() {
+            if (fibonacciCurrentStep < 0 || fibonacciCurrentStep >= fibonacciSteps.length) return;
+            
+            const step = fibonacciSteps[fibonacciCurrentStep];
+            
+            // Update tree visualization (simplified for fibonacci due to complexity)
+            fibonacciTree.innerHTML = '';
+            for (let i = 0; i <= fibonacciCurrentStep; i++) {
+                const s = fibonacciSteps[i];
+                if ((s.type === 'call' || s.type === 'memo') && i === fibonacciCurrentStep) {
+                    const node = document.createElement('div');
+                    node.className = 'call-node active';
+                    node.textContent = `fibonacci(${s.n})`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    fibonacciTree.appendChild(node);
+                } else if (s.type === 'base' || s.type === 'return') {
+                    const node = document.createElement('div');
+                    node.className = 'call-node completed';
+                    node.textContent = `fibonacci(${s.n}) = ${s.result}`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    fibonacciTree.appendChild(node);
+                }
+            }
+            
+            // Update log
+            const logEntry = document.createElement('p');
+            logEntry.textContent = step.message;
+            fibonacciLog.prepend(logEntry);
+            
+            // Update result if it's the final step
+            if (fibonacciCurrentStep === fibonacciSteps.length - 1) {
+                fibonacciResult.textContent = `fibonacci(${step.n}) = ${step.result}`;
+            }
+            
+            // Update buttons
+            fibonacciPrevBtn.disabled = fibonacciCurrentStep <= 0;
+            fibonacciNextBtn.disabled = fibonacciCurrentStep >= fibonacciSteps.length - 1;
+        }
+        
+        // Countdown implementation
+        const countdownInput = document.getElementById('countdown-input');
+        const countdownBtn = document.getElementById('countdown-btn');
+        const countdownStepBtn = document.getElementById('countdown-step-btn');
+        const countdownResult = document.getElementById('countdown-result');
+        const countdownPrevBtn = document.getElementById('countdown-prev-btn');
+        const countdownNextBtn = document.getElementById('countdown-next-btn');
+        const countdownTree = document.getElementById('countdown-tree');
+        const countdownLog = document.getElementById('countdown-log');
+        
+        let countdownSteps = [];
+        let countdownCurrentStep = -1;
+        
+        countdownBtn.addEventListener('click', () => {
+            const n = parseInt(countdownInput.value);
+            if (isNaN(n) || n < 1 || n > 20) {
+                countdownResult.textContent = 'Please enter a number between 1 and 20.';
+                return;
+            }
+            
+            countdownResult.textContent = '';
+            countdownTree.innerHTML = '';
+            countdownLog.innerHTML = '';
+            
+            // Perform countdown
+            const numbers = [];
+            for (let i = n; i >= 1; i--) {
+                numbers.push(i);
+                const node = document.createElement('div');
+                node.className = 'call-node completed';
+                node.textContent = i;
+                countdownTree.appendChild(node);
+                
+                const logEntry = document.createElement('p');
+                logEntry.textContent = `Countdown: ${i}`;
+                countdownLog.prepend(logEntry);
+            }
+            
+            countdownResult.textContent = `Countdown from ${n}: ${numbers.join(', ')}`;
+        });
+        
+        countdownStepBtn.addEventListener('click', () => {
+            const n = parseInt(countdownInput.value);
+            if (isNaN(n) || n < 1 || n > 20) {
+                countdownResult.textContent = 'Please enter a number between 1 and 20.';
+                return;
+            }
+            
+            // Generate steps
+            countdownSteps = [];
+            countdownLog.innerHTML = '';
+            generateCountdownSteps(n);
+            
+            countdownCurrentStep = 0;
+            countdownPrevBtn.disabled = true;
+            countdownNextBtn.disabled = countdownSteps.length <= 1;
+            
+            showCountdownStep();
+        });
+        
+        countdownPrevBtn.addEventListener('click', () => {
+            if (countdownCurrentStep > 0) {
+                countdownCurrentStep--;
+                showCountdownStep();
+            }
+        });
+        
+        countdownNextBtn.addEventListener('click', () => {
+            if (countdownCurrentStep < countdownSteps.length - 1) {
+                countdownCurrentStep++;
+                showCountdownStep();
+            }
+        });
+        
+        function countdown(n) {
+            if (n <= 0) {
+                return;
+            }
+            console.log(n);
+            countdown(n - 1);
+        }
+        
+        function generateCountdownStepsRecursive(n, depth = 0) {
+            // Add call step
+            countdownSteps.push({
+                type: 'call',
+                n: n,
+                depth: depth,
+                message: `Calling countdown(${n})`
+            });
+            
+            if (n <= 0) {
+                // Base case
+                countdownSteps.push({
+                    type: 'base',
+                    n: n,
+                    depth: depth,
+                    message: `Base case: countdown(${n}) - stopping recursion`
+                });
+                return;
+            }
+            
+            // Log the current number
+            countdownSteps.push({
+                type: 'log',
+                n: n,
+                depth: depth,
+                message: `Output: ${n}`
+            });
+            
+            // Recursive call
+            generateCountdownStepsRecursive(n - 1, depth + 1);
+            
+            // Return step
+            countdownSteps.push({
+                type: 'return',
+                n: n,
+                depth: depth,
+                message: `Return from countdown(${n})`
+            });
+        }
+        
+        function showCountdownStep() {
+            if (countdownCurrentStep < 0 || countdownCurrentStep >= countdownSteps.length) return;
+            
+            const step = countdownSteps[countdownCurrentStep];
+            
+            // Update tree visualization
+            countdownTree.innerHTML = '';
+            const numbers = [];
+            
+            for (let i = 0; i <= countdownCurrentStep; i++) {
+                const s = countdownSteps[i];
+                if (s.type === 'call' && i === countdownCurrentStep) {
+                    const node = document.createElement('div');
+                    node.className = 'call-node active';
+                    node.textContent = `countdown(${s.n})`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    countdownTree.appendChild(node);
+                } else if (s.type === 'log') {
+                    numbers.push(s.n);
+                    const node = document.createElement('div');
+                    node.className = 'call-node completed';
+                    node.textContent = s.n;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    countdownTree.appendChild(node);
+                }
+            }
+            
+            // Update log
+            const logEntry = document.createElement('p');
+            logEntry.textContent = step.message;
+            countdownLog.prepend(logEntry);
+            
+            // Update result
+            if (numbers.length > 0) {
+                countdownResult.textContent = `Countdown: ${numbers.join(', ')}`;
+            }
+            
+            // Update buttons
+            countdownPrevBtn.disabled = countdownCurrentStep <= 0;
+            countdownNextBtn.disabled = countdownCurrentStep >= countdownSteps.length - 1;
+        }
+    </script>
+</body>
+</html>Steps(n) {
+            // Generate steps for countdown
+            countdownSteps = [];
+            generateCountdownStepsRecursive(n);
+        }
+        
+        function generateCountdownStepsRecursive(n, depth = 0) {
+            // Add call step
+            countdownSteps.push({
+                type: 'call',
+                n: n,
+                depth: depth,
+                message: `Calling countdown(${n})`
+            });
+            
+            if (n <= 0) {
+                // Base case
+                countdownSteps.push({
+                    type: 'base',
+                    n: n,
+                    depth: depth,
+                    message: `Base case: countdown(${n}) - stopping recursion`
+                });
+                return;
+            }
+            
+            // Log the current number
+            countdownSteps.push({
+                type: 'log',
+                n: n,
+                depth: depth,
+                message: `Output: ${n}`
+            });
+            
+            // Recursive call
+            generateCountdownStepsRecursive(n - 1, depth + 1);
+            
+            // Return step
+            countdownSteps.push({
+                type: 'return',
+                n: n,
+                depth: depth,
+                message: `Return from countdown(${n})`
+            });
+        }
+        
+        function showCountdownStep() {
+            if (countdownCurrentStep < 0 || countdownCurrentStep >= countdownSteps.length) return;
+            
+            const step = countdownSteps[countdownCurrentStep];
+            
+            // Update tree visualization
+            countdownTree.innerHTML = '';
+            const numbers = [];
+            
+            for (let i = 0; i <= countdownCurrentStep; i++) {
+                const s = countdownSteps[i];
+                if (s.type === 'call' && i === countdownCurrentStep) {
+                    const node = document.createElement('div');
+                    node.className = 'call-node active';
+                    node.textContent = `countdown(${s.n})`;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    countdownTree.appendChild(node);
+                } else if (s.type === 'log') {
+                    numbers.push(s.n);
+                    const node = document.createElement('div');
+                    node.className = 'call-node completed';
+                    node.textContent = s.n;
+                    node.style.marginLeft = `${s.depth * 20}px`;
+                    countdownTree.appendChild(node);
+                }
+            }
+            
+            // Update log
+            const logEntry = document.createElement('p');
+            logEntry.textContent = step.message;
+            countdownLog.prepend(logEntry);
+            
+            // Update result
+            if (numbers.length > 0) {
+                countdownResult.textContent = `Countdown: ${numbers.join(', ')}`;
+            }
+            
+            // Update buttons
+            countdownPrevBtn.disabled = countdownCurrentStep <= 0;
+            countdownNextBtn.disabled = countdownCurrentStep >= countdownSteps.length - 1;
+        }
+    </script>
+</body>
+</html>
