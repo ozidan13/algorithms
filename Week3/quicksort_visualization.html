@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quicksort Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .array-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .array-element {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .array-element.pivot {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .array-element.sorted {
+            background-color: #2ecc71;
+        }
+        .array-element.current {
+            background-color: #f39c12;
+        }
+        .array-element.left {
+            border-left: 4px solid #9b59b6;
+        }
+        .array-element.right {
+            border-right: 4px solid #9b59b6;
+        }
+        .step-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        .complexity {
+            background-color: #f1c40f;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .example-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .comparison-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            flex: 1;
+            min-width: 300px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .comparison-item h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        #pivotStrategySelect {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quicksort Visualization</h1>
+    
+    <div class="container">
+        <h2>Introduction to Quicksort</h2>
+        <p>
+            Quicksort is a divide-and-conquer sorting algorithm that is widely used due to its efficiency and 
+            relatively simple implementation. It works by:
+        </p>
+        <ol>
+            <li>Selecting a 'pivot' element from the array</li>
+            <li>Partitioning the array around the pivot (elements less than pivot go to the left, greater go to the right)</li>
+            <li>Recursively applying the above steps to the sub-arrays</li>
+        </ol>
+        <p>
+            The choice of pivot can significantly affect the algorithm's performance. In this visualization, 
+            you can explore different pivot selection strategies and see how they affect the sorting process.
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>Quicksort Visualization</h2>
+        
+        <div class="controls">
+            <button id="generateArrayBtn">Generate Random Array</button>
+            <select id="pivotStrategySelect" aria-label="Select pivot strategy">
+                <option value="first">First Element</option>
+                <option value="last">Last Element</option>
+                <option value="middle" selected>Middle Element</option>
+                <option value="random">Random Element</option>
+                <option value="median">Median of Three</option>
+            </select>
+            <button id="startSortBtn">Start Quicksort</button>
+            <button id="nextStepBtn" disabled>Next Step</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        
+        <div class="array-container" id="arrayContainer">
+            <!-- Array elements will be rendered here -->
+        </div>
+        
+        <div class="step-display" id="stepDisplay">
+            <p>Select a pivot strategy and click "Start Quicksort" to begin the visualization.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Quicksort Algorithm</h2>
+        
+        <div class="example-container">
+            <h3>Pseudocode</h3>
+            <div class="code-block">
+                <pre>
+function quicksort(array, low, high):
+    if low < high:
+        // Partition the array and get the pivot index
+        pivotIndex = partition(array, low, high)
+        
+        // Recursively sort the sub-arrays
+        quicksort(array, low, pivotIndex - 1)
+        quicksort(array, pivotIndex + 1, high)
+
+function partition(array, low, high):
+    // Select pivot (various strategies possible)
+    pivot = selectPivot(array, low, high)
+    
+    // Move pivot to the end
+    swap(array, pivotIndex, high)
+    
+    // Elements less than pivot go to the left
+    i = low - 1
+    
+    for j = low to high - 1:
+        if array[j] <= pivot:
+            i++
+            swap(array, i, j)
+    
+    // Move pivot to its final sorted position
+    swap(array, i + 1, high)
+    
+    return i + 1  // Return the pivot index
+</pre>
+            </div>
+        </div>
+        
+        <div class="example-container">
+            <h3>JavaScript Implementation</h3>
+            <div class="code-block">
+                <pre>
+function quicksort(array, low, high) {
+    if (low < high) {
+        // Partition the array and get the pivot index
+        const pivotIndex = partition(array, low, high);
+        
+        // Recursively sort the sub-arrays
+        quicksort(array, low, pivotIndex - 1);
+        quicksort(array, pivotIndex + 1, high);
+    }
+    return array;
+}
+
+function partition(array, low, high) {
+    // Using last element as pivot
+    const pivot = array[high];
+    
+    // Index of smaller element
+    let i = low - 1;
+    
+    for (let j = low; j < high; j++) {
+        // If current element is less than or equal to pivot
+        if (array[j] <= pivot) {
+            i++;
+            // Swap array[i] and array[j]
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    
+    // Swap array[i+1] and array[high] (put pivot in its correct position)
+    [array[i + 1], array[high]] = [array[high], array[i + 1]];
+    
+    return i + 1; // Return the pivot index
+}
+</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Pivot Selection Strategies</h2>
+        
+        <div class="comparison-container">
+            <div class="comparison-item">
+                <h3>First Element</h3>
+                <p>
+                    Always chooses the first element of the array as the pivot.
+                </p>
+                <p><strong>Pros:</strong> Simple to implement.</p>
+                <p><strong>Cons:</strong> Poor performance for already sorted or nearly sorted arrays (O(n²) worst case).</p>
+            </div>
+            
+            <div class="comparison-item">
+                <h3>Last Element</h3>
+                <p>
+                    Always chooses the last element of the array as the pivot.
+                </p>
+                <p><strong>Pros:</strong> Simple to implement.</p>
+                <p><strong>Cons:</strong> Same issues as first element for reverse-sorted arrays.</p>
+            </div>
+            
+            <div class="comparison-item">
+                <h3>Middle Element</h3>
+                <p>
+                    Chooses the middle element of the array as the pivot.
+                </p>
+                <p><strong>Pros:</strong> Often provides better performance than first or last for sorted arrays.</p>
+                <p><strong>Cons:</strong> Still vulnerable to certain patterns in the data.</p>
+            </div>
+            
+            <div class="comparison-item">
+                <h3>Random Element</h3>
+                <p>
+                    Randomly selects an element from the array as the pivot.
+                </p>
+                <p><strong>Pros:</strong> Provides good average-case performance and protection against worst-case scenarios.</p>
+                <p><strong>Cons:</strong> Requires a random number generator and is non-deterministic.</p>
+            </div>
+            
+            <div class="comparison-item">
+                <h3>Median of Three</h3>
+                <p>
+                    Uses the median of the first, middle, and last elements as the pivot.
+                </p>
+                <p><strong>Pros:</strong> Excellent practical performance, reduces probability of worst-case scenarios.</p>
+                <p><strong>Cons:</strong> Slightly more complex to implement.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Time and Space Complexity</h2>
+        
+        <div class="example-container">
+            <h3>Time Complexity</h3>
+            <ul>
+                <li><strong>Best Case:</strong> O(n log n) - Occurs when the pivot always divides the array into nearly equal halves</li>
+                <li><strong>Average Case:</strong> O(n log n) - Expected performance with random data or good pivot selection</li>
+                <li><strong>Worst Case:</strong> O(n²) - Occurs when the pivot is always the smallest or largest element (e.g., with first/last pivot on sorted data)</li>
+            </ul>
+            <p>
+                The time complexity greatly depends on the pivot selection strategy. A good pivot divides the array into roughly equal halves,
+                which leads to a balanced recursion tree and O(n log n) performance.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Space Complexity</h3>
+            <ul>
+                <li><strong>Best/Average Case:</strong> O(log n) - For the recursion stack in a balanced tree</li>
+                <li><strong>Worst Case:</strong> O(n) - For the recursion stack in an unbalanced tree</li>
+            </ul>
+            <p>
+                Quicksort can be implemented in-place, meaning it doesn't require extra memory proportional to the input size
+                for the sorting itself. The space complexity comes primarily from the recursion stack.
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Quicksort vs. Other Sorting Algorithms</h2>
+        
+        <div class="example-container">
+            <h3>Quicksort vs. Merge Sort</h3>
+            <table>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Quicksort</th>
+                    <th>Merge Sort</th>
+                </tr>
+                <tr>
+                    <td>Time Complexity (Worst)</td>
+                    <td>O(n²)</td>
+                    <td>O(n log n)</td>
+                </tr>
+                <tr>
+                    <td>Time Complexity (Average)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                </tr>
+                <tr>
+                    <td>Space Complexity</td>
+                    <td>O(log n) to O(n)</td>
+                    <td>O(n)</td>
+                </tr>
+                <tr>
+                    <td>Stability</td>
+                    <td>Not stable</td>
+                    <td>Stable</td>
+                </tr>
+                <tr>
+                    <td>In-place</td>
+                    <td>Yes</td>
+                    <td>No (traditional implementation)</td>
+                </tr>
+                <tr>
+                    <td>Cache Efficiency</td>
+                    <td>Better (localized memory access)</td>
+                    <td>Worse (non-localized access)</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="example-container">
+            <h3>When to Use Quicksort</h3>
+            <p>
+                Quicksort is often the preferred sorting algorithm when:
+            </p>
+            <ul>
+                <li>Average-case performance is more important than worst-case guarantees</li>
+                <li>Memory usage is a concern (due to in-place sorting)</li>
+                <li>The data is randomly distributed</li>
+                <li>Cache performance is important</li>
+            </ul>
+            <p>
+                Many programming language standard libraries use Quicksort or a hybrid approach that incorporates Quicksort
+                for their sorting functions (often with optimizations like switching to insertion sort for small subarrays).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const arrayContainer = document.getElementById('arrayContainer');
+        const stepDisplay = document.getElementById('stepDisplay');
+        const generateArrayBtn = document.getElementById('generateArrayBtn');
+        const pivotStrategySelect = document.getElementById('pivotStrategySelect');
+        const startSortBtn = document.getElementById('startSortBtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Sorting state
+        let array = [38, 27, 43, 3, 9, 82, 10];
+        let sortingSteps = [];
+        let currentStepIndex = 0;
+        let sortingInProgress = false;
+        
+        // Initialize array display
+        renderArray();
+        
+        // Add event listeners
+        generateArrayBtn.addEventListener('click', generateRandomArray);
+        startSortBtn.addEventListener('click', startQuicksort);
+        nextStepBtn.addEventListener('click', showNextStep);
+        resetBtn.addEventListener('click', resetVisualization);
+        
+        // Generate a random array
+        function generateRandomArray() {
+            const length = Math.floor(Math.random() * 5) + 5; // 5-9 elements
+            array = [];
+            for (let i = 0; i < length; i++) {
+                array.push(Math.floor(Math.random() * 90) + 10); // 10-99
+            }
+            renderArray();
+            resetVisualization();
+            
+            updateStepDisplay(`Generated a random array with ${length} elements: [${array.join(', ')}]`);
+        }
+        
+        // Render the array
+        function renderArray(highlights = {}) {
+            arrayContainer.innerHTML = '';
+            
+            for (let i = 0; i < array.length; i++) {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = array[i];
+                
+                // Apply highlights
+                if (highlights.pivot === i) {
+                    element.classList.add('pivot');
+                }
+                if (highlights.sorted && highlights.sorted.includes(i)) {
+                    element.classList.add('sorted');
+                }
+                if (highlights.current === i) {
+                    element.classList.add('current');
+                }
+                if (highlights.left === i) {
+                    element.classList.add('left');
+                }
+                if (highlights.right === i) {
+                    element.classList.add('right');
+                }
+                
+                arrayContainer.appendChild(element);
+            }
+        }
+        
+        // Start the quicksort visualization
+        function startQuicksort() {
+            if (sortingInProgress) return;
+            
+            // Reset previous visualization
+            resetVisualization();
+            
+            // Start the sorting process
+            sortingInProgress = true;
+            sortingSteps = [];
+            currentStepIndex = 0;
+            
+            // Generate all steps of quicksort
+            generateQuicksortSteps(array.slice(), 0, array.length - 1);
+            
+            // Update UI
+            startSortBtn.disabled = true;
+            nextStepBtn.disabled = false;
+            
+            // Show the first step
+            showCurrentStep();
+            
+            updateStepDisplay(`Starting Quicksort with ${pivotStrategySelect.value} pivot strategy. Click 'Next Step' to proceed through the algorithm.`);
+        }
+        
+        // Generate all steps of quicksort
+        function generateQuicksortSteps(arr, low, high, sortedIndices = []) {
+            if (low < high) {
+                // Record initial state of this partition
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Starting partition from index ${low} to ${high}.`,
+                    left: low,
+                    right: high,
+                    sorted: [...sortedIndices]
+                });
+                
+                // Select pivot based on the chosen strategy
+                const pivotIndex = selectPivot(arr, low, high);
+                const pivot = arr[pivotIndex];
+                
+                // Record pivot selection
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Selected pivot: ${pivot} (${pivotStrategySelect.value} strategy).`,
+                    pivot: pivotIndex,
+                    left: low,
+                    right: high,
+                    sorted: [...sortedIndices]
+                });
+                
+                // Move pivot to the end if not already there
+                if (pivotIndex !== high) {
+                    [arr[pivotIndex], arr[high]] = [arr[high], arr[pivotIndex]];
+                    
+                    sortingSteps.push({
+                        array: [...arr],
+                        message: `Moved pivot ${pivot} to the end of partition.`,
+                        pivot: high,
+                        left: low,
+                        right: high,
+                        sorted: [...sortedIndices]
+                    });
+                }
+                
+                // Partition the array
+                let i = low - 1;
+                
+                for (let j = low; j < high; j++) {
+                    // Record current element being compared
+                    sortingSteps.push({
+                        array: [...arr],
+                        message: `Comparing element ${arr[j]} with pivot ${pivot}.`,
+                        pivot: high,
+                        current: j,
+                        left: low,
+                        right: high,
+                        sorted: [...sortedIndices]
+                    });
+                    
+                    if (arr[j] <= pivot) {
+                        i++;
+                        
+                        // Swap if needed
+                        if (i !== j) {
+                            [arr[i], arr[j]] = [arr[j], arr[i]];
+                            
+                            sortingSteps.push({
+                                array: [...arr],
+                                message: `${arr[i]} ≤ ${pivot}, swapping elements at indices ${i} and ${j}.`,
+                                pivot: high,
+                                current: j,
+                                left: low,
+                                right: high,
+                                sorted: [...sortedIndices]
+                            });
+                        } else {
+                            sortingSteps.push({
+                                array: [...arr],
+                                message: `${arr[j]} ≤ ${pivot}, element is already in the correct position.`,
+                                pivot: high,
+                                current: j,
+                                left: low,
+                                right: high,
+                                sorted: [...sortedIndices]
+                            });
+                        }
+                    } else {
+                        sortingSteps.push({
+                            array: [...arr],
+                            message: `${arr[j]} > ${pivot}, no swap needed.`,
+                            pivot: high,
+                            current: j,
+                            left: low,
+                            right: high,
+                            sorted: [...sortedIndices]
+                        });
+                    }
+                }
+                
+                // Move pivot to its final sorted position
+                const finalPivotIndex = i + 1;
+                [arr[finalPivotIndex], arr[high]] = [arr[high], arr[finalPivotIndex]];
+                
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Moved pivot ${pivot} to its final sorted position at index ${finalPivotIndex}.`,
+                    pivot: finalPivotIndex,
+                    left: low,
+                    right: high,
+                    sorted: [...sortedIndices]
+                });
+                
+                // Mark pivot as sorted
+                const newSortedIndices = [...sortedIndices, finalPivotIndex];
+                
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Pivot ${pivot} is now in its correct position. All elements to the left are smaller, and all elements to the right are larger.`,
+                    left: low,
+                    right: high,
+                    sorted: newSortedIndices
+                });
+                
+                // Recursively sort the subarrays
+                generateQuicksortSteps(arr, low, finalPivotIndex - 1, newSortedIndices);
+                generateQuicksortSteps(arr, finalPivotIndex + 1, high, newSortedIndices);
+            } 
+            else if (low === high && !sortedIndices.includes(low)) {
+                // Single element is already sorted
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Single element ${arr[low]} at index ${low} is already sorted.`,
+                    sorted: [...sortedIndices, low]
+                });
+            }
+            
+            // If we've sorted the entire array, add a final step
+            if (low === 0 && high === arr.length - 1 && sortedIndices.length === arr.length - 1) {
+                sortingSteps.push({
+                    array: [...arr],
+                    message: `Quicksort complete! The array is now fully sorted.`,
+                    sorted: Array.from({ length: arr.length }, (_, i) => i)
+                });
+            }
+        }
+        
+        // Select pivot based on the chosen strategy
+        function selectPivot(arr, low, high) {
+            const strategy = pivotStrategySelect.value;
+            
+            switch (strategy) {
+                case 'first':
+                    return low;
+                    
+                case 'last':
+                    return high;
+                    
+                case 'middle':
+                    return Math.floor((low + high) / 2);
+                    
+                case 'random':
+                    return Math.floor(Math.random() * (high - low + 1)) + low;
+                    
+                case 'median':
+                    // Median of three (first, middle, last)
+                    const first = arr[low];
+                    const middle = arr[Math.floor((low + high) / 2)];
+                    const last = arr[high];
+                    
+                    // Find the median index
+                    if ((first <= middle && middle <= last) || (last <= middle && middle <= first)) {
+                        return Math.floor((low + high) / 2);
+                    } else if ((middle <= first && first <= last) || (last <= first && first <= middle)) {
+                        return low;
+                    } else {
+                        return high;
+                    }
+                    
+                default:
+                    return high; // Default to last element
+            }
+        }
+        
+        // Show the current step
+        function showCurrentStep() {
+            if (currentStepIndex >= sortingSteps.length) {
+                updateStepDisplay('Quicksort complete! The array is now sorted.');
+                nextStepBtn.disabled = true;
+                return;
+            }
+            
+            const step = sortingSteps[currentStepIndex];
+            
+            // Update array display
+            array = [...step.array];
+            
+            // Create highlights object
+            const highlights = {
+                pivot: step.pivot,
+                current: step.current,
+                left: step.left,
+                right: step.right,
+                sorted: step.sorted
+            };
+            
+            // Render array with highlights
+            renderArray(highlights);
+            
+            // Update step display
+            updateStepDisplay(step.message);
+        }
+        
+        // Show the next step
+        function showNextStep() {
+            if (currentStepIndex < sortingSteps.length - 1) {
+                currentStepIndex++;
+                showCurrentStep();
+            } else {
+                updateStepDisplay('Quicksort complete! The array is now sorted.');
+                nextStepBtn.disabled = true;
+            }
+        }
+        
+        // Reset the visualization
+        function resetVisualization() {
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = 0;
+            
+            // Reset UI
+            startSortBtn.disabled = false;
+            nextStepBtn.disabled = true;
+            
+            // Clear highlights
+            renderArray();
+            
+            updateStepDisplay(`Select a pivot strategy and click "Start Quicksort" to begin the visualization.`);
+        }
+        
+        // Update the step display
+        function updateStepDisplay(message) {
+            stepDisplay.innerHTML = `<p>${message}</p>`;
+        }
+    </script>
+</body>
+</html> 

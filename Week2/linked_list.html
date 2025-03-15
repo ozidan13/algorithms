@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .operation-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .ll-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            min-height: 120px;
+            align-items: center;
+            position: relative;
+        }
+        .node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        .node-content {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+        .node-next {
+            width: 40px;
+            height: 30px;
+            background-color: #e8f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px dashed #3498db;
+            z-index: 2;
+        }
+        .pointer {
+            position: absolute;
+            height: 2px;
+            background-color: #3498db;
+            transform-origin: left center;
+            z-index: 1;
+        }
+        .pointer:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 10px solid #3498db;
+        }
+        .node.highlight .node-content {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .node.new .node-content {
+            background-color: #2ecc71;
+        }
+        .head-pointer, .tail-pointer {
+            position: absolute;
+            top: -35px;
+            left: 30px;
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+        .tail-pointer {
+            color: #2ecc71;
+        }
+        .step-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        .complexity {
+            background-color: #f1c40f;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f2f2f2;
+        }
+        .comparison-table .better {
+            background-color: rgba(46, 204, 113, 0.2);
+        }
+        .comparison-table .worse {
+            background-color: rgba(231, 76, 60, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Linked List Visualization</h1>
+    
+    <div class="container">
+        <h2>Introduction to Linked Lists</h2>
+        <p>
+            A linked list is a linear data structure where elements are stored in nodes. Unlike arrays, 
+            linked list elements are not stored in contiguous memory locations. Each node contains 
+            a data field and a reference (link) to the next node in the sequence.
+        </p>
+        <p>
+            In this visualization, you'll explore a singly linked list and its operations:
+        </p>
+        <ul>
+            <li><strong>Insertion:</strong> O(1) at the beginning or end, O(n) at a specific position</li>
+            <li><strong>Deletion:</strong> O(1) at the beginning, O(n) at the end or specific position</li>
+            <li><strong>Search:</strong> O(n) - Need to traverse from the head of the list</li>
+            <li><strong>Access:</strong> O(n) - No direct indexing, need to traverse</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>Linked List Visualization</h2>
+        <div class="controls">
+            <input type="number" id="valueInput" placeholder="Enter a value" min="0" max="99">
+            <input type="number" id="positionInput" placeholder="Position (0-based)" min="0">
+            <select id="operationSelect" aria-label="Select operation type">
+                <option value="insertHead">Insert at Head</option>
+                <option value="insertTail">Insert at Tail</option>
+                <option value="insertPosition">Insert at Position</option>
+                <option value="deleteHead">Delete from Head</option>
+                <option value="deleteTail">Delete from Tail</option>
+                <option value="deletePosition">Delete from Position</option>
+                <option value="search">Search Value</option>
+            </select>
+            <button id="executeBtn">Execute</button>
+            <button id="resetBtn">Reset List</button>
+        </div>
+        
+        <div class="ll-container" id="linkedListContainer">
+            <!-- Linked list will be rendered here -->
+        </div>
+        
+        <div class="step-display" id="stepDisplay">
+            <p>Use the controls above to interact with the linked list.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Operation Details</h2>
+        
+        <div class="operation-container">
+            <h3>Insert at Head <span class="complexity">O(1)</span></h3>
+            <p>
+                Inserting a new node at the beginning of the linked list (the head) is a constant-time operation.
+                We simply create a new node, point its next reference to the current head, and update the head to point to the new node.
+            </p>
+            <div class="code-block">
+                <pre>
+function insertAtHead(value) {
+    const newNode = { value: value, next: null };
+    
+    if (head === null) {
+        // Empty list case
+        head = newNode;
+        tail = newNode;
+    } else {
+        // Non-empty list case
+        newNode.next = head;  // Point new node to current head
+        head = newNode;       // Update head to new node
+    }
+}
+                </pre>
+            </div>
+        </div>
+        
+        <div class="operation-container">
+            <h3>Insert at Tail <span class="complexity">O(1)</span></h3>
+            <p>
+                Inserting at the end of the linked list is a constant-time operation if we maintain a reference to the tail node.
+                We create a new node, update the current tail's next pointer to the new node, and then update the tail reference.
+            </p>
+            <div class="code-block">
+                <pre>
+function insertAtTail(value) {
+    const newNode = { value: value, next: null };
+    
+    if (head === null) {
+        // Empty list case
+        head = newNode;
+        tail = newNode;
+    } else {
+        // Non-empty list case
+        tail.next = newNode;  // Point current tail to new node
+        tail = newNode;       // Update tail to new node
+    }
+}
+                </pre>
+            </div>
+        </div>
+        
+        <div class="operation-container">
+            <h3>Insert at Position <span class="complexity">O(n)</span></h3>
+            <p>
+                Inserting at a specific position requires traversing the list to find the correct position.
+                This is a linear-time operation in the worst case (insertion at the end).
+            </p>
+            <div class="code-block">
+                <pre>
+function insertAtPosition(value, position) {
+    // Special cases
+    if (position === 0) {
+        return insertAtHead(value);
+    }
+    
+    const newNode = { value: value, next: null };
+    let current = head;
+    let index = 0;
+    
+    // Traverse to position - 1
+    while (current !== null && index < position - 1) {
+        current = current.next;
+        index++;
+    }
+    
+    // Check if position is valid
+    if (current === null) {
+        return "Position out of bounds";
+    }
+    
+    // Insert the new node
+    newNode.next = current.next;
+    current.next = newNode;
+    
+    // Update tail if necessary
+    if (newNode.next === null) {
+        tail = newNode;
+    }
+}
+                </pre>
+            </div>
+        </div>
+        
+        <div class="operation-container">
+            <h3>Delete from Head <span class="complexity">O(1)</span></h3>
+            <p>
+                Removing the first node from the linked list is a constant-time operation.
+                We simply update the head reference to point to the second node in the list.
+            </p>
+            <div class="code-block">
+                <pre>
+function deleteFromHead() {
+    if (head === null) {
+        return "List is empty";
+    }
+    
+    const oldHead = head;
+    head = head.next;
+    
+    // Update tail if list becomes empty
+    if (head === null) {
+        tail = null;
+    }
+    
+    return oldHead.value;
+}
+                </pre>
+            </div>
+        </div>
+        
+        <div class="operation-container">
+            <h3>Delete from Tail <span class="complexity">O(n)</span></h3>
+            <p>
+                Removing the last node requires traversing the entire list to find the second-to-last node,
+                which is a linear-time operation.
+            </p>
+            <div class="code-block">
+                <pre>
+function deleteFromTail() {
+    if (head === null) {
+        return "List is empty";
+    }
+    
+    // Case with only one node
+    if (head === tail) {
+        const value = head.value;
+        head = null;
+        tail = null;
+        return value;
+    }
+    
+    // Find the second-to-last node
+    let current = head;
+    while (current.next !== tail) {
+        current = current.next;
+    }
+    
+    const value = tail.value;
+    tail = current;       // Update tail to second-to-last node
+    tail.next = null;     // Remove reference to the deleted node
+    
+    return value;
+}
+                </pre>
+            </div>
+        </div>
+        
+        <div class="operation-container">
+            <h3>Search <span class="complexity">O(n)</span></h3>
+            <p>
+                Searching for a value in a linked list requires traversing the list from the head 
+                until the value is found or the end of the list is reached. This is a linear-time operation.
+            </p>
+            <div class="code-block">
+                <pre>
+function search(value) {
+    let current = head;
+    let position = 0;
+    
+    while (current !== null) {
+        if (current.value === value) {
+            return position;  // Found at this position
+        }
+        current = current.next;
+        position++;
+    }
+    
+    return -1;  // Not found
+}
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Linked Lists vs. Arrays</h2>
+        
+        <p>
+            Both linked lists and arrays are linear data structures, but they have different advantages and trade-offs.
+            Here's a comparison of their performance characteristics:
+        </p>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Array</th>
+                    <th>Linked List</th>
+                    <th>Winner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Access by Index</td>
+                    <td class="better">O(1) - Constant time</td>
+                    <td class="worse">O(n) - Linear time</td>
+                    <td>Array</td>
+                </tr>
+                <tr>
+                    <td>Insert at Beginning</td>
+                    <td class="worse">O(n) - Need to shift elements</td>
+                    <td class="better">O(1) - Constant time</td>
+                    <td>Linked List</td>
+                </tr>
+                <tr>
+                    <td>Insert at End</td>
+                    <td class="better">O(1) - Amortized (with dynamic arrays)</td>
+                    <td class="better">O(1) - With tail pointer</td>
+                    <td>Tie</td>
+                </tr>
+                <tr>
+                    <td>Insert in Middle</td>
+                    <td class="worse">O(n) - Need to shift elements</td>
+                    <td class="worse">O(n) - Need to traverse</td>
+                    <td>Tie (but linked list is faster in practice)</td>
+                </tr>
+                <tr>
+                    <td>Delete from Beginning</td>
+                    <td class="worse">O(n) - Need to shift elements</td>
+                    <td class="better">O(1) - Constant time</td>
+                    <td>Linked List</td>
+                </tr>
+                <tr>
+                    <td>Delete from End</td>
+                    <td class="better">O(1) - Constant time</td>
+                    <td class="worse">O(n) - Need to find second-to-last node</td>
+                    <td>Array</td>
+                </tr>
+                <tr>
+                    <td>Search</td>
+                    <td>O(n) - Linear search (O(log n) if sorted and using binary search)</td>
+                    <td>O(n) - Linear search</td>
+                    <td>Tie (Array wins if sorted)</td>
+                </tr>
+                <tr>
+                    <td>Memory Usage</td>
+                    <td class="better">Less overhead (just the elements)</td>
+                    <td class="worse">More overhead (elements + next pointers)</td>
+                    <td>Array</td>
+                </tr>
+                <tr>
+                    <td>Memory Allocation</td>
+                    <td class="worse">Contiguous (may require resizing)</td>
+                    <td class="better">Non-contiguous (flexible)</td>
+                    <td>Linked List</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>When to Use Each Data Structure</h3>
+        
+        <p><strong>Use Arrays When:</strong></p>
+        <ul>
+            <li>You need fast access to elements by index</li>
+            <li>The size of the data is fixed or changes infrequently</li>
+            <li>Memory usage is a concern</li>
+            <li>You need to perform binary search on the data</li>
+        </ul>
+        
+        <p><strong>Use Linked Lists When:</strong></p>
+        <ul>
+            <li>You frequently insert or delete elements at the beginning</li>
+            <li>The size of the data changes frequently</li>
+            <li>You don't need random access to elements</li>
+            <li>You want to avoid the cost of resizing arrays</li>
+            <li>You need to implement other data structures like stacks, queues, or certain types of trees</li>
+        </ul>
+    </div>
+
+    <script>
+        // Linked List state
+        let head = null;
+        let tail = null;
+        
+        // DOM elements
+        const linkedListContainer = document.getElementById('linkedListContainer');
+        const valueInput = document.getElementById('valueInput');
+        const positionInput = document.getElementById('positionInput');
+        const operationSelect = document.getElementById('operationSelect');
+        const stepDisplay = document.getElementById('stepDisplay');
+        
+        // Buttons
+        document.getElementById('executeBtn').addEventListener('click', executeOperation);
+        document.getElementById('resetBtn').addEventListener('click', resetList);
+        
+        // Create a sample linked list initially
+        resetList();
+        
+        // Function to reset the list
+        function resetList() {
+            head = null;
+            tail = null;
+            
+            // Create a sample list with a few nodes
+            insertAtTail(10);
+            insertAtTail(20);
+            insertAtTail(30);
+            
+            renderList();
+            updateStepDisplay('Linked list has been reset with values: 10, 20, 30.');
+        }
+        
+        // Function to execute the selected operation
+        async function executeOperation() {
+            const operation = operationSelect.value;
+            const value = parseInt(valueInput.value);
+            const position = parseInt(positionInput.value);
+            
+            switch (operation) {
+                case 'insertHead':
+                    if (isNaN(value)) {
+                        updateStepDisplay('Please enter a valid value to insert.');
+                        return;
+                    }
+                    await insertAtHeadWithAnimation(value);
+                    break;
+                case 'insertTail':
+                    if (isNaN(value)) {
+                        updateStepDisplay('Please enter a valid value to insert.');
+                        return;
+                    }
+                    await insertAtTailWithAnimation(value);
+                    break;
+                case 'insertPosition':
+                    if (isNaN(value)) {
+                        updateStepDisplay('Please enter a valid value to insert.');
+                        return;
+                    }
+                    if (isNaN(position)) {
+                        updateStepDisplay('Please enter a valid position for insertion.');
+                        return;
+                    }
+                    await insertAtPositionWithAnimation(value, position);
+                    break;
+                case 'deleteHead':
+                    await deleteFromHeadWithAnimation();
+                    break;
+                case 'deleteTail':
+                    await deleteFromTailWithAnimation();
+                    break;
+                case 'deletePosition':
+                    if (isNaN(position)) {
+                        updateStepDisplay('Please enter a valid position for deletion.');
+                        return;
+                    }
+                    await deleteFromPositionWithAnimation(position);
+                    break;
+                case 'search':
+                    if (isNaN(value)) {
+                        updateStepDisplay('Please enter a valid value to search for.');
+                        return;
+                    }
+                    await searchWithAnimation(value);
+                    break;
+            }
+        }
+        
+        // Render the current state of the linked list
+        function renderList() {
+            linkedListContainer.innerHTML = '';
+            
+            if (head === null) {
+                updateStepDisplay('The list is empty.');
+                return;
+            }
+            
+            let current = head;
+            let index = 0;
+            let prevNode = null;
+            
+            while (current !== null) {
+                // Create node container
+                const nodeContainer = document.createElement('div');
+                nodeContainer.className = 'node';
+                nodeContainer.dataset.index = index;
+                
+                // Create node content (value)
+                const nodeContent = document.createElement('div');
+                nodeContent.className = 'node-content';
+                nodeContent.textContent = current.value;
+                
+                // Create node next pointer
+                const nodeNext = document.createElement('div');
+                nodeNext.className = 'node-next';
+                nodeNext.textContent = current.next ? 'next' : 'null';
+                
+                // Add head pointer text if it's the first node
+                if (current === head) {
+                    const headText = document.createElement('div');
+                    headText.className = 'head-pointer';
+                    headText.textContent = 'HEAD';
+                    nodeContainer.appendChild(headText);
+                }
+                
+                // Add tail pointer text if it's the last node
+                if (current === tail) {
+                    const tailText = document.createElement('div');
+                    tailText.className = 'tail-pointer';
+                    tailText.textContent = 'TAIL';
+                    nodeContainer.appendChild(tailText);
+                }
+                
+                // Append elements to node container
+                nodeContainer.appendChild(nodeContent);
+                nodeContainer.appendChild(nodeNext);
+                
+                // Append node to list container
+                linkedListContainer.appendChild(nodeContainer);
+                
+                // Draw pointer arrow from previous node if it exists
+                if (prevNode) {
+                    // Calculate positions for the arrow
+                    const pointer = document.createElement('div');
+                    pointer.className = 'pointer';
+                    pointer.style.width = '30px';
+                    pointer.style.top = '30px';
+                    pointer.style.left = '70px';
+                    prevNode.appendChild(pointer);
+                }
+                
+                prevNode = nodeContainer;
+                current = current.next;
+                index++;
+            }
+        }
+        
+        // Insert at head with animation
+        async function insertAtHeadWithAnimation(value) {
+            updateStepDisplay(`Step 1: Create a new node with value ${value}.`);
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 2: Point the new node's next pointer to the current head.`);
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 3: Update the head pointer to point to the new node.`);
+            await sleep(1000);
+            
+            // Actually insert the node
+            insertAtHead(value);
+            
+            // Render and highlight the new node
+            renderList();
+            document.querySelector('.node[data-index="0"]').classList.add('new');
+            
+            updateStepDisplay(`Inserted ${value} at the head of the list. This is an O(1) operation.`);
+        }
+        
+        // Insert at tail with animation
+        async function insertAtTailWithAnimation(value) {
+            updateStepDisplay(`Step 1: Create a new node with value ${value}.`);
+            await sleep(1000);
+            
+            if (head !== null) {
+                updateStepDisplay(`Step 2: Point the current tail's next pointer to the new node.`);
+                await sleep(1000);
+                
+                updateStepDisplay(`Step 3: Update the tail pointer to point to the new node.`);
+                await sleep(1000);
+            } else {
+                updateStepDisplay(`Step 2: Since the list is empty, set both head and tail to the new node.`);
+                await sleep(1000);
+            }
+            
+            // Actually insert the node
+            insertAtTail(value);
+            
+            // Render and highlight the new node
+            renderList();
+            const nodes = document.querySelectorAll('.node');
+            nodes[nodes.length - 1].classList.add('new');
+            
+            updateStepDisplay(`Inserted ${value} at the tail of the list. This is an O(1) operation.`);
+        }
+        
+        // Insert at position with animation
+        async function insertAtPositionWithAnimation(value, position) {
+            // Check if position is valid
+            if (position < 0) {
+                updateStepDisplay('Invalid position. Position must be non-negative.');
+                return;
+            }
+            
+            // Special case: insert at head
+            if (position === 0) {
+                await insertAtHeadWithAnimation(value);
+                return;
+            }
+            
+            updateStepDisplay(`Step 1: Create a new node with value ${value}.`);
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 2: Traverse the list to find position ${position - 1}.`);
+            
+            // Animate traversal
+            renderList();
+            let current = head;
+            let index = 0;
+            let valid = true;
+            
+            while (index < position - 1) {
+                if (current === null) {
+                    updateStepDisplay(`Position ${position} is out of bounds. The list only has ${index} nodes.`);
+                    valid = false;
+                    break;
+                }
+                
+                // Highlight current node during traversal
+                renderList();
+                document.querySelector(`.node[data-index="${index}"]`).classList.add('highlight');
+                await sleep(800);
+                
+                current = current.next;
+                index++;
+            }
+            
+            if (!valid) return;
+            
+            updateStepDisplay(`Step 3: Set the new node's next pointer to node at position ${position}.`);
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 4: Update the next pointer of the node at position ${position - 1} to point to the new node.`);
+            await sleep(1000);
+            
+            // Actually insert the node
+            insertAtPosition(value, position);
+            
+            // Render and highlight the new node
+            renderList();
+            document.querySelector(`.node[data-index="${position}"]`).classList.add('new');
+            
+            updateStepDisplay(`Inserted ${value} at position ${position}. This is an O(n) operation because we needed to traverse ${position} nodes.`);
+        }
+        
+        // Delete from head with animation
+        async function deleteFromHeadWithAnimation() {
+            if (head === null) {
+                updateStepDisplay('The list is empty. Nothing to delete.');
+                return;
+            }
+            
+            const value = head.value;
+            
+            updateStepDisplay(`Step 1: Store the value of the head node (${value}).`);
+            renderList();
+            document.querySelector('.node[data-index="0"]').classList.add('highlight');
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 2: Update the head pointer to point to the second node.`);
+            await sleep(1000);
+            
+            // Actually delete the node
+            deleteFromHead();
+            
+            // Render the updated list
+            renderList();
+            
+            updateStepDisplay(`Deleted ${value} from the head of the list. This is an O(1) operation.`);
+        }
+        
+        // Delete from tail with animation
+        async function deleteFromTailWithAnimation() {
+            if (head === null) {
+                updateStepDisplay('The list is empty. Nothing to delete.');
+                return;
+            }
+            
+            const value = tail.value;
+            
+            // Special case: only one node
+            if (head === tail) {
+                updateStepDisplay(`Step 1: Since there's only one node, we'll update both head and tail to null.`);
+                renderList();
+                document.querySelector('.node[data-index="0"]').classList.add('highlight');
+                await sleep(1000);
+                
+                // Delete the only node
+                deleteFromHead();
+                renderList();
+                
+                updateStepDisplay(`Deleted ${value} from the list. The list is now empty. This is an O(1) operation.`);
+                return;
+            }
+            
+            updateStepDisplay(`Step 1: Traverse the list to find the second-to-last node.`);
+            
+            // Animate traversal
+            renderList();
+            let current = head;
+            let index = 0;
+            
+            // Traverse to find the second-to-last node
+            while (current.next !== tail) {
+                // Highlight current node during traversal
+                renderList();
+                document.querySelector(`.node[data-index="${index}"]`).classList.add('highlight');
+                await sleep(800);
+                
+                current = current.next;
+                index++;
+            }
+            
+            // Highlight the second-to-last node
+            renderList();
+            document.querySelector(`.node[data-index="${index}"]`).classList.add('highlight');
+            await sleep(800);
+            
+            // Highlight the last node (to be deleted)
+            renderList();
+            const nodes = document.querySelectorAll('.node');
+            nodes[nodes.length - 1].classList.add('highlight');
+            
+            updateStepDisplay(`Step 2: Update the next pointer of the second-to-last node to null.`);
+            await sleep(1000);
+            
+            updateStepDisplay(`Step 3: Update the tail pointer to point to the second-to-last node.`);
+            await sleep(1000);
+            
+            // Actually delete the node
+            deleteFromTail();
+            
+            // Render the updated list
+            renderList();
+            
+            updateStepDisplay(`Deleted ${value} from the tail of the list. This is an O(n) operation because we had to traverse the list to find the second-to-last node.`);
+        }
+        
+        // Delete from position with animation
+        async function deleteFromPositionWithAnimation(position) {
+            if (head === null) {
+                updateStepDisplay('The list is empty. Nothing to delete.');
+                return;
+            }
+            
+            if (position < 0) {
+                updateStepDisplay('Invalid position. Position must be non-negative.');
+                return;
+            }
+            
+            // Special case: delete from head
+            if (position === 0) {
+                await deleteFromHeadWithAnimation();
+                return;
+            }
+            
+            updateStepDisplay(`Step 1: Traverse the list to find position ${position - 1}.`);
+            
+            // Animate traversal
+            renderList();
+            let current = head;
+            let index = 0;
+            let valid = true;
+            
+            while (index < position - 1) {
+                if (current === null || current.next === null) {
+                    updateStepDisplay(`Position ${position} is out of bounds. The list only has ${index + 1} nodes.`);
+                    valid = false;
+                    break;
+                }
+                
+                // Highlight current node during traversal
+                renderList();
+                document.querySelector(`.node[data-index="${index}"]`).classList.add('highlight');
+                await sleep(800);
+                
+                current = current.next;
+                index++;
+            }
+            
+            if (!valid) return;
+            
+            // Check if the position is valid
+            if (current.next === null) {
+                updateStepDisplay(`Position ${position} is out of bounds. The list only has ${index + 1} nodes.`);
+                return;
+            }
+            
+            const value = current.next.value;
+            
+            // Highlight the node to be deleted
+            renderList();
+            document.querySelector(`.node[data-index="${position}"]`).classList.add('highlight');
+            await sleep(800);
+            
+            updateStepDisplay(`Step 2: Update the next pointer of the node at position ${position - 1} to skip over the node at position ${position}.`);
+            await sleep(1000);
+            
+            // Actually delete the node
+            deleteFromPosition(position);
+            
+            // Render the updated list
+            renderList();
+            
+            updateStepDisplay(`Deleted ${value} from position ${position}. This is an O(n) operation because we had to traverse ${position} nodes.`);
+        }
+        
+        // Search with animation
+        async function searchWithAnimation(value) {
+            if (head === null) {
+                updateStepDisplay('The list is empty. Nothing to search for.');
+                return;
+            }
+            
+            updateStepDisplay(`Searching for value ${value}...`);
+            
+            // Animate traversal
+            renderList();
+            let current = head;
+            let index = 0;
+            let found = false;
+            
+            while (current !== null) {
+                // Highlight current node during traversal
+                renderList();
+                document.querySelector(`.node[data-index="${index}"]`).classList.add('highlight');
+                await sleep(800);
+                
+                if (current.value === value) {
+                    found = true;
+                    break;
+                }
+                
+                current = current.next;
+                index++;
+            }
+            
+            if (found) {
+                updateStepDisplay(`Found value ${value} at position ${index}. This required checking ${index + 1} nodes (O(n) operation).`);
+            } else {
+                updateStepDisplay(`Value ${value} not found in the list. Had to check all ${index} nodes (O(n) operation).`);
+            }
+        }
+        
+        // Actual linked list operations (without animation)
+        function insertAtHead(value) {
+            const newNode = { value: value, next: null };
+            
+            if (head === null) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                newNode.next = head;
+                head = newNode;
+            }
+        }
+        
+        function insertAtTail(value) {
+            const newNode = { value: value, next: null };
+            
+            if (head === null) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
+            }
+        }
+        
+        function insertAtPosition(value, position) {
+            if (position === 0) {
+                return insertAtHead(value);
+            }
+            
+            const newNode = { value: value, next: null };
+            let current = head;
+            let index = 0;
+            
+            while (current !== null && index < position - 1) {
+                current = current.next;
+                index++;
+            }
+            
+            if (current === null) {
+                return false; // Position out of bounds
+            }
+            
+            newNode.next = current.next;
+            current.next = newNode;
+            
+            // Update tail if necessary
+            if (newNode.next === null) {
+                tail = newNode;
+            }
+            
+            return true;
+        }
+        
+        function deleteFromHead() {
+            if (head === null) {
+                return null; // List is empty
+            }
+            
+            const value = head.value;
+            head = head.next;
+            
+            // Update tail if list becomes empty
+            if (head === null) {
+                tail = null;
+            }
+            
+            return value;
+        }
+        
+        function deleteFromTail() {
+            if (head === null) {
+                return null; // List is empty
+            }
+            
+            // Case with only one node
+            if (head === tail) {
+                const value = head.value;
+                head = null;
+                tail = null;
+                return value;
+            }
+            
+            // Find the second-to-last node
+            let current = head;
+            while (current.next !== tail) {
+                current = current.next;
+            }
+            
+            const value = tail.value;
+            tail = current;
+            tail.next = null;
+            
+            return value;
+        }
+        
+        function deleteFromPosition(position) {
+            if (head === null || position < 0) {
+                return null; // Invalid cases
+            }
+            
+            if (position === 0) {
+                return deleteFromHead();
+            }
+            
+            let current = head;
+            let index = 0;
+            
+            while (current !== null && index < position - 1) {
+                current = current.next;
+                index++;
+            }
+            
+            if (current === null || current.next === null) {
+                return null; // Position out of bounds
+            }
+            
+            const value = current.next.value;
+            
+            // Check if we're removing the tail
+            if (current.next === tail) {
+                tail = current;
+            }
+            
+            current.next = current.next.next;
+            
+            return value;
+        }
+        
+        function search(value) {
+            let current = head;
+            let position = 0;
+            
+            while (current !== null) {
+                if (current.value === value) {
+                    return position;
+                }
+                current = current.next;
+                position++;
+            }
+            
+            return -1; // Not found
+        }
+        
+        // Helper function to update the step display
+        function updateStepDisplay(message) {
+            stepDisplay.innerHTML = `<p>${message}</p>`;
+        }
+        
+        // Helper function for sleep
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html> 

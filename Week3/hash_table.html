@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Table Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .control-panel {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .visualization {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .hash-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .bucket {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+        .bucket-index {
+            position: absolute;
+            top: -10px;
+            left: 5px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .item {
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 3px;
+            padding: 5px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .empty-bucket {
+            color: #999;
+            text-align: center;
+            font-style: italic;
+        }
+        .highlight {
+            animation: highlight 1s;
+        }
+        .metrics {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            flex: 1;
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        .explanation {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        .code-display {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin-bottom: 20px;
+        }
+        @keyframes highlight {
+            0% { background-color: #ffff99; }
+            100% { background-color: inherit; }
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #fff;
+            border-bottom: 1px solid white;
+            z-index: 1;
+        }
+        .tab-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-top: -1px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hash Table Visualization</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="visualization">Interactive Visualization</div>
+            <div class="tab" data-tab="explanation">Hash Table Explanation</div>
+            <div class="tab" data-tab="code">Implementation Code</div>
+        </div>
+        
+        <div id="visualization" class="tab-content active">
+            <div class="control-panel">
+                <h3>Hash Table Controls</h3>
+                <div>
+                    <label for="hash-function">Hash Function:</label>
+                    <select id="hash-function">
+                        <option value="simple">Simple Modulo</option>
+                        <option value="string">String Hash</option>
+                        <option value="djb2">DJB2 Hash</option>
+                    </select>
+                    
+                    <label for="collision-strategy">Collision Resolution:</label>
+                    <select id="collision-strategy">
+                        <option value="chaining">Chaining</option>
+                        <option value="linear">Linear Probing</option>
+                        <option value="quadratic">Quadratic Probing</option>
+                    </select>
+                    
+                    <label for="table-size">Table Size:</label>
+                    <select id="table-size">
+                        <option value="8">8</option>
+                        <option value="16" selected>16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                    </select>
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="text" id="key-input" placeholder="Key">
+                    <input type="text" id="value-input" placeholder="Value">
+                    <button id="insert-btn">Insert</button>
+                    <button id="search-btn">Search</button>
+                    <button id="delete-btn">Delete</button>
+                    <button id="clear-btn">Clear Table</button>
+                </div>
+            </div>
+            
+            <div class="explanation" id="operation-explanation">
+                Welcome to the Hash Table visualization! Use the controls above to insert, search, or delete key-value pairs.
+            </div>
+            
+            <div class="metrics">
+                <div class="metric">
+                    <h4>Load Factor</h4>
+                    <div id="load-factor">0.00</div>
+                </div>
+                <div class="metric">
+                    <h4>Collision Count</h4>
+                    <div id="collision-count">0</div>
+                </div>
+                <div class="metric">
+                    <h4>Average Chain Length</h4>
+                    <div id="avg-chain-length">0.00</div>
+                </div>
+            </div>
+            
+            <h3>Hash Table Visualization</h3>
+            <div class="visualization">
+                <div class="hash-table" id="hash-table">
+                    <!-- Hash table buckets will be generated here -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="explanation" class="tab-content">
+            <h2>What is a Hash Table?</h2>
+            <p>A hash table is a data structure that provides fast insertion, deletion, and lookup operations. It uses a hash function to map keys to array indices where values are stored.</p>
+            
+            <h3>Key Concepts</h3>
+            <ul>
+                <li><strong>Hash Function:</strong> Converts keys into array indices.</li>
+                <li><strong>Collision:</strong> Occurs when two different keys hash to the same index.</li>
+                <li><strong>Collision Resolution:</strong> Techniques to handle collisions.</li>
+                <li><strong>Load Factor:</strong> Ratio of elements to table size, indicates efficiency and when to resize.</li>
+            </ul>
+            
+            <h3>Hash Functions</h3>
+            <p>This visualization provides three hash functions:</p>
+            <ul>
+                <li><strong>Simple Modulo:</strong> Uses modulo operation on numeric keys or character sum for strings.</li>
+                <li><strong>String Hash:</strong> Computes hash by adding character codes with position weights.</li>
+                <li><strong>DJB2:</strong> A widely used string hashing algorithm created by Daniel J. Bernstein.</li>
+            </ul>
+            
+            <h3>Collision Resolution Strategies</h3>
+            <ul>
+                <li><strong>Chaining:</strong> Each bucket contains a linked list of elements that hash to the same index.</li>
+                <li><strong>Linear Probing:</strong> When a collision occurs, search linearly for the next empty slot.</li>
+                <li><strong>Quadratic Probing:</strong> Similar to linear probing but uses quadratic function to find next position.</li>
+            </ul>
+            
+            <h3>Time and Space Complexity</h3>
+            <p><strong>Time Complexity:</strong></p>
+            <ul>
+                <li>Average Case: O(1) for insert, search, and delete operations</li>
+                <li>Worst Case: O(n) when many collisions occur</li>
+            </ul>
+            <p><strong>Space Complexity:</strong> O(n) where n is the number of elements stored</p>
+        </div>
+        
+        <div id="code" class="tab-content">
+            <h2>Hash Table Implementation Code</h2>
+            <p>Here's a simplified JavaScript implementation of a hash table:</p>
+            
+            <div class="code-display">
+<pre>
+class HashTable {
+    constructor(size = 16, hashFn = 'simple', collisionStrategy = 'chaining') {
+        this.size = size;
+        this.count = 0;
+        this.collisions = 0;
+        this.table = new Array(size).fill(null).map(() => []);
+        this.hashFunctionType = hashFn;
+        this.collisionStrategy = collisionStrategy;
+    }
+    
+    hash(key) {
+        switch(this.hashFunctionType) {
+            case 'simple':
+                return this.simpleHash(key);
+            case 'string':
+                return this.stringHash(key);
+            case 'djb2':
+                return this.djb2Hash(key);
+            default:
+                return this.simpleHash(key);
+        }
+    }
+    
+    simpleHash(key) {
+        if (typeof key === 'number') return key % this.size;
+        
+        let sum = 0;
+        for (let i = 0; i < key.length; i++) {
+            sum += key.charCodeAt(i);
+        }
+        return sum % this.size;
+    }
+    
+    stringHash(key) {
+        if (typeof key === 'number') return key % this.size;
+        
+        let hash = 0;
+        for (let i = 0; i < key.length; i++) {
+            hash = (hash * 31 + key.charCodeAt(i)) % this.size;
+        }
+        return hash;
+    }
+    
+    djb2Hash(key) {
+        if (typeof key === 'number') return key % this.size;
+        
+        let hash = 5381;
+        for (let i = 0; i < key.length; i++) {
+            hash = ((hash << 5) + hash) + key.charCodeAt(i);
+        }
+        return Math.abs(hash) % this.size;
+    }
+    
+    insert(key, value) {
+        const index = this.hash(key);
+        
+        if (this.collisionStrategy === 'chaining') {
+            // Check if key already exists to update
+            for (let i = 0; i < this.table[index].length; i++) {
+                if (this.table[index][i].key === key) {
+                    this.table[index][i].value = value;
+                    return;
+                }
+            }
+            
+            // If it's not the first item in this bucket, it's a collision
+            if (this.table[index].length > 0) {
+                this.collisions++;
+            }
+            
+            this.table[index].push({key, value});
+            this.count++;
+        } else {
+            // Linear or Quadratic probing
+            let i = 0;
+            let originalIndex = index;
+            
+            while (this.table[index].length > 0 && 
+                   this.table[index][0].key !== key) {
+                this.collisions++;
+                if (this.collisionStrategy === 'linear') {
+                    i++;
+                } else { // quadratic
+                    i++;
+                    index = (originalIndex + i*i) % this.size;
+                    continue;
+                }
+                index = (originalIndex + i) % this.size;
+            }
+            
+            if (this.table[index].length > 0 && 
+                this.table[index][0].key === key) {
+                this.table[index][0].value = value;
+            } else {
+                this.table[index] = [{key, value}];
+                this.count++;
+            }
+        }
+    }
+    
+    search(key) {
+        const index = this.hash(key);
+        
+        if (this.collisionStrategy === 'chaining') {
+            for (let i = 0; i < this.table[index].length; i++) {
+                if (this.table[index][i].key === key) {
+                    return this.table[index][i].value;
+                }
+            }
+        } else {
+            // Linear or Quadratic probing
+            let i = 0;
+            let originalIndex = index;
+            
+            while (this.table[index].length > 0) {
+                if (this.table[index][0].key === key) {
+                    return this.table[index][0].value;
+                }
+                
+                if (this.collisionStrategy === 'linear') {
+                    i++;
+                    index = (originalIndex + i) % this.size;
+                } else { // quadratic
+                    i++;
+                    index = (originalIndex + i*i) % this.size;
+                }
+                
+                // If we've searched the whole table or found an empty slot
+                if (i >= this.size || this.table[index].length === 0) {
+                    break;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    delete(key) {
+        const index = this.hash(key);
+        
+        if (this.collisionStrategy === 'chaining') {
+            for (let i = 0; i < this.table[index].length; i++) {
+                if (this.table[index][i].key === key) {
+                    this.table[index].splice(i, 1);
+                    this.count--;
+                    return true;
+                }
+            }
+        } else {
+            // Linear or Quadratic probing
+            let i = 0;
+            let originalIndex = index;
+            
+            while (this.table[index].length > 0) {
+                if (this.table[index][0].key === key) {
+                    this.table[index] = [];
+                    this.count--;
+                    return true;
+                }
+                
+                if (this.collisionStrategy === 'linear') {
+                    i++;
+                    index = (originalIndex + i) % this.size;
+                } else { // quadratic
+                    i++;
+                    index = (originalIndex + i*i) % this.size;
+                }
+                
+                // If we've searched the whole table
+                if (i >= this.size) {
+                    break;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    getLoadFactor() {
+        return this.count / this.size;
+    }
+    
+    getCollisionCount() {
+        return this.collisions;
+    }
+    
+    getAverageChainLength() {
+        if (this.count === 0) return 0;
+        
+        let filledBuckets = 0;
+        for (let i = 0; i < this.size; i++) {
+            if (this.table[i].length > 0) {
+                filledBuckets++;
+            }
+        }
+        
+        return filledBuckets === 0 ? 0 : this.count / filledBuckets;
+    }
+}
+</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hash Table Implementation
+        class HashTable {
+            constructor(size = 16, hashFn = 'simple', collisionStrategy = 'chaining') {
+                this.size = size;
+                this.count = 0;
+                this.collisions = 0;
+                this.table = new Array(size).fill(null).map(() => []);
+                this.hashFunctionType = hashFn;
+                this.collisionStrategy = collisionStrategy;
+            }
+            
+            hash(key) {
+                switch(this.hashFunctionType) {
+                    case 'simple':
+                        return this.simpleHash(key);
+                    case 'string':
+                        return this.stringHash(key);
+                    case 'djb2':
+                        return this.djb2Hash(key);
+                    default:
+                        return this.simpleHash(key);
+                }
+            }
+            
+            simpleHash(key) {
+                if (typeof key === 'number') return key % this.size;
+                
+                let sum = 0;
+                for (let i = 0; i < key.length; i++) {
+                    sum += key.charCodeAt(i);
+                }
+                return sum % this.size;
+            }
+            
+            stringHash(key) {
+                if (typeof key === 'number') return key % this.size;
+                
+                let hash = 0;
+                for (let i = 0; i < key.length; i++) {
+                    hash = (hash * 31 + key.charCodeAt(i)) % this.size;
+                }
+                return hash;
+            }
+            
+            djb2Hash(key) {
+                if (typeof key === 'number') return key % this.size;
+                
+                let hash = 5381;
+                for (let i = 0; i < key.length; i++) {
+                    hash = ((hash << 5) + hash) + key.charCodeAt(i);
+                }
+                return Math.abs(hash) % this.size;
+            }
+            
+            insert(key, value) {
+                const index = this.hash(key);
+                
+                if (this.collisionStrategy === 'chaining') {
+                    // Check if key already exists to update
+                    for (let i = 0; i < this.table[index].length; i++) {
+                        if (this.table[index][i].key === key) {
+                            this.table[index][i].value = value;
+                            return index;
+                        }
+                    }
+                    
+                    // If it's not the first item in this bucket, it's a collision
+                    if (this.table[index].length > 0) {
+                        this.collisions++;
+                    }
+                    
+                    this.table[index].push({key, value});
+                    this.count++;
+                    return index;
+                } else {
+                    // Linear or Quadratic probing
+                    let i = 0;
+                    let originalIndex = index;
+                    let probeSequence = [];
+                    
+                    while (this.table[index].length > 0 && 
+                          this.table[index][0].key !== key) {
+                        this.collisions++;
+                        probeSequence.push(index);
+                        
+                        if (this.collisionStrategy === 'linear') {
+                            i++;
+                            index = (originalIndex + i) % this.size;
+                        } else { // quadratic
+                            i++;
+                            index = (originalIndex + i*i) % this.size;
+                        }
+                    }
+                    
+                    if (this.table[index].length > 0 && 
+                        this.table[index][0].key === key) {
+                        this.table[index][0].value = value;
+                    } else {
+                        this.table[index] = [{key, value}];
+                        this.count++;
+                    }
+                    
+                    return {finalIndex: index, probeSequence};
+                }
+            }
+            
+            search(key) {
+                const index = this.hash(key);
+                
+                if (this.collisionStrategy === 'chaining') {
+                    for (let i = 0; i < this.table[index].length; i++) {
+                        if (this.table[index][i].key === key) {
+                            return {found: true, index, itemIndex: i};
+                        }
+                    }
+                    return {found: false, index};
+                } else {
+                    // Linear or Quadratic probing
+                    let i = 0;
+                    let originalIndex = index;
+                    let probeSequence = [];
+                    
+                    while (this.table[index].length > 0) {
+                        probeSequence.push(index);
+                        
+                        if (this.table[index][0].key === key) {
+                            return {found: true, index, probeSequence};
+                        }
+                        
+                        if (this.collisionStrategy === 'linear') {
+                            i++;
+                            index = (originalIndex + i) % this.size;
+                        } else { // quadratic
+                            i++;
+                            index = (originalIndex + i*i) % this.size;
+                        }
+                        
+                        // If we've searched the whole table or found an empty slot
+                        if (i >= this.size || this.table[index].length === 0) {
+                            break;
+                        }
+                    }
+                    
+                    return {found: false, index: originalIndex, probeSequence};
+                }
+            }
+            
+            delete(key) {
+                const index = this.hash(key);
+                
+                if (this.collisionStrategy === 'chaining') {
+                    for (let i = 0; i < this.table[index].length; i++) {
+                        if (this.table[index][i].key === key) {
+                            this.table[index].splice(i, 1);
+                            this.count--;
+                            return {deleted: true, index};
+                        }
+                    }
+                    return {deleted: false, index};
+                } else {
+                    // Linear or Quadratic probing
+                    let i = 0;
+                    let originalIndex = index;
+                    let probeSequence = [];
+                    
+                    while (this.table[index].length > 0) {
+                        probeSequence.push(index);
+                        
+                        if (this.table[index][0].key === key) {
+                            this.table[index] = [];
+                            this.count--;
+                            return {deleted: true, index, probeSequence};
+                        }
+                        
+                        if (this.collisionStrategy === 'linear') {
+                            i++;
+                            index = (originalIndex + i) % this.size;
+                        } else { // quadratic
+                            i++;
+                            index = (originalIndex + i*i) % this.size;
+                        }
+                        
+                        // If we've searched the whole table
+                        if (i >= this.size) {
+                            break;
+                        }
+                    }
+                    
+                    return {deleted: false, index: originalIndex, probeSequence};
+                }
+            }
+            
+            getLoadFactor() {
+                return this.count / this.size;
+            }
+            
+            getCollisionCount() {
+                return this.collisions;
+            }
+            
+            getAverageChainLength() {
+                if (this.count === 0) return 0;
+                
+                let filledBuckets = 0;
+                for (let i = 0; i < this.size; i++) {
+                    if (this.table[i].length > 0) {
+                        filledBuckets++;
+                    }
+                }
+                
+                return filledBuckets === 0 ? 0 : this.count / filledBuckets;
+            }
+        }
+
+        // Visualization Controller
+        class HashTableVisualization {
+            constructor() {
+                this.hashTable = new HashTable(16, 'simple', 'chaining');
+                this.initEventListeners();
+                this.renderHashTable();
+                this.updateMetrics();
+            }
+            
+            initEventListeners() {
+                document.getElementById('insert-btn').addEventListener('click', () => this.insertElement());
+                document.getElementById('search-btn').addEventListener('click', () => this.searchElement());
+                document.getElementById('delete-btn').addEventListener('click', () => this.deleteElement());
+                document.getElementById('clear-btn').addEventListener('click', () => this.clearTable());
+                
+                document.getElementById('hash-function').addEventListener('change', (e) => {
+                    this.hashTable.hashFunctionType = e.target.value;
+                    this.clearTable();
+                });
+                
+                document.getElementById('collision-strategy').addEventListener('change', (e) => {
+                    this.hashTable.collisionStrategy = e.target.value;
+                    this.clearTable();
+                });
+                
+                document.getElementById('table-size').addEventListener('change', (e) => {
+                    const newSize = parseInt(e.target.value);
+                    this.hashTable = new HashTable(
+                        newSize, 
+                        this.hashTable.hashFunctionType,
+                        this.hashTable.collisionStrategy
+                    );
+                    this.renderHashTable();
+                    this.updateMetrics();
+                    this.setExplanation('Hash table size changed to ' + newSize);
+                });
+                
+                // Set up tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        
+                        tab.classList.add('active');
+                        document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+                    });
+                });
+            }
+            
+            renderHashTable() {
+                const container = document.getElementById('hash-table');
+                container.innerHTML = '';
+                
+                for (let i = 0; i < this.hashTable.size; i++) {
+                    const bucket = document.createElement('div');
+                    bucket.className = 'bucket';
+                    bucket.id = `bucket-${i}`;
+                    
+                    const bucketIndex = document.createElement('div');
+                    bucketIndex.className = 'bucket-index';
+                    bucketIndex.textContent = i;
+                    bucket.appendChild(bucketIndex);
+                    
+                    if (this.hashTable.table[i].length === 0) {
+                        const emptyMsg = document.createElement('div');
+                        emptyMsg.className = 'empty-bucket';
+                        emptyMsg.textContent = 'Empty';
+                        bucket.appendChild(emptyMsg);
+                    } else {
+                        for (let j = 0; j < this.hashTable.table[i].length; j++) {
+                            const item = this.hashTable.table[i][j];
+                            const itemElement = document.createElement('div');
+                            itemElement.className = 'item';
+                            itemElement.id = `item-${i}-${j}`;
+                            itemElement.innerHTML = `
+                                <strong>${item.key}</strong>: ${item.value}
+                            `;
+                            bucket.appendChild(itemElement);
+                        }
+                    }
+                    
+                    container.appendChild(bucket);
+                }
+            }
+            
+            updateMetrics() {
+                document.getElementById('load-factor').textContent = 
+                    this.hashTable.getLoadFactor().toFixed(2);
+                document.getElementById('collision-count').textContent = 
+                    this.hashTable.getCollisionCount();
+                document.getElementById('avg-chain-length').textContent = 
+                    this.hashTable.getAverageChainLength().toFixed(2);
+            }
+            
+            highlightBucket(index) {
+                const bucket = document.getElementById(`bucket-${index}`);
+                bucket.classList.add('highlight');
+                setTimeout(() => {
+                    bucket.classList.remove('highlight');
+                }, 1000);
+            }
+            
+            highlightItem(bucketIndex, itemIndex) {
+                const item = document.getElementById(`item-${bucketIndex}-${itemIndex}`);
+                if (item) {
+                    item.classList.add('highlight');
+                    setTimeout(() => {
+                        item.classList.remove('highlight');
+                    }, 1000);
+                }
+            }
+            
+            highlightSequence(sequence) {
+                if (!sequence || sequence.length === 0) return;
+                
+                let i = 0;
+                const highlightNext = () => {
+                    if (i < sequence.length) {
+                        this.highlightBucket(sequence[i]);
+                        i++;
+                        setTimeout(highlightNext, 500);
+                    }
+                };
+                
+                highlightNext();
+            }
+            
+            setExplanation(text) {
+                document.getElementById('operation-explanation').textContent = text;
+            }
+            
+            insertElement() {
+                const keyInput = document.getElementById('key-input');
+                const valueInput = document.getElementById('value-input');
+                
+                const key = keyInput.value.trim();
+                const value = valueInput.value.trim();
+                
+                if (!key || !value) {
+                    this.setExplanation('Please enter both key and value!');
+                    return;
+                }
+                
+                const result = this.hashTable.insert(key, value);
+                
+                if (typeof result === 'number') {
+                    // Chaining
+                    this.highlightBucket(result);
+                    this.setExplanation(`Key '${key}' inserted at index ${result}`);
+                } else {
+                    // Probing
+                    const { finalIndex, probeSequence } = result;
+                    this.highlightSequence([...probeSequence, finalIndex]);
+                    
+                    if (probeSequence.length > 0) {
+                        this.setExplanation(
+                            `Key '${key}' inserted at index ${finalIndex} after probing ${probeSequence.length} positions`
+                        );
+                    } else {
+                        this.setExplanation(`Key '${key}' inserted at index ${finalIndex}`);
+                    }
+                }
+                
+                this.renderHashTable();
+                this.updateMetrics();
+                
+                keyInput.value = '';
+                valueInput.value = '';
+            }
+            
+            searchElement() {
+                const keyInput = document.getElementById('key-input');
+                const key = keyInput.value.trim();
+                
+                if (!key) {
+                    this.setExplanation('Please enter a key to search!');
+                    return;
+                }
+                
+                const result = this.hashTable.search(key);
+                
+                if (result.found) {
+                    if (result.probeSequence) {
+                        // Probing
+                        this.highlightSequence(result.probeSequence);
+                        this.setExplanation(
+                            `Key '${key}' found at index ${result.index} after probing ${result.probeSequence.length} positions`
+                        );
+                    } else {
+                        // Chaining
+                        this.highlightBucket(result.index);
+                        this.highlightItem(result.index, result.itemIndex);
+                        this.setExplanation(`Key '${key}' found at index ${result.index}, position ${result.itemIndex}`);
+                    }
+                } else {
+                    if (result.probeSequence) {
+                        // Probing not found
+                        this.highlightSequence(result.probeSequence);
+                        this.setExplanation(
+                            `Key '${key}' not found. Searched ${result.probeSequence.length} positions starting from index ${result.index}`
+                        );
+                    } else {
+                        // Chaining not found
+                        this.highlightBucket(result.index);
+                        this.setExplanation(`Key '${key}' not found. Hash value led to index ${result.index}`);
+                    }
+                }
+            }
+            
+            deleteElement() {
+                const keyInput = document.getElementById('key-input');
+                const key = keyInput.value.trim();
+                
+                if (!key) {
+                    this.setExplanation('Please enter a key to delete!');
+                    return;
+                }
+                
+                const result = this.hashTable.delete(key);
+                
+                if (result.deleted) {
+                    if (result.probeSequence) {
+                        // Probing
+                        this.highlightSequence(result.probeSequence);
+                        this.setExplanation(
+                            `Key '${key}' deleted from index ${result.index} after probing ${result.probeSequence.length} positions`
+                        );
+                    } else {
+                        // Chaining
+                        this.highlightBucket(result.index);
+                        this.setExplanation(`Key '${key}' deleted from index ${result.index}`);
+                    }
+                    
+                    this.renderHashTable();
+                    this.updateMetrics();
+                } else {
+                    if (result.probeSequence) {
+                        // Probing not found
+                        this.highlightSequence(result.probeSequence);
+                        this.setExplanation(
+                            `Key '${key}' not found for deletion. Searched ${result.probeSequence.length} positions starting from index ${result.index}`
+                        );
+                    } else {
+                        // Chaining not found
+                        this.highlightBucket(result.index);
+                        this.setExplanation(`Key '${key}' not found for deletion. Hash value led to index ${result.index}`);
+                    }
+                }
+            }
+            
+            clearTable() {
+                this.hashTable = new HashTable(
+                    this.hashTable.size,
+                    this.hashTable.hashFunctionType,
+                    this.hashTable.collisionStrategy
+                );
+                this.renderHashTable();
+                this.updateMetrics();
+                this.setExplanation('Hash table cleared');
+            }
+        }
+
+        // Initialize the visualization when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new HashTableVisualization();
+        });
+    </script>
+</body>
+</html> 

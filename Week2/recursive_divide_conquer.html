@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursive Divide and Conquer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .example-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .array-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .array-element {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .array-element.highlight {
+            background-color: #e74c3c;
+            transform: scale(1.1);
+        }
+        .array-element.sorted {
+            background-color: #2ecc71;
+        }
+        .array-element.merged {
+            background-color: #f39c12;
+        }
+        .tree-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .tree-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+            min-width: 80px;
+        }
+        .node-content {
+            padding: 5px 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            border: 1px solid #3498db;
+            font-size: 12px;
+            text-align: center;
+            min-width: 70px;
+        }
+        .node-connector {
+            width: 2px;
+            height: 20px;
+            background-color: #3498db;
+            margin: 5px 0;
+        }
+        .step-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        .complexity {
+            background-color: #f1c40f;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .recursion-tree {
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        .tree-diagram {
+            width: fit-content;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recursive Divide and Conquer</h1>
+    
+    <div class="container">
+        <h2>Introduction to Divide and Conquer</h2>
+        <p>
+            Divide and conquer is a recursive algorithmic paradigm that breaks down a problem into 
+            multiple smaller subproblems of the same type, solves them independently, and then 
+            combines their results to solve the original problem.
+        </p>
+        <p>
+            This approach consists of three main steps:
+        </p>
+        <ol>
+            <li><strong>Divide:</strong> Break the problem into smaller, more manageable subproblems</li>
+            <li><strong>Conquer:</strong> Solve each subproblem recursively</li>
+            <li><strong>Combine:</strong> Merge the solutions of the subproblems into a solution for the original problem</li>
+        </ol>
+        <p>
+            Divide and conquer algorithms are often implemented using recursion and can lead to efficient 
+            solutions for many problems. In this visualization, we'll explore the Merge Sort algorithm, 
+            a classic example of divide and conquer.
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>Merge Sort Visualization</h2>
+        <p>
+            Merge Sort is a sorting algorithm that follows the divide and conquer approach.
+            It divides the input array into two halves, recursively sorts them, and then 
+            merges the sorted halves to produce a sorted output.
+        </p>
+        
+        <div class="controls">
+            <button id="generateArrayBtn">Generate Random Array</button>
+            <button id="startSortBtn">Start Merge Sort</button>
+            <button id="nextStepBtn" disabled>Next Step</button>
+            <button id="resetBtn" disabled>Reset</button>
+        </div>
+        
+        <div class="array-box" id="arrayContainer">
+            <!-- Array elements will be rendered here -->
+        </div>
+        
+        <div class="step-display" id="stepDisplay">
+            <p>Generate a random array or start with the current array to begin the visualization.</p>
+        </div>
+        
+        <div class="tree-container">
+            <div class="tree" id="recursionTree">
+                <!-- Recursion tree will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Merge Sort Algorithm</h2>
+        
+        <div class="example-container">
+            <h3>Merge Sort Pseudocode</h3>
+            <div class="code-block">
+                <pre>
+function mergeSort(array):
+    if array.length <= 1:
+        return array  // Base case: already sorted
+        
+    // Divide step
+    middle = array.length / 2
+    leftHalf = array[0...middle-1]
+    rightHalf = array[middle...array.length-1]
+    
+    // Conquer step (recursive calls)
+    leftSorted = mergeSort(leftHalf)
+    rightSorted = mergeSort(rightHalf)
+    
+    // Combine step
+    return merge(leftSorted, rightSorted)
+
+function merge(left, right):
+    result = []
+    leftIndex = 0
+    rightIndex = 0
+    
+    // Compare elements from both arrays and add the smaller one to result
+    while leftIndex < left.length and rightIndex < right.length:
+        if left[leftIndex] <= right[rightIndex]:
+            result.add(left[leftIndex])
+            leftIndex++
+        else:
+            result.add(right[rightIndex])
+            rightIndex++
+    
+    // Add remaining elements
+    while leftIndex < left.length:
+        result.add(left[leftIndex])
+        leftIndex++
+        
+    while rightIndex < right.length:
+        result.add(right[rightIndex])
+        rightIndex++
+        
+    return result
+</pre>
+            </div>
+        </div>
+        
+        <div class="example-container">
+            <h3>JavaScript Implementation</h3>
+            <div class="code-block">
+                <pre>
+function mergeSort(array) {
+    // Base case
+    if (array.length <= 1) {
+        return array;
+    }
+    
+    // Divide step
+    const middle = Math.floor(array.length / 2);
+    const leftHalf = array.slice(0, middle);
+    const rightHalf = array.slice(middle);
+    
+    // Conquer step (recursive calls)
+    const leftSorted = mergeSort(leftHalf);
+    const rightSorted = mergeSort(rightHalf);
+    
+    // Combine step
+    return merge(leftSorted, rightSorted);
+}
+
+function merge(left, right) {
+    let result = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+    
+    // Compare elements from both arrays
+    while (leftIndex < left.length && rightIndex < right.length) {
+        if (left[leftIndex] <= right[rightIndex]) {
+            result.push(left[leftIndex]);
+            leftIndex++;
+        } else {
+            result.push(right[rightIndex]);
+            rightIndex++;
+        }
+    }
+    
+    // Add remaining elements
+    return result
+        .concat(left.slice(leftIndex))
+        .concat(right.slice(rightIndex));
+}
+</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Time and Space Complexity</h2>
+        
+        <div class="example-container">
+            <h3>Time Complexity <span class="complexity">O(n log n)</span></h3>
+            <p>
+                Merge Sort has a time complexity of O(n log n) in all cases (best, average, and worst).
+                This is because:
+            </p>
+            <ul>
+                <li>The <strong>dividing step</strong> takes O(log n) time as we repeatedly divide the array in half</li>
+                <li>The <strong>merging step</strong> takes O(n) time at each level because we need to compare and merge all elements</li>
+                <li>Overall, we have O(log n) levels of recursion, and at each level, we do O(n) work, resulting in O(n log n)</li>
+            </ul>
+            
+            <div class="recursion-tree">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/800px-Merge_sort_algorithm_diagram.svg.png" alt="Merge Sort Recursion Tree" style="max-width: 100%;">
+                <p class="text-center">Illustration of the Merge Sort recursion tree and time complexity</p>
+            </div>
+        </div>
+        
+        <div class="example-container">
+            <h3>Space Complexity <span class="complexity">O(n)</span></h3>
+            <p>
+                Merge Sort has a space complexity of O(n) because:
+            </p>
+            <ul>
+                <li>We need extra space to store the merged arrays at each level of recursion</li>
+                <li>The maximum amount of extra space needed at any point is proportional to the input size</li>
+                <li>Additionally, the recursion itself requires O(log n) space on the call stack</li>
+            </ul>
+            <p>
+                This higher space complexity is one of the trade-offs when using Merge Sort compared to algorithms like Quick Sort,
+                which can be implemented with O(log n) space complexity.
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Advantages and Disadvantages</h2>
+        
+        <div class="example-container">
+            <h3>Advantages of Merge Sort</h3>
+            <ul>
+                <li><strong>Stable sorting:</strong> Preserves the relative order of equal elements</li>
+                <li><strong>Guaranteed O(n log n) performance:</strong> Unlike Quick Sort, which can degrade to O(n²) in the worst case</li>
+                <li><strong>Well-suited for external sorting:</strong> When data doesn't fit into memory</li>
+                <li><strong>Parallelizable:</strong> The divide and conquer approach makes it easy to parallelize</li>
+            </ul>
+        </div>
+        
+        <div class="example-container">
+            <h3>Disadvantages of Merge Sort</h3>
+            <ul>
+                <li><strong>Extra space required:</strong> O(n) auxiliary space is needed</li>
+                <li><strong>Not adaptive:</strong> Doesn't take advantage of partially sorted arrays</li>
+                <li><strong>Not in-place:</strong> Requires additional memory proportional to the input size</li>
+                <li><strong>Overhead for small arrays:</strong> For small arrays, simpler algorithms like Insertion Sort may be faster</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Other Divide and Conquer Algorithms</h2>
+        
+        <div class="example-container">
+            <h3>Quick Sort</h3>
+            <p>
+                Another divide and conquer sorting algorithm that partitions the array around a pivot element.
+                It has an average case time complexity of O(n log n) but can degrade to O(n²) in the worst case.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Binary Search</h3>
+            <p>
+                A searching algorithm that divides the search interval in half at each step.
+                It has a time complexity of O(log n) and requires a sorted array.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Strassen's Matrix Multiplication</h3>
+            <p>
+                An algorithm for multiplying matrices that is faster than the naive method for large matrices.
+                It uses divide and conquer to reduce the number of recursive calls.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Closest Pair of Points</h3>
+            <p>
+                An algorithm to find the closest pair of points in a set of points in a plane.
+                It uses divide and conquer to achieve O(n log n) time complexity.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const arrayContainer = document.getElementById('arrayContainer');
+        const recursionTree = document.getElementById('recursionTree');
+        const stepDisplay = document.getElementById('stepDisplay');
+        const generateArrayBtn = document.getElementById('generateArrayBtn');
+        const startSortBtn = document.getElementById('startSortBtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Initial state
+        let array = [38, 27, 43, 3, 9, 82, 10];
+        let sortingSteps = [];
+        let currentStepIndex = 0;
+        let sortingInProgress = false;
+        
+        // Initialize array display
+        renderArray();
+        
+        // Add event listeners
+        generateArrayBtn.addEventListener('click', generateRandomArray);
+        startSortBtn.addEventListener('click', startMergeSort);
+        nextStepBtn.addEventListener('click', showNextStep);
+        resetBtn.addEventListener('click', resetVisualization);
+        
+        // Function to generate a random array
+        function generateRandomArray() {
+            const length = Math.floor(Math.random() * 5) + 5; // 5-9 elements
+            array = [];
+            for (let i = 0; i < length; i++) {
+                array.push(Math.floor(Math.random() * 90) + 10); // 10-99
+            }
+            renderArray();
+            resetVisualization();
+            
+            updateStepDisplay(`Generated a random array with ${length} elements: [${array.join(', ')}]`);
+        }
+        
+        // Function to render the array
+        function renderArray() {
+            arrayContainer.innerHTML = '';
+            for (let i = 0; i < array.length; i++) {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = array[i];
+                arrayContainer.appendChild(element);
+            }
+        }
+        
+        // Function to start the merge sort visualization
+        function startMergeSort() {
+            if (sortingInProgress) return;
+            
+            // Reset the visualization
+            resetVisualization();
+            
+            // Start the sorting
+            sortingInProgress = true;
+            sortingSteps = [];
+            
+            // Generate all steps of merge sort
+            generateMergeSortSteps(array.slice(), 0, array.length - 1, 0);
+            
+            // Update UI
+            startSortBtn.disabled = true;
+            nextStepBtn.disabled = false;
+            resetBtn.disabled = false;
+            
+            // Show the first step
+            currentStepIndex = 0;
+            showCurrentStep();
+            
+            updateStepDisplay(`Starting Merge Sort on array [${array.join(', ')}]. Click 'Next Step' to proceed through the algorithm.`);
+        }
+        
+        // Function to generate all steps of merge sort
+        function generateMergeSortSteps(arr, start, end, level) {
+            // Base case
+            if (start >= end) {
+                sortingSteps.push({
+                    type: 'base_case',
+                    array: arr.slice(),
+                    start: start,
+                    end: end,
+                    level: level,
+                    message: `Base case reached for subarray [${arr.slice(start, end + 1).join(', ')}]`
+                });
+                return arr.slice(start, end + 1);
+            }
+            
+            // Divide step
+            const mid = Math.floor((start + end) / 2);
+            
+            sortingSteps.push({
+                type: 'divide',
+                array: arr.slice(),
+                start: start,
+                mid: mid,
+                end: end,
+                level: level,
+                message: `Dividing array [${arr.slice(start, end + 1).join(', ')}] into [${arr.slice(start, mid + 1).join(', ')}] and [${arr.slice(mid + 1, end + 1).join(', ')}]`
+            });
+            
+            // Conquer step (recursive calls)
+            const leftArray = generateMergeSortSteps(arr.slice(), start, mid, level + 1);
+            const rightArray = generateMergeSortSteps(arr.slice(), mid + 1, end, level + 1);
+            
+            // Merge step
+            const merged = merge(leftArray, rightArray);
+            
+            // Update original array
+            for (let i = 0; i < merged.length; i++) {
+                arr[start + i] = merged[i];
+            }
+            
+            sortingSteps.push({
+                type: 'merge',
+                array: arr.slice(),
+                start: start,
+                mid: mid,
+                end: end,
+                level: level,
+                leftArray: leftArray,
+                rightArray: rightArray,
+                mergedArray: merged,
+                message: `Merging [${leftArray.join(', ')}] and [${rightArray.join(', ')}] into [${merged.join(', ')}]`
+            });
+            
+            return merged;
+        }
+        
+        // Function to merge two sorted arrays
+        function merge(left, right) {
+            let result = [];
+            let leftIndex = 0;
+            let rightIndex = 0;
+            
+            // Compare elements from both arrays
+            while (leftIndex < left.length && rightIndex < right.length) {
+                if (left[leftIndex] <= right[rightIndex]) {
+                    result.push(left[leftIndex]);
+                    leftIndex++;
+                } else {
+                    result.push(right[rightIndex]);
+                    rightIndex++;
+                }
+            }
+            
+            // Add remaining elements
+            return result
+                .concat(left.slice(leftIndex))
+                .concat(right.slice(rightIndex));
+        }
+        
+        // Function to show the current step
+        function showCurrentStep() {
+            if (currentStepIndex >= sortingSteps.length) {
+                updateStepDisplay('Sorting complete! The array is now sorted.');
+                nextStepBtn.disabled = true;
+                return;
+            }
+            
+            const step = sortingSteps[currentStepIndex];
+            
+            // Update step display
+            updateStepDisplay(step.message);
+            
+            // Highlight the relevant portion of the array
+            renderArrayWithHighlight(step);
+            
+            // Update the recursion tree
+            updateRecursionTree();
+        }
+        
+        // Function to render the array with highlighting
+        function renderArrayWithHighlight(step) {
+            arrayContainer.innerHTML = '';
+            
+            for (let i = 0; i < step.array.length; i++) {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = step.array[i];
+                
+                if (step.type === 'divide' && i >= step.start && i <= step.end) {
+                    element.classList.add('highlight');
+                } else if (step.type === 'merge' && i >= step.start && i <= step.end) {
+                    element.classList.add('merged');
+                } else if (step.type === 'base_case' && i >= step.start && i <= step.end) {
+                    element.classList.add('sorted');
+                }
+                
+                arrayContainer.appendChild(element);
+            }
+        }
+        
+        // Function to update the recursion tree
+        function updateRecursionTree() {
+            recursionTree.innerHTML = '';
+            
+            // Group steps by level
+            const levelSteps = {};
+            
+            for (let i = 0; i <= currentStepIndex; i++) {
+                const step = sortingSteps[i];
+                if (!levelSteps[step.level]) {
+                    levelSteps[step.level] = [];
+                }
+                
+                // Only add unique subarrays
+                const subarray = step.array.slice(step.start, step.end + 1).join(',');
+                const exists = levelSteps[step.level].some(s => 
+                    s.array.slice(s.start, s.end + 1).join(',') === subarray);
+                
+                if (!exists) {
+                    levelSteps[step.level].push(step);
+                }
+            }
+            
+            // Create tree levels
+            const levels = Object.keys(levelSteps).sort((a, b) => a - b);
+            
+            for (const level of levels) {
+                const treeLevel = document.createElement('div');
+                treeLevel.className = 'tree-level';
+                
+                for (const step of levelSteps[level]) {
+                    const treeNode = document.createElement('div');
+                    treeNode.className = 'tree-node';
+                    
+                    const nodeContent = document.createElement('div');
+                    nodeContent.className = 'node-content';
+                    nodeContent.textContent = step.array.slice(step.start, step.end + 1).join(', ');
+                    
+                    if (step.type === 'merge') {
+                        nodeContent.style.backgroundColor = '#f39c12';
+                        nodeContent.style.color = 'white';
+                    } else if (step.type === 'base_case') {
+                        nodeContent.style.backgroundColor = '#2ecc71';
+                        nodeContent.style.color = 'white';
+                    }
+                    
+                    treeNode.appendChild(nodeContent);
+                    
+                    // Add connector if not the first level
+                    if (level > 0) {
+                        const connector = document.createElement('div');
+                        connector.className = 'node-connector';
+                        treeNode.appendChild(connector);
+                    }
+                    
+                    treeLevel.appendChild(treeNode);
+                }
+                
+                recursionTree.appendChild(treeLevel);
+            }
+        }
+        
+        // Function to show the next step
+        function showNextStep() {
+            if (currentStepIndex < sortingSteps.length) {
+                currentStepIndex++;
+                showCurrentStep();
+            }
+        }
+        
+        // Function to reset the visualization
+        function resetVisualization() {
+            sortingInProgress = false;
+            sortingSteps = [];
+            currentStepIndex = 0;
+            
+            // Reset UI
+            startSortBtn.disabled = false;
+            nextStepBtn.disabled = true;
+            resetBtn.disabled = true;
+            
+            // Clear highlighting
+            renderArray();
+            
+            // Clear recursion tree
+            recursionTree.innerHTML = '';
+            
+            updateStepDisplay('Visualization reset. Click "Start Merge Sort" to begin.');
+        }
+        
+        // Function to update the step display
+        function updateStepDisplay(message) {
+            stepDisplay.innerHTML = `<p>${message}</p>`;
+        }
+    </script>
+</body>
+</html> 

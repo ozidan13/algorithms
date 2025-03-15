@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .example-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .memory-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            margin: 20px 0;
+        }
+        .memory-cell {
+            width: auto;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ecf0f1;
+            color: #333;
+            border-radius: 4px;
+            font-size: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .memory-cell.used {
+            background-color: #3498db;
+            color: white;
+        }
+        .memory-cell.fragmented {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .memory-cell.linked {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .memory-cell.pointer {
+            background-color: #f39c12;
+            color: white;
+        }
+        .memory-cell.head {
+            background-color: #9b59b6;
+            color: white;
+        }
+        .arrow {
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background-color: #f39c12;
+            top: 20px;
+            right: -30px;
+            z-index: 1;
+        }
+        .arrow:after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 10px solid #f39c12;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .step-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f2f2f2;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Visualization</h1>
+    
+    <div class="container">
+        <h2>Introduction to Memory Allocation</h2>
+        <p>
+            Memory allocation is a critical aspect of data structures and algorithms. Different data structures
+            use different memory allocation strategies, which directly impacts their performance characteristics.
+        </p>
+        <p>
+            In this visualization, we'll explore two fundamental memory allocation patterns:
+        </p>
+        <ul>
+            <li><strong>Contiguous Allocation:</strong> Used by arrays, where elements are stored in adjacent memory locations</li>
+            <li><strong>Linked Allocation:</strong> Used by linked lists, where elements can be scattered throughout memory with pointers connecting them</li>
+        </ul>
+        <p>
+            Understanding these patterns helps explain why certain operations are faster on arrays while others are faster on linked lists.
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>Memory Allocation Visualization</h2>
+        
+        <div class="controls">
+            <select id="visualizationSelect" aria-label="Select visualization">
+                <option value="array">Array (Contiguous Allocation)</option>
+                <option value="linkedList">Linked List (Non-contiguous Allocation)</option>
+                <option value="fragmentation">Memory Fragmentation</option>
+                <option value="dynamicArray">Dynamic Array Resizing</option>
+            </select>
+            <button id="startBtn">Start Visualization</button>
+            <button id="nextStepBtn" disabled>Next Step</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ecf0f1;"></div>
+                <span>Free Memory</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3498db;"></div>
+                <span>Used Memory (Array)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2ecc71;"></div>
+                <span>Data Node (Linked List)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f39c12;"></div>
+                <span>Pointer</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #9b59b6;"></div>
+                <span>Head Pointer</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #e74c3c;"></div>
+                <span>Fragmented Memory</span>
+            </div>
+        </div>
+        
+        <div class="memory-container" id="memoryContainer">
+            <!-- Memory cells will be rendered here -->
+        </div>
+        
+        <div class="step-display" id="stepDisplay">
+            <p>Select a visualization and click "Start Visualization" to begin.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Contiguous vs. Linked Memory Allocation</h2>
+        
+        <div class="example-container">
+            <h3>Contiguous Memory Allocation (Arrays)</h3>
+            <p>
+                Arrays use contiguous memory allocation, which means all elements are stored in adjacent memory locations.
+                This provides the following characteristics:
+            </p>
+            <ul>
+                <li><strong>Direct Access:</strong> Elements can be accessed in O(1) time using an index</li>
+                <li><strong>Memory Efficiency:</strong> No extra pointers needed, just the data</li>
+                <li><strong>Cache Efficiency:</strong> Better locality of reference for faster access</li>
+                <li><strong>Fixed Size:</strong> Size typically needs to be known in advance (though dynamic arrays can resize)</li>
+                <li><strong>Insertion/Deletion Cost:</strong> May require shifting elements, resulting in O(n) operations</li>
+            </ul>
+            
+            <div class="code-block">
+                <pre>
+// Array allocation in C
+int array[5];  // Allocates 5 contiguous integer slots
+
+// Accessing an element
+int value = array[2];  // Direct access
+                </pre>
+            </div>
+        </div>
+        
+        <div class="example-container">
+            <h3>Linked Memory Allocation (Linked Lists)</h3>
+            <p>
+                Linked lists use non-contiguous memory allocation, where elements (nodes) can be scattered throughout memory
+                and are connected by pointers. This provides the following characteristics:
+            </p>
+            <ul>
+                <li><strong>Flexible Size:</strong> Can grow or shrink dynamically without reallocation</li>
+                <li><strong>Efficient Insertion/Deletion:</strong> O(1) time if position is known</li>
+                <li><strong>No Direct Access:</strong> Must traverse the list to find elements, resulting in O(n) access time</li>
+                <li><strong>Extra Memory:</strong> Requires additional space for pointers</li>
+                <li><strong>Cache Inefficiency:</strong> Poorer locality of reference can lead to more cache misses</li>
+            </ul>
+            
+            <div class="code-block">
+                <pre>
+// Linked list node in C
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Traversing to access an element
+struct Node* current = head;
+for (int i = 0; i < position; i++) {
+    current = current->next;
+}
+int value = current->data;  // Indirect access
+                </pre>
+            </div>
+        </div>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Contiguous (Arrays)</th>
+                    <th>Linked (Linked Lists)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Memory Layout</td>
+                    <td>Elements stored in adjacent locations</td>
+                    <td>Elements can be scattered throughout memory</td>
+                </tr>
+                <tr>
+                    <td>Access Time</td>
+                    <td>O(1) - Constant time</td>
+                    <td>O(n) - Linear time</td>
+                </tr>
+                <tr>
+                    <td>Insertion at Beginning</td>
+                    <td>O(n) - Requires shifting elements</td>
+                    <td>O(1) - Constant time</td>
+                </tr>
+                <tr>
+                    <td>Deletion at Beginning</td>
+                    <td>O(n) - Requires shifting elements</td>
+                    <td>O(1) - Constant time</td>
+                </tr>
+                <tr>
+                    <td>Memory Efficiency</td>
+                    <td>Higher (just the elements)</td>
+                    <td>Lower (elements + pointers)</td>
+                </tr>
+                <tr>
+                    <td>Size Flexibility</td>
+                    <td>Fixed size or costly resizing</td>
+                    <td>Dynamically adjustable</td>
+                </tr>
+                <tr>
+                    <td>Fragmentation Issues</td>
+                    <td>Susceptible to external fragmentation</td>
+                    <td>Can utilize fragmented memory effectively</td>
+                </tr>
+                <tr>
+                    <td>Cache Performance</td>
+                    <td>Better (locality of reference)</td>
+                    <td>Poorer (scattered memory access)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Memory Fragmentation</h2>
+        
+        <div class="example-container">
+            <h3>What is Memory Fragmentation?</h3>
+            <p>
+                Memory fragmentation occurs when memory is allocated and freed in small chunks, leaving gaps of unused memory
+                that are too small to be efficiently used. There are two main types:
+            </p>
+            <ul>
+                <li><strong>External Fragmentation:</strong> Occurs when free memory space is available, but it's broken into small, non-contiguous blocks</li>
+                <li><strong>Internal Fragmentation:</strong> Occurs when memory is allocated in fixed-size blocks, and the allocated block is larger than what is needed</li>
+            </ul>
+            <p>
+                Fragmentation can significantly impact the performance of memory-intensive applications and is one of the reasons
+                why understanding different memory allocation strategies is important.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Arrays and Fragmentation</h3>
+            <p>
+                Arrays require contiguous memory blocks. When memory becomes fragmented, it may be difficult to find a large enough
+                contiguous block for a new array, even if the total free memory is sufficient. This can lead to:
+            </p>
+            <ul>
+                <li>Memory allocation failures</li>
+                <li>Need for memory compaction</li>
+                <li>Performance degradation due to increased allocation time</li>
+            </ul>
+        </div>
+        
+        <div class="example-container">
+            <h3>Linked Lists and Fragmentation</h3>
+            <p>
+                Linked lists can utilize fragmented memory effectively since they only need small chunks of memory for each node.
+                This makes them more resilient to fragmentation issues:
+            </p>
+            <ul>
+                <li>Can use small, scattered memory blocks</li>
+                <li>No need for contiguous allocation</li>
+                <li>More flexible in memory-constrained environments</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Dynamic Array Resizing</h2>
+        
+        <div class="example-container">
+            <h3>How Dynamic Arrays Work</h3>
+            <p>
+                Dynamic arrays (like ArrayList in Java or vector in C++) combine the benefits of arrays with the flexibility of 
+                automatically resizing when needed. Here's how they work:
+            </p>
+            <ol>
+                <li><strong>Initial Allocation:</strong> A fixed-size array is allocated with some initial capacity</li>
+                <li><strong>Growth:</strong> When the array fills up, a new, larger array is allocated (typically 1.5x or 2x the original size)</li>
+                <li><strong>Copy:</strong> All elements from the old array are copied to the new one</li>
+                <li><strong>Deallocation:</strong> The old array is deallocated</li>
+            </ol>
+            <p>
+                This strategy provides amortized constant time for insertions while maintaining the benefits of contiguous memory allocation.
+            </p>
+        </div>
+        
+        <div class="example-container">
+            <h3>Time Complexity Analysis</h3>
+            <p>
+                While individual resizing operations are expensive (O(n)), they happen infrequently enough that the amortized cost
+                of insertions remains O(1). This means that over a large number of operations, the average time per operation is constant.
+            </p>
+            <p>
+                For a dynamic array that doubles in size when full:
+            </p>
+            <ul>
+                <li>Inserting n elements requires approximately 2n total element copies</li>
+                <li>This gives an amortized cost of O(2n/n) = O(2) = O(1) per insertion</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const memoryContainer = document.getElementById('memoryContainer');
+        const stepDisplay = document.getElementById('stepDisplay');
+        const visualizationSelect = document.getElementById('visualizationSelect');
+        const startBtn = document.getElementById('startBtn');
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Visualization state
+        const MEMORY_SIZE = 50;
+        let memoryCells = new Array(MEMORY_SIZE).fill(0); // 0 = free, 1 = used, 2 = linked list node, 3 = pointer, 4 = head, 5 = fragmented
+        let currentVisualization = 'array';
+        let currentStep = 0;
+        let visualizationSteps = [];
+        
+        // Initialize memory display
+        initializeMemory();
+        
+        // Add event listeners
+        visualizationSelect.addEventListener('change', function() {
+            currentVisualization = this.value;
+            resetVisualization();
+        });
+        startBtn.addEventListener('click', startVisualization);
+        nextStepBtn.addEventListener('click', showNextStep);
+        resetBtn.addEventListener('click', resetVisualization);
+        
+        // Function to initialize the memory display
+        function initializeMemory() {
+            memoryContainer.innerHTML = '';
+            for (let i = 0; i < MEMORY_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'memory-cell';
+                cell.textContent = i;
+                cell.dataset.index = i;
+                memoryContainer.appendChild(cell);
+            }
+        }
+        
+        // Function to update the memory display based on memoryCells array
+        function updateMemory() {
+            const cells = document.querySelectorAll('.memory-cell');
+            
+            for (let i = 0; i < MEMORY_SIZE; i++) {
+                const cell = cells[i];
+                cell.className = 'memory-cell';
+                
+                // Remove any existing arrows
+                const arrows = cell.querySelectorAll('.arrow');
+                arrows.forEach(arrow => arrow.remove());
+                
+                switch (memoryCells[i]) {
+                    case 0: // Free
+                        cell.textContent = i;
+                        break;
+                    case 1: // Used (array)
+                        cell.classList.add('used');
+                        cell.textContent = 'A[' + i + ']';
+                        break;
+                    case 2: // Linked list node
+                        cell.classList.add('linked');
+                        cell.textContent = 'Node';
+                        break;
+                    case 3: // Pointer
+                        cell.classList.add('pointer');
+                        cell.textContent = 'Ptr';
+                        break;
+                    case 4: // Head pointer
+                        cell.classList.add('head');
+                        cell.textContent = 'Head';
+                        break;
+                    case 5: // Fragmented
+                        cell.classList.add('fragmented');
+                        cell.textContent = 'Frag';
+                        break;
+                }
+            }
+        }
+        
+        // Function to start the selected visualization
+        function startVisualization() {
+            resetVisualization();
+            
+            switch (currentVisualization) {
+                case 'array':
+                    generateArrayVisualization();
+                    break;
+                case 'linkedList':
+                    generateLinkedListVisualization();
+                    break;
+                case 'fragmentation':
+                    generateFragmentationVisualization();
+                    break;
+                case 'dynamicArray':
+                    generateDynamicArrayVisualization();
+                    break;
+            }
+            
+            // Enable/disable buttons
+            startBtn.disabled = true;
+            nextStepBtn.disabled = false;
+            
+            // Show first step
+            currentStep = 0;
+            showCurrentStep();
+        }
+        
+        // Function to show the current step
+        function showCurrentStep() {
+            if (currentStep >= visualizationSteps.length) {
+                updateStepDisplay('Visualization complete! You can reset to start again.');
+                nextStepBtn.disabled = true;
+                return;
+            }
+            
+            const step = visualizationSteps[currentStep];
+            
+            // Update memory cells
+            memoryCells = [...step.memory];
+            
+            // Update the display
+            updateMemory();
+            
+            // Add arrows if specified in the step
+            if (step.arrows) {
+                for (const arrow of step.arrows) {
+                    addArrow(arrow.from, arrow.to);
+                }
+            }
+            
+            // Update step display
+            updateStepDisplay(step.message);
+        }
+        
+        // Function to show the next step
+        function showNextStep() {
+            if (currentStep < visualizationSteps.length - 1) {
+                currentStep++;
+                showCurrentStep();
+            } else {
+                updateStepDisplay('Visualization complete! You can reset to start again.');
+                nextStepBtn.disabled = true;
+            }
+        }
+        
+        // Function to reset the visualization
+        function resetVisualization() {
+            // Reset state
+            memoryCells = new Array(MEMORY_SIZE).fill(0);
+            currentStep = 0;
+            visualizationSteps = [];
+            
+            // Reset UI
+            updateMemory();
+            startBtn.disabled = false;
+            nextStepBtn.disabled = true;
+            
+            updateStepDisplay('Select a visualization and click "Start Visualization" to begin.');
+        }
+        
+        // Function to add an arrow between two memory cells
+        function addArrow(fromIndex, toIndex) {
+            const cells = document.querySelectorAll('.memory-cell');
+            const fromCell = cells[fromIndex];
+            
+            const arrow = document.createElement('div');
+            arrow.className = 'arrow';
+            
+            // Calculate the direction and length of the arrow
+            // For simplicity, we'll only add arrows pointing right for adjacent cells
+            // In a more sophisticated version, this could be extended to handle arbitrary directions
+            
+            fromCell.appendChild(arrow);
+        }
+        
+        // Function to update the step display
+        function updateStepDisplay(message) {
+            stepDisplay.innerHTML = `<p>${message}</p>`;
+        }
+        
+        // Function to generate array visualization steps
+        function generateArrayVisualization() {
+            visualizationSteps = [];
+            
+            // Initial state
+            visualizationSteps.push({
+                memory: new Array(MEMORY_SIZE).fill(0),
+                arrows: [],
+                message: 'Starting array visualization. Memory is initially empty.'
+            });
+            
+            // Allocate array
+            const arraySize = 10;
+            const arrayStart = 5;
+            let memory = new Array(MEMORY_SIZE).fill(0);
+            
+            for (let i = 0; i < arraySize; i++) {
+                memory[arrayStart + i] = 1; // Mark as used for array
+            }
+            
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [],
+                message: `Array of size ${arraySize} allocated. Notice how array elements are stored in contiguous memory locations.`
+            });
+            
+            // Access element by index
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [],
+                message: 'Accessing array elements is fast (O(1)) because we can directly calculate the memory address using the formula: baseAddress + index * elementSize.'
+            });
+            
+            // Insert at beginning
+            let memoryWithInsert = [...memory];
+            for (let i = arraySize - 1; i >= 0; i--) {
+                memoryWithInsert[arrayStart + i + 1] = memoryWithInsert[arrayStart + i];
+            }
+            memoryWithInsert[arrayStart] = 1;
+            
+            visualizationSteps.push({
+                memory: memoryWithInsert,
+                arrows: [],
+                message: 'Inserting an element at the beginning requires shifting all existing elements to make space. This is an O(n) operation.'
+            });
+            
+            // Delete from beginning
+            let memoryWithDelete = [...memory];
+            for (let i = 0; i < arraySize - 1; i++) {
+                memoryWithDelete[arrayStart + i] = memoryWithDelete[arrayStart + i + 1];
+            }
+            memoryWithDelete[arrayStart + arraySize - 1] = 0;
+            
+            visualizationSteps.push({
+                memory: memoryWithDelete,
+                arrows: [],
+                message: 'Deleting an element from the beginning also requires shifting elements to fill the gap. This is an O(n) operation.'
+            });
+        }
+        
+        // Function to generate linked list visualization steps
+        function generateLinkedListVisualization() {
+            visualizationSteps = [];
+            
+            // Initial state
+            visualizationSteps.push({
+                memory: new Array(MEMORY_SIZE).fill(0),
+                arrows: [],
+                message: 'Starting linked list visualization. Memory is initially empty.'
+            });
+            
+            // Create scattered nodes
+            let memory = new Array(MEMORY_SIZE).fill(0);
+            const nodePositions = [8, 17, 29, 36, 42]; // Scattered node positions
+            
+            // Head pointer
+            memory[3] = 4; // Head pointer
+            
+            // Create nodes and pointers
+            for (let i = 0; i < nodePositions.length; i++) {
+                memory[nodePositions[i]] = 2; // Node
+                
+                if (i < nodePositions.length - 1) {
+                    memory[nodePositions[i] + 1] = 3; // Pointer to next node
+                }
+            }
+            
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [
+                    { from: 3, to: 8 },
+                    { from: 9, to: 17 },
+                    { from: 18, to: 29 },
+                    { from: 30, to: 36 },
+                    { from: 37, to: 42 }
+                ],
+                message: 'Linked list created. Notice how nodes can be scattered across memory, connected by pointers. The head pointer gives us access to the first node.'
+            });
+            
+            // Insert at beginning
+            let memoryWithInsert = [...memory];
+            memoryWithInsert[5] = 2; // New node
+            memoryWithInsert[6] = 3; // Pointer from new node
+            
+            visualizationSteps.push({
+                memory: memoryWithInsert,
+                arrows: [
+                    { from: 3, to: 5 },
+                    { from: 6, to: 8 },
+                    { from: 9, to: 17 },
+                    { from: 18, to: 29 },
+                    { from: 30, to: 36 },
+                    { from: 37, to: 42 }
+                ],
+                message: 'Inserting at the beginning of a linked list is an O(1) operation. We simply create a new node and update the head pointer.'
+            });
+            
+            // Delete from beginning
+            let memoryWithDelete = [...memory];
+            memoryWithDelete[8] = 0; // Remove first node
+            memoryWithDelete[9] = 0; // Remove its pointer
+            
+            visualizationSteps.push({
+                memory: memoryWithDelete,
+                arrows: [
+                    { from: 3, to: 17 },
+                    { from: 18, to: 29 },
+                    { from: 30, to: 36 },
+                    { from: 37, to: 42 }
+                ],
+                message: 'Deleting from the beginning is also an O(1) operation. We simply update the head pointer to point to the second node.'
+            });
+            
+            // Access middle element
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [
+                    { from: 3, to: 8 },
+                    { from: 9, to: 17 },
+                    { from: 18, to: 29 },
+                    { from: 30, to: 36 },
+                    { from: 37, to: 42 }
+                ],
+                message: 'Accessing elements in a linked list is an O(n) operation. We must traverse from the head, following pointers until we reach the desired position.'
+            });
+        }
+        
+        // Function to generate fragmentation visualization steps
+        function generateFragmentationVisualization() {
+            visualizationSteps = [];
+            
+            // Initial state
+            visualizationSteps.push({
+                memory: new Array(MEMORY_SIZE).fill(0),
+                arrows: [],
+                message: 'Starting memory fragmentation visualization. Memory is initially empty.'
+            });
+            
+            // Allocate some blocks
+            let memory = new Array(MEMORY_SIZE).fill(0);
+            
+            // Allocate 3 arrays
+            for (let i = 5; i < 15; i++) memory[i] = 1; // Array 1
+            for (let i = 20; i < 28; i++) memory[i] = 1; // Array 2
+            for (let i = 32; i < 42; i++) memory[i] = 1; // Array 3
+            
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [],
+                message: 'Memory after allocating three arrays. Each array requires a contiguous block of memory.'
+            });
+            
+            // Free the middle array, creating fragmentation
+            let fragmentedMemory = [...memory];
+            for (let i = 20; i < 28; i++) fragmentedMemory[i] = 0; // Free Array 2
+            
+            visualizationSteps.push({
+                memory: fragmentedMemory,
+                arrows: [],
+                message: 'After freeing the middle array, we now have a "hole" in memory. This is the start of memory fragmentation.'
+            });
+            
+            // Free part of the third array, creating more fragmentation
+            let moreFragmentedMemory = [...fragmentedMemory];
+            for (let i = 32; i < 35; i++) moreFragmentedMemory[i] = 0; // Free part of Array 3
+            for (let i = 38; i < 42; i++) moreFragmentedMemory[i] = 0; // Free part of Array 3
+            for (let i = 35; i < 38; i++) moreFragmentedMemory[i] = 5; // Mark as fragmented
+            
+            visualizationSteps.push({
+                memory: moreFragmentedMemory,
+                arrows: [],
+                message: 'After more operations, memory becomes increasingly fragmented. We now have several small "holes" that are difficult to use for large allocations.'
+            });
+            
+            // Try to allocate a large array
+            visualizationSteps.push({
+                memory: moreFragmentedMemory,
+                arrows: [],
+                message: 'Now, if we try to allocate a new array of size 10, it will fail even though we have enough free memory in total. This is because we need contiguous memory for arrays.'
+            });
+            
+            // Show linked list can use fragmented memory
+            let linkedListMemory = [...moreFragmentedMemory];
+            
+            // Create a linked list using the fragmented space
+            linkedListMemory[3] = 4; // Head pointer
+            linkedListMemory[22] = 2; // Node 1
+            linkedListMemory[23] = 3; // Pointer
+            linkedListMemory[33] = 2; // Node 2
+            linkedListMemory[34] = 3; // Pointer
+            linkedListMemory[40] = 2; // Node 3
+            
+            visualizationSteps.push({
+                memory: linkedListMemory,
+                arrows: [
+                    { from: 3, to: 22 },
+                    { from: 23, to: 33 },
+                    { from: 34, to: 40 }
+                ],
+                message: 'However, a linked list can effectively use fragmented memory because it only needs small, non-contiguous pieces for each node. This is a major advantage in memory-constrained environments.'
+            });
+        }
+        
+        // Function to generate dynamic array visualization steps
+        function generateDynamicArrayVisualization() {
+            visualizationSteps = [];
+            
+            // Initial state
+            visualizationSteps.push({
+                memory: new Array(MEMORY_SIZE).fill(0),
+                arrows: [],
+                message: 'Starting dynamic array visualization. Memory is initially empty.'
+            });
+            
+            // Initial small array
+            let memory = new Array(MEMORY_SIZE).fill(0);
+            const initialSize = 4;
+            const initialStart = 5;
+            
+            for (let i = 0; i < initialSize; i++) {
+                memory[initialStart + i] = 1; // Mark as used for array
+            }
+            
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [],
+                message: `Dynamic array initialized with capacity ${initialSize}. Initially, it's just a fixed-size array.`
+            });
+            
+            // Fill the array
+            visualizationSteps.push({
+                memory: [...memory],
+                arrows: [],
+                message: 'As we add elements to the array, we fill up the allocated space. Each insertion is O(1) time.'
+            });
+            
+            // Need to resize - allocate new array
+            let resizingMemory = [...memory];
+            const newSize = initialSize * 2;
+            const newStart = 20;
+            
+            for (let i = 0; i < newSize; i++) {
+                if (i < initialSize) {
+                    // Copying over existing elements
+                    resizingMemory[newStart + i] = 1;
+                } else {
+                    // New space
+                    resizingMemory[newStart + i] = 0;
+                }
+            }
+            
+            visualizationSteps.push({
+                memory: resizingMemory,
+                arrows: [],
+                message: `When the array is full, we need to resize. This involves allocating a new, larger array (typically 2x the size) at a new memory location. Here we've allocated a new array of size ${newSize}.`
+            });
+            
+            // Copy over old elements
+            for (let i = 0; i < initialSize; i++) {
+                resizingMemory[newStart + i] = 1;
+            }
+            
+            visualizationSteps.push({
+                memory: [...resizingMemory],
+                arrows: [],
+                message: 'We then copy all elements from the old array to the new one. This is an O(n) operation.'
+            });
+            
+            // Free old array
+            let finalMemory = [...resizingMemory];
+            for (let i = 0; i < initialSize; i++) {
+                finalMemory[initialStart + i] = 0;
+            }
+            
+            visualizationSteps.push({
+                memory: finalMemory,
+                arrows: [],
+                message: 'Finally, we free the old array. The new, larger array becomes our working array. This amortizes the cost of resizing over many insertions, resulting in O(1) average insertion time.'
+            });
+            
+            // Fill new array
+            let filledMemory = [...finalMemory];
+            for (let i = 0; i < newSize; i++) {
+                filledMemory[newStart + i] = 1;
+            }
+            
+            visualizationSteps.push({
+                memory: filledMemory,
+                arrows: [],
+                message: 'We can continue adding elements until this new array fills up, at which point we would resize again. This pattern of occasional costly resizing operations amortizes to give efficient performance over time.'
+            });
+        }
+    </script>
+</body>
+</html> 
