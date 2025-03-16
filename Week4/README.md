@@ -11,7 +11,7 @@ This week covers advanced algorithm paradigms that are essential for solving com
 5. Feature Scaling and Distance Metrics
 6. NP-Complete Problems and Approximation Algorithms
 
-## Implementations 
+## Implementations  
 
 - `greedy_algorithms.html` - Interactive visualization of greedy algorithms
   - Time Complexity: Various (typically O(n log n) due to sorting)
