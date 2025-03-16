@@ -11,7 +11,7 @@ This week explores more advanced algorithms and data structures that form the fo
 5. Breadth-First Search (BFS)
 6. Depth-First Search (DFS)
 
-## Implementations
+## Implementations 
 
 - `quicksort_visualization.html` - Interactive visualization of the quicksort algorithm
   - Time Complexity: O(n log n) average case, O(n²) worst case
