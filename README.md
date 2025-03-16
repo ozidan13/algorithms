@@ -7,8 +7,8 @@ This repository contains interactive visualizations and implementations of vario
 The repository is organized into four weeks, each focusing on different algorithm concepts:
 
 - **Week 1**: Introduction to Algorithms
-- **Week 2**: Arrays, Linked Lists, and Recursion (Coming Soon)
-- **Week 3**: Quicksort, Hash Tables, and Graphs (Coming Soon)
+- **Week 2**: Arrays, Linked Lists, and Recursion
+- **Week 3**: Quicksort, Hash Tables, and Graphs
 - **Week 4**: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors (Coming Soon)
 
 ## Week 1: Introduction to Algorithms
@@ -41,31 +41,77 @@ The first week covers fundamental concepts in algorithms:
 - `big_o_visualization.html` - Graphical representation of different time complexities
   - Features: Interactive comparison of O(1), O(log n), O(n), O(n log n), O(n²), and O(2ⁿ)
 
-## Week 2: Arrays, Linked Lists, and Recursion (Coming Soon)
+## Week 2: Arrays, Linked Lists, and Recursion
 
-This section will cover:
+This section covers:
 
-- Arrays and Linked Lists
-- Implementation of a basic Linked List
-- Recursive strategies for problem-solving
-- Divide and conquer algorithms
+- Arrays and Their Limitations
+- Linked Lists (Singly and Doubly Linked)
+- Advanced Recursion Techniques
+- Divide and Conquer Algorithms
+- Memory Management in Data Structures
 
-## Week 3: Quicksort, Hash Tables, and Graphs (Coming Soon)
+### Implementations
 
-This section will cover:
+- `array_operations.html` - Interactive visualization of array operations
+  - Time Complexity: Various (O(1) for access, O(n) for insertion/deletion)
+  - Space Complexity: O(n)
+  - Features: Visual comparison of operations, performance metrics, real-time manipulation
 
-- Quicksort algorithm
-- Hash tables and hash functions
-- Breadth-first search
-- Implementation of graphs
+- `linked_list.html` - Implementation and visualization of linked lists
+  - Time Complexity: O(1) for insertion/deletion at known positions, O(n) for search
+  - Space Complexity: O(n)
+  - Features: Interactive node creation/deletion, pointer visualization, comparison with arrays
+
+- `recursive_divide_conquer.html` - Examples of divide and conquer algorithms
+  - Features: Merge sort visualization, recursive tree exploration, step-by-step execution
+  - Time Complexity: O(n log n) for merge sort
+  - Space Complexity: O(n) for merge sort
+
+- `memory_visualization.html` - Visual representation of memory allocation
+  - Features: Comparison of contiguous vs linked memory allocation, fragmentation demonstration
+
+## Week 3: Quicksort, Hash Tables, and Graphs
+
+This section covers:
+
+- Quicksort Algorithm and Analysis
+- Hash Tables and Hash Functions
+- Collision Resolution Strategies
+- Graph Representation (Adjacency Lists/Matrices)
+- Breadth-First Search (BFS)
+- Depth-First Search (DFS)
+
+### Implementations
+
+- `quicksort_visualization.html` - Interactive visualization of the quicksort algorithm
+  - Time Complexity: O(n log n) average case, O(n²) worst case
+  - Space Complexity: O(log n)
+  - Features: Animated pivot selection, partitioning visualization, performance comparison
+
+- `hash_table.html` - Implementation and visualization of hash tables
+  - Time Complexity: O(1) average for insert/search/delete, O(n) worst case
+  - Space Complexity: O(n)
+  - Features: Interactive hash function demonstration, collision resolution visualization
+
+- `graph_representation.html` - Visual comparison of graph representation methods
+  - Features: Interactive creation of graphs, conversion between adjacency lists and matrices
+
+- `graph_traversal.html` - Visualization of graph traversal algorithms
+  - Time Complexity: O(V + E) for both BFS and DFS
+  - Space Complexity: O(V)
+  - Features: Step-by-step traversal animation, path highlighting, queue/stack visualization
 
 ## Week 4: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors (Coming Soon)
 
 This section will cover:
 
-- Greedy algorithms
-- Dynamic programming
-- K-nearest neighbors algorithm
+- Greedy Algorithm Design and Analysis
+- Dynamic Programming Principles
+- Memoization vs. Tabulation
+- K-nearest neighbors Algorithm
+- Feature Scaling and Distance Metrics
+- NP-Complete Problems and Approximation Algorithms
 
 ## How to Use
 
