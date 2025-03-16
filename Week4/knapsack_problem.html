@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knapsack Problem Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .visualization-container {
+            margin: 20px 0;
+            min-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+        .step-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        .complexity {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .complexity-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .tab.active {
+            border: 1px solid #ddd;
+            border-bottom: 1px solid white;
+            border-radius: 4px 4px 0 0;
+            margin-bottom: -1px;
+            background-color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .example-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .comparison-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            flex: 1;
+            min-width: 300px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .comparison-item h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .activity-log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .activity-log p {
+            margin: 5px 0;
+        }
+        .dp-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .dp-table th, .dp-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .dp-table th {
+            background-color: #f2f2f2;
+        }
+        .dp-cell {
+            position: relative;
+            min-width: 40px;
+            min-height: 40px;
+        }
+        .dp-cell.highlight {
+            background-color: #fff3cd;
+        }
+        .dp-cell.current {
+            background-color: #d4edda;
+        }
+        .dp-cell.optimal {
+            background-color: #cce5ff;
+        }
+        .item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .item-selected {
+            border: 2px solid #e74c3c;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Knapsack Problem Visualization</h1>
+    
+    <div class="container">
+        <h2>Introduction to the Knapsack Problem</h2>
+        <p>
+            The Knapsack Problem is a classic optimization problem: given a set of items, each with a weight and a value,
+            determine which items to include in a collection so that the total weight is less than or equal to a given limit
+            and the total value is as large as possible.
+        </p>
+        <p>
+            There are two main variants of the problem:
+        </p>
+        <div class="comparison-container">
+            <div class="comparison-item">
+                <h3>0/1 Knapsack</h3>
+                <p>Items cannot be broken down - you either take an item completely or not at all.</p>
+                <p>This variant requires dynamic programming for an optimal solution.</p>
+            </div>
+            <div class="comparison-item">
+                <h3>Fractional Knapsack</h3>
+                <p>Items can be broken into smaller pieces - you can take a fraction of an item.</p>
+                <p>This variant can be solved optimally using a greedy approach.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="zero-one">0/1 Knapsack (DP)</div>
+            <div class="tab" data-tab="fractional">Fractional Knapsack (Greedy)</div>
+            <div class="tab" data-tab="comparison">Comparison</div>
+        </div>
+        
+        <div id="zero-one" class="tab-content active">
+            <h2>0/1 Knapsack Problem</h2>
+            <p>
+                In the 0/1 Knapsack Problem, each item must be either taken completely or left behind.
+                This problem cannot be solved optimally using a greedy approach and requires dynamic programming.
+            </p>
+            
+            <div class="controls">
+                <button id="generate-01-items-btn">Generate Random Items</button>
+                <label for="capacity-01-input">Knapsack Capacity:</label>
+                <input type="number" id="capacity-01-input" min="1" value="50" placeholder="Capacity">
+                <button id="solve-01-btn">Solve with DP</button>
+                <button id="step-01-btn">Step Through</button>
+                <button id="reset-01-btn">Reset</button>
+            </div>
+            
+            <div class="visualization-container" id="zero-one-visualization">
+                <!-- 0/1 Knapsack visualization will appear here -->
+            </div>
+            
+            <div class="step-display" id="zero-one-step-display">
+                <p>Generate random items and set a knapsack capacity, then click "Solve with DP" to find the optimal solution.</p>
+            </div>
+            
+            <div class="activity-log" id="zero-one-log"></div>
+            
+            <h3>Algorithm Explanation</h3>
+            <div class="example-container">
+                <p>The dynamic programming approach for the 0/1 Knapsack problem:</p>
+                <ol>
+                    <li>Create a 2D array dp[i][w] where i is the number of items considered and w is the current capacity</li>
+                    <li>For each item and each possible capacity, decide whether to include the item or not</li>
+                    <li>The value in dp[n][W] will be the maximum possible value (where n is the number of items and W is the total capacity)</li>
+                </ol>
+                
+                <div class="code-block">
+                    <pre>
+function knapsack01(weights, values, capacity):
+    n = length of weights array
+    
+    // Create a table of size (n+1) x (capacity+1)
+    dp = new table of size (n+1) x (capacity+1)
+    
+    // Fill the dp table
+    for i from 0 to n:
+        for w from 0 to capacity:
+            if i == 0 or w == 0:
+                dp[i][w] = 0
+            else if weights[i-1] <= w:
+                dp[i][w] = max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w])
+            else:
+                dp[i][w] = dp[i-1][w]
+    
+    return dp[n][capacity]</pre>
+                </div>
+            </div>
+            
+            <div class="complexity">
+                <div class="complexity-item">
+                    <h4>Time Complexity</h4>
+                    <p><strong>O(n × W)</strong> - Where n is the number of items and W is the capacity</p>
+                </div>
+                <div class="complexity-item">
+                    <h4>Space Complexity</h4>
+                    <p><strong>O(n × W)</strong> - For the DP table</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="fractional" class="tab-content">
+            <h2>Fractional Knapsack Problem</h2>
+            <p>
+                In the Fractional Knapsack Problem, items can be broken into smaller pieces, allowing you to take fractions of items.
+                This problem can be solved optimally using a greedy approach.
+            </p>
+            
+            <div class="controls">
+                <button id="generate-frac-items-btn">Generate Random Items</button>
+                <label for="capacity-frac-input">Knapsack Capacity:</label>
+                <input type="number" id="capacity-frac-input" min="1" value="50" placeholder="Capacity">
+                <button id="solve-frac-btn">Solve Greedily</button>
+                <button id="step-frac-btn">Step Through</button>
+                <button id="reset-frac-btn">Reset</button>
+            </div>
+            
+            <div class="visualization-container" id="fractional-visualization">
+                <!-- Fractional Knapsack visualization will appear here -->
+            </div>
+            
+            <div class="step-display" id="fractional-step-display">
+                <p>Generate random items and set a knapsack capacity, then click "Solve Greedily" to find the optimal solution.</p>
+            </div>
+            
+            <div class="activity-log" id="fractional-log"></div>
+            
+            <h3>Algorithm Explanation</h3>
+            <div class="example-container">
+                <p>The greedy approach for the Fractional Knapsack problem:</p>
+                <ol>
+                    <li>Calculate the value-to-weight ratio for each item</li>
+                    <li>Sort items by value-to-weight ratio in descending order</li>
+                    <li>Take items with highest value-to-weight ratio first</li>
+                    <li>If an item can be fully included, take it all</li>
+                    <li>If an item can only be partially included, take the fraction that fits</li>
+                </ol>
+                
+                <div class="code-block">
+                    <pre>
+function fractionalKnapsack(weights, values, capacity):
+    n = length of weights array
+    
+    // Create array of item objects with value-to-weight ratios
+    items = []
+    for i from 0 to n-1:
+        items.push({weight: weights[i], value: values[i], ratio: values[i]/weights[i]})
+    
+    // Sort by value-to-weight ratio in descending order
+    sort items by ratio in descending order
+    
+    totalValue = 0
+    remainingCapacity = capacity
+    
+    for each item in items:
+        if remainingCapacity >= item.weight:
+            // Take the whole item
+            totalValue += item.value
+            remainingCapacity -= item.weight
+        else:
+            // Take a fraction of the item
+            fraction = remainingCapacity / item.weight
+            totalValue += item.value * fraction
+            remainingCapacity = 0
+            break
+    
+    return totalValue</pre>
+                </div>
+            </div>
+            
+            <div class="complexity">
+                <div class="complexity-item">
+                    <h4>Time Complexity</h4>
+                    <p><strong>O(n log n)</strong> - Dominated by the sorting step</p>
+                </div>
+                <div class="complexity-item">
+                    <h4>Space Complexity</h4>
+                    <p><strong>O(n)</strong> - To store the items</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="comparison" class="tab-content">
+            <h2>Comparison: 0/1
