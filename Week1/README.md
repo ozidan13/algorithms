@@ -10,7 +10,7 @@ This folder contains implementations of the basic algorithms covered in Week 1 o
 4. Selection Sort
 5. Recursion
 
-## Implementations
+## Implementations 
 
 - `binary_search.html` - Interactive demonstration of binary search algorithm
 - `selection_sort.html` - Visual representation of selection sort algorithm
