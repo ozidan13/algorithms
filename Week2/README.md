@@ -10,7 +10,7 @@ This week focuses on fundamental data structures and recursive problem-solving t
 4. Divide and Conquer Algorithms
 5. Memory Management in Data Structures
 
-## Implementations
+## Implementations 
 
 - `array_operations.html` - Interactive visualization of array operations
   - Time Complexity: Various (O(1) for access, O(n) for insertion/deletion)
