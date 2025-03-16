@@ -13,7 +13,6 @@ This week explores more advanced algorithms and data structures that form the fo
 
 ## Implementations
 
-
 - `quicksort_visualization.html` - Interactive visualization of the quicksort algorithm
   - Time Complexity: O(n log n) average case, O(n²) worst case
   - Space Complexity: O(log n)
