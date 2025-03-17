@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Nearest Neighbors Classifier</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .visualization {
+            flex: 1;
+            min-width: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input[type="range"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .data-point {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .class-a {
+            background-color: #e74c3c;
+        }
+        .class-b {
+            background-color: #3498db;
+        }
+        .class-c {
+            background-color: #2ecc71;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        .metrics {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>K-Nearest Neighbors Classifier</h1>
+    
+    <p>K-Nearest Neighbors (KNN) is a simple, versatile, and non-parametric supervised learning algorithm used for classification and regression. This visualization demonstrates how KNN classifies data points based on the majority class of their k nearest neighbors.</p>
+    
+    <div class="container">
+        <div class="visualization">
+            <h2>Visualization</h2>
+            <div class="legend">
+                <div class="legend-item"><span class="data-point class-a"></span> Class A</div>
+                <div class="legend-item"><span class="data-point class-b"></span> Class B</div>
+                <div class="legend-item"><span class="data-point class-c"></span> Class C</div>
+            </div>
+            <canvas id="knnCanvas" width="600" height="400"></canvas>
+            <div class="btn-group">
+                <button id="addPointA" class="btn">Add Class A Point</button>
+                <button id="addPointB" class="btn">Add Class B Point</button>
+                <button id="addPointC" class="btn">Add Class C Point</button>
+                <button id="clearCanvas" class="btn">Clear Canvas</button>
+            </div>
+            <div class="metrics" id="metrics">
+                <h3>Classification Metrics</h3>
+                <p>Click on the canvas to classify a new point.</p>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h2>Algorithm Controls</h2>
+            <div class="form-group">
+                <label for="kValue">K Value: <span id="kValueDisplay">5</span></label>
+                <input type="range" id="kValue" min="1" max="15" value="5">
+            </div>
+            
+            <div class="form-group">
+                <label for="distanceMetric">Distance Metric:</label>
+                <select id="distanceMetric">
+                    <option value="euclidean">Euclidean Distance</option>
+                    <option value="manhattan">Manhattan Distance</option>
+                    <option value="chebyshev">Chebyshev Distance</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="weightingScheme">Weighting Scheme:</label>
+                <select id="weightingScheme">
+                    <option value="uniform">Uniform (No Weighting)</option>
+                    <option value="distance">Distance-Based Weighting</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button id="generateRandomData" class="btn">Generate Random Dataset</button>
+            </div>
+            
+            <h3>Algorithm Explanation</h3>
+            <p>KNN works by:</p>
+            <ol>
+                <li>Calculating the distance between the query point and all training points</li>
+                <li>Selecting the K-nearest data points</li>
+                <li>Assigning the class by majority vote of the K neighbors</li>
+            </ol>
+            
+            <h3>Time & Space Complexity</h3>
+            <p><strong>Time Complexity:</strong> O(n×d) for prediction where n is the dataset size and d is the number of dimensions</p>
+            <p><strong>Space Complexity:</strong> O(n) to store all training data points</p>
+            
+            <div class="code-block">
+                <pre><code>function predict(queryPoint, trainingData, k) {
+    // Calculate distances
+    const distances = trainingData.map(point => {
+        return {
+            distance: calculateDistance(queryPoint, point),
+            class: point.class
+        };
+    });
+    
+    // Sort by distance
+    distances.sort((a, b) => a.distance - b.distance);
+    
+    // Take k nearest neighbors
+    const kNearest = distances.slice(0, k);
+    
+    // Count class frequencies
+    const classCounts = {};
+    kNearest.forEach(neighbor => {
+        classCounts[neighbor.class] = 
+            (classCounts[neighbor.class] || 0) + 1;
+    });
+    
+    // Return the class with highest frequency
+    return Object.keys(classCounts).reduce((a, b) => 
+        classCounts[a] > classCounts[b] ? a : b);
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('knnCanvas');
+            const ctx = canvas.getContext('2d');
+            const kValueSlider = document.getElementById('kValue');
+            const kValueDisplay = document.getElementById('kValueDisplay');
+            const distanceMetricSelect = document.getElementById('distanceMetric');
+            const weightingSchemeSelect = document.getElementById('weightingScheme');
+            const metricsDiv = document.getElementById('metrics');
+            
+            // Initialize data points
+            let dataPoints = [];
+            let currentClassification = null;
+            
+            // Colors for classes
+            const colors = {
+                'A': '#e74c3c',
+                'B': '#3498db',
+                'C': '#2ecc71'
+            };
+            
+            // Update k value display
+            kValueSlider.addEventListener('input', function() {
+                kValueDisplay.textContent = this.value;
+                if (currentClassification) {
+                    classifyPoint(currentClassification.x, currentClassification.y);
+                }
+            });
+            
+            // Distance metric change
+            distanceMetricSelect.addEventListener('change', function() {
+                if (currentClassification) {
+                    classifyPoint(currentClassification.x, currentClassification.y);
+                }
+            });
+            
+            // Weighting scheme change
+            weightingSchemeSelect.addEventListener('change', function() {
+                if (currentClassification) {
+                    classifyPoint(currentClassification.x, currentClassification.y);
+                }
+            });
+            
+            // Add point buttons
+            document.getElementById('addPointA').addEventListener('click', function() {
+                addRandomPoint('A', 5);
+            });
+            
+            document.getElementById('addPointB').addEventListener('click', function() {
+                addRandomPoint('B', 5);
+            });
+            
+            document.getElementById('addPointC').addEventListener('click', function() {
+                addRandomPoint('C', 5);
+            });
+            
+            // Generate random dataset
+            document.getElementById('generateRandomData').addEventListener('click', function() {
+                clearCanvas();
+                addRandomPoint('A', 15);
+                addRandomPoint('B', 15);
+                addRandomPoint('C', 15);
+            });
+            
+            // Clear canvas
+            document.getElementById('clearCanvas').addEventListener('click', clearCanvas);
+            
+            // Canvas click event for classification
+            canvas.addEventListener('click', function(event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                classifyPoint(x, y);
+            });
+            
+            // Function to add random points
+            function addRandomPoint(className, count = 1) {
+                for (let i = 0; i < count; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    dataPoints.push({ x, y, class: className });
+                }
+                drawDataPoints();
+            }
+            
+            // Function to clear canvas
+            function clearCanvas() {
+                dataPoints = [];
+                currentClassification = null;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                metricsDiv.innerHTML = '<h3>Classification Metrics</h3><p>Click on the canvas to classify a new point.</p>';
+            }
+            
+            // Function to draw data points
+            function drawDataPoints() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background classification regions if we have enough points
+                if (dataPoints.length > 5) {
+                    drawClassificationRegions();
+                }
+                
+                // Draw all data points
+                dataPoints.forEach(point => {
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[point.class];
+                    ctx.fill();
+                    ctx.strokeStyle = '#333';
+                    ctx.stroke();
+                });
+                
+                // Draw current classification point if exists
+                if (currentClassification) {
+                    ctx.beginPath();
+                    ctx.arc(currentClassification.x, currentClassification.y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[currentClassification.predictedClass] + '80'; // Semi-transparent
+                    ctx.fill();
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.lineWidth = 1;
+                    
+                    // Draw lines to k nearest neighbors
+                    currentClassification.neighbors.forEach(neighbor => {
+                        ctx.beginPath();
+                        ctx.moveTo(currentClassification.x, currentClassification.y);
+                        ctx.lineTo(neighbor.x, neighbor.y);
+                        ctx.strokeStyle = '#33333380'; // Semi-transparent
+                        ctx.stroke();
+                    });
+                }
+            }
+            
+            // Function to draw classification regions (simplified for performance)
+            function drawClassificationRegions() {
+                const gridSize = 20; // Lower for more detailed visualization, higher for better performance
+                const k = parseInt(kValueSlider.value);
+                
+                for (let x = 0; x < canvas.width; x += gridSize) {
+                    for (let y = 0; y < canvas.height; y += gridSize) {
+                        const predictedClass = knnClassify({ x, y }, k);
+                        ctx.fillStyle = colors[predictedClass] + '20'; // Very transparent
+                        ctx.fillRect(x, y, gridSize, gridSize);
+                    }
+                }
+            }
+            
+            // Function to classify a point
+            function classifyPoint(x, y) {
+                if (dataPoints.length === 0) {
+                    metricsDiv.innerHTML = '<h3>Classification Metrics</h3><p>Add some data points first!</p>';
+                    return;
+                }
+                
+                const k = parseInt(kValueSlider.value);
+                const point = { x, y };
+                const predictedClass = knnClassify(point, k);
+                
+                // Get k nearest neighbors for visualization
+                const neighbors = getKNearestNeighbors(point, k);
+                
+                currentClassification = {
+                    x, y, 
+                    predictedClass,
+                    neighbors: neighbors.map(n => dataPoints[n.index])
+                };
+                
+                drawDataPoints();
+                updateMetrics(point, predictedClass, neighbors);
+            }
+            
+            // Function to get k nearest neighbors
+            function getKNearestNeighbors(point, k) {
+                const distances = dataPoints.map((dataPoint, index) => {
+                    return {
+                        index,
+                        distance: calculateDistance(point, dataPoint)
+                    };
+                });
+                
+                distances.sort((a, b) => a.distance - b.distance);
+                return distances.slice(0, k);
+            }
+            
+            // Function to classify using KNN
+            function knnClassify(point, k) {
+                if (dataPoints.length === 0) return null;
+                
+                const neighbors = getKNearestNeighbors(point, k);
+                const weightingScheme = weightingSchemeSelect.value;
+                
+                // Count class frequencies with optional weighting
+                const classCounts = {};
+                neighbors.forEach(neighbor => {
+                    const dataPoint = dataPoints[neighbor.index];
+                    const weight = weightingScheme === 'distance' ? 
+                        1 / (neighbor.distance + 0.0001) : 1; // Avoid division by zero
+                    
+                    classCounts[dataPoint.class] = (classCounts[dataPoint.class] || 0) + weight;
+                });
+                
+                // Find class with highest count
+                let maxCount = 0;
+                let maxClass = null;
+                
+                for (const className in classCounts) {
+                    if (classCounts[className] > maxCount) {
+                        maxCount = classCounts[className];
+                        maxClass = className;
+                    }
+                }
+                
+                return maxClass;
+            }
+            
+            // Function to calculate distance between two points
+            function calculateDistance(pointA, pointB) {
+                const distanceMetric = distanceMetricSelect.value;
+                
+                switch (distanceMetric) {
+                    case 'manhattan':
+                        return Math.abs(pointA.x - pointB.x) + Math.abs(pointA.y - pointB.y);
+                        
+                    case 'chebyshev':
+                        return Math.max(Math.abs(pointA.x - pointB.x), Math.abs(pointA.y - pointB.y));
+                        
+                    case 'euclidean':
+                    default:
+                        return Math.sqrt(
+                            Math.pow(pointA.x - pointB.x, 2) + 
+                            Math.pow(pointA.y - pointB.y, 2)
+                        );
+                }
+            }
+            
+            // Function to update metrics display
+            function updateMetrics(point, predictedClass, neighbors) {
+                const k = parseInt(kValueSlider.value);
+                const distanceMetric = distanceMetricSelect.value;
+                const weightingScheme = weightingSchemeSelect.value;
+                
+                let metricsHTML = `
+                    <h3>Classification Metrics</h3>
+                    <p><strong>Query Point:</strong> (${Math.round(point.x)}, ${Math.round(point.y)})</p>
+                    <p><strong>Predicted Class:</strong> <span style="color: ${colors[predictedClass]}">Class ${predictedClass}</span></p>
+                    <p><strong>K Value:</strong> ${k}</p>
+                    <p><strong>Distance Metric:</strong> ${distanceMetric}</p>
+                    <p><strong>Weighting:</strong> ${weightingScheme}</p>
+                    <p><strong>Nearest Neighbors:</strong></p>
+                    <ul>
+                `;
+                
+                neighbors.forEach((neighbor, i) => {
+                    const dataPoint = dataPoints[neighbor.index];
+                    metricsHTML += `
+                        <li>Neighbor ${i+1}: Class ${dataPoint.class} - Distance: ${neighbor.distance.toFixed(2)}</li>
+                    `;
+                });
+                
+                metricsHTML += '</ul>';
+                metricsDiv.innerHTML = metricsHTML;
+            }
+            
+            // Initialize with some random data
+            addRandomPoint('A', 10);
+            addRandomPoint('B', 10);
+            addRandomPoint('C', 10);
+        });
+    </script>
+</body>
+</html>
