@@ -3,77 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algorithms Learning Repository</title>
+    <title>Algorithms Learning Repository - Inspired by Apple</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4a5568;
-            --secondary-color: #2b6cb0;
-            --accent-color: #4299e1;
-            --bg-color: #f7fafc;
-            --card-bg: #ffffff;
-            --text-color: #1a202c;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        * {
+        /* Reset and Core Styles - Apple Inspired */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-text: #1d1d1f; /* Near black for main text */
+            --secondary-text: #6e6e73; /* Grayish secondary text */
+            --accent-color: #0071e3; /* Apple's blue link color */
+            --background-color: #fff; /* White background */
+            --section-padding: 80px 0;
+            --heading-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --border-radius: 12px;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition-duration: 0.2s;
+            --link-hover-underline-offset: 3px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            font-family: var(--body-font-family);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--primary-text);
+            background-color: var(--background-color);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color var(--transition-duration);
+        }
+
+        a:hover {
+            color: #ffffff; /* Darker blue on hover */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--heading-font-family);
+            font-weight: 600; /* Semi-bold headings */
+            color: var(--primary-text);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.5rem; }
+        h3 { font-size: 1.8rem; }
+        h4 { font-size: 1.2rem; }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--secondary-text);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1280px; /* Slightly wider container like Apple */
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 40px; /* More side padding */
         }
 
+        /* Header - Hero Section */
         header {
-            background: linear-gradient(135deg, #2b6cb0, #4a5568);
-            color: white;
-            padding: 40px 0;
+            padding: 120px 0 100px 0; /* Increased padding for spacious hero */
             text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="none" width="100" height="100"/><rect fill="rgba(255,255,255,0.05)" x="25" y="25" width="50" height="50" transform="rotate(45 50 50)"/></svg>');
-            opacity: 0.3;
+            background-color: #f5f5f7; /* Light gray background for hero */
         }
 
         header .container {
-            position: relative;
-            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
+        header h1 {
+            font-size: 4rem; /* Even larger hero heading */
+            margin-bottom: 20px;
+            color: var(--primary-text);
             animation: fadeInDown 1s ease-out;
         }
 
         header p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto 30px;
+            font-size: 1.4rem; /* Larger hero paragraph */
+            max-width: 900px; /* Wider paragraph for better readability */
+            margin-bottom: 40px;
+            color: var(--secondary-text);
             animation: fadeInUp 1s ease-out;
         }
 
@@ -81,157 +104,188 @@
             display: inline-block;
             background-color: var(--accent-color);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 30px; /* Adjusted button padding */
             border-radius: var(--border-radius);
             text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
+            font-weight: 500; /* Slightly lighter button font */
+            transition: background-color var(--transition-duration), transform var(--transition-duration), box-shadow var(--transition-duration);
             margin: 10px;
             border: none;
             cursor: pointer;
-            box-shadow: var(--box-shadow);
+            box-shadow: var(--card-shadow); /* Use card shadow for buttons too */
+            font-size: 1.1rem;
         }
 
         .btn:hover {
-            background-color: var(--secondary-color);
+            background-color: #0059b2; /* Darker blue on hover */
             transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow on hover */
         }
 
+        /* Week Sections */
         .week-container {
-            margin-bottom: 60px;
+            padding: var(--section-padding);
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        .visible {
+        .week-container.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
         .week-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
+            margin-bottom: 40px;
+            text-align: center; /* Center week headers */
         }
 
         .week-header h2 {
-            font-size: 2rem;
-            margin-right: 15px;
+            font-size: 3rem; /* Larger week section titles */
+            color: var(--primary-text);
+            margin-bottom: 10px;
         }
 
         .week-description {
-            margin-bottom: 30px;
+            max-width: 800px;
+            margin: 0 auto 50px; /* Centered week description */
+            text-align: center;
         }
 
         .topics {
-            background-color: #edf2f7;
-            padding: 15px 20px;
+            background-color: #f0f0f0; /* Lighter background for topics */
+            padding: 30px; /* More padding for topics */
             border-radius: var(--border-radius);
-            margin-bottom: 30px;
+            margin-bottom: 60px;
         }
 
         .topics h3 {
-            margin-bottom: 10px;
-            color: var(--secondary-color);
+            margin-bottom: 20px;
+            color: var(--primary-text);
+            font-size: 2rem;
+            text-align: center; /* Center "Topics Covered" */
         }
 
         .topics ul {
             list-style-type: none;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            justify-content: center; /* Center topic list items */
+            gap: 15px; /* Increased gap between topics */
         }
 
         .topics li {
-            background-color: var(--card-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
+            background-color: var(--background-color);
+            padding: 12px 25px; /* Adjusted topic item padding */
+            border-radius: 30px; /* More rounded topic items */
             display: inline-block;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--card-shadow);
+            font-weight: 500;
+            transition: transform var(--transition-duration), box-shadow var(--transition-duration);
         }
 
+        .topics li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Hover effect for topic items */
+        }
+
+
+        /* Algorithm Grid and Cards */
         .algo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Wider algo cards */
+            gap: 40px; /* Increased gap between algo cards */
         }
 
         .algo-card {
-            background-color: var(--card-bg);
+            background-color: var(--background-color);
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-duration), box-shadow var(--transition-duration);
             position: relative;
-            height: 100%;
             display: flex;
             flex-direction: column;
+            padding-bottom: 20px; /* Add padding to the bottom of cards */
         }
 
         .algo-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Stronger shadow on card hover */
         }
 
         .algo-card-header {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 15px;
+            background-color: #e0e0e0; /* Light gray header for cards */
+            color: var(--primary-text);
+            padding: 20px; /* Increased header padding */
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            text-align: center; /* Center card headers */
+            border-bottom: 1px solid #d4d4d4; /* Subtle border */
         }
 
         .algo-card-body {
-            padding: 20px;
+            padding: 30px; /* Increased body padding */
             flex-grow: 1;
         }
 
+        .algo-card-body p {
+            color: var(--secondary-text); /* Use secondary text color for card descriptions */
+            margin-bottom: 25px;
+            font-size: 1.1rem; /* Slightly larger card description font */
+        }
+
         .complexity {
-            margin: 15px 0;
-            font-size: 0.9rem;
+            margin: 20px 0;
+            font-size: 1rem;
+            color: var(--secondary-text);
         }
 
         .complexity span {
             font-weight: 600;
-            color: var(--secondary-color);
+            color: var(--accent-color); /* Accent color for complexity values */
         }
 
         .features {
-            margin-top: 15px;
+            margin-top: 25px;
         }
 
         .features h4 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary-text);
         }
 
         .features ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
+            padding-left: 25px;
+            margin-bottom: 20px;
+            list-style-type: disc; /* Use disc bullet points */
+            color: var(--secondary-text);
+        }
+        .features li {
+            margin-bottom: 8px;
         }
 
+
         .algo-card-footer {
-            padding: 15px;
-            background-color: #f8fafc;
-            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            background-color: #f8f8f8; /* Even lighter footer background */
+            border-top: 1px solid #e8e8e8; /* Very subtle border */
             text-align: center;
         }
 
-        .coming-soon {
-            background-color: rgba(0, 0, 0, 0.03);
-            border: 2px dashed #cbd5e0;
+        .algo-card-footer .btn {
+            padding: 12px 25px; /* Slightly smaller button in footer */
+            font-size: 1rem;
         }
 
+
+        /* Footer */
         footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 0;
-            margin-top: 60px;
+            background-color: #f5f5f7; /* Light gray footer background */
+            color: var(--secondary-text);
+            padding: 80px 0;
+            margin-top: 100px;
         }
 
         .footer-content {
@@ -242,13 +296,14 @@
 
         .footer-section {
             flex: 1;
-            min-width: 250px;
-            margin-bottom: 30px;
+            min-width: 280px;
+            margin-bottom: 40px;
         }
 
         .footer-section h3 {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            color: var(--primary-text);
         }
 
         .footer-section ul {
@@ -256,77 +311,86 @@
         }
 
         .footer-section li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .footer-section a {
-            color: #e2e8f0;
-            text-decoration: none;
-            transition: var(--transition);
+            color: var(--accent-color); /* Blue links in footer */
         }
 
         .footer-section a:hover {
-            color: white;
+            color: #0059b2; /* Darker blue on hover */
             text-decoration: underline;
+            text-underline-offset: var(--link-hover-underline-offset);
         }
+
 
         .copyright {
             text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0; /* Subtle copyright border */
+            margin-top: 30px;
             font-size: 0.9rem;
         }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .algo-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .topics ul {
-                flex-direction: column;
-            }
-
-            .topics li {
-                margin-bottom: 5px;
-            }
+        .copyright a {
+            color: var(--accent-color);
         }
 
-        /* Animations */
+
+        /* Responsive Design - Apple Inspired Breakpoints */
+        @media (max-width: 1068px) {
+            .container {
+                padding: 0 20px;
+            }
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2rem; }
+            header { padding: 100px 0 80px 0; }
+            header h1 { font-size: 3.5rem; }
+            header p { font-size: 1.3rem; }
+            .week-header h2 { font-size: 2.5rem; }
+            .topics h3 { font-size: 1.6rem; }
+            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+            .footer-content { justify-content: space-around; } /* Adjust footer spacing */
+
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; }
+            header { padding: 80px 0 60px 0; }
+            header h1 { font-size: 3rem; }
+            header p { font-size: 1.2rem; }
+            .week-header h2 { font-size: 2rem; }
+            .topics h3 { font-size: 1.4rem; }
+            .algo-grid { grid-template-columns: 1fr; } /* Single column on smaller screens */
+            .topics ul { flex-direction: column; align-items: center; } /* Stack topics on smaller screens */
+            .topics li { margin-bottom: 10px; }
+            .footer-content { flex-direction: column; text-align: center; } /* Stack footer sections */
+            .footer-section { margin-bottom: 30px; }
+            .footer-section h3, .copyright { text-align: center; }
+        }
+
+
+        /* Animations - Fade In */
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+
+        /* Scroll to Top Button - Minimalist */
         .scroll-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--secondary-color);
+            width: 45px;
+            height: 45px;
+            background-color: rgba(0, 0, 0, 0.1); /* Subtle dark background */
             color: white;
             border-radius: 50%;
             display: flex;
@@ -335,8 +399,8 @@
             cursor: pointer;
             opacity: 0;
             visibility: hidden;
-            transition: var(--transition);
-            box-shadow: var(--box-shadow);
+            transition: opacity var(--transition-duration), visibility var(--transition-duration), background-color var(--transition-duration);
+            box-shadow: var(--card-shadow);
             z-index: 100;
         }
 
@@ -346,39 +410,42 @@
         }
 
         .scroll-top:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-3px);
+            background-color: rgba(0, 0, 0, 0.2); /* Slightly darker on hover */
         }
 
-        /* Tab navigation for each week */
-        .tab-container {
+        .scroll-top i {
+            font-size: 1.2rem;
+        }
+
+
+        /* Tab Navigation - Keeping it simple, can be removed if not needed */
+        .tab-container { margin-bottom: 60px; }
+        .tab-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center; /* Center tabs */
             margin-bottom: 30px;
         }
 
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
         .tab-btn {
-            background-color: var(--bg-color);
-            border: 1px solid #e2e8f0;
-            padding: 10px 20px;
+            background-color: #f0f0f0; /* Light tab background */
+            border: none;
+            padding: 12px 25px;
             cursor: pointer;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
+            border-radius: 30px;
+            transition: background-color var(--transition-duration), color var(--transition-duration);
+            font-weight: 500;
+            font-size: 1.1rem;
         }
 
         .tab-btn.active {
-            background-color: var(--secondary-color);
+            background-color: var(--accent-color);
             color: white;
-            border-color: var(--secondary-color);
         }
 
         .tab-btn:hover:not(.active) {
-            background-color: #e2e8f0;
+            background-color: #e0e0e0; /* Slightly darker on hover */
         }
 
         .tab-content {
@@ -390,36 +457,29 @@
             animation: fadeIn 0.5s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
+
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Algorithms Learning Repository</h1>
-            <p>Interactive visualizations and implementations of various algorithms based on the "Grokking Algorithms" book. Organized as a 4-week learning roadmap to help you understand fundamental algorithms and data structures through visual, interactive examples.</p>
-            <a href="#weeks" class="btn">Explore Algorithms <i class="fas fa-arrow-right"></i></a>
+            <h1>Unlock the Power of Algorithms</h1>
+            <p>Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the "Grokking Algorithms" approach.</p>
+            <a href="#weeks" class="btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
         </div>
     </header>
 
     <main class="container" id="weeks">
         <section id="week1" class="week-container">
             <div class="week-header">
-                <h2>Week 1: Introduction to Algorithms</h2>
+                <h2>Week 1: Foundations of Algorithmic Thinking</h2>
             </div>
             <div class="week-description">
-                <p>The first week covers fundamental concepts in algorithms, providing a solid foundation for more advanced topics.</p>
+                <p>Begin your journey with essential algorithm concepts. This week lays the groundwork for efficient problem-solving and introduces core techniques like binary search and recursion.</p>
             </div>
 
             <div class="topics">
-                <h3>Topics Covered</h3>
+                <h3>Week 1 Topics</h3>
                 <ul>
                     <li>Introduction to Algorithms</li>
                     <li>Binary Search</li>
@@ -433,17 +493,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Binary Search</div>
                     <div class="algo-card-body">
-                        <p>Interactive visualization of the binary search algorithm on sorted arrays.</p>
+                        <p>Visualize the efficiency of binary search in sorted datasets. Step through interactive examples to understand its logarithmic time complexity and practical applications.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(log n)</div>
                             <div><span>Space Complexity:</span> O(1)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Step-by-step visualization</li>
-                                <li>Interactive search</li>
-                                <li>Code explanation</li>
+                                <li>Interactive Visualization</li>
+                                <li>Step-by-Step Breakdown</li>
+                                <li>Code Explanation & Examples</li>
                             </ul>
                         </div>
                     </div>
@@ -455,17 +515,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Selection Sort</div>
                     <div class="algo-card-body">
-                        <p>Visual representation of the selection sort algorithm for array sorting.</p>
+                        <p>Grasp the fundamentals of sorting algorithms with Selection Sort. Observe its step-by-step process and analyze its quadratic time complexity in action.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n²)</div>
                             <div><span>Space Complexity:</span> O(1)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Animated sorting process</li>
-                                <li>Step tracking</li>
-                                <li>Code walkthrough</li>
+                                <li>Animated Sorting Process</li>
+                                <li>Visual Step Tracking</li>
+                                <li>Algorithm Walkthrough</li>
                             </ul>
                         </div>
                     </div>
@@ -475,15 +535,15 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Recursion Examples</div>
+                    <div class="algo-card-header">Recursion in Action</div>
                     <div class="algo-card-body">
-                        <p>Interactive examples of recursive functions and their execution.</p>
+                        <p>Explore the power of recursion through interactive examples. Understand how recursive functions work and visualize the call stack in action.</p>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Factorial calculation</li>
-                                <li>Fibonacci sequence</li>
-                                <li>Visualization of the call stack</li>
+                                <li>Factorial Calculation Example</li>
+                                <li>Fibonacci Sequence Visualization</li>
+                                <li>Call Stack Exploration</li>
                             </ul>
                         </div>
                     </div>
@@ -493,15 +553,15 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Big O Visualization</div>
+                    <div class="algo-card-header">Big O Complexity</div>
                     <div class="algo-card-body">
-                        <p>Graphical representation of different time complexities and their growth rates.</p>
+                        <p>Visually compare different time complexities and their growth rates. Gain an intuitive understanding of Big O notation and its importance in algorithm analysis.</p>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive comparison of O(1), O(log n), O(n), O(n log n), O(n²), and O(2ⁿ)</li>
-                                <li>Visual growth charts</li>
-                                <li>Real-world examples</li>
+                                <li>Interactive Complexity Comparison</li>
+                                <li>Visual Growth Charts</li>
+                                <li>Real-World Complexity Scenarios</li>
                             </ul>
                         </div>
                     </div>
@@ -514,20 +574,20 @@
 
         <section id="week2" class="week-container">
             <div class="week-header">
-                <h2>Week 2: Arrays, Linked Lists, and Recursion</h2>
+                <h2>Week 2: Data Structures and Recursive Strategies</h2>
             </div>
             <div class="week-description">
-                <p>This week focuses on fundamental data structures and recursive problem-solving techniques.</p>
+                <p>Delve deeper into data structures and advanced recursion. Learn about arrays, linked lists, and divide-and-conquer algorithms, essential tools for efficient data management.</p>
             </div>
 
             <div class="topics">
-                <h3>Topics Covered</h3>
+                <h3>Week 2 Topics</h3>
                 <ul>
-                    <li>Arrays and Their Limitations</li>
-                    <li>Linked Lists (Singly and Doubly Linked)</li>
-                    <li>Advanced Recursion Techniques</li>
-                    <li>Divide and Conquer Algorithms</li>
-                    <li>Memory Management in Data Structures</li>
+                    <li>Arrays and Limitations</li>
+                    <li>Linked Lists (Singly & Doubly)</li>
+                    <li>Advanced Recursion</li>
+                    <li>Divide and Conquer</li>
+                    <li>Memory Management</li>
                 </ul>
             </div>
 
@@ -535,17 +595,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Array Operations</div>
                     <div class="algo-card-body">
-                        <p>Interactive visualization of array operations and their performance characteristics.</p>
+                        <p>Explore array operations and their performance characteristics. Visualize access, insertion, and deletion to understand array efficiency and limitations.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> Various (O(1) for access, O(n) for insertion/deletion)</div>
+                            <div><span>Time Complexity:</span> O(1) Access, O(n) Insert/Delete</div>
                             <div><span>Space Complexity:</span> O(n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Visual comparison of operations</li>
-                                <li>Performance metrics</li>
-                                <li>Real-time manipulation</li>
+                                <li>Visual Operation Comparison</li>
+                                <li>Performance Metrics Display</li>
+                                <li>Real-time Array Manipulation</li>
                             </ul>
                         </div>
                     </div>
@@ -555,19 +615,19 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Linked List</div>
+                    <div class="algo-card-header">Linked Lists</div>
                     <div class="algo-card-body">
-                        <p>Implementation and visualization of linked lists data structures.</p>
+                        <p>Implement and visualize linked lists, a dynamic data structure. Compare singly and doubly linked lists and understand their advantages over arrays.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(1) for insertion/deletion at known positions, O(n) for search</div>
+                            <div><span>Time Complexity:</span> O(1) Insert/Delete (known), O(n) Search</div>
                             <div><span>Space Complexity:</span> O(n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive node creation/deletion</li>
-                                <li>Pointer visualization</li>
-                                <li>Comparison with arrays</li>
+                                <li>Interactive Node Manipulation</li>
+                                <li>Pointer Visualization</li>
+                                <li>Array vs. Linked List Comparison</li>
                             </ul>
                         </div>
                     </div>
@@ -577,19 +637,19 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Recursive Divide & Conquer</div>
+                    <div class="algo-card-header">Divide & Conquer Recursion</div>
                     <div class="algo-card-body">
-                        <p>Examples of divide and conquer algorithms using recursive approaches.</p>
+                        <p>Master divide and conquer algorithms using recursion. Visualize Merge Sort and understand how breaking problems down leads to efficient solutions.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(n log n) for merge sort</div>
-                            <div><span>Space Complexity:</span> O(n) for merge sort</div>
+                            <div><span>Time Complexity:</span> O(n log n) Merge Sort</div>
+                            <div><span>Space Complexity:</span> O(n) Merge Sort</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Merge sort visualization</li>
-                                <li>Recursive tree exploration</li>
-                                <li>Step-by-step execution</li>
+                                <li>Merge Sort Visualization</li>
+                                <li>Recursive Tree Exploration</li>
+                                <li>Step-by-Step Execution Analysis</li>
                             </ul>
                         </div>
                     </div>
@@ -601,13 +661,13 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Memory Visualization</div>
                     <div class="algo-card-body">
-                        <p>Visual representation of memory allocation for different data structures.</p>
+                        <p>Visualize memory allocation for different data structures. Compare contiguous and linked memory and understand memory fragmentation and usage patterns.</p>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Comparison of contiguous vs linked memory allocation</li>
-                                <li>Fragmentation demonstration</li>
-                                <li>Memory usage patterns</li>
+                                <li>Contiguous vs. Linked Memory</li>
+                                <li>Fragmentation Demonstration</li>
+                                <li>Memory Usage Pattern Analysis</li>
                             </ul>
                         </div>
                     </div>
@@ -620,18 +680,18 @@
 
         <section id="week3" class="week-container">
             <div class="week-header">
-                <h2>Week 3: Quicksort, Hash Tables, and Graphs</h2>
+                <h2>Week 3: Advanced Sorting, Hashing, and Graph Algorithms</h2>
             </div>
             <div class="week-description">
-                <p>This week explores more advanced algorithms and data structures that form the foundation of many complex applications.</p>
+                <p>Expand your algorithmic toolkit with advanced sorting, hashing techniques, and graph algorithms. Explore Quicksort, Hash Tables, and fundamental graph traversal methods.</p>
             </div>
 
             <div class="topics">
-                <h3>Topics Covered</h3>
+                <h3>Week 3 Topics</h3>
                 <ul>
-                    <li>Quicksort Algorithm and Analysis</li>
-                    <li>Hash Tables and Hash Functions</li>
-                    <li>Collision Resolution Strategies</li>
+                    <li>Quicksort Algorithm</li>
+                    <li>Hash Tables & Functions</li>
+                    <li>Collision Resolution</li>
                     <li>Graph Representation</li>
                     <li>Breadth-First Search (BFS)</li>
                     <li>Depth-First Search (DFS)</li>
@@ -642,17 +702,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Quicksort Visualization</div>
                     <div class="algo-card-body">
-                        <p>Interactive visualization of the quicksort algorithm and its partitioning process.</p>
+                        <p>Visualize Quicksort, a highly efficient sorting algorithm. Observe its partitioning process and analyze its average and worst-case time complexities.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(n log n) average case, O(n²) worst case</div>
+                            <div><span>Time Complexity:</span> O(n log n) Avg, O(n²) Worst</div>
                             <div><span>Space Complexity:</span> O(log n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Animated pivot selection</li>
-                                <li>Partitioning visualization</li>
-                                <li>Performance comparison</li>
+                                <li>Animated Pivot Selection</li>
+                                <li>Partitioning Process Visualization</li>
+                                <li>Performance Comparison</li>
                             </ul>
                         </div>
                     </div>
@@ -662,19 +722,19 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Hash Table</div>
+                    <div class="algo-card-header">Hash Tables</div>
                     <div class="algo-card-body">
-                        <p>Implementation and visualization of hash tables and their operation.</p>
+                        <p>Implement and visualize Hash Tables and their key operations. Understand hash functions, collision resolution, and the efficiency of hash-based data retrieval.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(1) average for insert/search/delete, O(n) worst case</div>
+                            <div><span>Time Complexity:</span> O(1) Avg, O(n) Worst (Insert/Search/Delete)</div>
                             <div><span>Space Complexity:</span> O(n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive hash function demonstration</li>
-                                <li>Collision resolution visualization</li>
-                                <li>Performance comparison</li>
+                                <li>Interactive Hash Function Demo</li>
+                                <li>Collision Resolution Visualization</li>
+                                <li>Performance Analysis</li>
                             </ul>
                         </div>
                     </div>
@@ -684,15 +744,15 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Graph Representation</div>
+                    <div class="algo-card-header">Graph Representations</div>
                     <div class="algo-card-body">
-                        <p>Visual comparison of different ways to represent graphs in data structures.</p>
+                        <p>Compare different graph representations in data structures. Visualize adjacency lists and matrices and understand their trade-offs in space and time.</p>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive creation of graphs</li>
-                                <li>Conversion between adjacency lists and matrices</li>
-                                <li>Comparison of space and time requirements</li>
+                                <li>Interactive Graph Creation</li>
+                                <li>Adjacency List vs. Matrix Conversion</li>
+                                <li>Space & Time Requirement Comparison</li>
                             </ul>
                         </div>
                     </div>
@@ -702,19 +762,19 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">Graph Traversal</div>
+                    <div class="algo-card-header">Graph Traversal (BFS & DFS)</div>
                     <div class="algo-card-body">
-                        <p>Visualization of graph traversal algorithms (BFS and DFS).</p>
+                        <p>Visualize graph traversal algorithms, Breadth-First Search (BFS) and Depth-First Search (DFS). Step through animations and understand their pathfinding strategies.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(V + E) for both BFS and DFS</div>
+                            <div><span>Time Complexity:</span> O(V + E) (BFS & DFS)</div>
                             <div><span>Space Complexity:</span> O(V)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Step-by-step traversal animation</li>
-                                <li>Path highlighting</li>
-                                <li>Queue/stack visualization for BFS/DFS</li>
+                                <li>Step-by-Step Traversal Animation</li>
+                                <li>Path Highlighting</li>
+                                <li>Queue/Stack Visualization (BFS/DFS)</li>
                             </ul>
                         </div>
                     </div>
@@ -728,21 +788,21 @@
         <!-- Updated Week 4 Section -->
         <section id="week4" class="week-container">
             <div class="week-header">
-                <h2>Week 4: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors</h2>
+                <h2>Week 4: Optimization and Proximity Algorithms</h2>
             </div>
             <div class="week-description">
-                <p>This week covers advanced algorithm paradigms that are essential for solving complex optimization and classification problems.</p>
+                <p>Conclude your journey with advanced algorithm paradigms. Explore Greedy Algorithms, Dynamic Programming, and the K-Nearest Neighbors algorithm for complex problem-solving.</p>
             </div>
 
             <div class="topics">
-                <h3>Topics Covered</h3>
+                <h3>Week 4 Topics</h3>
                 <ul>
-                    <li>Greedy Algorithm Design and Analysis</li>
-                    <li>Dynamic Programming Principles</li>
+                    <li>Greedy Algorithms</li>
+                    <li>Dynamic Programming</li>
                     <li>Memoization vs. Tabulation</li>
-                    <li>K-nearest neighbors Algorithm</li>
-                    <li>Feature Scaling and Distance Metrics</li>
-                    <li>NP-Complete Problems and Approximation Algorithms</li>
+                    <li>K-Nearest Neighbors (KNN)</li>
+                    <li>Feature Scaling & Metrics</li>
+                    <li>NP-Complete & Approximation</li>
                 </ul>
             </div>
 
@@ -750,17 +810,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Greedy Algorithms</div>
                     <div class="algo-card-body">
-                        <p>Interactive visualization of greedy algorithms and their decision-making process.</p>
+                        <p>Visualize greedy algorithms and their decision-making processes. Understand how locally optimal choices can lead to efficient, though not always perfect, solutions.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> Various (typically O(n log n) due to sorting)</div>
+                            <div><span>Time Complexity:</span> Varies (O(n log n) common)</div>
                             <div><span>Space Complexity:</span> O(n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Step-by-step decision making</li>
-                                <li>Visual proof of optimality/sub-optimality</li>
-                                <li>Real-world applications</li>
+                                <li>Step-by-Step Decision Visualization</li>
+                                <li>Optimality vs. Sub-optimality</li>
+                                <li>Real-World Applications</li>
                             </ul>
                         </div>
                     </div>
@@ -772,17 +832,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Dynamic Programming</div>
                     <div class="algo-card-body">
-                        <p>Visualization of dynamic programming solutions and subproblem structure.</p>
+                        <p>Visualize Dynamic Programming solutions and subproblem structures. Master techniques like memoization and tabulation for solving complex optimization problems.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> Various (typically O(n²) for 2D problems)</div>
-                            <div><span>Space Complexity:</span> Various (O(n) to O(n²))</div>
+                            <div><span>Time Complexity:</span> Varies (O(n²) common)</div>
+                            <div><span>Space Complexity:</span> O(n) - O(n²)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Subproblem visualization</li>
-                                <li>Memoization table building</li>
-                                <li>Optimal substructure demonstration</li>
+                                <li>Subproblem Visualization</li>
+                                <li>Memoization Table Building</li>
+                                <li>Optimal Substructure Demo</li>
                             </ul>
                         </div>
                     </div>
@@ -794,17 +854,17 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Knapsack Problem</div>
                     <div class="algo-card-body">
-                        <p>Interactive solution to the classic knapsack problem using various approaches.</p>
+                        <p>Solve the classic Knapsack Problem interactively. Explore greedy and dynamic programming approaches and visualize weight-value trade-offs.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(n×W) where n is number of items and W is capacity</div>
-                            <div><span>Space Complexity:</span> O(n×W)</div>
+                            <div><span>Time Complexity:</span> O(n*W)</div>
+                            <div><span>Space Complexity:</span> O(n*W)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive item selection</li>
-                                <li>Weight/value tradeoff visualization</li>
-                                <li>Comparison of greedy vs. DP approaches</li>
+                                <li>Interactive Item Selection</li>
+                                <li>Weight-Value Trade-off Visualization</li>
+                                <li>Greedy vs. DP Comparison</li>
                             </ul>
                         </div>
                     </div>
@@ -814,19 +874,19 @@
                 </div>
 
                 <div class="algo-card">
-                    <div class="algo-card-header">K-nearest neighbors</div>
+                    <div class="algo-card-header">K-Nearest Neighbors (KNN)</div>
                     <div class="algo-card-body">
-                        <p>Implementation of K-nearest neighbors algorithm for classification tasks.</p>
+                        <p>Implement the K-Nearest Neighbors algorithm for classification tasks. Visualize distance metrics and parameter tuning in this fundamental machine learning algorithm.</p>
                         <div class="complexity">
-                            <div><span>Time Complexity:</span> O(n×d) for prediction (n = dataset size, d = dimensions)</div>
+                            <div><span>Time Complexity:</span> O(n*d) Prediction</div>
                             <div><span>Space Complexity:</span> O(n)</div>
                         </div>
                         <div class="features">
-                            <h4>Features</h4>
+                            <h4>Key Features</h4>
                             <ul>
-                                <li>Interactive data point classification</li>
-                                <li>Distance metric visualization</li>
-                                <li>Parameter tuning</li>
+                                <li>Interactive Data Classification</li>
+                                <li>Distance Metric Visualization</li>
+                                <li>Parameter Tuning Exploration</li>
                             </ul>
                         </div>
                     </div>
@@ -842,31 +902,31 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>About the Project</h3>
-                    <p>This repository contains interactive visualizations and implementations of various algorithms based on the "Grokking Algorithms" book.</p>
+                    <h3>About Algorithms Repository</h3>
+                    <p>A project dedicated to making algorithms and data structures accessible and understandable through interactive visualizations. Inspired by "Grokking Algorithms".</p>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Learning Resources</h3>
+                    <h3>Explore More</h3>
                     <ul>
-                        <li><a href="https://www.manning.com/books/grokking-algorithms" target="_blank" rel="noopener noreferrer">Grokking Algorithms by Aditya Bhargava</a></li>
-                        <li><a href="https://www.khanacademy.org/computing/computer-science/algorithms" target="_blank" rel="noopener noreferrer">Khan Academy: Algorithms</a></li>
-                        <li><a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/" target="_blank" rel="noopener noreferrer">MIT OpenCourseWare: Introduction to Algorithms</a></li>
+                        <li><a href="https://www.manning.com/books/grokking-algorithms" target="_blank" rel="noopener noreferrer">Grokking Algorithms Book</a></li>
+                        <li><a href="https://www.khanacademy.org/computing/computer-science/algorithms" target="_blank" rel="noopener noreferrer">Khan Academy Algorithms</a></li>
+                        <li><a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/" target="_blank" rel="noopener noreferrer">MIT Intro to Algorithms</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Quick Links</h3>
+                    <h3>Quick Navigation</h3>
                     <ul>
-                        <li><a href="#week1">Week 1: Introduction to Algorithms</a></li>
-                        <li><a href="#week2">Week 2: Arrays, Linked Lists, and Recursion</a></li>
-                        <li><a href="#week3">Week 3: Quicksort, Hash Tables, and Graphs</a></li>
-                        <li><a href="#week4">Week 4: Greedy Algorithms, Dynamic Programming, and KNN</a></li>
+                        <li><a href="#week1">Week 1: Algorithm Foundations</a></li>
+                        <li><a href="#week2">Week 2: Data Structures & Recursion</a></li>
+                        <li><a href="#week3">Week 3: Sorting, Hashing & Graphs</a></li>
+                        <li><a href="#week4">Week 4: Optimization & KNN</a></li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 Algorithms Learning Repository. Licensed under the <a href="LICENSE" style="color: #e2e8f0;">MIT License</a>.</p>
+                <p>&copy; 2023 Algorithms Learning Repository. <a href="LICENSE">MIT License</a>.</p>
             </div>
         </div>
     </footer>
@@ -876,9 +936,7 @@
     </div>
 
     <script>
-        // Intersection Observer for fade-in animations
         document.addEventListener('DOMContentLoaded', function() {
-            // Fade in sections as they appear in viewport
             const sections = document.querySelectorAll('.week-container');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -886,51 +944,30 @@
                         entry.target.classList.add('visible');
                     }
                 });
-            }, {
-                threshold: 0.1
-            });
+            }, { threshold: 0.1 });
 
-            sections.forEach(section => {
-                observer.observe(section);
-            });
+            sections.forEach(section => observer.observe(section));
 
-            // Scroll to top button
             const scrollTopBtn = document.getElementById('scrollTop');
-            
             window.addEventListener('scroll', () => {
-                if (window.pageYOffset > 300) {
-                    scrollTopBtn.classList.add('visible');
-                } else {
-                    scrollTopBtn.classList.remove('visible');
-                }
+                scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
             });
-
             scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            // Smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
-                        window.scrollTo({
-                            top: target.offsetTop - 20,
-                            behavior: 'smooth'
-                        });
+                        window.scrollTo({ top: target.offsetTop - 20, behavior: 'smooth' });
                     }
                 });
             });
 
-            // Initialize all sections as visible on page load
             setTimeout(() => {
-                sections.forEach(section => {
-                    section.classList.add('visible');
-                });
+                sections.forEach(section => section.classList.add('visible'));
             }, 300);
         });
     </script>
