@@ -1,1313 +1,1305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Programming Visualization</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        select, input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .visualization-container {
-            margin: 20px 0;
-            min-height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            position: relative;
-        }
-        .step-display {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-            min-height: 60px;
-        }
-        .code-block {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            margin: 15px 0;
-        }
-        .complexity {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .complexity-item {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .tab.active {
-            border: 1px solid #ddd;
-            border-bottom: 1px solid white;
-            border-radius: 4px 4px 0 0;
-            margin-bottom: -1px;
-            background-color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .example-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .comparison-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .comparison-item {
-            flex: 1;
-            min-width: 300px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-        }
-        .comparison-item h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .activity-log {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .activity-log p {
-            margin: 5px 0;
-        }
-        .dp-table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 20px 0;
-        }
-        .dp-table th, .dp-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        .dp-table th {
-            background-color: #f2f2f2;
-        }
-        .dp-cell {
-            position: relative;
-            min-width: 40px;
-            min-height: 40px;
-        }
-        .dp-cell.highlight {
-            background-color: #fff3cd;
-        }
-        .dp-cell.current {
-            background-color: #d4edda;
-        }
-        .dp-cell.optimal {
-            background-color: #cce5ff;
-        }
-        .dp-cell-value {
-            font-weight: bold;
-        }
-        .dp-cell-formula {
-            font-size: 10px;
-            color: #666;
-            margin-top: 4px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Programming Visualization</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .controls {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    select, input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .visualization-container {
+      margin: 20px 0;
+      min-height: 300px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+    }
+    .step-display {
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #e8f4f8;
+      border-radius: 4px;
+      min-height: 60px;
+    }
+    .code-block {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+      margin: 15px 0;
+    }
+    .complexity {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .complexity-item {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .tab.active {
+      border: 1px solid #ddd;
+      border-bottom: 1px solid white;
+      border-radius: 4px 4px 0 0;
+      margin-bottom: -1px;
+      background-color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .example-container {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+    }
+    .comparison-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .comparison-item {
+      flex: 1;
+      min-width: 300px;
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+    }
+    .comparison-item h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .activity-log {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .activity-log p {
+      margin: 5px 0;
+    }
+    .dp-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .dp-table th, .dp-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .dp-table th {
+      background-color: #f2f2f2;
+    }
+    .dp-cell {
+      position: relative;
+      min-width: 40px;
+      min-height: 40px;
+    }
+    .dp-cell.highlight {
+      background-color: #fff3cd;
+    }
+    .dp-cell.current {
+      background-color: #d4edda;
+    }
+    .dp-cell.optimal {
+      background-color: #cce5ff;
+    }
+    .dp-cell-value {
+      font-weight: bold;
+    }
+    .dp-cell-formula {
+      font-size: 10px;
+      color: #666;
+      margin-top: 4px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Dynamic Programming Visualization</h1>
-    
-    <div class="container">
-        <h2>Introduction to Dynamic Programming</h2>
-        <p>
-            Dynamic Programming (DP) is a method for solving complex problems by breaking them down into simpler subproblems.
-            It is applicable when the subproblems overlap and have optimal substructure.
-        </p>
-        <p>
-            Key characteristics of Dynamic Programming problems:
-        </p>
-        <ul>
-            <li><strong>Overlapping Subproblems:</strong> The same subproblems are solved multiple times</li>
-            <li><strong>Optimal Substructure:</strong> An optimal solution to the problem contains optimal solutions to subproblems</li>
-        </ul>
-        <p>
-            Dynamic Programming uses two main approaches:
-        </p>
-        <div class="comparison-container">
-            <div class="comparison-item">
-                <h3>Top-Down (Memoization)</h3>
-                <p>Start with the original problem and recursively break it down, storing results to avoid redundant calculations.</p>
-                <p>Advantages: Easier to implement, only calculates needed subproblems.</p>
-            </div>
-            <div class="comparison-item">
-                <h3>Bottom-Up (Tabulation)</h3>
-                <p>Start with the smallest subproblems and build up to the original problem, typically using arrays or tables.</p>
-                <p>Advantages: More efficient, avoids recursion overhead, better space complexity.</p>
-            </div>
-        </div>
+  <h1>Dynamic Programming Visualization</h1>
+  
+  <div class="container">
+    <h2>Introduction to Dynamic Programming</h2>
+    <p>
+      Dynamic Programming (DP) is a method for solving complex problems by breaking them down into simpler subproblems.
+      It is applicable when the subproblems overlap and have optimal substructure.
+    </p>
+    <p>
+      Key characteristics of Dynamic Programming problems:
+    </p>
+    <ul>
+      <li><strong>Overlapping Subproblems:</strong> The same subproblems are solved multiple times</li>
+      <li><strong>Optimal Substructure:</strong> An optimal solution to the problem contains optimal solutions to subproblems</li>
+    </ul>
+    <p>
+      Dynamic Programming uses two main approaches:
+    </p>
+    <div class="comparison-container">
+      <div class="comparison-item">
+        <h3>Top-Down (Memoization)</h3>
+        <p>Start with the original problem and recursively break it down, storing results to avoid redundant calculations.</p>
+        <p>Advantages: Easier to implement, only calculates needed subproblems.</p>
+      </div>
+      <div class="comparison-item">
+        <h3>Bottom-Up (Tabulation)</h3>
+        <p>Start with the smallest subproblems and build up to the original problem, typically using arrays or tables.</p>
+        <p>Advantages: More efficient, avoids recursion overhead, better space complexity.</p>
+      </div>
     </div>
-
-    <div class="container">
-        <div class="tabs">
-            <div class="tab active" data-tab="fibonacci">Fibonacci Sequence</div>
-            <div class="tab" data-tab="lcs">Longest Common Subsequence</div>
-            <div class="tab" data-tab="coin-change">Coin Change Problem</div>
-        </div>
-        
-        <div id="fibonacci" class="tab-content active">
-            <h2>Fibonacci Sequence</h2>
-            <p>
-                The Fibonacci sequence is defined as: F(n) = F(n-1) + F(n-2) with base cases F(0) = 0 and F(1) = 1.
-                It's a classic example to demonstrate the power of dynamic programming over naive recursion.
-            </p>
-            
-            <div class="controls">
-                <label for="fibonacci-n">Calculate F(n) where n =</label>
-                <input type="number" id="fibonacci-n" min="1" max="40" value="10">
-                <button id="fibonacci-recursive-btn">Recursive (No DP)</button>
-                <button id="fibonacci-memoization-btn">Memoization (Top-Down)</button>
-                <button id="fibonacci-tabulation-btn">Tabulation (Bottom-Up)</button>
-                <button id="fibonacci-step-btn">Step Through</button>
-                <button id="fibonacci-reset-btn">Reset</button>
-            </div>
-            
-            <div class="visualization-container" id="fibonacci-visualization">
-                <!-- Fibonacci visualization will appear here -->
-            </div>
-            
-            <div class="step-display" id="fibonacci-step-display">
-                <p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>
-            </div>
-            
-            <div class="activity-log" id="fibonacci-log"></div>
-            
-            <h3>Algorithm Comparison</h3>
-            <div class="comparison-container">
-                <div class="comparison-item">
-                    <h3>Recursive (No DP)</h3>
-                    <div class="code-block">
-                        <pre>
+  </div>
+  
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" data-tab="fibonacci">Fibonacci Sequence</div>
+      <div class="tab" data-tab="lcs">Longest Common Subsequence</div>
+      <div class="tab" data-tab="coin-change">Coin Change Problem</div>
+    </div>
+    
+    <!-- Fibonacci Tab -->
+    <div id="fibonacci" class="tab-content active">
+      <h2>Fibonacci Sequence</h2>
+      <p>
+        The Fibonacci sequence is defined as: F(n) = F(n-1) + F(n-2) with base cases F(0) = 0 and F(1) = 1.
+        This is a classic example demonstrating how dynamic programming improves efficiency over naive recursion.
+      </p>
+      
+      <div class="controls">
+        <label for="fibonacci-n">Calculate F(n) where n =</label>
+        <input type="number" id="fibonacci-n" min="0" max="40" value="10">
+        <button id="fibonacci-recursive-btn">Recursive (No DP)</button>
+        <button id="fibonacci-memoization-btn">Memoization (Top-Down)</button>
+        <button id="fibonacci-tabulation-btn">Tabulation (Bottom-Up)</button>
+        <button id="fibonacci-step-btn">Step Through</button>
+        <button id="fibonacci-reset-btn">Reset</button>
+      </div>
+      
+      <div class="visualization-container" id="fibonacci-visualization">
+        <!-- Fibonacci visualization will appear here -->
+      </div>
+      
+      <div class="step-display" id="fibonacci-step-display">
+        <p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>
+      </div>
+      
+      <div class="activity-log" id="fibonacci-log"></div>
+      
+      <h3>Algorithm Comparison</h3>
+      <div class="comparison-container">
+        <div class="comparison-item">
+          <h3>Recursive (No DP)</h3>
+          <div class="code-block">
+            <pre>
 function fibonacci(n):
     if n <= 1:
         return n
-    return fibonacci(n-1) + fibonacci(n-2)</pre>
-                    </div>
-                    <p>Time Complexity: O(2ⁿ)</p>
-                    <p>Space Complexity: O(n) for the call stack</p>
-                </div>
-                <div class="comparison-item">
-                    <h3>Memoization (Top-Down)</h3>
-                    <div class="code-block">
-                        <pre>
+    return fibonacci(n-1) + fibonacci(n-2)
+            </pre>
+          </div>
+          <p>Time Complexity: O(2ⁿ)</p>
+          <p>Space Complexity: O(n) for the call stack</p>
+        </div>
+        <div class="comparison-item">
+          <h3>Memoization (Top-Down)</h3>
+          <div class="code-block">
+            <pre>
 function fibonacci(n, memo={}):
     if n in memo:
         return memo[n]
     if n <= 1:
         return n
     memo[n] = fibonacci(n-1, memo) + fibonacci(n-2, memo)
-    return memo[n]</pre>
-                    </div>
-                    <p>Time Complexity: O(n)</p>
-                    <p>Space Complexity: O(n)</p>
-                </div>
-                <div class="comparison-item">
-                    <h3>Tabulation (Bottom-Up)</h3>
-                    <div class="code-block">
-                        <pre>
+    return memo[n]
+            </pre>
+          </div>
+          <p>Time Complexity: O(n)</p>
+          <p>Space Complexity: O(n)</p>
+        </div>
+        <div class="comparison-item">
+          <h3>Tabulation (Bottom-Up)</h3>
+          <div class="code-block">
+            <pre>
 function fibonacci(n):
     if n <= 1:
         return n
-    
-    dp = new array of size n+1
-    dp[0] = 0
-    dp[1] = 1
-    
-    for i from 2 to n:
+    dp = array of size n+1
+    dp[0] = 0, dp[1] = 1
+    for i = 2 to n:
         dp[i] = dp[i-1] + dp[i-2]
-    
-    return dp[n]</pre>
-                    </div>
-                    <p>Time Complexity: O(n)</p>
-                    <p>Space Complexity: O(n)</p>
-                </div>
-            </div>
+    return dp[n]
+            </pre>
+          </div>
+          <p>Time Complexity: O(n)</p>
+          <p>Space Complexity: O(n)</p>
         </div>
-        
-        <div id="lcs" class="tab-content">
-            <h2>Longest Common Subsequence (LCS)</h2>
-            <p>
-                The Longest Common Subsequence problem is to find the longest subsequence common to two sequences.
-                A subsequence is a sequence that appears in the same relative order, but not necessarily contiguous.
-            </p>
-            
-            <div class="controls">
-                <label for="lcs-string1">String 1:</label>
-                <input type="text" id="lcs-string1" value="ABCBDAB" maxlength="15">
-                <label for="lcs-string2">String 2:</label>
-                <input type="text" id="lcs-string2" value="BDCABA" maxlength="15">
-                <button id="lcs-solve-btn">Solve LCS</button>
-                <button id="lcs-step-btn">Step Through</button>
-                <button id="lcs-reset-btn">Reset</button>
-            </div>
-            
-            <div class="visualization-container" id="lcs-visualization">
-                <!-- LCS visualization will appear here -->
-            </div>
-            
-            <div class="step-display" id="lcs-step-display">
-                <p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>
-            </div>
-            
-            <div class="activity-log" id="lcs-log"></div>
-            
-            <h3>Algorithm Explanation</h3>
-            <div class="example-container">
-                <p>The dynamic programming approach for LCS:</p>
-                <ol>
-                    <li>Create a table where cell [i][j] represents the length of LCS of the first i characters of string1 and the first j characters of string2</li>
-                    <li>Fill the table using the following rule:</li>
-                    <ul>
-                        <li>If the characters match: LCS[i][j] = 1 + LCS[i-1][j-1]</li>
-                        <li>If they don't match: LCS[i][j] = max(LCS[i-1][j], LCS[i][j-1])</li>
-                    </ul>
-                    <li>The value in the bottom-right cell is the length of the LCS</li>
-                    <li>To find the actual LCS, backtrack through the table</li>
-                </ol>
-                
-                <div class="code-block">
-                    <pre>
+      </div>
+    </div>
+    
+    <!-- LCS Tab -->
+    <div id="lcs" class="tab-content">
+      <h2>Longest Common Subsequence (LCS)</h2>
+      <p>
+        The Longest Common Subsequence problem finds the longest subsequence common to two sequences.
+        The subsequence must preserve the order of characters but need not be contiguous.
+      </p>
+      
+      <div class="controls">
+        <label for="lcs-string1">String 1:</label>
+        <input type="text" id="lcs-string1" value="ABCBDAB" maxlength="15">
+        <label for="lcs-string2">String 2:</label>
+        <input type="text" id="lcs-string2" value="BDCABA" maxlength="15">
+        <button id="lcs-solve-btn">Solve LCS</button>
+        <button id="lcs-step-btn">Step Through</button>
+        <button id="lcs-reset-btn">Reset</button>
+      </div>
+      
+      <div class="visualization-container" id="lcs-visualization">
+        <!-- LCS visualization will appear here -->
+      </div>
+      
+      <div class="step-display" id="lcs-step-display">
+        <p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>
+      </div>
+      
+      <div class="activity-log" id="lcs-log"></div>
+      
+      <h3>Algorithm Explanation</h3>
+      <div class="example-container">
+        <p>The dynamic programming approach for LCS:</p>
+        <ol>
+          <li>Create a table where cell [i][j] represents the length of LCS of the first i characters of String 1 and the first j characters of String 2.</li>
+          <li>If the characters match: dp[i][j] = dp[i-1][j-1] + 1.</li>
+          <li>If they don’t match: dp[i][j] = max(dp[i-1][j], dp[i][j-1]).</li>
+          <li>The bottom-right cell contains the length of the LCS.</li>
+          <li>Backtrack through the table to reconstruct the LCS.</li>
+        </ol>
+        <div class="code-block">
+          <pre>
 function LCS(string1, string2):
-    m = length of string1
-    n = length of string2
-    
-    // Create a table of size (m+1) x (n+1)
-    dp = new table of size (m+1) x (n+1)
-    
-    // Fill the dp table
-    for i from 0 to m:
-        for j from 0 to n:
-            if i == 0 or j == 0:
-                dp[i][j] = 0
-            else if string1[i-1] == string2[j-1]:
+    m = length of string1, n = length of string2
+    dp = table of size (m+1) x (n+1) filled with 0
+    for i = 1 to m:
+        for j = 1 to n:
+            if string1[i-1] == string2[j-1]:
                 dp[i][j] = dp[i-1][j-1] + 1
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-    
-    // The length of LCS is in dp[m][n]
-    // To find the actual LCS, backtrack through the table
-    return dp[m][n] and the actual LCS</pre>
-                </div>
-            </div>
-            
-            <div class="complexity">
-                <div class="complexity-item">
-                    <h4>Time Complexity</h4>
-                    <p><strong>O(m × n)</strong> - Where m and n are the lengths of the two strings</p>
-                </div>
-                <div class="complexity-item">
-                    <h4>Space Complexity</h4>
-                    <p><strong>O(m × n)</strong> - For the DP table</p>
-                </div>
-            </div>
+    Backtrack to get LCS
+    return dp[m][n] and the LCS
+          </pre>
         </div>
-        
-        <div id="coin-change" class="tab-content">
-            <h2>Coin Change Problem (DP Approach)</h2>
-            <p>
-                The Coin Change problem is to find the minimum number of coins needed to make a given amount.
-                Unlike the greedy approach, dynamic programming guarantees an optimal solution for any coin system.
-            </p>
-            
-            <div class="controls">
-                <label for="dp-coin-system">Coin System:</label>
-                <select id="dp-coin-system">
-                    <option value="us">US Coins (1, 5, 10, 25)</option>
-                    <option value="euro">Euro Coins (1, 2, 5, 10, 20, 50)</option>
-                    <option value="custom">Custom System (1, 3, 4)</option>
-                </select>
-                <label for="dp-amount">Amount:</label>
-                <input type="number" id="dp-amount" min="1" value="11" max="100">
-                <button id="dp-coin-solve-btn">Solve with DP</button>
-                <button id="dp-coin-step-btn">Step Through</button>
-                <button id="dp-coin-reset-btn">Reset</button>
-            </div>
-            
-            <div class="visualization-container" id="dp-coin-visualization">
-                <!-- DP Coin Change visualization will appear here -->
-            </div>
-            
-            <div class="step-display" id="dp-coin-step-display">
-                <p>Select a coin system and amount, then click "Solve with DP" to find the minimum number of coins.</p>
-            </div>
-            
-            <div class="activity-log" id="dp-coin-log"></div>
-            
-            <h3>Algorithm Explanation</h3>
-            <div class="example-container">
-                <p>The dynamic programming approach for the Coin Change problem:</p>
-                <ol>
-                    <li>Create an array dp[] of size amount+1 to store the minimum number of coins needed for each value from 0 to amount</li>
-                    <li>Initialize dp[0] = 0 (it takes 0 coins to make amount 0)</li>
-                    <li>Initialize all other dp values to infinity</li>
-                    <li>For each coin and for each amount from coin value to the target amount, update dp[amount] if using the current coin gives a better solution</li>
-                </ol>
-                
-                <div class="code-block">
-                    <pre>
+      </div>
+      
+      <div class="complexity">
+        <div class="complexity-item">
+          <h4>Time Complexity</h4>
+          <p><strong>O(m × n)</strong> - Where m and n are the lengths of the two strings</p>
+        </div>
+        <div class="complexity-item">
+          <h4>Space Complexity</h4>
+          <p><strong>O(m × n)</strong> - For the DP table</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Coin Change Tab -->
+    <div id="coin-change" class="tab-content">
+      <h2>Coin Change Problem (DP Approach)</h2>
+      <p>
+        The Coin Change problem aims to find the minimum number of coins required to make a given amount.
+        Dynamic Programming ensures an optimal solution regardless of the coin system.
+      </p>
+      
+      <div class="controls">
+        <label for="dp-coin-system">Coin System:</label>
+        <select id="dp-coin-system">
+          <option value="us">US Coins (1, 5, 10, 25)</option>
+          <option value="euro">Euro Coins (1, 2, 5, 10, 20, 50)</option>
+          <option value="custom">Custom System (1, 3, 4)</option>
+        </select>
+        <label for="dp-amount">Amount:</label>
+        <input type="number" id="dp-amount" min="1" value="11" max="100">
+        <button id="dp-coin-solve-btn">Solve with DP</button>
+        <button id="dp-coin-step-btn">Step Through</button>
+        <button id="dp-coin-reset-btn">Reset</button>
+      </div>
+      
+      <div class="visualization-container" id="dp-coin-visualization">
+        <!-- DP Coin Change visualization will appear here -->
+      </div>
+      
+      <div class="step-display" id="dp-coin-step-display">
+        <p>Select a coin system and amount, then click "Solve with DP" to find the minimum number of coins.</p>
+      </div>
+      
+      <div class="activity-log" id="dp-coin-log"></div>
+      
+      <h3>Algorithm Explanation</h3>
+      <div class="example-container">
+        <p>The dynamic programming approach for the Coin Change problem:</p>
+        <ol>
+          <li>Create an array dp[] of size amount+1; initialize dp[0] = 0 and the rest to infinity.</li>
+          <li>For each coin and each value from the coin’s value up to the target amount, update dp[value] if using the coin results in fewer coins.</li>
+          <li>If dp[amount] remains infinity, no solution exists; otherwise, dp[amount] is the answer.</li>
+          <li>Optionally, track the coins used to reconstruct the solution.</li>
+        </ol>
+        <div class="code-block">
+          <pre>
 function coinChange(coins, amount):
-    // Initialize dp array
-    dp = new array of size amount+1
-    dp[0] = 0
-    for i from 1 to amount:
-        dp[i] = infinity
-    
-    // Fill the dp array
-    for coin in coins:
-        for i from coin to amount:
-            dp[i] = min(dp[i], dp[i-coin] + 1)
-    
-    // If dp[amount] is still infinity, no solution exists
-    if dp[amount] == infinity:
+    dp = array of size amount+1, initialize dp[0]=0 and dp[1...amount]=∞
+    coinUsed = array of size amount+1, initialize all to -1
+    for i = 1 to amount:
+        for coin in coins:
+            if i >= coin and dp[i - coin] + 1 < dp[i]:
+                dp[i] = dp[i - coin] + 1
+                coinUsed[i] = coin
+    if dp[amount] == ∞:
         return -1
     else:
-        return dp[amount]</pre>
-                </div>
-            </div>
-            
-            <div class="complexity">
-                <div class="complexity-item">
-                    <h4>Time Complexity</h4>
-                    <p><strong>O(amount × n)</strong> - Where n is the number of coin denominations</p>
-                </div>
-                <div class="complexity-item">
-                    <h4>Space Complexity</h4>
-                    <p><strong>O(amount)</strong> - For the DP array</p>
-                </div>
-            </div>
-            
-            <div class="comparison-container">
-                <div class="comparison-item">
-                    <h3>DP vs. Greedy for Coin Change</h3>
-                    <p>For the example with coins [1, 3, 4] and amount 6:</p>
-                    <ul>
-                        <li><strong>Greedy:</strong> Take 4, then 1, then 1 = 3 coins</li>
-                        <li><strong>DP:</strong> Take 3, then 3 = 2 coins (optimal)</li>
-                    </ul>
-                    <p>Dynamic Programming always finds the optimal solution, while greedy may not.</p>
-                </div>
-                <div class="comparison-item">
-                    <h3>Reconstructing the Solution</h3>
-                    <p>To find which coins to use (not just how many):</p>
-                    <ol>
-                        <li>Keep track of which coin was used for each amount in the DP table</li>
-                        <li>Backtrack from the final amount to reconstruct the coins used</li>
-                    </ol>
-                </div>
-            </div>
+        return dp[amount] and reconstruct the coins used
+          </pre>
         </div>
+      </div>
+      
+      <div class="complexity">
+        <div class="complexity-item">
+          <h4>Time Complexity</h4>
+          <p><strong>O(amount × n)</strong> - Where n is the number of coin denominations</p>
+        </div>
+        <div class="complexity-item">
+          <h4>Space Complexity</h4>
+          <p><strong>O(amount)</strong> - For the DP array</p>
+        </div>
+      </div>
+      
+      <div class="comparison-container">
+        <div class="comparison-item">
+          <h3>DP vs. Greedy for Coin Change</h3>
+          <p>For coins [1, 3, 4] and amount 6:</p>
+          <ul>
+            <li><strong>Greedy:</strong> 4, 1, 1 = 3 coins</li>
+            <li><strong>DP:</strong> 3, 3 = 2 coins (optimal)</li>
+          </ul>
+          <p>Dynamic Programming always finds the optimal solution.</p>
+        </div>
+        <div class="comparison-item">
+          <h3>Reconstructing the Solution</h3>
+          <p>By tracking which coin was used for each amount, you can backtrack to show the coins that make up the optimal solution.</p>
+        </div>
+      </div>
     </div>
-    
-    <div class="container">
-        <h2>When to Use Dynamic Programming</h2>
-        <p>
-            Dynamic Programming is most effective when:
-        </p>
-        <ul>
-            <li><strong>Overlapping Subproblems:</strong> The same calculations are repeated multiple times</li>
-            <li><strong>Optimal Substructure:</strong> The optimal solution can be constructed from optimal solutions of its subproblems</li>
-            <li><strong>No Greedy Choice Property:</strong> Making locally optimal choices doesn't lead to a global optimum</li>
-        </ul>
-        
-        <h3>Common Dynamic Programming Problems</h3>
-        <ul>
-            <li>Knapsack Problem (0/1 and Fractional)</li>
-            <li>Longest Common Subsequence</li>
-            <li>Longest Increasing Subsequence</li>
-            <li>Edit Distance</li>
-            <li>Matrix Chain Multiplication</li>
-            <li>Shortest Path Algorithms (e.g., Floyd-Warshall)</li>
-        </ul>
-    </div>
+  </div>
+  
+  <div class="container">
+    <h2>When to Use Dynamic Programming</h2>
+    <p>
+      Dynamic Programming is most effective when:
+    </p>
+    <ul>
+      <li><strong>Overlapping Subproblems:</strong> The same calculations are repeated multiple times</li>
+      <li><strong>Optimal Substructure:</strong> The optimal solution can be built from optimal solutions of its subproblems</li>
+      <li><strong>No Greedy Choice Property:</strong> Local optimal choices don’t guarantee a global optimum</li>
+    </ul>
+    <h3>Common Dynamic Programming Problems</h3>
+    <ul>
+      <li>Knapsack Problem (0/1 and Fractional)</li>
+      <li>Longest Common Subsequence</li>
+      <li>Longest Increasing Subsequence</li>
+      <li>Edit Distance</li>
+      <li>Matrix Chain Multiplication</li>
+      <li>Shortest Path Algorithms (e.g., Floyd-Warshall)</li>
+    </ul>
+  </div>
 
-    <script>
-        // Common utility functions
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        
-        function setActiveTab(tabId) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Deactivate all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Activate the selected tab and its content
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-        }
-        
-        // Set up tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                setActiveTab(tabId);
-            });
+  <script>
+    // Utility Functions
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function setActiveTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+    }
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        setActiveTab(tabId);
+      });
+    });
+
+    /* -------------------------------------
+       Fibonacci Implementation
+    ------------------------------------- */
+    const fibonacciVisualization = document.getElementById('fibonacci-visualization');
+    const fibonacciStepDisplay = document.getElementById('fibonacci-step-display');
+    const fibonacciLog = document.getElementById('fibonacci-log');
+    let fibonacciSteps = [];
+    let currentFibStep = 0;
+    let fibonacciCalls = 0;
+    let fibonacciMemo = {};
+
+    document.getElementById('fibonacci-recursive-btn').addEventListener('click', calculateFibonacciRecursive);
+    document.getElementById('fibonacci-memoization-btn').addEventListener('click', calculateFibonacciMemoization);
+    document.getElementById('fibonacci-tabulation-btn').addEventListener('click', calculateFibonacciTabulation);
+    document.getElementById('fibonacci-step-btn').addEventListener('click', setupFibonacciSteps);
+    document.getElementById('fibonacci-reset-btn').addEventListener('click', resetFibonacci);
+
+    function calculateFibonacciRecursive() {
+      const n = parseInt(document.getElementById('fibonacci-n').value);
+      if (isNaN(n) || n < 0 || n > 40) {
+        fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
+        return;
+      }
+      resetFibonacci();
+      fibonacciCalls = 0;
+      const startTime = performance.now();
+      const result = fibonacciRecursive(n);
+      const endTime = performance.now();
+      visualizeFibonacciResult('Recursive (No DP)', n, result, fibonacciCalls, endTime - startTime);
+      fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} using recursion. ${fibonacciCalls} calls made in ${(endTime - startTime).toFixed(2)}ms.</p>`;
+      logFibonacci(`Calculated F(${n}) = ${result} recursively with ${fibonacciCalls} calls.`);
+    }
+
+    function fibonacciRecursive(n) {
+      fibonacciCalls++;
+      if (n <= 1) return n;
+      return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+    }
+
+    function calculateFibonacciMemoization() {
+      const n = parseInt(document.getElementById('fibonacci-n').value);
+      if (isNaN(n) || n < 0 || n > 40) {
+        fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
+        return;
+      }
+      resetFibonacci();
+      fibonacciCalls = 0;
+      fibonacciMemo = {};
+      const startTime = performance.now();
+      const result = fibonacciMemoization(n);
+      const endTime = performance.now();
+      visualizeFibonacciResult('Memoization (Top-Down)', n, result, fibonacciCalls, endTime - startTime);
+      fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} using memoization. ${fibonacciCalls} calls made in ${(endTime - startTime).toFixed(2)}ms.</p>`;
+      logFibonacci(`Calculated F(${n}) = ${result} with memoization in ${fibonacciCalls} calls.`);
+    }
+
+    function fibonacciMemoization(n) {
+      fibonacciCalls++;
+      if (n in fibonacciMemo) return fibonacciMemo[n];
+      if (n <= 1) return n;
+      fibonacciMemo[n] = fibonacciMemoization(n - 1) + fibonacciMemoization(n - 2);
+      return fibonacciMemo[n];
+    }
+
+    function calculateFibonacciTabulation() {
+      const n = parseInt(document.getElementById('fibonacci-n').value);
+      if (isNaN(n) || n < 0 || n > 40) {
+        fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
+        return;
+      }
+      resetFibonacci();
+      const startTime = performance.now();
+      const result = fibonacciTabulation(n);
+      const endTime = performance.now();
+      visualizeFibonacciResult('Tabulation (Bottom-Up)', n, result, n + 1, endTime - startTime);
+      fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} using tabulation. Filled ${n + 1} table entries in ${(endTime - startTime).toFixed(2)}ms.</p>`;
+      logFibonacci(`Calculated F(${n}) = ${result} using tabulation.`);
+    }
+
+    function fibonacciTabulation(n) {
+      if (n <= 1) return n;
+      const dp = new Array(n + 1);
+      dp[0] = 0;
+      dp[1] = 1;
+      for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+      }
+      return dp[n];
+    }
+
+    function visualizeFibonacciResult(method, n, result, operations, time) {
+      fibonacciVisualization.innerHTML = '';
+      const resultContainer = document.createElement('div');
+      resultContainer.style.textAlign = 'center';
+      resultContainer.style.margin = '20px 0';
+      resultContainer.innerHTML = `<h3>${method} Result</h3>`;
+      const resultValue = document.createElement('div');
+      resultValue.style.fontSize = '2rem';
+      resultValue.style.fontWeight = 'bold';
+      resultValue.style.margin = '10px 0';
+      resultValue.textContent = `F(${n}) = ${result}`;
+      resultContainer.appendChild(resultValue);
+      const metrics = document.createElement('div');
+      metrics.style.display = 'flex';
+      metrics.style.justifyContent = 'center';
+      metrics.style.gap = '20px';
+      metrics.style.margin = '20px 0';
+      const operationsMetric = document.createElement('div');
+      operationsMetric.style.padding = '10px';
+      operationsMetric.style.backgroundColor = '#f8f9fa';
+      operationsMetric.style.borderRadius = '4px';
+      operationsMetric.innerHTML = `<strong>Operations:</strong> ${operations}`;
+      const timeMetric = document.createElement('div');
+      timeMetric.style.padding = '10px';
+      timeMetric.style.backgroundColor = '#f8f9fa';
+      timeMetric.style.borderRadius = '4px';
+      timeMetric.innerHTML = `<strong>Time:</strong> ${time.toFixed(2)}ms`;
+      metrics.appendChild(operationsMetric);
+      metrics.appendChild(timeMetric);
+      resultContainer.appendChild(metrics);
+      fibonacciVisualization.appendChild(resultContainer);
+
+      if (method === 'Memoization (Top-Down)' && Object.keys(fibonacciMemo).length > 0) {
+        const memoContainer = document.createElement('div');
+        memoContainer.style.margin = '20px 0';
+        memoContainer.innerHTML = '<h3>Memoization Table</h3>';
+        const memoTable = document.createElement('table');
+        memoTable.className = 'dp-table';
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = '<th>n</th><th>F(n)</th>';
+        memoTable.appendChild(headerRow);
+        Object.keys(fibonacciMemo).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${key}</td><td>${fibonacciMemo[key]}</td>`;
+          memoTable.appendChild(row);
         });
-        
-        // Fibonacci Implementation
-        const fibonacciVisualization = document.getElementById('fibonacci-visualization');
-        const fibonacciStepDisplay = document.getElementById('fibonacci-step-display');
-        const fibonacciLog = document.getElementById('fibonacci-log');
-        
-        let fibonacciSteps = [];
-        let currentFibStep = 0;
-        let fibonacciCalls = 0;
-        let fibonacciMemo = {};
-        
-        document.getElementById('fibonacci-recursive-btn').addEventListener('click', calculateFibonacciRecursive);
-        document.getElementById('fibonacci-memoization-btn').addEventListener('click', calculateFibonacciMemoization);
-        document.getElementById('fibonacci-tabulation-btn').addEventListener('click', calculateFibonacciTabulation);
-        document.getElementById('fibonacci-step-btn').addEventListener('click', setupFibonacciSteps);
-        document.getElementById('fibonacci-reset-btn').addEventListener('click', resetFibonacci);
-        
-        function calculateFibonacciRecursive() {
-            const n = parseInt(document.getElementById('fibonacci-n').value);
-            
-            if (isNaN(n) || n < 0 || n > 40) {
-                fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
-                return;
-            }
-            
-            resetFibonacci();
-            fibonacciCalls = 0;
-            
-            const startTime = performance.now();
-            const result = fibonacciRecursive(n);
-            const endTime = performance.now();
-            
-            visualizeFibonacciResult('Recursive (No DP)', n, result, fibonacciCalls, endTime - startTime);
-            
-            fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} calculated using recursive approach. Made ${fibonacciCalls} function calls in ${(endTime - startTime).toFixed(2)}ms.</p>`;
-            logFibonacci(`Calculated F(${n}) = ${result} using recursive approach. Made ${fibonacciCalls} function calls.`);
+        memoContainer.appendChild(memoTable);
+        fibonacciVisualization.appendChild(memoContainer);
+      }
+
+      if (method === 'Tabulation (Bottom-Up)') {
+        const dpContainer = document.createElement('div');
+        dpContainer.style.margin = '20px 0';
+        dpContainer.innerHTML = '<h3>DP Array</h3>';
+        const dpTable = document.createElement('table');
+        dpTable.className = 'dp-table';
+        const headerRow = document.createElement('tr');
+        let headerHTML = '<th>Index</th>';
+        for (let i = 0; i <= n; i++) {
+          headerHTML += `<th>${i}</th>`;
         }
-        
-        function fibonacciRecursive(n) {
-            fibonacciCalls++;
-            
-            if (n <= 1) {
-                return n;
-            }
-            
-            return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+        headerRow.innerHTML = headerHTML;
+        dpTable.appendChild(headerRow);
+        const dataRow = document.createElement('tr');
+        let dataHTML = '<td>F(n)</td>';
+        for (let i = 0; i <= n; i++) {
+          dataHTML += `<td>${fibonacciTabulation(i)}</td>`;
         }
-        
-        function calculateFibonacciMemoization() {
-            const n = parseInt(document.getElementById('fibonacci-n').value);
-            
-            if (isNaN(n) || n < 0 || n > 40) {
-                fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
-                return;
-            }
-            
-            resetFibonacci();
-            fibonacciCalls = 0;
-            fibonacciMemo = {};
-            
-            const startTime = performance.now();
-            const result = fibonacciMemoization(n);
-            const endTime = performance.now();
-            
-            visualizeFibonacciResult('Memoization (Top-Down)', n, result, fibonacciCalls, endTime - startTime);
-            
-            fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} calculated using memoization approach. Made ${fibonacciCalls} function calls in ${(endTime - startTime).toFixed(2)}ms.</p>`;
-            logFibonacci(`Calculated F(${n}) = ${result} using memoization approach. Made ${fibonacciCalls} function calls.`);
+        dataRow.innerHTML = dataHTML;
+        dpTable.appendChild(dataRow);
+        dpContainer.appendChild(dpTable);
+        fibonacciVisualization.appendChild(dpContainer);
+      }
+
+      if (method === 'Recursive (No DP)') {
+        if (n <= 10) {
+          const treeContainer = document.createElement('div');
+          treeContainer.style.margin = '20px 0';
+          treeContainer.innerHTML = '<h3>Recursive Call Tree (Simplified)</h3>';
+          const treeText = document.createElement('div');
+          treeText.style.fontFamily = 'monospace';
+          treeText.style.whiteSpace = 'pre';
+          treeText.style.overflowX = 'auto';
+          treeText.style.padding = '10px';
+          treeText.style.backgroundColor = '#f8f9fa';
+          treeText.style.borderRadius = '4px';
+          let treeContent = generateFibonacciCallTree(n);
+          treeText.textContent = treeContent;
+          treeContainer.appendChild(treeText);
+          fibonacciVisualization.appendChild(treeContainer);
+        } else {
+          const treeContainer = document.createElement('div');
+          treeContainer.style.margin = '20px 0';
+          treeContainer.innerHTML = '<h3>Recursive Call Tree</h3><p>Visualization omitted for n > 10.</p>';
+          fibonacciVisualization.appendChild(treeContainer);
         }
-        
-        function fibonacciMemoization(n) {
-            fibonacciCalls++;
-            
-            if (n in fibonacciMemo) {
-                return fibonacciMemo[n];
-            }
-            
-            if (n <= 1) {
-                return n;
-            }
-            
-            fibonacciMemo[n] = fibonacciMemoization(n - 1) + fibonacciMemoization(n - 2);
-            return fibonacciMemo[n];
+      }
+    }
+
+    function generateFibonacciCallTree(n, depth = 0, maxDepth = 3) {
+      if (depth >= maxDepth) {
+        return '  '.repeat(depth) + `F(${n}) = ...\n`;
+      }
+      if (n <= 1) {
+        return '  '.repeat(depth) + `F(${n}) = ${n}\n`;
+      }
+      let result = '  '.repeat(depth) + `F(${n}) = F(${n-1}) + F(${n-2})\n`;
+      result += generateFibonacciCallTree(n - 1, depth + 1, maxDepth);
+      result += generateFibonacciCallTree(n - 2, depth + 1, maxDepth);
+      return result;
+    }
+
+    function setupFibonacciSteps() {
+      const n = parseInt(document.getElementById('fibonacci-n').value);
+      if (isNaN(n) || n < 0 || n > 40) {
+        fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
+        return;
+      }
+      resetFibonacci();
+      fibonacciSteps = [];
+      const dp = new Array(n + 1);
+      dp[0] = 0;
+      dp[1] = 1;
+      fibonacciSteps.push({
+        description: 'Initialize DP array: dp[0] = 0, dp[1] = 1',
+        dp: [...dp],
+        current: null
+      });
+      for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+        fibonacciSteps.push({
+          description: `Compute dp[${i}] = dp[${i-1}] + dp[${i-2}] = ${dp[i-1]} + ${dp[i-2]} = ${dp[i]}`,
+          dp: [...dp],
+          current: i
+        });
+      }
+      fibonacciSteps.push({
+        description: `Completed! F(${n}) = ${dp[n]}`,
+        dp: [...dp],
+        current: null
+      });
+      currentFibStep = 0;
+      showFibonacciStep(currentFibStep);
+      document.getElementById('fibonacci-step-btn').disabled = true;
+      logFibonacci('Started step-by-step tabulation visualization.');
+    }
+
+    function showFibonacciStep(stepIndex) {
+      if (stepIndex < 0 || stepIndex >= fibonacciSteps.length) return;
+      const step = fibonacciSteps[stepIndex];
+      fibonacciStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${fibonacciSteps.length}: ${step.description}</p>`;
+      visualizeFibonacciStep(step);
+    }
+
+    function visualizeFibonacciStep(step) {
+      fibonacciVisualization.innerHTML = '';
+      const dpContainer = document.createElement('div');
+      dpContainer.style.margin = '20px 0';
+      dpContainer.innerHTML = '<h3>DP Array (Tabulation)</h3>';
+      const dpTable = document.createElement('table');
+      dpTable.className = 'dp-table';
+      const headerRow = document.createElement('tr');
+      let headerHTML = '<th>Index</th>';
+      for (let i = 0; i < step.dp.length; i++) {
+        headerHTML += `<th>${i}</th>`;
+      }
+      headerRow.innerHTML = headerHTML;
+      dpTable.appendChild(headerRow);
+      const dataRow = document.createElement('tr');
+      let dataHTML = '<td>F(n)</td>';
+      for (let i = 0; i < step.dp.length; i++) {
+        let cellStyle = '';
+        if (step.current !== null && i === step.current) {
+          cellStyle = ' style="background-color: #d4edda;"';
         }
-        
-        function calculateFibonacciTabulation() {
-            const n = parseInt(document.getElementById('fibonacci-n').value);
-            
-            if (isNaN(n) || n < 0 || n > 40) {
-                fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
-                return;
-            }
-            
-            resetFibonacci();
-            
-            const startTime = performance.now();
-            const result = fibonacciTabulation(n);
-            const endTime = performance.now();
-            
-            visualizeFibonacciResult('Tabulation (Bottom-Up)', n, result, n + 1, endTime - startTime);
-            
-            fibonacciStepDisplay.innerHTML = `<p>F(${n}) = ${result} calculated using tabulation approach. Filled ${n + 1} table entries in ${(endTime - startTime).toFixed(2)}ms.</p>`;
-            logFibonacci(`Calculated F(${n}) = ${result} using tabulation approach. Filled ${n + 1} table entries.`);
+        dataHTML += `<td${cellStyle}>${step.dp[i]}</td>`;
+      }
+      dataRow.innerHTML = dataHTML;
+      dpTable.appendChild(dataRow);
+      dpContainer.appendChild(dpTable);
+      fibonacciVisualization.appendChild(dpContainer);
+      if (step.current !== null) {
+        const calcContainer = document.createElement('div');
+        calcContainer.style.margin = '20px 0';
+        calcContainer.style.padding = '10px';
+        calcContainer.style.backgroundColor = '#e8f4f8';
+        calcContainer.style.borderRadius = '4px';
+        calcContainer.innerHTML = `<strong>Calculation:</strong> F(${step.current}) = F(${step.current-1}) + F(${step.current-2}) = ${step.dp[step.current-1]} + ${step.dp[step.current-2]} = ${step.dp[step.current]}`;
+        fibonacciVisualization.appendChild(calcContainer);
+      }
+    }
+
+    function resetFibonacci() {
+      fibonacciVisualization.innerHTML = '<p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>';
+      fibonacciStepDisplay.innerHTML = '<p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>';
+      fibonacciLog.innerHTML = '';
+      fibonacciSteps = [];
+      currentFibStep = 0;
+      fibonacciCalls = 0;
+      fibonacciMemo = {};
+    }
+
+    function logFibonacci(message) {
+      const logEntry = document.createElement('p');
+      logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      fibonacciLog.prepend(logEntry);
+    }
+
+    /* -------------------------------------
+       LCS Implementation
+    ------------------------------------- */
+    const lcsVisualization = document.getElementById('lcs-visualization');
+    const lcsStepDisplay = document.getElementById('lcs-step-display');
+    const lcsLog = document.getElementById('lcs-log');
+    let lcsSteps = [];
+    let currentLcsStep = 0;
+
+    document.getElementById('lcs-solve-btn').addEventListener('click', solveLCS);
+    document.getElementById('lcs-step-btn').addEventListener('click', setupLCSSteps);
+    document.getElementById('lcs-reset-btn').addEventListener('click', resetLCS);
+
+    function solveLCS() {
+      const string1 = document.getElementById('lcs-string1').value.toUpperCase();
+      const string2 = document.getElementById('lcs-string2').value.toUpperCase();
+      if (!string1 || !string2) {
+        lcsStepDisplay.innerHTML = '<p>Please enter both strings.</p>';
+        return;
+      }
+      resetLCS();
+      const startTime = performance.now();
+      const { length, subsequence, dp } = lcsAlgorithm(string1, string2);
+      const endTime = performance.now();
+      visualizeLCSResult(string1, string2, length, subsequence, dp, endTime - startTime);
+      lcsStepDisplay.innerHTML = `<p>LCS of "${string1}" and "${string2}" is "${subsequence}" (length ${length}) calculated in ${(endTime - startTime).toFixed(2)}ms.</p>`;
+      logLCS(`LCS for "${string1}" and "${string2}" is "${subsequence}" (length ${length}).`);
+    }
+
+    function lcsAlgorithm(string1, string2) {
+      const m = string1.length, n = string2.length;
+      const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          if (string1[i - 1] === string2[j - 1]) {
+            dp[i][j] = dp[i - 1][j - 1] + 1;
+          } else {
+            dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+          }
         }
-        
-        function fibonacciTabulation(n) {
-            if (n <= 1) {
-                return n;
-            }
-            
-            const dp = new Array(n + 1);
-            dp[0] = 0;
-            dp[1] = 1;
-            
-            for (let i = 2; i <= n; i++) {
-                dp[i] = dp[i - 1] + dp[i - 2];
-            }
-            
-            return dp[n];
+      }
+      let i = m, j = n, subsequence = '';
+      while (i > 0 && j > 0) {
+        if (string1[i - 1] === string2[j - 1]) {
+          subsequence = string1[i - 1] + subsequence;
+          i--; j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+          i--;
+        } else {
+          j--;
         }
-        
-        function visualizeFibonacciResult(method, n, result, operations, time) {
-            fibonacciVisualization.innerHTML = '';
-            
-            // Create result container
-            const resultContainer = document.createElement('div');
-            resultContainer.style.textAlign = 'center';
-            resultContainer.style.margin = '20px 0';
-            resultContainer.innerHTML = `<h3>${method} Result</h3>`;
-            
-            // Create result value
-            const resultValue = document.createElement('div');
-            resultValue.style.fontSize = '2rem';
-            resultValue.style.fontWeight = 'bold';
-            resultValue.style.margin = '10px 0';
-            resultValue.textContent = `F(${n}) = ${result}`;
-            resultContainer.appendChild(resultValue);
-            
-            // Create metrics
-            const metrics = document.createElement('div');
-            metrics.style.display = 'flex';
-            metrics.style.justifyContent = 'center';
-            metrics.style.gap = '20px';
-            metrics.style.margin = '20px 0';
-            
-            const operationsMetric = document.createElement('div');
-            operationsMetric.style.padding = '10px';
-            operationsMetric.style.backgroundColor = '#f8f9fa';
-            operationsMetric.style.borderRadius = '4px';
-            operationsMetric.innerHTML = `<strong>Operations:</strong> ${operations}`;
-            metrics.appendChild(operationsMetric);
-            
-            const timeMetric = document.createElement('div');
-            timeMetric.style.padding = '10px';
-            timeMetric.style.backgroundColor = '#f8f9fa';
-            timeMetric.style.borderRadius = '4px';
-            timeMetric.innerHTML = `<strong>Time:</strong> ${time.toFixed(2)}ms`;
-            metrics.appendChild(timeMetric);
-            
-            resultContainer.appendChild(metrics);
-            fibonacciVisualization.appendChild(resultContainer);
-            
-            // If using memoization, show the memoization table
-            if (method === 'Memoization (Top-Down)' && Object.keys(fibonacciMemo).length > 0) {
-                const memoContainer = document.createElement('div');
-                memoContainer.style.margin = '20px 0';
-                memoContainer.innerHTML = '<h3>Memoization Table</h3>';
-                
-                const memoTable = document.createElement('table');
-                memoTable.className = 'dp-table';
-                
-                // Create header row
-                const headerRow = document.createElement('tr');
-                headerRow.innerHTML = '<th>n</th><th>F(n)</th>';
-                memoTable.appendChild(headerRow);
-                
-                // Create data rows
-                Object.keys(fibonacciMemo).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td>${key}</td><td>${fibonacciMemo[key]}</td>`;
-                    memoTable.appendChild(row);
-                });
-                
-                memoContainer.appendChild(memoTable);
-                fibonacciVisualization.appendChild(memoContainer);
-            }
-            
-            // If using tabulation, show the DP array
-            if (method === 'Tabulation (Bottom-Up)') {
-                const dpContainer = document.createElement('div');
-                dpContainer.style.margin = '20px 0';
-                dpContainer.innerHTML = '<h3>DP Array</h3>';
-                
-                const dpTable = document.createElement('table');
-                dpTable.className = 'dp-table';
-                
-                // Create header row
-                const headerRow = document.createElement('tr');
-                let headerHTML = '<th>Index</th>';
-                for (let i = 0; i <= n; i++) {
-                    headerHTML += `<th>${i}</th>`;
-                }
-                headerRow.innerHTML = headerHTML;
-                dpTable.appendChild(headerRow);
-                
-                // Create data row
-                const dataRow = document.createElement('tr');
-                let dataHTML = '<td>F(n)</td>';
-                for (let i = 0; i <= n; i++) {
-                    dataHTML += `<td>${fibonacciTabulation(i)}</td>`;
-                }
-                dataRow.innerHTML = dataHTML;
-                dpTable.appendChild(dataRow);
-                
-                dpContainer.appendChild(dpTable);
-                fibonacciVisualization.appendChild(dpContainer);
-            }
-            
-            // If using recursive, show the call tree (simplified for large n)
-            if (method === 'Recursive (No DP)' && n <= 10) {
-                const treeContainer = document.createElement('div');
-                treeContainer.style.margin = '20px 0';
-                treeContainer.innerHTML = '<h3>Recursive Call Tree (Simplified)</h3>';
-                
-                // For simplicity, we'll just show a text representation for small n
-                const treeText = document.createElement('div');
-                treeText.style.fontFamily = 'monospace';
-                treeText.style.whiteSpace = 'pre';
-                treeText.style.overflowX = 'auto';
-                treeText.style.padding = '10px';
-                treeText.style.backgroundColor = '#f8f9fa';
-                treeText.style.borderRadius = '4px';
-                
-                let treeContent = generateFibonacciCallTree(n);
-                treeText.textContent = treeContent;
-                
-                treeContainer.appendChild(treeText);
-                fibonacciVisualization.appendChild(treeContainer);
-            } else if (method === 'Recursive (No DP)') {
-                const treeContainer = document.createElement('div');
-                treeContainer.style.margin = '20px 0';
-                treeContainer.innerHTML = '<h3>Recursive Call Tree</h3>';
-                treeContainer.innerHTML += '<p>Tree visualization omitted for n > 10 due to size.</p>';
-                fibonacciVisualization.appendChild(treeContainer);
-            }
+      }
+      return { length: dp[m][n], subsequence, dp };
+    }
+
+    function visualizeLCSResult(string1, string2, length, subsequence, dp, time) {
+      lcsVisualization.innerHTML = '';
+      const resultContainer = document.createElement('div');
+      resultContainer.style.textAlign = 'center';
+      resultContainer.style.margin = '20px 0';
+      resultContainer.innerHTML = `<h3>LCS Result</h3>`;
+      const resultValue = document.createElement('div');
+      resultValue.style.fontSize = '1.5rem';
+      resultValue.style.fontWeight = 'bold';
+      resultValue.style.margin = '10px 0';
+      resultValue.innerHTML = `LCS: <span style="color: #3498db;">${subsequence}</span> (Length: ${length})`;
+      resultContainer.appendChild(resultValue);
+      const metrics = document.createElement('div');
+      metrics.style.display = 'flex';
+      metrics.style.justifyContent = 'center';
+      metrics.style.gap = '20px';
+      metrics.style.margin = '20px 0';
+      const timeMetric = document.createElement('div');
+      timeMetric.style.padding = '10px';
+      timeMetric.style.backgroundColor = '#f8f9fa';
+      timeMetric.style.borderRadius = '4px';
+      timeMetric.innerHTML = `<strong>Time:</strong> ${time.toFixed(2)}ms`;
+      metrics.appendChild(timeMetric);
+      resultContainer.appendChild(metrics);
+      lcsVisualization.appendChild(resultContainer);
+      
+      const dpContainer = document.createElement('div');
+      dpContainer.style.margin = '20px 0';
+      dpContainer.innerHTML = '<h3>DP Table</h3>';
+      const dpTable = document.createElement('table');
+      dpTable.className = 'dp-table';
+      const headerRow = document.createElement('tr');
+      let headerHTML = '<th></th><th></th>';
+      for (let j = 0; j < string2.length; j++) {
+        headerHTML += `<th>${string2[j]}</th>`;
+      }
+      headerRow.innerHTML = headerHTML;
+      dpTable.appendChild(headerRow);
+      for (let i = 0; i <= string1.length; i++) {
+        const row = document.createElement('tr');
+        let rowHTML = '';
+        if (i === 0) {
+          rowHTML += '<td></td>';
+        } else {
+          rowHTML += `<td>${string1[i-1]}</td>`;
         }
-        
-        function generateFibonacciCallTree(n, depth = 0, maxDepth = 3) {
-            if (depth >= maxDepth) {
-                return '  '.repeat(depth) + `F(${n}) = ...\n`;
-            }
-            
-            if (n <= 1) {
-                return '  '.repeat(depth) + `F(${n}) = ${n}\n`;
-            }
-            
-            let result = '  '.repeat(depth) + `F(${n}) = F(${n-1}) + F(${n-2})\n`;
-            result += generateFibonacciCallTree(n - 1, depth + 1, maxDepth);
-            result += generateFibonacciCallTree(n - 2, depth + 1, maxDepth);
-            
-            return result;
+        for (let j = 0; j <= string2.length; j++) {
+          rowHTML += `<td>${dp[i][j]}</td>`;
         }
-        
-        function setupFibonacciSteps() {
-            const n = parseInt(document.getElementById('fibonacci-n').value);
-            
-            if (isNaN(n) || n < 0 || n > 40) {
-                fibonacciStepDisplay.innerHTML = '<p>Please enter a valid number between 0 and 40.</p>';
-                return;
-            }
-            
-            resetFibonacci();
-            
-            // Create steps for tabulation visualization
-            fibonacciSteps = [];
-            
-            // Step 1: Initialize DP array
-            const dp = new Array(n + 1);
-            dp[0] = 0;
-            dp[1] = 1;
-            
-            fibonacciSteps.push({
-                description: 'Initialize the DP array with base cases: dp[0] = 0, dp[1] = 1',
-                dp: [...dp],
-                current: null
-            });
-            
-            // Steps 2+: Fill the DP array
-            for (let i = 2; i <= n; i++) {
-                dp[i] = dp[i - 1] + dp[i - 2];
-                
-                fibonacciSteps.push({
-                    description: `Calculate dp[${i}] = dp[${i-1}] + dp[${i-2}] = ${dp[i-1]} + ${dp[i-2]} = ${dp[i]}`,
-                    dp: [...dp],
-                    current: i
-                });
-            }
-            
-            // Final step
-            fibonacciSteps.push({
-                description: `Finished! F(${n}) = ${dp[n]}`,
-                dp: [...dp],
-                current: null
-            });
-            
-            currentFibStep = 0;
-            showFibonacciStep(currentFibStep);
-            
-            document.getElementById('fibonacci-step-btn').disabled = true;
-            logFibonacci('Started step-by-step visualization for Fibonacci using tabulation');
+        row.innerHTML = rowHTML;
+        dpTable.appendChild(row);
+      }
+      dpContainer.appendChild(dpTable);
+      lcsVisualization.appendChild(dpContainer);
+      
+      const stringsContainer = document.createElement('div');
+      stringsContainer.style.margin = '20px 0';
+      stringsContainer.innerHTML = '<h3>Strings with LCS Highlighted</h3>';
+      const string1Container = document.createElement('div');
+      string1Container.style.margin = '10px 0';
+      string1Container.style.fontSize = '1.2rem';
+      string1Container.innerHTML = `<strong>String 1:</strong> ${highlightLCS(string1, subsequence)}`;
+      stringsContainer.appendChild(string1Container);
+      const string2Container = document.createElement('div');
+      string2Container.style.margin = '10px 0';
+      string2Container.style.fontSize = '1.2rem';
+      string2Container.innerHTML = `<strong>String 2:</strong> ${highlightLCS(string2, subsequence)}`;
+      stringsContainer.appendChild(string2Container);
+      lcsVisualization.appendChild(stringsContainer);
+    }
+
+    function highlightLCS(str, lcs) {
+      let result = '';
+      let lcsIndex = 0;
+      for (let i = 0; i < str.length; i++) {
+        if (lcsIndex < lcs.length && str[i] === lcs[lcsIndex]) {
+          result += `<span style="color: #3498db; font-weight: bold;">${str[i]}</span>`;
+          lcsIndex++;
+        } else {
+          result += str[i];
         }
-        
-        function showFibonacciStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= fibonacciSteps.length) return;
-            
-            const step = fibonacciSteps[stepIndex];
-            fibonacciStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${fibonacciSteps.length}: ${step.description}</p>`;
-            
-            visualizeFibonacciStep(step);
-        }
-        
-        function visualizeFibonacciStep(step) {
-            fibonacciVisualization.innerHTML = '';
-            
-            const dpContainer = document.createElement('div');
-            dpContainer.style.margin = '20px 0';
-            dpContainer.innerHTML = '<h3>DP Array (Tabulation)</h3>';
-            
-            const dpTable = document.createElement('table');
-            dpTable.className = 'dp-table';
-            
-            // Create header row
-            const headerRow = document.createElement('tr');
-            let headerHTML = '<th>Index</th>';
-            for (let i = 0; i < step.dp.length; i++) {
-                if (step.dp[i] !== undefined) {
-                    headerHTML += `<th>${i}</th>`;
-                }
-            }
-            headerRow.innerHTML = headerHTML;
-            dpTable.appendChild(headerRow);
-            
-            // Create data row
-            const dataRow = document.createElement('tr');
-            let dataHTML = '<td>F(n)</td>';
-            for (let i = 0; i < step.dp.length; i++) {
-                if (step.dp[i] !== undefined) {
-                    let cellClass = '';
-                    if (i === step.current) {
-                        cellClass = 'class="dp-cell current"';
-                    }
-                    dataHTML += `<td ${cellClass}>${step.dp[i]}</td>`;
-                }
-            }
-            dataRow.innerHTML = dataHTML;
-            dpTable.appendChild(dataRow);
-            
-            dpContainer.appendChild(dpTable);
-            fibonacciVisualization.appendChild(dpContainer);
-            
-            // If we're calculating a new value, show the calculation
-            if (step.current !== null) {
-                const calcContainer = document.createElement('div');
-                calcContainer.style.margin = '20px 0';
-                calcContainer.style.padding = '10px';
-                calcContainer.style.backgroundColor = '#e8f4f8';
-                calcContainer.style.borderRadius = '4px';
-                calcContainer.innerHTML = `<strong>Current Calculation:</strong> F(${step.current}) = F(${step.current-1}) + F(${step.current-2}) = ${step.dp[step.current-1]} + ${step.dp[step.current-2]} = ${step.dp[step.current]}`;
-                
-                fibonacciVisualization.appendChild(calcContainer);
-            }
-        }
-        
-        function resetFibonacci() {
-            fibonacciVisualization.innerHTML = '<p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>';
-            fibonacciStepDisplay.innerHTML = '<p>Select a method and click the corresponding button to calculate the Fibonacci number.</p>';
-            fibonacciLog.innerHTML = '';
-            fibonacciSteps = [];
-            currentFibStep = 0;
-            fibonacciCalls = 0;
-            fibonacciMemo = {};
-        }
-        
-        function logFibonacci(message) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            fibonacciLog.prepend(logEntry);
-        }
-        
-        // LCS Implementation
-        const lcsVisualization = document.getElementById('lcs-visualization');
-        const lcsStepDisplay = document.getElementById('lcs-step-display');
-        const lcsLog = document.getElementById('lcs-log');
-        
-        let lcsSteps = [];
-        let currentLcsStep = 0;
-        
-        document.getElementById('lcs-solve-btn').addEventListener('click', solveLCS);
-        document.getElementById('lcs-step-btn').addEventListener('click', setupLCSSteps);
-        document.getElementById('lcs-reset-btn').addEventListener('click', resetLCS);
-        
-        function solveLCS() {
-            const string1 = document.getElementById('lcs-string1').value.toUpperCase();
-            const string2 = document.getElementById('lcs-string2').value.toUpperCase();
-            
-            if (!string1 || !string2) {
-                lcsStepDisplay.innerHTML = '<p>Please enter both strings.</p>';
-                return;
-            }
-            
-            resetLCS();
-            
-            const startTime = performance.now();
-            const { length, subsequence, dp } = lcsAlgorithm(string1, string2);
-            const endTime = performance.now();
-            
-            visualizeLCSResult(string1, string2, length, subsequence, dp, endTime - startTime);
-            
-            lcsStepDisplay.innerHTML = `<p>The Longest Common Subsequence of "${string1}" and "${string2}" is "${subsequence}" with length ${length}. Calculated in ${(endTime - startTime).toFixed(2)}ms.</p>`;
-            logLCS(`Found LCS "${subsequence}" with length ${length} between "${string1}" and "${string2}".`);
-        }
-        
-        function lcsAlgorithm(string1, string2) {
-            const m = string1.length;
-            const n = string2.length;
-            
-            // Create DP table
-            const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
-            
-            // Fill the DP table
-            for (let i = 1; i <= m; i++) {
-                for (let j = 1; j <= n; j++) {
-                    if (string1[i - 1] === string2[j - 1]) {
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                    } else {
-                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-                    }
-                }
-            }
-            
-            // Backtrack to find the actual LCS
-            let i = m, j = n;
-            let subsequence = '';
-            
-            while (i > 0 && j > 0) {
-                if (string1[i - 1] === string2[j - 1]) {
-                    subsequence = string1[i - 1] + subsequence;
-                    i--;
-                    j--;
-                } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                    i--;
-                } else {
-                    j--;
-                }
-            }
-            
-            return { length: dp[m][n], subsequence, dp };
-        }
-        
-        function visualizeLCSResult(string1, string2, length, subsequence, dp, time) {
-            lcsVisualization.innerHTML = '';
-            
-            // Create result container
-            const resultContainer = document.createElement('div');
-            resultContainer.style.textAlign = 'center';
-            resultContainer.style.margin = '20px 0';
-            resultContainer.innerHTML = `<h3>LCS Result</h3>`;
-            
-            // Create result value
-            const resultValue = document.createElement('div');
-            resultValue.style.fontSize = '1.5rem';
-            resultValue.style.fontWeight = 'bold';
-            resultValue.style.margin = '10px 0';
-            resultValue.innerHTML = `LCS: <span style="color: #3498db;">${subsequence}</span> (Length: ${length})`;
-            resultContainer.appendChild(resultValue);
-            
-            // Create metrics
-            const metrics = document.createElement('div');
-            metrics.style.display = 'flex';
-            metrics.style.justifyContent = 'center';
-            metrics.style.gap = '20px';
-            metrics.style.margin = '20px 0';
-            
-            const timeMetric = document.createElement('div');
-            timeMetric.style.padding = '10px';
-            timeMetric.style.backgroundColor = '#f8f9fa';
-            timeMetric.style.borderRadius = '4px';
-            timeMetric.innerHTML = `<strong>Time:</strong> ${time.toFixed(2)}ms`;
-            metrics.appendChild(timeMetric);
-            
-            resultContainer.appendChild(metrics);
-            lcsVisualization.appendChild(resultContainer);
-            
-            // Show the DP table
-            const dpContainer = document.createElement('div');
-            dpContainer.style.margin = '20px 0';
-            dpContainer.innerHTML = '<h3>DP Table</h3>';
-            
-            const dpTable = document.createElement('table');
-            dpTable.className = 'dp-table';
-            
-            // Create header row
-            const headerRow = document.createElement('tr');
-            let headerHTML = '<th></th><th></th>';
-            for (let j = 0; j < string2.length; j++) {
-                headerHTML += `<th>${string2[j]}</th>`;
-            }
-            headerRow.innerHTML = headerHTML;
-            dpTable.appendChild(headerRow);
-            
-            // Create data rows
-            for (let i = 0; i <= string1.length; i++) {
-                const row = document.createElement('tr');
-                let rowHTML = '';
-                
-                if (i === 0) {
-                    rowHTML += '<td></td>';
-                } else {
-                    rowHTML += `<td>${string1[i-1]}</td>`;
-                }
-                
-                for (let j = 0; j <= string2.length; j++) {
-                    rowHTML += `<td>${dp[i][j]}</td>`;
-                }
-                
-                row.innerHTML = rowHTML;
-                dpTable.appendChild(row);
-            }
-            
-            dpContainer.appendChild(dpTable);
-            lcsVisualization.appendChild(dpContainer);
-            
-            // Show the highlighted strings
-            const stringsContainer = document.createElement('div');
-            stringsContainer.style.margin = '20px 0';
-            stringsContainer.innerHTML = '<h3>Strings with LCS Highlighted</h3>';
-            
-            const string1Container = document.createElement('div');
-            string1Container.style.margin = '10px 0';
-            string1Container.style.fontSize = '1.2rem';
-            string1Container.innerHTML = `<strong>String 1:</strong> ${highlightLCS(string1, subsequence)}`;
-            stringsContainer.appendChild(string1Container);
-            
-            const string2Container = document.createElement('div');
-            string2Container.style.margin = '10px 0';
-            string2Container.style.fontSize = '1.2rem';
-            string2Container.innerHTML = `<strong>String 2:</strong> ${highlightLCS(string2, subsequence)}`;
-            stringsContainer.appendChild(string2Container);
-            
-            lcsVisualization.appendChild(stringsContainer);
-        }
-        
-        function highlightLCS(str, lcs) {
-            let result = '';
-            let lcsIndex = 0;
-            
-            for (let i = 0; i < str.length; i++) {
-                if (lcsIndex < lcs.length && str[i] === lcs[lcsIndex]) {
-                    result += `<span style="color: #3498db; font-weight: bold;">${str[i]}</span>`;
-                    lcsIndex++;
-                } else {
-                    result += str[i];
-                }
-            }
-            
-            return result;
-        }
-        
-        function setupLCSSteps() {
-            const string1 = document.getElementById('lcs-string1').value.toUpperCase();
-            const string2 = document.getElementById('lcs-string2').value.toUpperCase();
-            
-            if (!string1 || !string2) {
-                lcsStepDisplay.innerHTML = '<p>Please enter both strings.</p>';
-                return;
-            }
-            
-            resetLCS();
-            
-            // Create steps for LCS visualization
-            lcsSteps = [];
-            
-            const m = string1.length;
-            const n = string2.length;
-            
-            // Create DP table
-            const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
-            
-            // Step 1: Initialize DP table
+      }
+      return result;
+    }
+
+    function setupLCSSteps() {
+      const string1 = document.getElementById('lcs-string1').value.toUpperCase();
+      const string2 = document.getElementById('lcs-string2').value.toUpperCase();
+      if (!string1 || !string2) {
+        lcsStepDisplay.innerHTML = '<p>Please enter both strings.</p>';
+        return;
+      }
+      resetLCS();
+      lcsSteps = [];
+      const m = string1.length;
+      const n = string2.length;
+      const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
+      lcsSteps.push({
+        description: 'Initialize DP table with zeros',
+        dp: JSON.parse(JSON.stringify(dp)),
+        current: { i: 0, j: 0 },
+        match: false
+      });
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          if (string1[i - 1] === string2[j - 1]) {
+            dp[i][j] = dp[i - 1][j - 1] + 1;
             lcsSteps.push({
-                description: 'Initialize the DP table with zeros',
-                dp: JSON.parse(JSON.stringify(dp)),
-                current: { i: 0, j: 0 },
-                match: false
+              description: `Match: ${string1[i-1]} = ${string2[j-1]}, set dp[${i}][${j}] = dp[${i-1}][${j-1}] + 1 = ${dp[i-1][j-1]} + 1 = ${dp[i][j]}`,
+              dp: JSON.parse(JSON.stringify(dp)),
+              current: { i, j },
+              match: true
             });
-            
-            // Steps 2+: Fill the DP table
-            for (let i = 1; i <= m; i++) {
-                for (let j = 1; j <= n; j++) {
-                    if (string1[i - 1] === string2[j - 1]) {
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                        
-                        lcsSteps.push({
-                            description: `Characters match: ${string1[i-1]} = ${string2[j-1]}. Set dp[${i}][${j}] = dp[${i-1}][${j-1}] + 1 = ${dp[i-1][j-1]} + 1 = ${dp[i][j]}`,
-                            dp: JSON.parse(JSON.stringify(dp)),
-                            current: { i, j },
-                            match: true
-                        });
-                    } else {
-                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-                        
-                        lcsSteps.push({
-                            description: `Characters don't match: ${string1[i-1]} ≠ ${string2[j-1]}. Set dp[${i}][${j}] = max(dp[${i-1}][${j}], dp[${i}][${j-1}]) = max(${dp[i-1][j]}, ${dp[i][j-1]}) = ${dp[i][j]}`,
-                            dp: JSON.parse(JSON.stringify(dp)),
-                            current: { i, j },
-                            match: false
-                        });
-                    }
-                }
-            }
-            
-            // Backtrack to find the actual LCS
-            let i = m, j = n;
-            let subsequence = '';
-            const backtrackSteps = [];
-            
-            while (i > 0 && j > 0) {
-                if (string1[i - 1] === string2[j - 1]) {
-                    subsequence = string1[i - 1] + subsequence;
-                    backtrackSteps.push({ i: i, j: j, char: string1[i - 1] });
-                    i--;
-                    j--;
-                } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                    i--;
-                } else {
-                    j--;
-                }
-            }
-            
-            // Final step
+          } else {
+            dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
             lcsSteps.push({
-                description: `Finished! The LCS is "${subsequence}" with length ${dp[m][n]}`,
-                dp: JSON.parse(JSON.stringify(dp)),
-                current: null,
-                match: false,
-                backtrack: backtrackSteps,
-                subsequence: subsequence
+              description: `No match: ${string1[i-1]} ≠ ${string2[j-1]}, set dp[${i}][${j}] = max(dp[${i-1}][${j}], dp[${i}][${j-1}]) = max(${dp[i-1][j]}, ${dp[i][j-1]}) = ${dp[i][j]}`,
+              dp: JSON.parse(JSON.stringify(dp)),
+              current: { i, j },
+              match: false
             });
-            
-            currentLcsStep = 0;
-            showLCSStep(currentLcsStep);
-            
-            document.getElementById('lcs-step-btn').disabled = true;
-            logLCS('Started step-by-step visualization for LCS');
+          }
         }
-        
-        function showLCSStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= lcsSteps.length) return;
-            
-            const step = lcsSteps[stepIndex];
-            lcsStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${lcsSteps.length}: ${step.description}</p>`;
-            
-            visualizeLCSStep(step);
+      }
+      let i = m, j = n, subsequence = '';
+      const backtrackSteps = [];
+      while (i > 0 && j > 0) {
+        if (string1[i - 1] === string2[j - 1]) {
+          subsequence = string1[i - 1] + subsequence;
+          backtrackSteps.push({ i, j, char: string1[i - 1] });
+          i--; j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+          i--;
+        } else {
+          j--;
         }
-        
-        function visualizeLCSStep(step) {
-            lcsVisualization.innerHTML = '';
-            
-            const string1 = document.getElementById('lcs-string1').value.toUpperCase();
-            const string2 = document.getElementById('lcs-string2').value.toUpperCase();
-            
-            // Show the DP table
-            const dpContainer = document.createElement('div');
-            dpContainer.style.margin = '20px 0';
-            dpContainer.innerHTML = '<h3>DP Table</h3>';
-            
-            const dpTable = document.createElement('table');
-            dpTable.className = 'dp-table';
-            
-            // Create header row
-            const headerRow = document.createElement('tr');
-            let headerHTML = '<th></th><th></th>';
-            for (let j = 0; j < string2.length; j++) {
-                headerHTML += `<th>${string2[j]}</th>`;
-            }
-            headerRow.innerHTML = headerHTML;
-            dpTable.appendChild(headerRow);
-            
-            // Create data rows
-            for (let i = 0; i <= string1.length; i++) {
-                const row = document.createElement('tr');
-                
-                for (let j = 0; j <= string2.length; j++) {
-                    const cell = document.createElement('td');
-                    
-                    if (j === 0) {
-                        if (i === 0) {
-                            cell.textContent = '';
-                        } else {
-                            cell.textContent = string1[i-1];
-                        }
-                    } else {
-                        // Add cell class for highlighting
-                        if (step.current && step.current.i === i && step.current.j === j) {
-                            cell.className = step.match ? 'dp-cell current' : 'dp-cell highlight';
-                        } else if (step.backtrack && step.backtrack.some(pos => pos.i === i && pos.j === j)) {
-                            cell.className = 'dp-cell optimal';
-                        }
-                        
-                        cell.textContent = step.dp[i][j];
-                    }
-                    
-                    row.appendChild(cell);
-                }
-                
-                dpTable.appendChild(row);
-            }
-            
-            dpContainer.appendChild(dpTable);
-            lcsVisualization.appendChild(dpContainer);
-            
-            // If we're at the final step, show the LCS
-            if (step.subsequence) {
-                const resultContainer = document.createElement('div');
-                resultContainer.style.margin = '20px 0';
-                resultContainer.style.padding = '10px';
-                resultContainer.style.backgroundColor = '#e8f4f8';
-                resultContainer.style.borderRadius = '4px';
-                resultContainer.style.textAlign = 'center';
-                resultContainer.innerHTML = `<h3>Longest Common Subsequence</h3><div style="font-size: 1.5rem; font-weight: bold;">${step.subsequence}</div>`;
-                
-                lcsVisualization.appendChild(resultContainer);
-                
-                // Show the highlighted strings
-                const stringsContainer = document.createElement('div');
-                stringsContainer.style.margin = '20px 0';
-                stringsContainer.innerHTML = '<h3>Strings with LCS Highlighted</h3>';
-                
-                const string1Container = document.createElement('div');
-                string1Container.style.margin = '10px 0';
-                string1Container.style.fontSize = '1.2rem';
-                string1Container.innerHTML = `<strong>String 1:</strong> ${highlightLCS(string1, step.subsequence)}`;
-                stringsContainer.appendChild(string1Container);
-                
-                const string2Container = document.createElement('div');
-                string2Container.style.margin = '10px 0';
-                string2Container.style.fontSize = '1.2rem';
-                string2Container.innerHTML = `<strong>String 2:</strong> ${highlightLCS(string2, step.subsequence)}`;
-                stringsContainer.appendChild(string2Container);
-                
-                lcsVisualization.appendChild(stringsContainer);
-            }
+      }
+      lcsSteps.push({
+        description: `Finished! LCS is "${subsequence}" with length ${dp[m][n]}`,
+        dp: JSON.parse(JSON.stringify(dp)),
+        current: null,
+        match: false,
+        backtrack: backtrackSteps,
+        subsequence: subsequence
+      });
+      currentLcsStep = 0;
+      showLCSStep(currentLcsStep);
+      document.getElementById('lcs-step-btn').disabled = true;
+      logLCS('Started step-by-step visualization for LCS.');
+    }
+
+    function showLCSStep(stepIndex) {
+      if (stepIndex < 0 || stepIndex >= lcsSteps.length) return;
+      const step = lcsSteps[stepIndex];
+      lcsStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${lcsSteps.length}: ${step.description}</p>`;
+      visualizeLCSStep(step);
+    }
+
+    function visualizeLCSStep(step) {
+      lcsVisualization.innerHTML = '';
+      const string1 = document.getElementById('lcs-string1').value.toUpperCase();
+      const string2 = document.getElementById('lcs-string2').value.toUpperCase();
+      const dpContainer = document.createElement('div');
+      dpContainer.style.margin = '20px 0';
+      dpContainer.innerHTML = '<h3>DP Table</h3>';
+      const dpTable = document.createElement('table');
+      dpTable.className = 'dp-table';
+      const headerRow = document.createElement('tr');
+      let headerHTML = '<th></th><th></th>';
+      for (let j = 0; j < string2.length; j++) {
+        headerHTML += `<th>${string2[j]}</th>`;
+      }
+      headerRow.innerHTML = headerHTML;
+      dpTable.appendChild(headerRow);
+      for (let i = 0; i <= string1.length; i++) {
+        const row = document.createElement('tr');
+        let rowHTML = '';
+        if (i === 0) {
+          rowHTML += '<td></td>';
+        } else {
+          rowHTML += `<td>${string1[i-1]}</td>`;
         }
-        
-        function resetLCS() {
-            lcsVisualization.innerHTML = '<p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>';
-            lcsStepDisplay.innerHTML = '<p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>';
-            lcsLog.innerHTML = '';
-            lcsSteps = [];
-            currentLcsStep = 0;
+        for (let j = 0; j <= string2.length; j++) {
+          let cellClass = '';
+          if (step.current && step.current.i === i && step.current.j === j) {
+            cellClass = step.match ? 'dp-cell current' : 'dp-cell highlight';
+          } else if (step.backtrack && step.backtrack.some(pos => pos.i === i && pos.j === j)) {
+            cellClass = 'dp-cell optimal';
+          }
+          rowHTML += `<td class="${cellClass}">${step.dp[i][j]}</td>`;
         }
-        
-        function logLCS(message) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            lcsLog.prepend(logEntry);
+        row.innerHTML = rowHTML;
+        dpTable.appendChild(row);
+      }
+      dpContainer.appendChild(dpTable);
+      lcsVisualization.appendChild(dpContainer);
+      if (step.subsequence) {
+        const resultContainer = document.createElement('div');
+        resultContainer.style.margin = '20px 0';
+        resultContainer.style.padding = '10px';
+        resultContainer.style.backgroundColor = '#e8f4f8';
+        resultContainer.style.borderRadius = '4px';
+        resultContainer.style.textAlign = 'center';
+        resultContainer.innerHTML = `<h3>Longest Common Subsequence</h3><div style="font-size: 1.5rem; font-weight: bold;">${step.subsequence}</div>`;
+        lcsVisualization.appendChild(resultContainer);
+        const stringsContainer = document.createElement('div');
+        stringsContainer.style.margin = '20px 0';
+        stringsContainer.innerHTML = '<h3>Strings with LCS Highlighted</h3>';
+        const string1Container = document.createElement('div');
+        string1Container.style.margin = '10px 0';
+        string1Container.style.fontSize = '1.2rem';
+        string1Container.innerHTML = `<strong>String 1:</strong> ${highlightLCS(string1, step.subsequence)}`;
+        stringsContainer.appendChild(string1Container);
+        const string2Container = document.createElement('div');
+        string2Container.style.margin = '10px 0';
+        string2Container.style.fontSize = '1.2rem';
+        string2Container.innerHTML = `<strong>String 2:</strong> ${highlightLCS(string2, step.subsequence)}`;
+        stringsContainer.appendChild(string2Container);
+        lcsVisualization.appendChild(stringsContainer);
+      }
+    }
+
+    function resetLCS() {
+      lcsVisualization.innerHTML = '<p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>';
+      lcsStepDisplay.innerHTML = '<p>Enter two strings and click "Solve LCS" to find the longest common subsequence.</p>';
+      lcsLog.innerHTML = '';
+      lcsSteps = [];
+      currentLcsStep = 0;
+    }
+
+    function logLCS(message) {
+      const logEntry = document.createElement('p');
+      logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      lcsLog.prepend(logEntry);
+    }
+
+    /* -------------------------------------
+       Coin Change DP Implementation
+    ------------------------------------- */
+    const dpCoinVisualization = document.getElementById('dp-coin-visualization');
+    const dpCoinStepDisplay = document.getElementById('dp-coin-step-display');
+    const dpCoinLog = document.getElementById('dp-coin-log');
+    let dpCoinSteps = [];
+    let currentDpCoinStep = 0;
+    let dpCoins = [];
+
+    document.getElementById('dp-coin-solve-btn').addEventListener('click', solveDpCoinChange);
+    document.getElementById('dp-coin-step-btn').addEventListener('click', setupDpCoinSteps);
+    document.getElementById('dp-coin-reset-btn').addEventListener('click', resetDpCoin);
+    document.getElementById('dp-coin-system').addEventListener('change', updateDpCoinSystem);
+
+    function updateDpCoinSystem() {
+      const system = document.getElementById('dp-coin-system').value;
+      if (system === 'us') {
+        dpCoins = [1, 5, 10, 25];
+      } else if (system === 'euro') {
+        dpCoins = [1, 2, 5, 10, 20, 50];
+      } else if (system === 'custom') {
+        dpCoins = [1, 3, 4];
+      }
+    }
+    // Initialize coin system on load
+    updateDpCoinSystem();
+
+    function solveDpCoinChange() {
+      const amount = parseInt(document.getElementById('dp-amount').value);
+      if (isNaN(amount) || amount < 1) {
+        dpCoinStepDisplay.innerHTML = '<p>Please enter a valid amount (>=1).</p>';
+        return;
+      }
+      resetDpCoin();
+      updateDpCoinSystem();
+      const startTime = performance.now();
+      const result = coinChangeDP(dpCoins, amount);
+      const endTime = performance.now();
+      visualizeDpCoinResult(result, amount, endTime - startTime);
+      dpCoinStepDisplay.innerHTML = `<p>Minimum coins needed for amount ${amount} is ${result.minCoins === Infinity ? 'No solution' : result.minCoins}. Calculated in ${(endTime - startTime).toFixed(2)}ms.</p>`;
+      logDpCoin(`Solved coin change for amount ${amount} with result: ${result.minCoins === Infinity ? 'No solution' : result.minCoins}.`);
+    }
+
+    function coinChangeDP(coins, amount) {
+      const dp = new Array(amount + 1).fill(Infinity);
+      const coinUsed = new Array(amount + 1).fill(-1);
+      dp[0] = 0;
+      dpCoinSteps.push({
+        description: `Initialize: dp[0] = 0; dp[1..${amount}] = ∞`,
+        dp: [...dp],
+        coinUsed: [...coinUsed],
+        current: null
+      });
+      for (let i = 1; i <= amount; i++) {
+        for (let coin of coins) {
+          if (i >= coin && dp[i - coin] + 1 < dp[i]) {
+            dp[i] = dp[i - coin] + 1;
+            coinUsed[i] = coin;
+            dpCoinSteps.push({
+              description: `For amount ${i}, using coin ${coin}: dp[${i}] = dp[${i-coin}] + 1 = ${dp[i-coin]} + 1 = ${dp[i]}`,
+              dp: [...dp],
+              coinUsed: [...coinUsed],
+              current: i,
+              coin: coin
+            });
+          }
         }
-        
-        // Coin Change DP Implementation
-        const dpCoinVisualization = document.getElementById('dp-coin-visualization');
-        const dpCoinStepDisplay = document.getElementById('dp-coin-step-display');
-        const dpCoinLog = document.getElementById('dp-coin-log');
-        
-        let dpCoinSteps = [];
-        let currentDpCoinStep = 0;
-        
-        document.getElementById('dp-coin-solve-btn').addEventListener('click', solveDpCoinChange);
-        document.getElementById('dp-coin-step-btn').addEventListener('click', setupDpCoinSteps);
-        document.getElementById('dp-coin-reset-btn').addEventListener('click', resetDpCoin);
-        document.getElementById('dp-coin-system').addEventListener('change', updateDpCoinSystem);
-        
-        let dpCoins = []
+      }
+      return { minCoins: dp[amount], dp, coinUsed };
+    }
+
+    function visualizeDpCoinResult(result, amount, time) {
+      dpCoinVisualization.innerHTML = '';
+      const resultContainer = document.createElement('div');
+      resultContainer.style.textAlign = 'center';
+      resultContainer.style.margin = '20px 0';
+      resultContainer.innerHTML = `<h3>Coin Change Result</h3>`;
+      const resultValue = document.createElement('div');
+      resultValue.style.fontSize = '2rem';
+      resultValue.style.fontWeight = 'bold';
+      resultValue.style.margin = '10px 0';
+      resultValue.textContent = result.minCoins === Infinity ? 'No solution' : `Minimum Coins: ${result.minCoins}`;
+      resultContainer.appendChild(resultValue);
+      const metrics = document.createElement('div');
+      metrics.style.display = 'flex';
+      metrics.style.justifyContent = 'center';
+      metrics.style.gap = '20px';
+      metrics.style.margin = '20px 0';
+      const timeMetric = document.createElement('div');
+      timeMetric.style.padding = '10px';
+      timeMetric.style.backgroundColor = '#f8f9fa';
+      timeMetric.style.borderRadius = '4px';
+      timeMetric.innerHTML = `<strong>Time:</strong> ${time.toFixed(2)}ms`;
+      metrics.appendChild(timeMetric);
+      resultContainer.appendChild(metrics);
+      dpCoinVisualization.appendChild(resultContainer);
+
+      const dpContainer = document.createElement('div');
+      dpContainer.style.margin = '20px 0';
+      dpContainer.innerHTML = '<h3>DP Array</h3>';
+      const dpTable = document.createElement('table');
+      dpTable.className = 'dp-table';
+      const headerRow = document.createElement('tr');
+      let headerHTML = '<th>Amount</th>';
+      for (let i = 0; i <= amount; i++) {
+        headerHTML += `<th>${i}</th>`;
+      }
+      headerRow.innerHTML = headerHTML;
+      dpTable.appendChild(headerRow);
+      const dpRow = document.createElement('tr');
+      let dpHTML = '<td>Min Coins</td>';
+      for (let i = 0; i <= amount; i++) {
+        dpHTML += `<td>${result.dp[i] === Infinity ? '∞' : result.dp[i]}</td>`;
+      }
+      dpRow.innerHTML = dpHTML;
+      dpTable.appendChild(dpRow);
+      const coinRow = document.createElement('tr');
+      let coinHTML = '<td>Coin Used</td>';
+      for (let i = 0; i <= amount; i++) {
+        coinHTML += `<td>${result.coinUsed[i] === -1 ? '-' : result.coinUsed[i]}</td>`;
+      }
+      coinRow.innerHTML = coinHTML;
+      dpTable.appendChild(coinRow);
+      dpContainer.appendChild(dpTable);
+      dpCoinVisualization.appendChild(dpContainer);
+    }
+
+    function setupDpCoinSteps() {
+      const amount = parseInt(document.getElementById('dp-amount').value);
+      if (isNaN(amount) || amount < 1) {
+        dpCoinStepDisplay.innerHTML = '<p>Please enter a valid amount (>=1).</p>';
+        return;
+      }
+      resetDpCoin();
+      updateDpCoinSystem();
+      coinChangeDP(dpCoins, amount);
+      currentDpCoinStep = 0;
+      showDpCoinStep(currentDpCoinStep);
+      document.getElementById('dp-coin-step-btn').disabled = true;
+      logDpCoin('Started step-by-step visualization for Coin Change DP.');
+    }
+
+    function showDpCoinStep(stepIndex) {
+      if (stepIndex < 0 || stepIndex >= dpCoinSteps.length) return;
+      const step = dpCoinSteps[stepIndex];
+      dpCoinStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${dpCoinSteps.length}: ${step.description}</p>`;
+      visualizeDpCoinStep(step);
+    }
+
+    function visualizeDpCoinStep(step) {
+      dpCoinVisualization.innerHTML = '';
+      const amount = step.dp.length - 1;
+      const dpContainer = document.createElement('div');
+      dpContainer.style.margin = '20px 0';
+      dpContainer.innerHTML = '<h3>DP Array (Step-by-Step)</h3>';
+      const dpTable = document.createElement('table');
+      dpTable.className = 'dp-table';
+      const headerRow = document.createElement('tr');
+      let headerHTML = '<th>Amount</th>';
+      for (let i = 0; i <= amount; i++) {
+        headerHTML += `<th>${i}</th>`;
+      }
+      headerRow.innerHTML = headerHTML;
+      dpTable.appendChild(headerRow);
+      const dpRow = document.createElement('tr');
+      let dpHTML = '<td>Min Coins</td>';
+      for (let i = 0; i <= amount; i++) {
+        let cellStyle = '';
+        if (step.current !== null && i === step.current) {
+          cellStyle = ' style="background-color: #d4edda;"';
+        }
+        dpHTML += `<td${cellStyle}>${step.dp[i] === Infinity ? '∞' : step.dp[i]}</td>`;
+      }
+      dpRow.innerHTML = dpHTML;
+      dpTable.appendChild(dpRow);
+      const coinRow = document.createElement('tr');
+      let coinHTML = '<td>Coin Used</td>';
+      for (let i = 0; i <= amount; i++) {
+        let cellStyle = '';
+        if (step.current !== null && i === step.current) {
+          cellStyle = ' style="background-color: #d4edda;"';
+        }
+        coinHTML += `<td${cellStyle}>${step.coinUsed[i] === -1 ? '-' : step.coinUsed[i]}</td>`;
+      }
+      coinRow.innerHTML = coinHTML;
+      dpTable.appendChild(coinRow);
+      dpContainer.appendChild(dpTable);
+      dpCoinVisualization.appendChild(dpContainer);
+      if (step.current !== null && step.coin !== undefined) {
+        const calcContainer = document.createElement('div');
+        calcContainer.style.margin = '20px 0';
+        calcContainer.style.padding = '10px';
+        calcContainer.style.backgroundColor = '#e8f4f8';
+        calcContainer.style.borderRadius = '4px';
+        calcContainer.innerHTML = `<strong>Calculation:</strong> For amount ${step.current}, using coin ${step.coin} gives dp[${step.current}]=dp[${step.current - step.coin}]+1 = ${step.dp[step.current - step.coin]} + 1 = ${step.dp[step.current]}`;
+        dpCoinVisualization.appendChild(calcContainer);
+      }
+    }
+
+    function resetDpCoin() {
+      dpCoinVisualization.innerHTML = '<p>Select a coin system and amount, then click "Solve with DP" to find the minimum number of coins.</p>';
+      dpCoinStepDisplay.innerHTML = '<p>Select a coin system and amount, then click "Solve with DP" to find the minimum number of coins.</p>';
+      dpCoinLog.innerHTML = '';
+      dpCoinSteps = [];
+      currentDpCoinStep = 0;
+    }
+
+    function logDpCoin(message) {
+      const logEntry = document.createElement('p');
+      logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      dpCoinLog.prepend(logEntry);
+    }
+  </script>
+</body>
+</html>
