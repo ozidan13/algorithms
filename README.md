@@ -9,7 +9,7 @@ The repository is organized into four weeks, each focusing on different algorith
 - **Week 1**: Introduction to Algorithms
 - **Week 2**: Arrays, Linked Lists, and Recursion
 - **Week 3**: Quicksort, Hash Tables, and Graphs
-- **Week 4**: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors (Coming Soon)
+- **Week 4**: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors
 
 ## Week 1: Introduction to Algorithms
 
@@ -102,9 +102,9 @@ This section covers:
   - Space Complexity: O(V)
   - Features: Step-by-step traversal animation, path highlighting, queue/stack visualization
 
-## Week 4: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors (Coming Soon)
+## Week 4: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors
 
-This section will cover:
+This section covers:
 
 - Greedy Algorithm Design and Analysis
 - Dynamic Programming Principles
@@ -112,6 +112,28 @@ This section will cover:
 - K-nearest neighbors Algorithm
 - Feature Scaling and Distance Metrics
 - NP-Complete Problems and Approximation Algorithms
+
+### Implementations
+
+- `greedy_algorithms.html` - Interactive visualization of greedy algorithms
+  - Time Complexity: Various (typically O(n log n) due to sorting)
+  - Space Complexity: O(n)
+  - Features: Step-by-step decision making, visual proof of optimality/sub-optimality, real-world applications
+
+- `dynamic_programming.html` - Visualization of dynamic programming solutions
+  - Time Complexity: Various (typically O(n²) for 2D problems)
+  - Space Complexity: Various (O(n) to O(n²))
+  - Features: Subproblem visualization, memoization table building, optimal substructure demonstration
+
+- `knapsack_problem.html` - Interactive solution to the classic knapsack problem
+  - Time Complexity: O(n×W) where n is number of items and W is capacity
+  - Space Complexity: O(n×W)
+  - Features: Interactive item selection, weight/value tradeoff visualization, comparison of greedy vs. DP approaches
+
+- `knn_classifier.html` - Implementation of K-nearest neighbors algorithm
+  - Time Complexity: O(n×d) for prediction (n = dataset size, d = dimensions)
+  - Space Complexity: O(n)
+  - Features: Interactive data point classification, distance metric visualization, parameter tuning
 
 ## How to Use
 
