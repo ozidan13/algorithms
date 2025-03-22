@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algorithms & Data Structures | Osama</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         /* Reset and Core Styles - Apple Inspired */
         *, *::before, *::after {
@@ -14,17 +14,138 @@
         }
 
         :root {
-            --primary-text: #1d1d1f; /* Near black for main text */
-            --secondary-text: #6e6e73; /* Grayish secondary text */
-            --accent-color: #0071e3; /* Apple's blue link color */
-            --background-color: #fff; /* White background */
+            /* Light Theme Variables - Enhanced */
+            --primary-text: #1d1d1f;
+            --secondary-text: #6e6e73;
+            --accent-color: #0071e3;
+            --accent-color-hover: #0059b2;
+            --accent-secondary: #5e5ce6;  /* New secondary accent color */
+            --background-color: #fff;
+            --secondary-background: #f5f5f7;
+            --card-background: #fff;
+            --card-header-bg: #f0f0f0;
+            --card-footer-bg: #f8f8f8;
+            --topic-background: #f2f2f7;  /* Lighter topic background */
+            --topic-item-bg: #ffffff;
+            --border-color: #e8e8e8;
+            --tab-background: #f0f0f0;
+            --tab-hover: #e0e0e0;
+            --scroll-top-bg: rgba(0, 113, 227, 0.8);  /* Match accent color */
+            --scroll-top-hover: rgba(0, 89, 178, 0.9); /* Match accent hover */
             --section-padding: 80px 0;
-            --heading-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-            --body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --heading-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            --body-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
             --border-radius: 12px;
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --card-radius: 16px;  /* Slightly larger radius for cards */
+            --button-radius: 20px; /* Rounded buttons */
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
             --transition-duration: 0.2s;
             --link-hover-underline-offset: 3px;
+            --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+            --hero-gradient: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+            --footer-gradient: linear-gradient(135deg, #f5f5f7 0%, #eaeaed 100%);
+        }
+
+        /* Dark Theme Variables - Enhanced */
+        [data-theme="dark"] {
+            --primary-text: #f5f5f7;
+            --secondary-text: #a1a1a6;
+            --accent-color: #0a84ff;
+            --accent-color-hover: #429fff;
+            --accent-secondary: #bf5af2;  /* Purple secondary accent for dark mode */
+            --background-color: #1a1a1a;
+            --secondary-background: #2a2a2a;
+            --card-background: #2c2c2e;
+            --card-header-bg: #3a3a3c;
+            --card-footer-bg: #323234;
+            --topic-background: #3a3a3c;
+            --topic-item-bg: #2c2c2e;
+            --border-color: #444444;
+            --tab-background: #3a3a3c;
+            --tab-hover: #444446;
+            --scroll-top-bg: rgba(10, 132, 255, 0.8);
+            --scroll-top-hover: rgba(66, 159, 255, 0.9);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.35);
+            --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+            --hero-gradient: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            --footer-gradient: linear-gradient(135deg, #2a2a2a 0%, #222222 100%);
+        }
+
+        /* Enhanced Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotateIn {
+            from { transform: rotate(-10deg); opacity: 0; }
+            to { transform: rotate(0); opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
         }
 
         body {
@@ -36,90 +157,187 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            scroll-behavior: smooth;
         }
 
         a {
             color: var(--accent-color);
             text-decoration: none;
             transition: color var(--transition-duration);
+            position: relative;
         }
 
         a:hover {
-            color: #ffffff; /* Darker blue on hover */
+            color: var(--accent-color-hover);
+        }
+
+        a:not(.btn)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        a:not(.btn):hover::after {
+            width: 100%;
         }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: var(--heading-font-family);
-            font-weight: 600; /* Semi-bold headings */
+            font-weight: 600;
             color: var(--primary-text);
             line-height: 1.2;
             margin-bottom: 1rem;
+            transition: color 0.3s ease;
         }
 
         h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
-        h2 { font-size: 2.5rem; }
+        h2 { font-size: 2.5rem; position: relative; display: inline-block; }
         h3 { font-size: 1.8rem; }
         h4 { font-size: 1.2rem; }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .week-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
 
         p {
             margin-bottom: 1.2rem;
             color: var(--secondary-text);
+            transition: color 0.3s ease;
         }
 
         .container {
-            max-width: 1280px; /* Slightly wider container like Apple */
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 40px; /* More side padding */
+            padding: 0 40px;
         }
 
         /* Header - Hero Section */
         header {
-            padding: 120px 0 100px 0; /* Increased padding for spacious hero */
+            padding: 140px 0 120px 0;
             text-align: center;
-            background-color: #f5f5f7; /* Light gray background for hero */
+            background: var(--hero-gradient);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
+            background-size: 200% 200%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(10, 132, 255, 0.08) 0%, transparent 70%);
+            z-index: 0;
         }
 
         header .container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         header h1 {
-            font-size: 4rem; /* Even larger hero heading */
+            font-size: 4rem;
             margin-bottom: 20px;
             color: var(--primary-text);
             animation: fadeInDown 1s ease-out;
+            background: linear-gradient(90deg, var(--primary-text), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
 
         header p {
-            font-size: 1.4rem; /* Larger hero paragraph */
-            max-width: 900px; /* Wider paragraph for better readability */
+            font-size: 1.4rem;
+            max-width: 900px;
             margin-bottom: 40px;
             color: var(--secondary-text);
             animation: fadeInUp 1s ease-out;
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--accent-color);
             color: white;
-            padding: 14px 30px; /* Adjusted button padding */
-            border-radius: var(--border-radius);
+            padding: 14px 30px;
+            border-radius: var(--button-radius);
             text-decoration: none;
-            font-weight: 500; /* Slightly lighter button font */
-            transition: background-color var(--transition-duration), transform var(--transition-duration), box-shadow var(--transition-duration);
+            font-weight: 500;
+            transition: all 0.3s ease;
             margin: 10px;
             border: none;
             cursor: pointer;
-            box-shadow: var(--card-shadow); /* Use card shadow for buttons too */
+            box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
             font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            gap: 10px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
         }
 
         .btn:hover {
-            background-color: #0059b2; /* Darker blue on hover */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow on hover */
+            background-color: var(--accent-color-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 113, 227, 0.4);
+            color: white;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn i {
+            transition: transform 0.3s ease;
+            font-size: 0.9em;
+            margin-left: 8px;
+        }
+
+        .btn:hover i {
+            transform: translateX(4px);
         }
 
         /* Week Sections */
@@ -128,6 +346,18 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.8s ease, transform 0.8s ease;
+            position: relative;
+        }
+
+        .week-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            opacity: 0.5;
         }
 
         .week-container.visible {
@@ -137,113 +367,225 @@
 
         .week-header {
             margin-bottom: 40px;
-            text-align: center; /* Center week headers */
+            text-align: center;
+            position: relative;
         }
 
         .week-header h2 {
-            font-size: 3rem; /* Larger week section titles */
+            font-size: 3rem;
             color: var(--primary-text);
-            margin-bottom: 10px;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
         }
 
         .week-description {
             max-width: 800px;
-            margin: 0 auto 50px; /* Centered week description */
+            margin: 0 auto 60px;
             text-align: center;
+            position: relative;
+            padding: 0 20px;
         }
 
         .topics {
-            background-color: #f0f0f0; /* Lighter background for topics */
-            padding: 30px; /* More padding for topics */
+            background-color: var(--topic-background);
+            padding: 40px;
             border-radius: var(--border-radius);
             margin-bottom: 60px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topics::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .topics h3 {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: var(--primary-text);
             font-size: 2rem;
-            text-align: center; /* Center "Topics Covered" */
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .topics h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
         }
 
         .topics ul {
             list-style-type: none;
             display: flex;
             flex-wrap: wrap;
-            justify-content: center; /* Center topic list items */
-            gap: 15px; /* Increased gap between topics */
+            justify-content: center;
+            gap: 15px;
         }
 
         .topics li {
-            background-color: var(--background-color);
-            padding: 12px 25px; /* Adjusted topic item padding */
-            border-radius: 30px; /* More rounded topic items */
-            display: inline-block;
+            background-color: var(--topic-item-bg);
+            color: var(--primary-text);
+            padding: 12px 25px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
             box-shadow: var(--card-shadow);
             font-weight: 500;
-            transition: transform var(--transition-duration), box-shadow var(--transition-duration);
+            transition: transform 0.3s ease, 
+                        box-shadow 0.3s ease,
+                        background-color 0.3s ease,
+                        color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+
+        .topics li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
         }
 
         .topics li:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Hover effect for topic items */
+            /*border-image: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)) 1;*/
+            transform: translateY(-5px);
         }
 
+        .topics li i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
 
         /* Algorithm Grid and Cards */
         .algo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Wider algo cards */
-            gap: 40px; /* Increased gap between algo cards */
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+            perspective: 1000px;
         }
 
         .algo-card {
-            background-color: var(--background-color);
-            border-radius: var(--border-radius);
+            background-color: var(--card-background);
+            border-radius: var(--card-radius);
             overflow: hidden;
             box-shadow: var(--card-shadow);
-            transition: transform var(--transition-duration), box-shadow var(--transition-duration);
+            transition: transform 0.4s ease, 
+                        box-shadow 0.4s ease,
+                        background-color 0.3s ease;
             position: relative;
             display: flex;
             flex-direction: column;
-            padding-bottom: 20px; /* Add padding to the bottom of cards */
+            padding-bottom: 0;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        .algo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.3s ease;
         }
 
         .algo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Stronger shadow on card hover */
+            transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .algo-card:hover::before {
+            opacity: 0.8;
         }
 
         .algo-card-header {
-            background-color: #e0e0e0; /* Light gray header for cards */
+            background-color: var(--card-header-bg);
             color: var(--primary-text);
-            padding: 20px; /* Increased header padding */
+            padding: 25px 20px;
             font-weight: 600;
-            font-size: 1.3rem;
-            text-align: center; /* Center card headers */
-            border-bottom: 1px solid #d4d4d4; /* Subtle border */
+            font-size: 1.4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .algo-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .algo-card:hover .algo-card-header::before {
+            left: 100%;
         }
 
         .algo-card-body {
-            padding: 30px; /* Increased body padding */
+            padding: 30px;
             flex-grow: 1;
+            position: relative;
+            z-index: 2;
         }
 
         .algo-card-body p {
-            color: var(--secondary-text); /* Use secondary text color for card descriptions */
+            color: var(--secondary-text);
             margin-bottom: 25px;
-            font-size: 1.1rem; /* Slightly larger card description font */
+            font-size: 1.1rem;
+            line-height: 1.6;
         }
 
         .complexity {
             margin: 20px 0;
             font-size: 1rem;
             color: var(--secondary-text);
+            background-color: rgba(0, 0, 0, 0.02);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+            transition: background-color 0.3s ease;
+        }
+
+        [data-theme="dark"] .complexity {
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
         .complexity span {
             font-weight: 600;
-            color: var(--accent-color); /* Accent color for complexity values */
+            color: var(--accent-color);
         }
 
         .features {
@@ -254,56 +596,125 @@
             font-size: 1.1rem;
             margin-bottom: 15px;
             color: var(--primary-text);
+            position: relative;
+            display: inline-block;
+        }
+
+        .features h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
         }
 
         .features ul {
-            padding-left: 25px;
+            padding-left: 15px;
             margin-bottom: 20px;
-            list-style-type: disc; /* Use disc bullet points */
+            list-style-type: none;
             color: var(--secondary-text);
         }
+
         .features li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
         }
 
-
-        .algo-card-footer {
-            padding: 20px;
-            background-color: #f8f8f8; /* Even lighter footer background */
-            border-top: 1px solid #e8e8e8; /* Very subtle border */
+        .features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            width: 20px;
             text-align: center;
         }
 
-        .algo-card-footer .btn {
-            padding: 12px 25px; /* Slightly smaller button in footer */
-            font-size: 1rem;
+        .algo-card-footer {
+            padding: 20px;
+            background-color: var(--card-footer-bg);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            transition: background-color 0.3s ease;
         }
 
+        .algo-card-footer .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            width: auto;
+            min-width: 140px;
+        }
 
         /* Footer */
         footer {
-            background-color: #f5f5f7; /* Light gray footer background */
+            background: var(--footer-gradient);
             color: var(--secondary-text);
-            padding: 80px 0;
+            padding: 100px 0 60px;
             margin-top: 100px;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        footer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .footer-content {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+            position: relative;
+            z-index: 1;
         }
 
         .footer-section {
             flex: 1;
             min-width: 280px;
             margin-bottom: 40px;
+            padding: 0 20px;
         }
 
         .footer-section h3 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-size: 1.4rem;
             color: var(--primary-text);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
         }
 
         .footer-section ul {
@@ -311,31 +722,216 @@
         }
 
         .footer-section li {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-section li:hover {
+            transform: translateX(5px);
         }
 
         .footer-section a {
-            color: var(--accent-color); /* Blue links in footer */
+            color: var(--accent-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .footer-section a:hover {
-            color: #0059b2; /* Darker blue on hover */
-            text-decoration: underline;
-            text-underline-offset: var(--link-hover-underline-offset);
+            color: var(--accent-color-hover);
         }
 
+        .footer-section a i {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .footer-section a:hover i {
+            transform: translateX(3px);
+        }
 
         .copyright {
             text-align: center;
             padding-top: 30px;
-            border-top: 1px solid #e0e0e0; /* Subtle copyright border */
+            border-top: 1px solid var(--border-color);
             margin-top: 30px;
             font-size: 0.9rem;
-        }
-        .copyright a {
-            color: var(--accent-color);
+            position: relative;
+            z-index: 1;
         }
 
+        .copyright a {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Scroll to Top Button - Enhanced */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--scroll-top-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            transform: translateY(20px) scale(0.9);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .scroll-top:hover {
+            background-color: var(--scroll-top-hover);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .scroll-top i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .scroll-top:hover i {
+            transform: translateY(-3px);
+        }
+
+        /* Dark Mode Toggle - Enhanced */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            box-shadow: var(--toggle-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .theme-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .theme-toggle i {
+            font-size: 1.6rem;
+            color: var(--primary-text);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
+
+        [data-theme="dark"] .theme-toggle i.fa-sun {
+            color: #ffd60a;
+            text-shadow: 0 0 10px rgba(255, 214, 10, 0.5);
+        }
+
+        [data-theme="light"] .theme-toggle i.fa-moon {
+            color: #6e6e73;
+        }
+
+        /* Tab Navigation - Enhanced */
+        .tab-container { 
+            margin-bottom: 60px; 
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            background-color: var(--tab-background);
+            border: none;
+            padding: 14px 28px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: var(--primary-text);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 113, 227, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background-color: var(--tab-hover);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
 
         /* Responsive Design - Apple Inspired Breakpoints */
         @media (max-width: 1068px) {
@@ -457,22 +1053,154 @@
             animation: fadeIn 0.5s ease;
         }
 
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
 
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+            color: var(--primary-text);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Apply animations to elements */
+        header h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--primary-text);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        header p {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin-bottom: 40px;
+            color: var(--secondary-text);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        header .btn {
+            animation: scaleIn 1s ease-out 0.5s both;
+        }
+
+        .week-container {
+            padding: var(--section-padding);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .week-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .algo-card {
+            animation: fadeIn 0.5s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Staggered animation for cards */
+        .algo-grid .algo-card:nth-child(1) { animation-delay: 0.1s; }
+        .algo-grid .algo-card:nth-child(2) { animation-delay: 0.2s; }
+        .algo-grid .algo-card:nth-child(3) { animation-delay: 0.3s; }
+        .algo-grid .algo-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .btn {
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        .topics li:hover {
+            animation: float 2s ease-in-out infinite;
+        }
+
+        /* Add styles for icon spacing */
+        .icon-margin {
+            margin-right: 10px;
+        }
+
+        /* Improve spacing in buttons */
+        .btn i {
+            transition: transform 0.3s ease;
+            font-size: 0.9em;
+            margin-left: 8px; /* Add space between text and icon */
+        }
+
+        /* Improve spacing in topic items */
+        .topics li i {
+            margin-right: 10px; /* Add space between icon and text */
+            width: 20px; /* Ensure consistent width for icons */
+            text-align: center; /* Center icons in their space */
+        }
+
+        /* Improve spacing in footer links */
+        .footer-section a i {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            margin-right: 12px; /* Add space between icon and text */
+            width: 20px; /* Ensure consistent width for icons */
+            text-align: center; /* Center icons in their space */
+        }
+
+        /* Add spacing for heading icons */
+        h1 i, h2 i, h3 i {
+            margin-right: 10px;
+        }
+
+        /* Ensure features list icons alignment */
+        .features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            width: 20px; /* Ensure consistent width */
+            text-align: center; /* Center icon */
+        }
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle Button - Enhanced -->
+    <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </div>
+    
     <header>
         <div class="container">
-            <h1>Unlock the Power of Algorithms</h1>
+            <h1><i class="fas fa-code icon-margin"></i>Algorithms & Data Structures | Osama</h1>
             <p>Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the "Grokking Algorithms" approach.</p>
-            <a href="#weeks" class="btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
+            <a href="#weeks" class="btn primary-btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
         </div>
     </header>
 
     <main class="container" id="weeks">
         <section id="week1" class="week-container">
             <div class="week-header">
-                <h2>Week 1: Foundations of Algorithmic Thinking</h2>
+                <h2><i class="fas fa-rocket icon-margin"></i>Week 1: Foundations of Algorithmic Thinking</h2>
             </div>
             <div class="week-description">
                 <p>Begin your journey with essential algorithm concepts. This week lays the groundwork for efficient problem-solving and introduces core techniques like binary search and recursion.</p>
@@ -481,11 +1209,11 @@
             <div class="topics">
                 <h3>Week 1 Topics</h3>
                 <ul>
-                    <li>Introduction to Algorithms</li>
-                    <li>Binary Search</li>
-                    <li>Big O Notation</li>
-                    <li>Selection Sort</li>
-                    <li>Recursion</li>
+                    <li><i class="fas fa-book-open"></i>Introduction to Algorithms</li>
+                    <li><i class="fas fa-search"></i>Binary Search</li>
+                    <li><i class="fas fa-tachometer-alt"></i>Big O Notation</li>
+                    <li><i class="fas fa-sort-amount-up"></i>Selection Sort</li>
+                    <li><i class="fas fa-redo"></i>Recursion</li>
                 </ul>
             </div>
 
@@ -574,7 +1302,7 @@
 
         <section id="week2" class="week-container">
             <div class="week-header">
-                <h2>Week 2: Data Structures and Recursive Strategies</h2>
+                <h2><i class="fas fa-project-diagram icon-margin"></i>Week 2: Data Structures and Recursive Strategies</h2>
             </div>
             <div class="week-description">
                 <p>Delve deeper into data structures and advanced recursion. Learn about arrays, linked lists, and divide-and-conquer algorithms, essential tools for efficient data management.</p>
@@ -583,11 +1311,11 @@
             <div class="topics">
                 <h3>Week 2 Topics</h3>
                 <ul>
-                    <li>Arrays and Limitations</li>
-                    <li>Linked Lists (Singly & Doubly)</li>
-                    <li>Advanced Recursion</li>
-                    <li>Divide and Conquer</li>
-                    <li>Memory Management</li>
+                    <li><i class="fas fa-table"></i>Arrays and Limitations</li>
+                    <li><i class="fas fa-link"></i>Linked Lists (Singly & Doubly)</li>
+                    <li><i class="fas fa-redo-alt"></i>Advanced Recursion</li>
+                    <li><i class="fas fa-object-ungroup"></i>Divide and Conquer</li>
+                    <li><i class="fas fa-memory"></i>Memory Management</li>
                 </ul>
             </div>
 
@@ -902,71 +1630,236 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>About Algorithms Repository</h3>
+                    <h3><i class="fas fa-code-branch icon-margin"></i>About This Repository</h3>
                     <p>A project dedicated to making algorithms and data structures accessible and understandable through interactive visualizations. Inspired by "Grokking Algorithms".</p>
+                    <div class="social-icons" style="margin-top: 20px; display: flex; gap: 20px;">
+                        <a href="#" aria-label="GitHub" style="font-size: 1.5rem;"><i class="fab fa-github"></i></a>
+                        <a href="#" aria-label="LinkedIn" style="font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Twitter" style="font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                    </div>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Explore More</h3>
+                    <h3><i class="fas fa-compass icon-margin"></i>Explore More</h3>
                     <ul>
-                        <li><a href="https://edu.anarcho-copy.org/Algorithm/grokking-algorithms-illustrated-programmers-curious.pdf" target="_blank" rel="noopener noreferrer">Grokking Algorithms Book</a></li>
-                        <li><a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">Get a Mentorship</a></li>
+                        <li>
+                            <a href="https://edu.anarcho-copy.org/Algorithm/grokking-algorithms-illustrated-programmers-curious.pdf" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-book"></i>Grokking Algorithms Book
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-whatsapp"></i>Get a Mentorship
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-chalkboard-teacher"></i>Join Online Workshops
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-code"></i>Contribute to Project
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Quick Navigation</h3>
+                    <h3><i class="fas fa-map-signs icon-margin"></i>Quick Navigation</h3>
                     <ul>
-                        <li><a href="#week1">Week 1: Algorithm Foundations</a></li>
-                        <li><a href="#week2">Week 2: Data Structures & Recursion</a></li>
-                        <li><a href="#week3">Week 3: Sorting, Hashing & Graphs</a></li>
-                        <li><a href="#week4">Week 4: Optimization & KNN</a></li>
+                        <li>
+                            <a href="#week1">
+                                <i class="fas fa-rocket"></i>Week 1: Algorithm Foundations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#week2">
+                                <i class="fas fa-project-diagram"></i>Week 2: Data Structures & Recursion
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#week3">
+                                <i class="fas fa-network-wired"></i>Week 3: Sorting, Hashing & Graphs
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#week4">
+                                <i class="fas fa-brain"></i>Week 4: Optimization & KNN
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 Algorithms Learning <a href="https://www.linkedin.com/in/ozidan/">Osama</a></p>
+                <p>&copy; 2025 Algorithms Learning | Designed with <i class="fas fa-heart" style="color: #ff6b6b; margin: 0 3px;"></i> by <a href="https://www.linkedin.com/in/ozidan/">Osama</a></p>
             </div>
         </div>
     </footer>
 
-    <div class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
+    <div class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+        <i class="fas fa-chevron-up"></i>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode functionality - Enhanced
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const body = document.body;
+            const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const savedTheme = localStorage.getItem('theme');
+            
+            // Function to apply theme
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            };
+            
+            // Apply initial theme
+            if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme)) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+            
+            // Theme toggle animation
+            themeToggle.addEventListener('click', () => {
+                themeToggle.classList.add('animate__animated', 'animate__rubberBand');
+                setTimeout(() => {
+                    themeToggle.classList.remove('animate__animated', 'animate__rubberBand');
+                }, 1000);
+                
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                // Apply theme change with animation
+                document.documentElement.style.transition = 'all 0.5s ease';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Add animation to cards
+                document.querySelectorAll('.algo-card').forEach(card => {
+                    card.style.transition = 'all 0.5s ease';
+                });
+            });
+            
+            // Section animations - Enhanced
             const sections = document.querySelectorAll('.week-container');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
+                        
+                        // Staggered card animations
+                        const cards = entry.target.querySelectorAll('.algo-card');
+                        cards.forEach((card, index) => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(30px)';
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 150 * (index + 1));
+                        });
+                        
+                        // Animate topic items
+                        const topics = entry.target.querySelectorAll('.topics li');
+                        topics.forEach((topic, index) => {
+                            topic.style.opacity = '0';
+                            topic.style.transform = 'translateX(-20px)';
+                            setTimeout(() => {
+                                topic.style.opacity = '1';
+                                topic.style.transform = 'translateX(0)';
+                            }, 100 * (index + 1));
+                        });
                     }
                 });
             }, { threshold: 0.1 });
 
             sections.forEach(section => observer.observe(section));
 
+            // Enhanced scroll to top functionality
             const scrollTopBtn = document.getElementById('scrollTop');
             window.addEventListener('scroll', () => {
-                scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+                if (window.pageYOffset > 300) {
+                    if (!scrollTopBtn.classList.contains('visible')) {
+                        scrollTopBtn.classList.add('visible');
+                    }
+                } else {
+                    scrollTopBtn.classList.remove('visible');
+                }
             });
+            
             scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ 
+                    top: 0, 
+                    behavior: 'smooth' 
+                });
+                
+                // Add bounce animation
+                scrollTopBtn.classList.add('animate__animated', 'animate__bounceOut');
+                setTimeout(() => {
+                    scrollTopBtn.classList.remove('animate__animated', 'animate__bounceOut');
+                }, 1000);
             });
 
+            // Smooth scroll for anchor links with offset for fixed header
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
-                        window.scrollTo({ top: target.offsetTop - 20, behavior: 'smooth' });
+                        const headerOffset = 80;
+                        const elementPosition = target.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
                     }
                 });
             });
 
+            // Enhanced hover effects for buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-5px)';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Animate cards on hover
+            const cards = document.querySelectorAll('.algo-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-10px) rotateX(2deg) rotateY(2deg)';
+                    card.style.boxShadow = getComputedStyle(document.documentElement).getPropertyValue('--card-shadow-hover');
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+                    card.style.boxShadow = getComputedStyle(document.documentElement).getPropertyValue('--card-shadow');
+                });
+            });
+
+            // Initial animation for all sections
             setTimeout(() => {
                 sections.forEach(section => section.classList.add('visible'));
+                
+                // Initial animation for header elements
+                document.querySelector('header h1').classList.add('animate__animated', 'animate__fadeInDown');
+                document.querySelector('header p').classList.add('animate__animated', 'animate__fadeInUp');
+                document.querySelector('header .btn').classList.add('animate__animated', 'animate__fadeIn');
             }, 300);
         });
     </script>
