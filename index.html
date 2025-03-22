@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,38 +14,7 @@
         }
 
         :root {
-            /* Main Colors */
-            --primary-text: #2c3e50;
-            --secondary-text: #34495e;
-            --accent-color: #007bff;
-            --accent-color-hover: #0069d9;
-            --accent-secondary: #6c5ce7;
-            --background-main: #f8f9fa;
-            --background-alt: #ffffff;
-            --border-color: rgba(0, 0, 0, 0.1);
-            
-            /* Card Variables */
-            --card-radius: 16px;
-            --card-background: #ffffff;
-            --card-header-bg: rgba(0, 0, 0, 0.02);
-            --card-footer-bg: rgba(0, 0, 0, 0.01);
-            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
-            
-            /* UI Elements */
-            --button-radius: 12px;
-            --section-padding: 80px 0;
-            
-            /* Gradients */
-            --hero-gradient: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            --footer-gradient: linear-gradient(135deg, #f8f9fa 0%, #f5f7fa 100%);
-            
-            /* Transitions */
-            --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        [data-theme="dark"] {
-            /* Main Colors - Dark Theme */
+            /* Main Colors - Dark Theme as Default */
             --primary-text: #e0e0e0;
             --secondary-text: #a0a0a0;
             --accent-color: #007bff;
@@ -56,15 +25,62 @@
             --border-color: rgba(255, 255, 255, 0.1);
             
             /* Card Variables - Dark Theme */
+            --card-radius: 16px;
             --card-background: #1e1e1e;
             --card-header-bg: rgba(255, 255, 255, 0.03);
             --card-footer-bg: rgba(255, 255, 255, 0.02);
             --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
             --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.4);
             
+            /* UI Elements */
+            --button-radius: 12px;
+            --section-padding: 80px 0;
+            --topic-background: #2a2a2a;
+            --topic-item-bg: #1e1e1e;
+            --tab-background: #2a2a2a;
+            --tab-hover: #333333;
+            --scroll-top-bg: rgba(0, 123, 255, 0.5);
+            --scroll-top-hover: rgba(0, 145, 255, 0.7);
+            --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+            
             /* Gradients - Dark Theme */
             --hero-gradient: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
             --footer-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
+            
+            /* Transitions */
+            --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        [data-theme="light"] {
+            /* Main Colors - Light Theme */
+            --primary-text: #2c3e50;
+            --secondary-text: #34495e;
+            --accent-color: #007bff;
+            --accent-color-hover: #0069d9;
+            --accent-secondary: #6c5ce7;
+            --background-main: #f8f9fa;
+            --background-alt: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.1);
+            
+            /* Card Variables - Light Theme */
+            --card-background: #ffffff;
+            --card-header-bg: rgba(0, 0, 0, 0.02);
+            --card-footer-bg: rgba(0, 0, 0, 0.01);
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+            
+            /* UI Elements */
+            --topic-background: #f5f5f7;
+            --topic-item-bg: #ffffff;
+            --tab-background: #f0f0f0;
+            --tab-hover: #e0e0e0;
+            --scroll-top-bg: rgba(0, 123, 255, 0.3);
+            --scroll-top-hover: rgba(0, 145, 255, 0.5);
+            --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+            
+            /* Gradients - Light Theme */
+            --hero-gradient: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            --footer-gradient: linear-gradient(135deg, #f8f9fa 0%, #f5f7fa 100%);
         }
 
         /* Animation Keyframes */
@@ -744,15 +760,15 @@
             margin: 20px 0;
             font-size: 1rem;
             color: var(--secondary-text);
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid var(--accent-color);
             transition: background-color 0.3s ease;
         }
 
-        [data-theme="dark"] .complexity {
-            background-color: rgba(255, 255, 255, 0.05);
+        [data-theme="light"] .complexity {
+            background-color: rgba(0, 0, 0, 0.02);
         }
 
         .complexity span {
@@ -1032,11 +1048,13 @@
             transform: rotate(20deg);
         }
 
-        [data-theme="dark"] .theme-toggle i.fa-sun {
+        /* Sun icon in dark mode (default) */
+        .theme-toggle i.fa-sun {
             color: #ffd60a;
             text-shadow: 0 0 10px rgba(255, 214, 10, 0.5);
         }
 
+        /* Moon icon in light mode */
         [data-theme="light"] .theme-toggle i.fa-moon {
             color: #6e6e73;
         }
@@ -1430,7 +1448,7 @@
 <body>
     <!-- Dark Mode Toggle Button - Enhanced -->
     <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
     </div>
     
     <header>
@@ -1989,11 +2007,15 @@
                 }
             };
             
-            // Apply initial theme
-            if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme)) {
-                applyTheme('dark');
-            } else {
+            // Apply initial theme - Make dark the default
+            if (savedTheme === 'light') {
                 applyTheme('light');
+            } else {
+                // Default to dark mode if no theme is saved or if saved theme is dark
+                applyTheme('dark');
+                if (!savedTheme) {
+                    localStorage.setItem('theme', 'dark');
+                }
             }
             
             // Theme toggle animation
