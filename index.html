@@ -49,6 +49,21 @@
             
             /* Transitions */
             --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            
+            /* Color Scheme - Default Blue */
+            --color-scheme: 'blue';
+        }
+
+        /* Pistachio Green Color Scheme */
+        [data-color-scheme="green"] {
+            --accent-color: #7cb342;
+            --accent-color-hover: #8bc34a;
+            --accent-secondary: #689f38;
+            --scroll-top-bg: rgba(124, 179, 66, 0.5);
+            --scroll-top-hover: rgba(139, 195, 74, 0.7);
+            /* Button shadows - only for main action buttons */
+            --main-button-shadow: 0 4px 15px rgba(124, 179, 66, 0.3);
+            --main-button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.4);
         }
 
         [data-theme="light"] {
@@ -81,6 +96,25 @@
             /* Gradients - Light Theme */
             --hero-gradient: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             --footer-gradient: linear-gradient(135deg, #f8f9fa 0%, #f5f7fa 100%);
+            /* Box shadows for light+green theme */
+            --card-shadow: 0 10px 25px rgba(105, 159, 56, 0.15);
+            --card-shadow-hover: 0 15px 35px rgba(105, 159, 56, 0.25);
+            --toggle-shadow: 0 2px 15px rgba(105, 159, 56, 0.15);
+            /* Button shadows */
+            --button-shadow: 0 4px 15px rgba(124, 179, 66, 0.2);
+            --button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.3);
+        }
+
+        /* Light Theme with Green Color Scheme */
+        [data-theme="light"][data-color-scheme="green"] {
+            --accent-color: #7cb342;
+            --accent-color-hover: #8bc34a;
+            --accent-secondary: #689f38;
+            --scroll-top-bg: rgba(124, 179, 66, 0.3);
+            --scroll-top-hover: rgba(139, 195, 74, 0.5);
+            /* Button shadows - only for main action buttons */
+            --main-button-shadow: 0 4px 15px rgba(124, 179, 66, 0.2);
+            --main-button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.3);
         }
 
         /* Animation Keyframes */
@@ -490,7 +524,7 @@
         header .btn:hover {
             background-position: 100% 0;
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 113, 227, 0.4);
+            box-shadow: var(--button-shadow-hover, 0 10px 30px rgba(0, 113, 227, 0.4));
         }
 
         /* Scroll down indicator */
@@ -973,7 +1007,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--button-shadow, 0 4px 15px rgba(0, 0, 0, 0.15));
             z-index: 100;
             transform: translateY(20px) scale(0.9);
         }
@@ -987,7 +1021,7 @@
         .scroll-top:hover {
             background-color: var(--scroll-top-hover);
             transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--button-shadow-hover, 0 6px 20px rgba(0, 0, 0, 0.2));
         }
 
         .scroll-top i {
@@ -1101,7 +1135,7 @@
         .tab-btn.active {
             background-color: var(--accent-color);
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 113, 227, 0.3);
+            box-shadow: var(--button-shadow, 0 5px 15px rgba(0, 113, 227, 0.3));
             transform: translateY(-2px);
         }
 
@@ -1443,12 +1477,147 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 113, 227, 0.4);
         }
+
+        /* Color Scheme Toggle */
+        .color-scheme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 85px; /* Position next to theme toggle */
+            z-index: 1000;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            box-shadow: var(--toggle-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .color-scheme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .color-scheme-toggle:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .color-scheme-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .color-scheme-toggle i {
+            font-size: 1.6rem;
+            color: var(--primary-text);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .color-scheme-toggle:hover i {
+            transform: rotate(20deg);
+        }
+
+        /* Color the palette icon based on the color scheme */
+        [data-color-scheme="blue"] .color-scheme-toggle i.fa-palette {
+            color: #007bff;
+            text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        [data-color-scheme="green"] .color-scheme-toggle i.fa-palette {
+            color: #7cb342;
+            text-shadow: 0 0 10px rgba(124, 179, 66, 0.5);
+        }
+
+        /* Custom styles for theme-specific header gradients */
+        [data-color-scheme="green"] header h1 {
+            background: linear-gradient(90deg, var(--primary-text), #7cb342, #689f38, var(--primary-text));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        /* Target only main buttons for special shadows in pistachio theme */
+        [data-color-scheme="green"] header .btn,
+        [data-color-scheme="green"] .algo-card-footer .btn {
+            box-shadow: var(--main-button-shadow);
+        }
+
+        [data-color-scheme="green"] header .btn:hover,
+        [data-color-scheme="green"] .algo-card-footer .btn:hover {
+            box-shadow: var(--main-button-shadow-hover);
+        }
+
+        /* Keep original shadow for cards and topics in pistachio theme */
+        [data-color-scheme="green"] .algo-card,
+        [data-color-scheme="green"] .topics,
+        [data-color-scheme="green"] .topics li {
+            box-shadow: var(--card-shadow);
+        }
+
+        [data-color-scheme="green"] .algo-card:hover {
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Set scroll-top button to use the green theme shadow */
+        [data-color-scheme="green"] .scroll-top {
+            box-shadow: var(--main-button-shadow);
+        }
+
+        [data-color-scheme="green"] .scroll-top:hover {
+            box-shadow: var(--main-button-shadow-hover);
+        }
+
+        [data-color-scheme="green"] .infinity-animation {
+            background: linear-gradient(45deg, transparent 0%, #7cb342 30%, #689f38 70%, transparent 100%);
+            background-size: 400% 400%;
+            opacity: 0.03;
+            z-index: 0;
+            animation: gradientFlow 10s ease infinite;
+            mix-blend-mode: overlay;
+        }
+
+        [data-color-scheme="green"] .ripple-effect {
+            border: 2px solid #7cb342;
+        }
+
+        [data-color-scheme="green"] h2::after,
+        [data-color-scheme="green"] .week-header h2::after,
+        [data-color-scheme="green"] .topics h3::after,
+        [data-color-scheme="green"] .features h4::after,
+        [data-color-scheme="green"] .footer-section h3::after {
+            background-color: #7cb342;
+        }
+
+        [data-color-scheme="green"] .complexity {
+            border-left: 3px solid #7cb342;
+        }
+
+        [data-color-scheme="green"] .features li::before {
+            color: #7cb342;
+        }
     </style>
 </head>
 <body>
     <!-- Dark Mode Toggle Button - Enhanced -->
     <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <i class="fas fa-sun"></i>
+    </div>
+    
+    <!-- Color Scheme Toggle Button -->
+    <div class="color-scheme-toggle" id="colorSchemeToggle" aria-label="Toggle color scheme">
+        <i class="fas fa-palette"></i>
     </div>
     
     <header>
@@ -1994,6 +2163,10 @@
             const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
             const savedTheme = localStorage.getItem('theme');
             
+            // Color scheme toggle functionality
+            const colorSchemeToggle = document.getElementById('colorSchemeToggle');
+            const savedColorScheme = localStorage.getItem('colorScheme');
+            
             // Function to apply theme
             const applyTheme = (theme) => {
                 if (theme === 'dark') {
@@ -2007,6 +2180,21 @@
                 }
             };
             
+            // Function to apply color scheme
+            const applyColorScheme = (scheme) => {
+                document.documentElement.setAttribute('data-color-scheme', scheme);
+                
+                // Generate pistachio images if green scheme is selected
+                if (scheme === 'green') {
+                    generatePistachioImages();
+                    // We no longer need the updateGradients function since we're using CSS variables
+                } else {
+                    resetFloatingParticles();
+                }
+            };
+            
+            // Remove the updateGradients function since we're now using CSS selectors
+            
             // Apply initial theme - Make dark the default
             if (savedTheme === 'light') {
                 applyTheme('light');
@@ -2015,6 +2203,16 @@
                 applyTheme('dark');
                 if (!savedTheme) {
                     localStorage.setItem('theme', 'dark');
+                }
+            }
+            
+            // Apply initial color scheme - Blue is default
+            if (savedColorScheme === 'green') {
+                applyColorScheme('green');
+            } else {
+                applyColorScheme('blue');
+                if (!savedColorScheme) {
+                    localStorage.setItem('colorScheme', 'blue');
                 }
             }
             
@@ -2039,6 +2237,143 @@
                 });
             });
             
+            // Color scheme toggle
+            colorSchemeToggle.addEventListener('click', () => {
+                colorSchemeToggle.classList.add('animate__animated', 'animate__rubberBand');
+                setTimeout(() => {
+                    colorSchemeToggle.classList.remove('animate__animated', 'animate__rubberBand');
+                }, 1000);
+                
+                const currentColorScheme = document.documentElement.getAttribute('data-color-scheme');
+                const newColorScheme = currentColorScheme === 'blue' ? 'green' : 'blue';
+                
+                // Apply color scheme change with animation
+                document.documentElement.style.transition = 'all 0.5s ease';
+                applyColorScheme(newColorScheme);
+                localStorage.setItem('colorScheme', newColorScheme);
+            });
+            
+            // Function to generate pistachio images using canvas
+            function generatePistachioImages() {
+                // Clear existing floating particles
+                const existingParticles = document.querySelectorAll('.floating-particle');
+                existingParticles.forEach(particle => {
+                    particle.innerHTML = '';
+                    particle.style.background = 'transparent';
+                    
+                    // Create a canvas element for each particle
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 40;
+                    canvas.height = 40;
+                    canvas.style.width = '100%';
+                    canvas.style.height = '100%';
+                    
+                    particle.appendChild(canvas);
+                    
+                    // Draw pistachio shape
+                    const ctx = canvas.getContext('2d');
+                    drawPistachio(ctx, canvas.width, canvas.height);
+                });
+                
+                // Adjust particle sizes for the pistachio theme
+                document.querySelectorAll('.floating-particle').forEach((particle, index) => {
+                    // Make particles larger for pistachio images
+                    const size = 20 + (index % 3) * 10; // 20px, 30px, or 40px depending on index
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    
+                    // Slow down animation for more natural floating
+                    const currentDuration = parseFloat(getComputedStyle(particle).animationDuration);
+                    particle.style.animationDuration = (currentDuration * 1.5) + 's';
+                });
+            }
+            
+            // Function to draw a pistachio on canvas
+            function drawPistachio(ctx, width, height) {
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const size = Math.min(width, height) * 0.8;
+                
+                // Draw pistachio shell (outer part)
+                ctx.beginPath();
+                ctx.fillStyle = '#967259'; // Brown shell color
+                ctx.ellipse(centerX, centerY, size/2, size/3, Math.PI/4, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Draw the crack in the shell
+                ctx.beginPath();
+                ctx.strokeStyle = '#78604b'; // Darker brown for crack
+                ctx.lineWidth = 1;
+                ctx.moveTo(centerX - size/4, centerY - size/5);
+                ctx.lineTo(centerX + size/4, centerY + size/5);
+                ctx.stroke();
+                
+                // Draw pistachio nut (inner part)
+                ctx.beginPath();
+                ctx.fillStyle = '#ACD15F'; // Light green for pistachio meat
+                ctx.ellipse(centerX, centerY, size/3.5, size/5, Math.PI/4, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Add highlight/dimension to the nut
+                ctx.beginPath();
+                ctx.fillStyle = '#87aa44'; // Slightly darker green for dimension
+                ctx.ellipse(centerX + size/10, centerY + size/10, size/7, size/10, Math.PI/4, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // Function to reset floating particles to the original style
+            function resetFloatingParticles() {
+                document.querySelectorAll('.floating-particle').forEach((particle, index) => {
+                    // Remove canvas if present
+                    const canvas = particle.querySelector('canvas');
+                    if (canvas) {
+                        particle.removeChild(canvas);
+                    }
+                    
+                    // Reset to original style
+                    particle.style.background = 'var(--accent-color)';
+                    
+                    // Reset particle sizes to original values based on the original CSS
+                    if (index === 0) {
+                        particle.style.width = '12px';
+                        particle.style.height = '12px';
+                        particle.style.animationDuration = '25s';
+                    } else if (index === 1) {
+                        particle.style.width = '18px';
+                        particle.style.height = '18px';
+                        particle.style.animationDuration = '30s';
+                    } else if (index === 2) {
+                        particle.style.width = '10px';
+                        particle.style.height = '10px';
+                        particle.style.animationDuration = '20s';
+                    } else if (index === 3) {
+                        particle.style.width = '15px';
+                        particle.style.height = '15px';
+                        particle.style.animationDuration = '28s';
+                    } else if (index === 4) {
+                        particle.style.width = '9px';
+                        particle.style.height = '9px';
+                        particle.style.animationDuration = '22s';
+                    } else if (index === 5) {
+                        particle.style.width = '14px';
+                        particle.style.height = '14px';
+                        particle.style.animationDuration = '26s';
+                    } else if (index === 6) {
+                        particle.style.width = '11px';
+                        particle.style.height = '11px';
+                        particle.style.animationDuration = '24s';
+                    } else if (index === 7) {
+                        particle.style.width = '16px';
+                        particle.style.height = '16px';
+                        particle.style.animationDuration = '29s';
+                    } else if (index === 8) {
+                        particle.style.width = '13px';
+                        particle.style.height = '13px';
+                        particle.style.animationDuration = '27s';
+                    }
+                });
+            }
+
             // Section animations - Enhanced
             const sections = document.querySelectorAll('.week-container');
             const observer = new IntersectionObserver((entries) => {
