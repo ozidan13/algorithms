@@ -138,7 +138,8 @@ class NotificationSystem {
 
     async loadMessages() {
         try {
-            const response = await fetch('/notifications/messages.json');
+            // Use a relative path that works both locally and when deployed
+            const response = await fetch('./notifications/messages.json');
             const data = await response.json();
             this.notificationData = data;
             
