@@ -11,6 +11,29 @@ The repository is organized into four weeks, each focusing on different algorith
 - **Week 3**: Quicksort, Hash Tables, and Graphs
 - **Week 4**: Greedy Algorithms, Dynamic Programming, and K-nearest neighbors
 
+Additionally, the repository includes:
+
+- **CSS**: Styling files for the visualizations
+- **JS**: JavaScript utility functions and shared code
+- **Notifications**: An adaptive notification system that provides contextual learning tips
+
+## UI Features
+
+- **Responsive Design**: All visualizations are fully responsive and work on desktop and mobile devices
+- **Dark/Light Theme**: Toggle between dark and light themes for comfortable viewing in any environment
+- **Color Schemes**: Support for multiple color schemes including default blue and pistachio green
+- **Interactive Elements**: Animated transitions, floating elements, and visual feedback enhance the learning experience
+
+## Notification System
+
+The repository includes a smart notification system that:
+
+- Displays contextual tips based on the algorithm being studied
+- Shows welcome messages for first-time visitors
+- Provides motivational content to encourage learning
+- Intelligently adapts to both local and remote deployments through dynamic path resolution
+- Uses smooth animations and themed styling consistent with the main interface
+
 ## Week 1: Introduction to Algorithms
 
 The first week covers fundamental concepts in algorithms:
@@ -140,6 +163,7 @@ This section covers:
 1. Clone this repository to your local machine
 2. Navigate to the week you're currently studying
 3. Open any HTML file in a web browser to see the algorithm in action
+4. For remote deployments, use the hosted version which automatically adapts paths and resources
 
 Each implementation includes:
 
@@ -147,12 +171,20 @@ Each implementation includes:
 - Step-by-step explanation
 - Interactive elements to help understand the concept
 - Code snippets showing the implementation
+- Contextual notifications with helpful tips
 
 ## Learning Resources
 
 - [Grokking Algorithms](https://www.manning.com/books/grokking-algorithms) by Aditya Bhargava
 - [Khan Academy: Algorithms](https://www.khanacademy.org/computing/computer-science/algorithms)
 - [MIT OpenCourseWare: Introduction to Algorithms](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/)
+
+## Technical Notes
+
+- The applications use vanilla JavaScript with no external dependencies
+- CSS variables provide theming support with smooth transitions between themes
+- The notification system uses dynamic path resolution to work in both local and remote environments
+- All visualizations use HTML Canvas for rendering with fallbacks when necessary
 
 ## Contributing
 
