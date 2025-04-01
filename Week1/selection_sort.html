@@ -26,19 +26,20 @@
     }
     .array-container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
+      flex-wrap: nowrap;
+      gap: clamp(2px, 1vw, 5px);
       margin: 20px 0;
-      height: 300px;
+      height: min(60vh, 400px);
       align-items: flex-end;
       position: relative;
+      overflow-x: auto;
+      padding-bottom: 30px;
     }
     .array-bar {
-      flex: 1;
+      flex: 0 0 clamp(20px, 5vw, 40px);
       background-color: #3498db;
       transition: height 0.3s ease, background-color 0.3s ease;
       position: relative;
-      min-width: 20px;
       border-radius: 4px 4px 0 0;
     }
     .array-bar::after {
@@ -64,17 +65,19 @@
     .controls {
       margin: 20px 0;
       display: flex;
-      gap: 10px;
+      gap: clamp(5px, 2vw, 10px);
       flex-wrap: wrap;
     }
     button {
-      padding: 8px 16px;
+      padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
       background-color: #3498db;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s;
+      font-size: clamp(14px, 2vw, 16px);
+      min-width: 80px;
     }
     button:hover {
       background-color: #2980b9;
@@ -86,8 +89,9 @@
     .speed-control {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+      gap: clamp(5px, 2vw, 10px);
+      margin-top: 15px;
+      flex-wrap: wrap;
     }
     .speed-control label {
       margin-right: 5px;
