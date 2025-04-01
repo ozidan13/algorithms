@@ -4,6 +4,7 @@ class NotificationSystem {
         this.container = null;
         this.currentPage = null;
         this.notificationData = null;
+        this.repoName = 'algorithms'; // Make repoName a class property
         this.initialize();
     }
 
@@ -138,8 +139,30 @@ class NotificationSystem {
 
     async loadMessages() {
         try {
-            // Use a relative path that works both locally and when deployed
-            const response = await fetch('./notifications/messages.json');
+            // Build the path dynamically based on the current URL
+            const currentPath = window.location.pathname;
+            const pathSegments = currentPath.split('/');
+            let basePath = '';
+            
+            // Handle various deployment scenarios by finding the base path
+            const repoIndex = pathSegments.findIndex(segment => 
+                segment.toLowerCase() === this.repoName.toLowerCase());
+            
+            if (repoIndex !== -1) {
+                // Construct base path up to the repository name
+                basePath = pathSegments.slice(0, repoIndex + 1).join('/');
+            }
+            
+            // Use absolute path from base with leading slash if needed
+            const messagesPath = `${basePath ? basePath : ''}/notifications/messages.json`;
+            
+            console.log(`Loading notifications from: ${messagesPath}`);
+            const response = await fetch(messagesPath);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load notifications: ${response.status} ${response.statusText}`);
+            }
+            
             const data = await response.json();
             this.notificationData = data;
             
@@ -156,66 +179,137 @@ class NotificationSystem {
             this.detectCurrentPage();
             this.showPageSpecificNotifications();
 
-            // Show random motivational message
-            const randomMotivational = data.motivational[Math.floor(Math.random() * data.motivational.length)];
-            this.show(randomMotivational);
+            // Show random motivational message with 50% probability to avoid too many notifications
+            if (Math.random() > 0.5) {
+                const randomMotivational = data.motivational[Math.floor(Math.random() * data.motivational.length)];
+                this.show(randomMotivational);
+            }
 
         } catch (error) {
             console.error('Error loading notifications:', error);
+            // Still allow the application to function if notifications fail
         }
     }
 
     detectCurrentPage() {
-        const path = window.location.pathname;
+        const path = window.location.pathname.toLowerCase();
+        console.log('Detecting current page for path:', path);
         
-        // Extract week and lesson from path
-        if (path.includes('Week1/')) {
-            this.currentPage = { week: 'week1' };
-            if (path.includes('binary_search')) this.currentPage.lesson = 'binary_search';
-            else if (path.includes('big_o')) this.currentPage.lesson = 'big_o';
-            else if (path.includes('selection_sort')) this.currentPage.lesson = 'selection_sort';
-            else if (path.includes('recursion')) this.currentPage.lesson = 'recursion';
-            else this.currentPage.lesson = 'intro';
-        } 
-        else if (path.includes('Week2/')) {
-            this.currentPage = { week: 'week2' };
-            if (path.includes('array_operations')) this.currentPage.lesson = 'array_operations';
-            else if (path.includes('linked_list')) this.currentPage.lesson = 'linked_list';
-            else if (path.includes('recursive_divide_conquer')) this.currentPage.lesson = 'recursive_divide_conquer';
-            else if (path.includes('memory_visualization')) this.currentPage.lesson = 'memory_visualization';
-            else this.currentPage.lesson = 'intro';
+        // More flexible pattern matching for week detection
+        const weekRegex = /week(\d+)/i;
+        const weekMatch = path.match(weekRegex);
+        
+        if (weekMatch) {
+            const weekNum = weekMatch[1];
+            this.currentPage = { week: `week${weekNum}` };
+            
+            // Detect lesson using flexible matching
+            const lessonPatterns = {
+                binary_search: /binary[_-]?search/i,
+                big_o: /big[_-]?o/i,
+                selection_sort: /selection[_-]?sort/i,
+                recursion: /recursion/i,
+                array_operations: /array[_-]?operations/i,
+                linked_list: /linked[_-]?list/i,
+                recursive_divide_conquer: /recursive[_-]?divide[_-]?conquer/i,
+                memory_visualization: /memory[_-]?visualization/i,
+                quicksort: /quicksort/i,
+                hash_table: /hash[_-]?table/i,
+                graph_representation: /graph[_-]?representation/i,
+                graph_traversal: /graph[_-]?traversal/i,
+                greedy_algorithms: /greedy[_-]?algorithms/i,
+                dynamic_programming: /dynamic[_-]?programming/i,
+                knapsack_problem: /knapsack[_-]?problem/i,
+                knn_classifier: /knn[_-]?classifier/i
+            };
+            
+            let lessonDetected = false;
+            // Find matching lesson pattern
+            for (const [lessonName, pattern] of Object.entries(lessonPatterns)) {
+                if (pattern.test(path)) {
+                    this.currentPage.lesson = lessonName;
+                    lessonDetected = true;
+                    break;
+                }
+            }
+            
+            // If no specific lesson pattern matched but we're in a week folder, default to intro
+            if (!lessonDetected) {
+                this.currentPage.lesson = 'intro';
+                console.log(`No specific lesson detected, defaulting to intro for week ${weekNum}`);
+            }
+            
+            console.log(`Detected page: Week ${weekNum}, Lesson: ${this.currentPage.lesson}`);
+            return; // Return early after successful detection
         }
-        else if (path.includes('Week3/')) {
-            this.currentPage = { week: 'week3' };
-            if (path.includes('quicksort')) this.currentPage.lesson = 'quicksort';
-            else if (path.includes('hash_table')) this.currentPage.lesson = 'hash_table';
-            else if (path.includes('graph_representation')) this.currentPage.lesson = 'graph_representation';
-            else if (path.includes('graph_traversal')) this.currentPage.lesson = 'graph_traversal';
-            else this.currentPage.lesson = 'intro';
-        }
-        else if (path.includes('Week4/')) {
-            this.currentPage = { week: 'week4' };
-            if (path.includes('greedy_algorithms')) this.currentPage.lesson = 'greedy_algorithms';
-            else if (path.includes('dynamic_programming')) this.currentPage.lesson = 'dynamic_programming';
-            else if (path.includes('knapsack_problem')) this.currentPage.lesson = 'knapsack_problem';
-            else if (path.includes('knn_classifier')) this.currentPage.lesson = 'knn_classifier';
-            else this.currentPage.lesson = 'intro';
+        
+        // Check if we're on the homepage
+        // Handle homepage - using more flexible detection
+        const pathLastSegment = path.split('/').pop() || '';
+        if (pathLastSegment === 'index.html' || 
+            pathLastSegment === '' || 
+            pathLastSegment === this.repoName.toLowerCase()) {
+            this.currentPage = { isHomePage: true };
+            console.log('Detected homepage');
         }
         else {
+            console.log('Could not detect current page from path:', path);
+            // Instead of setting to null, try to infer from URL structure
+            const segments = path.split('/').filter(s => s);
+            if (segments.length > 0) {
+                // Try to detect if we're in a lesson file even if it doesn't match our patterns
+                for (let i = 0; i < segments.length; i++) {
+                    if (segments[i].toLowerCase().includes('week')) {
+                        const weekMatch = segments[i].match(/week(\d+)/i);
+                        if (weekMatch) {
+                            const weekNum = weekMatch[1];
+                            this.currentPage = { 
+                                week: `week${weekNum}`,
+                                lesson: segments[i+1] ? segments[i+1].toLowerCase().replace('.html', '') : 'intro'
+                            };
+                            console.log(`Inferred page from URL structure: Week ${weekNum}, Lesson: ${this.currentPage.lesson}`);
+                            return;
+                        }
+                    }
+                }
+            }
+            // If all detection fails, set to null
             this.currentPage = null;
         }
     }
 
     showPageSpecificNotifications() {
-        if (!this.currentPage || !this.notificationData) return;
+        if (!this.currentPage || !this.notificationData) {
+            console.log('Cannot show page-specific notifications. Current page or notification data missing.');
+            return;
+        }
         
-        const { week, lesson } = this.currentPage;
-        
-        // Show week-specific notification
-        if (this.notificationData.weeks && this.notificationData.weeks[week]) {
+        try {
+            // Handle homepage specifically
+            if (this.currentPage.isHomePage) {
+                // Show a random promotional message
+                const promos = this.notificationData.promotional;
+                if (promos && promos.length > 0) {
+                    const randomPromo = promos[Math.floor(Math.random() * promos.length)];
+                    this.show(randomPromo);
+                    console.log('Showing homepage promotional notification:', randomPromo.id);
+                }
+                return;
+            }
+            
+            const { week, lesson } = this.currentPage;
+            console.log(`Showing notifications for: ${week}, lesson: ${lesson}`);
+            
+            // Ensure week data exists
+            if (!this.notificationData.weeks || !this.notificationData.weeks[week]) {
+                console.log(`No notifications found for ${week}`);
+                return;
+            }
+            
             // Show lesson-specific notification if available
             if (lesson && this.notificationData.weeks[week][lesson]) {
                 const lessonNotification = this.notificationData.weeks[week][lesson];
+                console.log(`Found lesson-specific notification: ${lessonNotification.id}`);
                 this.show(lessonNotification);
                 
                 // Show a random tip if available after a delay
@@ -233,8 +327,14 @@ class NotificationSystem {
             }
             // If no lesson-specific notification or on intro page, show week intro
             else if (this.notificationData.weeks[week].intro) {
+                console.log(`No lesson-specific notification found, showing week intro for ${week}`);
                 this.show(this.notificationData.weeks[week].intro);
             }
+            else {
+                console.log(`No notifications found for ${week}.${lesson}`);
+            }
+        } catch (error) {
+            console.error('Error showing page-specific notifications:', error, error.stack);
         }
     }
 
