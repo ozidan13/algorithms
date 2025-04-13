@@ -4,42 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Big O Notation Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/global-algo.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
         .chart-container {
-            height: 400px;
-            margin: 20px 0;
+            height: 450px;
+            margin: 25px 0;
             position: relative;
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            transition: var(--theme-transition);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
         .chart {
             width: 100%;
             height: 100%;
-            border-left: 2px solid #333;
-            border-bottom: 2px solid #333;
+            border-left: 2px solid var(--secondary-text);
+            border-bottom: 2px solid var(--secondary-text);
             position: relative;
         }
         .x-axis, .y-axis {
             position: absolute;
-            color: #333;
-            font-size: 14px;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            user-select: none;
         }
         .x-axis {
             bottom: -30px;
@@ -48,7 +38,7 @@
         }
         .y-axis {
             top: 50%;
-            left: -30px;
+            left: -40px;
             transform: translateY(-50%) rotate(-90deg);
         }
         .complexity-line {
@@ -56,95 +46,144 @@
             bottom: 0;
             left: 0;
             pointer-events: none;
+            overflow: visible;
         }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
+        .complexity-line path {
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
-        button {
-            padding: 8px 16px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
+        .complexity-line circle {
+             r: 4;
+             filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
         }
         .complexity-selector {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 15px;
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            transition: var(--theme-transition);
         }
         .complexity-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        .complexity-item:hover {
+            background-color: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
+        }
+        .complexity-item input[type="checkbox"] {
+             appearance: none;
+             width: 18px;
+             height: 18px;
+             border: 2px solid var(--secondary-text);
+             border-radius: 4px;
+             margin-right: 5px;
+             cursor: pointer;
+             position: relative;
+             transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .complexity-item input[type="checkbox"]:checked {
+             border-color: var(--accent-color);
+             background-color: var(--accent-color);
+        }
+        .complexity-item input[type="checkbox"]:checked::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         .color-box {
             width: 20px;
             height: 20px;
-            border-radius: 3px;
-        }
-        .explanation {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #e8f4f8;
             border-radius: 4px;
-            border-left: 4px solid #3498db;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         .complexity-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 25px 0;
+            font-size: 0.95rem;
         }
         .complexity-table th, .complexity-table td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
             text-align: left;
+            transition: var(--theme-transition);
         }
         .complexity-table th {
-            background-color: #f2f2f2;
+            background-color: var(--background-alt);
+            font-weight: 600;
+            color: var(--primary-text);
         }
-        .complexity-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .complexity-table tr:nth-child(even) td {
+            background-color: rgba(0, 0, 0, 0.05);
         }
-        .input-range {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
+        [data-theme="light"] .complexity-table tr:nth-child(even) td {
+            background-color: rgba(0, 0, 0, 0.02);
         }
-        .input-range label {
-            margin-right: 5px;
+        .complexity-table td:first-child strong {
+            font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace;
         }
         .examples {
-            margin-top: 20px;
+            margin-top: 25px;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
         .example-item {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
+            padding: 20px;
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border-left: 4px solid var(--accent-color);
+            transition: var(--theme-transition);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
+         .example-item h3 {
+             margin-top: 0;
+             margin-bottom: 10px;
+             font-size: 1.2rem;
+             color: var(--primary-text);
+         }
+         .example-item ul {
+             padding-left: 20px;
+             margin-top: 10px;
+             color: var(--secondary-text);
+         }
+         .example-item li {
+            margin-bottom: 5px;
+         }
+         .example-item code {
+             font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace;
+             background-color: var(--code-background);
+             padding: 2px 5px;
+             border-radius: 4px;
+             font-size: 0.9em;
+         }
     </style>
 </head>
-<body>
-    <h1>Big O Notation Visualization</h1>
+<body data-theme="dark">
+    <a href="../index.html#week1" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <h1><i class="fas fa-chart-line icon-margin"></i>Big O Notation Visualization</h1>
     
     <div class="container">
-        <h2>What is Big O Notation?</h2>
+        <h2><i class="fas fa-info-circle icon-margin"></i>What is Big O Notation?</h2>
         <div class="explanation">
             <p>Big O notation is a mathematical notation that describes the limiting behavior of a function when the argument tends towards a particular value or infinity. In computer science, it's used to classify algorithms according to how their run time or space requirements grow as the input size grows.</p>
             <p>Big O notation characterizes functions according to their growth rates: different functions with the same growth rate may be represented using the same O notation.</p>
@@ -152,44 +191,44 @@
     </div>
     
     <div class="container">
-        <h2>Interactive Visualization</h2>
-        <p>Select which complexity functions to display and adjust the input size to see how different algorithms scale.</p>
+        <h2><i class="fas fa-eye icon-margin"></i>Interactive Visualization</h2>
+        <p>Select which complexity functions to display and adjust the input size (n) to see how the number of operations scale.</p>
         
         <div class="complexity-selector">
-            <div class="complexity-item">
-                <input type="checkbox" id="o1-checkbox" checked>
-                <div class="color-box" style="background-color: #3498db;"></div>
-                <label for="o1-checkbox">O(1) - Constant</label>
-            </div>
-            <div class="complexity-item">
-                <input type="checkbox" id="ologn-checkbox" checked>
-                <div class="color-box" style="background-color: #2ecc71;"></div>
-                <label for="ologn-checkbox">O(log n) - Logarithmic</label>
-            </div>
-            <div class="complexity-item">
-                <input type="checkbox" id="on-checkbox" checked>
-                <div class="color-box" style="background-color: #9b59b6;"></div>
-                <label for="on-checkbox">O(n) - Linear</label>
-            </div>
-            <div class="complexity-item">
-                <input type="checkbox" id="onlogn-checkbox" checked>
-                <div class="color-box" style="background-color: #f39c12;"></div>
-                <label for="onlogn-checkbox">O(n log n) - Linearithmic</label>
-            </div>
-            <div class="complexity-item">
-                <input type="checkbox" id="on2-checkbox" checked>
-                <div class="color-box" style="background-color: #e74c3c;"></div>
-                <label for="on2-checkbox">O(n²) - Quadratic</label>
-            </div>
-            <div class="complexity-item">
-                <input type="checkbox" id="o2n-checkbox">
-                <div class="color-box" style="background-color: #e67e22;"></div>
-                <label for="o2n-checkbox">O(2ⁿ) - Exponential</label>
-            </div>
+            <label class="complexity-item">
+                <input type="checkbox" id="o1-checkbox" checked data-color="#3498db">
+                <span class="color-box" style="background-color: #3498db;"></span>
+                O(1) - Constant
+            </label>
+            <label class="complexity-item">
+                <input type="checkbox" id="ologn-checkbox" checked data-color="#2ecc71">
+                <span class="color-box" style="background-color: #2ecc71;"></span>
+                O(log n) - Logarithmic
+            </label>
+            <label class="complexity-item">
+                <input type="checkbox" id="on-checkbox" checked data-color="#9b59b6">
+                <span class="color-box" style="background-color: #9b59b6;"></span>
+                O(n) - Linear
+            </label>
+            <label class="complexity-item">
+                <input type="checkbox" id="onlogn-checkbox" checked data-color="#f39c12">
+                <span class="color-box" style="background-color: #f39c12;"></span>
+                O(n log n) - Linearithmic
+            </label>
+            <label class="complexity-item">
+                <input type="checkbox" id="on2-checkbox" checked data-color="#e74c3c">
+                <span class="color-box" style="background-color: #e74c3c;"></span>
+                O(n²) - Quadratic
+            </label>
+            <label class="complexity-item">
+                <input type="checkbox" id="o2n-checkbox" data-color="#e67e22">
+                <span class="color-box" style="background-color: #e67e22;"></span>
+                O(2ⁿ) - Exponential
+            </label>
         </div>
         
-        <div class="input-range">
-            <label for="input-size-slider">Max Input Size:</label>
+        <div class="input-range controls">
+            <label for="input-size-slider">Max Input Size (n):</label>
             <input type="range" id="input-size-slider" min="10" max="100" value="50">
             <span id="input-size-value">50</span>
         </div>
@@ -197,100 +236,110 @@
         <div class="chart-container">
             <div class="chart" id="chart">
                 <div class="x-axis">Input Size (n)</div>
-                <div class="y-axis">Operations</div>
+                <div class="y-axis">Operations (Growth Rate)</div>
             </div>
         </div>
         
         <div class="controls">
-            <button id="update-btn">Update Chart</button>
-            <button id="reset-btn">Reset</button>
+            <button id="update-btn"><i class="fas fa-sync-alt icon-margin"></i>Update Chart</button>
+            <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset View</button>
         </div>
     </div>
     
     <div class="container">
-        <h2>Common Time Complexities</h2>
+        <h2><i class="fas fa-table icon-margin"></i>Common Time Complexities</h2>
         <table class="complexity-table">
             <thead>
                 <tr>
                     <th>Notation</th>
                     <th>Name</th>
-                    <th>Example Algorithms</th>
+                    <th>Example Algorithms / Operations</th>
                     <th>Description</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>O(1)</td>
+                    <td><strong>O(1)</strong></td>
                     <td>Constant</td>
-                    <td>Array access, Hash table insertion/lookup</td>
+                    <td>Array access (<code>arr[i]</code>), Hash table insertion/lookup (average)</td>
                     <td>The operation takes the same amount of time regardless of the input size.</td>
                 </tr>
                 <tr>
-                    <td>O(log n)</td>
+                    <td><strong>O(log n)</strong></td>
                     <td>Logarithmic</td>
-                    <td>Binary search, Balanced binary search trees</td>
-                    <td>The operation's time increases logarithmically as the input size grows.</td>
+                    <td>Binary search, Balanced BST operations</td>
+                    <td>Time increases very slowly as input size grows. Efficient for large datasets.</td>
                 </tr>
                 <tr>
-                    <td>O(n)</td>
+                    <td><strong>O(n)</strong></td>
                     <td>Linear</td>
-                    <td>Linear search, Traversing an array</td>
-                    <td>The operation's time increases linearly with the input size.</td>
+                    <td>Linear search, Traversing an array/list</td>
+                    <td>Time increases directly proportional to the input size.</td>
                 </tr>
                 <tr>
-                    <td>O(n log n)</td>
+                    <td><strong>O(n log n)</strong></td>
                     <td>Linearithmic</td>
-                    <td>Merge sort, Heap sort, Quick sort (average case)</td>
-                    <td>Common in efficient sorting algorithms. Better than quadratic but slower than linear.</td>
+                    <td>Merge sort, Heap sort, Quick sort (average)</td>
+                    <td>Efficient sorting algorithms. Scales well.</td>
                 </tr>
                 <tr>
-                    <td>O(n²)</td>
+                    <td><strong>O(n²)</strong></td>
                     <td>Quadratic</td>
-                    <td>Bubble sort, Selection sort, Insertion sort</td>
-                    <td>The operation's time increases with the square of the input size. Often seen in nested loops.</td>
+                    <td>Bubble sort, Selection sort, Nested loops iterating over same data</td>
+                    <td>Time increases significantly with input size. Can become slow quickly.</td>
                 </tr>
                 <tr>
-                    <td>O(2ⁿ)</td>
+                    <td><strong>O(2ⁿ)</strong></td>
                     <td>Exponential</td>
-                    <td>Recursive Fibonacci, Tower of Hanoi</td>
-                    <td>The operation's time doubles with each additional element in the input. Often impractical for large inputs.</td>
+                    <td>Recursive Fibonacci (naive), Traveling Salesman (brute force)</td>
+                    <td>Time grows extremely fast. Impractical for anything beyond small inputs.</td>
                 </tr>
             </tbody>
         </table>
     </div>
     
     <div class="container">
-        <h2>Real-World Examples</h2>
+        <h2><i class="fas fa-lightbulb icon-margin"></i>Real-World Impact</h2>
         <div class="examples">
             <div class="example-item">
                 <h3>Binary Search - O(log n)</h3>
-                <p>When searching for an element in a sorted array of 1,000,000 elements:</p>
+                <p>Searching a <strong>sorted</strong> list of 1,000,000 items:</p>
                 <ul>
-                    <li>Linear search (O(n)) might need up to 1,000,000 comparisons</li>
-                    <li>Binary search (O(log n)) needs at most log₂(1,000,000) ≈ 20 comparisons</li>
+                    <li>Linear search (<code>O(n)</code>) might need up to <strong>1,000,000</strong> comparisons.</li>
+                    <li>Binary search (<code>O(log n)</code>) needs at most log₂(1,000,000) ≈ <strong>20</strong> comparisons.</li>
                 </ul>
             </div>
             <div class="example-item">
                 <h3>Sorting Algorithms</h3>
-                <p>To sort an array of 10,000 elements:</p>
+                <p>Sorting 10,000 items:</p>
                 <ul>
-                    <li>Selection sort (O(n²)) would perform approximately 100,000,000 operations</li>
-                    <li>Merge sort (O(n log n)) would perform approximately 130,000 operations</li>
+                    <li>Selection sort (<code>O(n²)</code>) performs roughly <strong>100,000,000</strong> operations.</li>
+                    <li>Merge sort (<code>O(n log n)</code>) performs roughly <strong>130,000</strong> operations.</li>
                 </ul>
-                <p>This is why efficient sorting algorithms are crucial for large datasets.</p>
+                <p>Efficient algorithms (like <code>O(n log n)</code>) are crucial for performance on larger datasets.</p>
+            </div>
+             <div class="example-item">
+                <h3>Nested Loops - O(n²)</h3>
+                <p>Finding duplicate items in a list by comparing every pair:</p>
+                <pre><code>for i = 0 to n-1:
+  for j = i+1 to n-1:
+    if list[i] == list[j]:
+      return True // Found duplicate</code></pre>
+                <p>This nested loop structure results in <code>O(n²)</code> complexity.</p>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // DOM elements
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
         const chart = document.getElementById('chart');
         const inputSizeSlider = document.getElementById('input-size-slider');
         const inputSizeValue = document.getElementById('input-size-value');
         const updateBtn = document.getElementById('update-btn');
         const resetBtn = document.getElementById('reset-btn');
         
-        // Complexity checkboxes
         const o1Checkbox = document.getElementById('o1-checkbox');
         const olognCheckbox = document.getElementById('ologn-checkbox');
         const onCheckbox = document.getElementById('on-checkbox');
@@ -298,96 +347,80 @@
         const on2Checkbox = document.getElementById('on2-checkbox');
         const o2nCheckbox = document.getElementById('o2n-checkbox');
         
-        // Variables
+        const checkboxes = [
+            { el: o1Checkbox, func: n => 1, name: 'O(1)' },
+            { el: olognCheckbox, func: n => Math.log2(n) || 0.1, name: 'O(log n)' },
+            { el: onCheckbox, func: n => n, name: 'O(n)' },
+            { el: onlognCheckbox, func: n => n * (Math.log2(n) || 0.1), name: 'O(n log n)' },
+            { el: on2Checkbox, func: n => n * n, name: 'O(n²)' },
+            { el: o2nCheckbox, func: n => Math.pow(2, n), name: 'O(2ⁿ)' },
+        ];
+        
         let maxInputSize = parseInt(inputSizeSlider.value);
         let maxOperations = 0;
         
-        // Event listeners
         inputSizeSlider.addEventListener('input', () => {
             maxInputSize = parseInt(inputSizeSlider.value);
             inputSizeValue.textContent = maxInputSize;
+            updateChart();
         });
         
         updateBtn.addEventListener('click', updateChart);
         resetBtn.addEventListener('click', resetChart);
         
-        // Initialize
+        checkboxes.forEach(cb => {
+            cb.el.addEventListener('change', updateChart);
+            const label = cb.el.closest('.complexity-item');
+            if (label) {
+                label.addEventListener('click', (e) => {
+                    if (e.target !== cb.el) {
+                        cb.el.checked = !cb.el.checked;
+                        updateChart();
+                    }
+                });
+            }
+        });
+        
         updateChart();
         
-        // Functions
         function updateChart() {
-            // Clear previous lines
             const existingLines = document.querySelectorAll('.complexity-line');
             existingLines.forEach(line => line.remove());
             
-            // Calculate complexity values
-            const values = {
-                o1: [],
-                ologn: [],
-                on: [],
-                onlogn: [],
-                on2: [],
-                o2n: []
-            };
-            
-            for (let n = 1; n <= maxInputSize; n++) {
-                values.o1.push({ n, ops: 1 });
-                values.ologn.push({ n, ops: Math.log2(n) || 0.1 });
-                values.on.push({ n, ops: n });
-                values.onlogn.push({ n, ops: n * (Math.log2(n) || 0.1) });
-                values.on2.push({ n, ops: n * n });
-                values.o2n.push({ n, ops: Math.pow(2, n) });
-            }
-            
-            // Find maximum operations for scaling
+            const activeValues = {};
             maxOperations = 0;
             
-            if (o1Checkbox.checked) {
-                maxOperations = Math.max(maxOperations, ...values.o1.map(v => v.ops));
-            }
-            if (olognCheckbox.checked) {
-                maxOperations = Math.max(maxOperations, ...values.ologn.map(v => v.ops));
-            }
-            if (onCheckbox.checked) {
-                maxOperations = Math.max(maxOperations, ...values.on.map(v => v.ops));
-            }
-            if (onlognCheckbox.checked) {
-                maxOperations = Math.max(maxOperations, ...values.onlogn.map(v => v.ops));
-            }
-            if (on2Checkbox.checked) {
-                maxOperations = Math.max(maxOperations, ...values.on2.map(v => v.ops));
-            }
-            if (o2nCheckbox.checked) {
-                // For exponential, we need to limit it to avoid breaking the chart
-                const limitedO2n = values.o2n.filter(v => v.n <= Math.min(30, maxInputSize));
-                if (limitedO2n.length > 0) {
-                    maxOperations = Math.max(maxOperations, ...limitedO2n.map(v => v.ops));
+            checkboxes.forEach(cb => {
+                if (cb.el.checked) {
+                    const values = [];
+                    const isExponential = cb.name === 'O(2ⁿ)';
+                    const limitN = isExponential ? Math.min(15, maxInputSize) : maxInputSize;
+                    
+                    for (let n = 1; n <= maxInputSize; n++) {
+                        if (n > limitN && isExponential) break;
+                        const ops = cb.func(n);
+                        if (ops === Infinity) break;
+                        values.push({ n, ops });
+                        if (ops < 1e9) {
+                            maxOperations = Math.max(maxOperations, ops);
+                        }
+                    }
+                    if (values.length > 0) {
+                        activeValues[cb.name] = { values, color: cb.el.dataset.color };
+                        maxOperations = Math.max(maxOperations, values[values.length - 1].ops);
+                    }
                 }
+            });
+            
+            if (maxOperations < 10) {
+                maxOperations = 10;
             }
             
-            // Scale factor to fit within chart height
-            const scaleFactor = maxOperations > 0 ? (chart.clientHeight - 20) / maxOperations : 1;
+            const chartHeight = chart.clientHeight;
+            const scaleFactor = maxOperations > 0 ? (chartHeight * 0.9) / maxOperations : 1;
             
-            // Draw complexity lines
-            if (o1Checkbox.checked) {
-                drawComplexityLine(values.o1, '#3498db', scaleFactor);
-            }
-            if (olognCheckbox.checked) {
-                drawComplexityLine(values.ologn, '#2ecc71', scaleFactor);
-            }
-            if (onCheckbox.checked) {
-                drawComplexityLine(values.on, '#9b59b6', scaleFactor);
-            }
-            if (onlognCheckbox.checked) {
-                drawComplexityLine(values.onlogn, '#f39c12', scaleFactor);
-            }
-            if (on2Checkbox.checked) {
-                drawComplexityLine(values.on2, '#e74c3c', scaleFactor);
-            }
-            if (o2nCheckbox.checked) {
-                // For exponential, we need to limit it to avoid breaking the chart
-                const limitedO2n = values.o2n.filter(v => v.n <= Math.min(30, maxInputSize));
-                drawComplexityLine(limitedO2n, '#e67e22', scaleFactor);
+            for (const name in activeValues) {
+                drawComplexityLine(activeValues[name].values, activeValues[name].color, scaleFactor);
             }
         }
         
@@ -398,46 +431,41 @@
             line.setAttribute('class', 'complexity-line');
             line.setAttribute('width', '100%');
             line.setAttribute('height', '100%');
-            line.setAttribute('style', 'position: absolute; top: 0; left: 0; overflow: visible;');
             
-            // Create SVG path
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             
-            // Calculate points
             let pathData = '';
             const chartWidth = chart.clientWidth;
             const chartHeight = chart.clientHeight;
             
             values.forEach((value, index) => {
-                const x = (value.n / maxInputSize) * (chartWidth - 20);
-                const y = chartHeight - (value.ops * scaleFactor) - 2; // 2px offset from bottom
+                const x = (value.n / maxInputSize) * chartWidth;
+                let y = chartHeight - (value.ops * scaleFactor);
+                y = Math.max(2, Math.min(chartHeight - 2, y));
                 
                 if (index === 0) {
-                    pathData += `M ${x} ${y}`;
+                    pathData += `M ${x.toFixed(2)} ${y.toFixed(2)}`;
                 } else {
-                    pathData += ` L ${x} ${y}`;
+                    pathData += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
                 }
             });
             
             path.setAttribute('d', pathData);
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', '2');
-            path.setAttribute('fill', 'none');
             
             line.appendChild(path);
             chart.appendChild(line);
             
-            // Add dots at each point for better visibility
+            const dotInterval = Math.max(1, Math.floor(values.length / 15));
             values.forEach((value, index) => {
-                // Only add dots for some points to avoid cluttering
-                if (index % Math.max(1, Math.floor(values.length / 10)) === 0) {
-                    const x = (value.n / maxInputSize) * (chartWidth - 20);
-                    const y = chartHeight - (value.ops * scaleFactor) - 2;
+                if (index % dotInterval === 0 || index === values.length - 1) {
+                    const x = (value.n / maxInputSize) * chartWidth;
+                    let y = chartHeight - (value.ops * scaleFactor);
+                    y = Math.max(2, Math.min(chartHeight - 2, y));
                     
                     const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    dot.setAttribute('cx', x);
-                    dot.setAttribute('cy', y);
-                    dot.setAttribute('r', '3');
+                    dot.setAttribute('cx', x.toFixed(2));
+                    dot.setAttribute('cy', y.toFixed(2));
                     dot.setAttribute('fill', color);
                     
                     line.appendChild(dot);
@@ -446,23 +474,16 @@
         }
         
         function resetChart() {
-            // Reset checkboxes
-            o1Checkbox.checked = true;
-            olognCheckbox.checked = true;
-            onCheckbox.checked = true;
-            onlognCheckbox.checked = true;
-            on2Checkbox.checked = true;
-            o2nCheckbox.checked = false;
+            checkboxes.forEach(cb => {
+                cb.el.checked = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'].includes(cb.name);
+            });
             
-            // Reset slider
             inputSizeSlider.value = 50;
             maxInputSize = 50;
             inputSizeValue.textContent = '50';
             
-            // Update chart
             updateChart();
         }
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
 </html>

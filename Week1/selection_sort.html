@@ -4,172 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Selection Sort Algorithm</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    h1, h2, h3 {
-      color: #2c3e50;
-    }
-    .container {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-    .array-container {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: clamp(2px, 1vw, 5px);
-      margin: 20px 0;
-      height: min(60vh, 400px);
-      align-items: flex-end;
-      position: relative;
-      overflow-x: auto;
-      padding-bottom: 30px;
-    }
-    .array-bar {
-      flex: 0 0 clamp(20px, 5vw, 40px);
-      background-color: #3498db;
-      transition: height 0.3s ease, background-color 0.3s ease;
-      position: relative;
-      border-radius: 4px 4px 0 0;
-    }
-    .array-bar::after {
-      content: attr(data-value);
-      position: absolute;
-      bottom: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 12px;
-    }
-    .array-bar.current {
-      background-color: #e74c3c;
-    }
-    .array-bar.min {
-      background-color: #2ecc71;
-    }
-    .array-bar.sorted {
-      background-color: #27ae60;
-    }
-    .array-bar.comparing {
-      background-color: #f39c12;
-    }
-    .controls {
-      margin: 20px 0;
-      display: flex;
-      gap: clamp(5px, 2vw, 10px);
-      flex-wrap: wrap;
-    }
-    button {
-      padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: clamp(14px, 2vw, 16px);
-      min-width: 80px;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    button:disabled {
-      background-color: #95a5a6;
-      cursor: not-allowed;
-    }
-    .speed-control {
-      display: flex;
-      align-items: center;
-      gap: clamp(5px, 2vw, 10px);
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-    .speed-control label {
-      margin-right: 5px;
-    }
-    .log {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .log p {
-      margin: 5px 0;
-    }
-    .code-container {
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 4px;
-      overflow-x: auto;
-      margin: 20px 0;
-    }
-    pre {
-      margin: 0;
-      white-space: pre-wrap;
-    }
-    code {
-      font-family: 'Courier New', Courier, monospace;
-      color: #333;
-    }
-    .complexity {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin: 20px 0;
-    }
-    .complexity-item {
-      flex: 1;
-      min-width: 200px;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-    }
-    .explanation {
-      margin: 20px 0;
-      padding: 15px;
-      background-color: #e8f4f8;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/global-algo.css">
 </head>
-<body>
-  <h1>Selection Sort Algorithm</h1>
+<body data-theme="dark">
+  <a href="../index.html#week1" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+  <h1><i class="fas fa-sort-amount-down icon-margin"></i>Selection Sort Algorithm</h1>
   
   <div class="container">
     <h2>Interactive Demonstration</h2>
     <p>Selection sort repeatedly finds the minimum element from the unsorted part of the array and swaps it with the first unsorted element.</p>
     
     <div class="controls">
-      <button id="sort-btn">Sort</button>
-      <button id="reset-btn">Reset</button>
-      <button id="new-array-btn">New Array</button>
-      <button id="step-btn">Step Through</button>
-      <button id="pause-btn" disabled>Pause</button>
+      <button id="sort-btn"><i class="fas fa-play icon-margin"></i>Sort</button>
+      <button id="reset-btn"><i class="fas fa-redo icon-margin"></i>Reset</button>
+      <button id="new-array-btn"><i class="fas fa-random icon-margin"></i>New Array</button>
+      <button id="step-btn"><i class="fas fa-step-forward icon-margin"></i>Step Through</button>
+      <button id="pause-btn" disabled><i class="fas fa-pause icon-margin"></i>Pause</button>
     </div>
     
-    <div class="speed-control">
+    <div class="speed-control controls">
       <label for="speed-slider">Speed:</label>
       <input type="range" id="speed-slider" min="1" max="100" value="50">
       <span id="speed-value">50%</span>
     </div>
     
-    <div class="array-container" id="array-container"></div>
+    <div class="array-container bar-chart" id="array-container"></div>
     
-    <div class="log" id="log"></div>
+    <div class="log" id="log"><p>Generate a new array or click Sort/Step Through.</p></div>
   </div>
   
   <div class="container">
@@ -188,11 +51,11 @@
     <div class="complexity">
       <div class="complexity-item">
         <h4>Time Complexity</h4>
-        <p><strong>O(n²)</strong></p>
+        <p><strong>O(n²)</strong> - Requires nested loops to iterate through the array.</p>
       </div>
       <div class="complexity-item">
         <h4>Space Complexity</h4>
-        <p><strong>O(1)</strong></p>
+        <p><strong>O(1)</strong> - Sorts in-place, requiring minimal extra memory.</p>
       </div>
     </div>
   </div>
@@ -238,6 +101,10 @@
     let sortingInterval = null;
     let stepMode = false;
 
+    // Theme persistence
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+
     // Initialize with a new array
     generateArray();
 
@@ -251,25 +118,35 @@
 
     // Generates a new random array
     function generateArray() {
-      const size = Math.floor(Math.random() * 10) + 10; // size between 10 and 19
+      const size = Math.floor(Math.random() * 11) + 10; // 10-20 elements
       array = [];
       for (let i = 0; i < size; i++) {
         array.push(Math.floor(Math.random() * 100) + 1); // values 1 to 100
       }
       renderArray();
       resetSort();
-      log('New array generated.');
+      log('New array generated.', 'info');
     }
 
-    // Renders the array bars
-    function renderArray(current = -1, min = -1, sorted = [], comparing = -1) {
+    // Renders the array bars using classes from global-algo.css
+    function renderArray(state = {}) {
+      const { current = -1, min = -1, sorted = [], comparing = -1 } = state;
       arrayContainer.innerHTML = '';
-      const maxValue = Math.max(...array);
+      const maxValue = array.length > 0 ? Math.max(...array) : 1; // Prevent division by zero
+      const containerHeight = arrayContainer.clientHeight || 250; // Use container height
+
       array.forEach((value, index) => {
         const bar = document.createElement('div');
-        bar.className = 'array-bar';
-        bar.style.height = `${(value / maxValue) * 250}px`;
+        bar.className = 'array-bar'; // Use the base class from CSS
+        // Calculate height relative to container height (minus padding/margins)
+        const barHeight = Math.max(5, (value / maxValue) * (containerHeight * 0.8)); // Ensure min height, use 80% of container
+        bar.style.height = `${barHeight}px`;
         bar.setAttribute('data-value', value);
+
+        // Remove previous state classes
+        bar.classList.remove('sorted', 'min', 'current', 'comparing');
+
+        // Apply new state classes based on the provided state object
         if (sorted.includes(index)) {
           bar.classList.add('sorted');
         } else if (index === min) {
@@ -296,20 +173,29 @@
         showCurrentStep();
       } else {
         currentStepIndex = 0;
-        const speed = 101 - speedSlider.value; // higher slider = faster
-        sortingInterval = setInterval(() => {
-          if (currentStepIndex < sortingSteps.length) {
+        const delay = calculateDelay();
+        // Start the interval
+        sortingInterval = setInterval(runSortStep, delay);
+      }
+    }
+
+    // Runs a single step of the sorting animation
+    function runSortStep() {
+        if (currentStepIndex < sortingSteps.length) {
             showCurrentStep();
             currentStepIndex++;
-          } else {
+        } else {
             clearInterval(sortingInterval);
+            sortingInterval = null; // Clear interval ID
             sortingInProgress = false;
             pauseBtn.disabled = true;
-            stepBtn.disabled = false;
-            log('Sorting completed!');
-          }
-        }, speed * 20);
-      }
+            pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause'; // Reset button text
+            stepBtn.disabled = false; // Re-enable step button
+            sortBtn.disabled = false; // Re-enable sort button
+            log('Sorting completed!', 'success');
+            // Final render with all bars sorted
+            renderArray({ sorted: array.map((_, idx) => idx) });
+        }
     }
 
     // Generates the steps for selection sort visualization
@@ -327,7 +213,7 @@
           min: minIndex,
           sorted: [...sorted],
           comparing: -1,
-          message: `Starting at index ${i}.`
+          message: `Starting outer loop at index ${i}. Assume arr[${i}] (${arrCopy[i]}) is minimum.`
         });
         for (let j = i + 1; j < n; j++) {
           sortingSteps.push({
@@ -336,9 +222,10 @@
             min: minIndex,
             sorted: [...sorted],
             comparing: j,
-            message: `Comparing element ${arrCopy[j]} (index ${j}) with current minimum ${arrCopy[minIndex]}.`
+            message: `Comparing arr[${j}] (${arrCopy[j]}) with current minimum arr[${minIndex}] (${arrCopy[minIndex]})`
           });
           if (arrCopy[j] < arrCopy[minIndex]) {
+            const oldMinIndex = minIndex;
             minIndex = j;
             sortingSteps.push({
               array: [...arrCopy],
@@ -346,7 +233,7 @@
               min: minIndex,
               sorted: [...sorted],
               comparing: -1,
-              message: `New minimum found: ${arrCopy[minIndex]} at index ${minIndex}.`
+              message: `New minimum found: arr[${minIndex}] (${arrCopy[minIndex]}). (Was arr[${oldMinIndex}])`
             });
           }
         }
@@ -357,23 +244,23 @@
             min: minIndex,
             sorted: [...sorted],
             comparing: -1,
-            message: `Swapping element ${arrCopy[i]} with minimum ${arrCopy[minIndex]}.`
+            message: `Swapping arr[${i}] (${arrCopy[i]}) with minimum arr[${minIndex}] (${arrCopy[minIndex]})`
           });
           [arrCopy[i], arrCopy[minIndex]] = [arrCopy[minIndex], arrCopy[i]];
         } else {
           sortingSteps.push({
             array: [...arrCopy],
             current: i,
-            min: -1,
+            min: -1, // No swap needed, indicate no specific minimum index highlighted for swap
             sorted: [...sorted],
             comparing: -1,
-            message: `Element ${arrCopy[i]} is already minimum.`
+            message: `Element arr[${i}] (${arrCopy[i]}) is already in correct position for this pass.`
           });
         }
         sorted.push(i);
         sortingSteps.push({
           array: [...arrCopy],
-          current: -1,
+          current: -1, // No current element in outer loop focus
           min: -1,
           sorted: [...sorted],
           comparing: -1,
@@ -395,33 +282,47 @@
     function showCurrentStep() {
       if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
       const step = sortingSteps[currentStepIndex];
-      array = [...step.array];
-      renderArray(step.current, step.min, step.sorted, step.comparing);
-      log(step.message);
+      array = [...step.array]; // Update the main array
+      renderArray(step); // Pass the whole step object to renderArray
+      log(step.message, 'info'); // Log with type
     }
 
     // Toggles between step-through mode and auto-sorting mode
     function toggleStepMode() {
       stepMode = !stepMode;
-      stepBtn.textContent = stepMode ? 'Auto Sort' : 'Step Through';
-      if (sortingInProgress) {
-        if (stepMode) {
-          clearInterval(sortingInterval);
-          pauseBtn.disabled = true;
+      stepBtn.disabled = true; // Disable during toggle to prevent issues
+      pauseBtn.disabled = true;
+
+      if (sortingInterval) {
+        clearInterval(sortingInterval);
+        sortingInterval = null;
+      }
+
+      if (stepMode) {
+        stepBtn.innerHTML = '<i class="fas fa-play icon-margin"></i>Auto Sort';
+        // If sorting was in progress, stay at the current step
+        if (sortingInProgress && currentStepIndex >= 0) {
+            showCurrentStep(); // Show the current state
+            stepBtn.disabled = false; // Re-enable step button for manual stepping
         } else {
-          const speed = 101 - speedSlider.value;
+            // If not sorting, just toggle the button text
+            sortingInProgress = false; // Ensure state is correct
+            stepBtn.disabled = false;
+            sortBtn.disabled = false;
+        }
+      } else {
+        stepBtn.innerHTML = '<i class="fas fa-step-forward icon-margin"></i>Step Through';
+        if (sortingInProgress && currentStepIndex >= 0 && currentStepIndex < sortingSteps.length) {
+          // Resume auto sort from current step
           pauseBtn.disabled = false;
-          sortingInterval = setInterval(() => {
-            if (currentStepIndex < sortingSteps.length) {
-              showCurrentStep();
-              currentStepIndex++;
-            } else {
-              clearInterval(sortingInterval);
-              sortingInProgress = false;
-              pauseBtn.disabled = true;
-              log('Sorting completed!');
-            }
-          }, speed * 20);
+          pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
+          const delay = calculateDelay();
+          sortingInterval = setInterval(runSortStep, delay);
+        } else {
+             // If not sorting or finished, just toggle button text
+            sortingInProgress = false;
+            stepBtn.disabled = false;
+            sortBtn.disabled = false;
         }
       }
     }
@@ -432,22 +333,11 @@
       if (sortingInterval) {
         clearInterval(sortingInterval);
         sortingInterval = null;
-        pauseBtn.textContent = 'Resume';
+        pauseBtn.innerHTML = '<i class="fas fa-play icon-margin"></i>Resume';
       } else {
-        const speed = 101 - speedSlider.value;
-        sortingInterval = setInterval(() => {
-          if (currentStepIndex < sortingSteps.length) {
-            showCurrentStep();
-            currentStepIndex++;
-          } else {
-            clearInterval(sortingInterval);
-            sortingInProgress = false;
-            pauseBtn.disabled = true;
-            pauseBtn.textContent = 'Pause';
-            log('Sorting completed!');
-          }
-        }, speed * 20);
-        pauseBtn.textContent = 'Pause';
+        const delay = calculateDelay();
+        sortingInterval = setInterval(runSortStep, delay);
+        pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
       }
     }
 
@@ -461,13 +351,24 @@
       sortingSteps = [];
       currentStepIndex = -1;
       stepMode = false;
-      stepBtn.textContent = 'Step Through';
+      stepBtn.innerHTML = '<i class="fas fa-step-forward icon-margin"></i>Step Through';
       sortBtn.disabled = false;
       pauseBtn.disabled = true;
-      pauseBtn.textContent = 'Pause';
+      pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
       stepBtn.disabled = false;
-      renderArray();
-      log('Sort reset.');
+      renderArray(); // Render the initial unsorted array
+      logElement.innerHTML = '<p>Generate a new array or click Sort/Step Through.</p>'; // Clear log or add initial message
+    }
+
+    // Calculate delay based on slider
+    function calculateDelay() {
+        const speed = parseInt(speedSlider.value);
+        // Map speed (1-100) to delay (e.g., 1000ms to 10ms)
+        // Use an exponential scale for a more noticeable difference at high speeds
+        const maxDelay = 1000;
+        const minDelay = 10;
+        const delay = maxDelay * Math.pow((minDelay / maxDelay), (speed - 1) / 99);
+        return delay;
     }
 
     // Updates animation speed
@@ -475,31 +376,22 @@
       speedValue.textContent = `${speedSlider.value}%`;
       if (sortingInterval && !stepMode) {
         clearInterval(sortingInterval);
-        const speed = 101 - speedSlider.value;
-        sortingInterval = setInterval(() => {
-          if (currentStepIndex < sortingSteps.length) {
-            showCurrentStep();
-            currentStepIndex++;
-          } else {
-            clearInterval(sortingInterval);
-            sortingInProgress = false;
-            pauseBtn.disabled = true;
-            log('Sorting completed!');
-          }
-        }, speed * 20);
+        const delay = calculateDelay();
+        sortingInterval = setInterval(runSortStep, delay);
       }
     }
 
-    // Logs messages to the log container (keeping at most 10 entries)
-    function log(message) {
+    // Logs messages to the log container
+    function log(message, type = 'info') {
       const p = document.createElement('p');
       p.textContent = message;
+      p.classList.add(`log-${type}`); // Add class for styling
       logElement.prepend(p);
-      if (logElement.children.length > 10) {
+      // Limit log entries
+      while (logElement.children.length > 15) {
         logElement.removeChild(logElement.lastChild);
       }
     }
   </script>
-  <script src="../notifications/notification.js"></script>
 </body>
 </html>

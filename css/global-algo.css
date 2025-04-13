@@ -1,0 +1,511 @@
+/* css/global-algo.css */
+
+/* Import theme variables (assuming this file is in /css) */
+/* This requires the main CSS variables to be accessible or redefined here */
+/* For simplicity, let's redefine the core ones needed */
+
+:root {
+    /* Re-define core variables from index.html for dark theme */
+    --primary-text: #e0e0e0;
+    --secondary-text: #a0a0a0;
+    --accent-color: #007bff;
+    --accent-color-hover: #0091ff;
+    --accent-secondary: #8a7ef8; /* Might not be needed */
+    --background-main: #121212;
+    --background-alt: #1e1e1e;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --card-radius: 16px;
+    --card-background: #1e1e1e;
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    --button-radius: 12px;
+    --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
+    --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.4);
+    --transition-duration: 0.3s;
+    --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+    /* Specific colors for binary search visualization */
+    --color-low: #2ecc71;   /* Green */
+    --color-high: #f39c12;  /* Orange */
+    --color-mid: #9b59b6;   /* Purple */
+    --color-found: #27ae60; /* Darker Green */
+    --color-default-element: var(--accent-color);
+    --color-element-text: white;
+    --code-background: #2a2a2a; /* Slightly different from card bg */
+}
+
+[data-theme="light"] {
+    /* Re-define core variables for light theme */
+    --primary-text: #2c3e50;
+    --secondary-text: #34495e;
+    --accent-color: #007bff;
+    --accent-color-hover: #0069d9;
+    --accent-secondary: #6c5ce7;
+    --background-main: #f8f9fa;
+    --background-alt: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --card-radius: 16px;
+    --card-background: #ffffff;
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    --button-radius: 12px;
+    --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
+    --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.3);
+
+    /* Specific colors for binary search visualization */
+    --color-low: #2ecc71;
+    --color-high: #f39c12;
+    --color-mid: #9b59b6;
+    --color-found: #27ae60;
+    --color-default-element: var(--accent-color);
+    --color-element-text: white;
+    --code-background: #f0f0f0;
+}
+
+/* Reset and Core Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--primary-text);
+    background-color: var(--background-main);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    padding: 80px 40px 40px 40px; /* Add padding for back button */
+    max-width: 1200px; /* Limit content width */
+    margin: 0 auto; /* Center content */
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color var(--transition-duration);
+}
+
+a:hover:not(.btn) { /* Exclude buttons from underline hover */
+    color: var(--accent-color-hover);
+    text-decoration: underline;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 600;
+    color: var(--primary-text);
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    transition: color var(--theme-transition);
+}
+
+h1 { font-size: 2.8rem; margin-bottom: 1.5rem; text-align: center; }
+h2 { font-size: 2rem; margin-top: 2.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+h3 { font-size: 1.5rem; margin-top: 2rem; }
+h4 { font-size: 1.2rem; }
+
+p {
+    margin-bottom: 1.2rem;
+    color: var(--secondary-text);
+    transition: color var(--theme-transition);
+}
+
+strong {
+    color: var(--primary-text);
+    font-weight: 600;
+}
+
+/* Icon spacing helper class */
+.icon-margin {
+    margin-right: 8px;
+}
+h1 .icon-margin, h2 .icon-margin, h3 .icon-margin {
+    margin-right: 12px;
+}
+
+
+/* Container - Use this for main content blocks */
+.container {
+    background-color: var(--card-background);
+    border-radius: var(--card-radius);
+    padding: 30px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+    transition: background-color var(--theme-transition), box-shadow var(--theme-transition);
+    position: relative; /* For potential absolute positioned elements inside */
+}
+
+/* Controls Styling */
+.controls, .step-controls {
+    margin: 25px 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center; /* Align items vertically */
+}
+
+input[type="number"], input[type="text"] {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-alt);
+    color: var(--primary-text);
+    border-radius: var(--button-radius); /* Match button radius */
+    font-size: 1rem;
+    min-width: 150px; /* Ensure decent width */
+    transition: var(--theme-transition), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="number"]:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb, 0, 123, 255), 0.2); /* Use RGB version if available */
+}
+
+/* Button Styles - Inherited/Adapted from index.html */
+.btn, button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-color);
+    color: white !important; /* Ensure text is white */
+    padding: 10px 20px; /* Slightly smaller padding for algo pages */
+    border-radius: var(--button-radius);
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--button-shadow);
+    font-size: 1rem; /* Slightly smaller font size */
+    position: relative;
+    overflow: hidden;
+    gap: 8px; /* Smaller gap */
+    transition: transform var(--transition-duration) ease,
+                box-shadow var(--transition-duration) ease,
+                background-color var(--transition-duration) ease;
+}
+
+/* Shimmer effect */
+.btn::before, button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn:hover, button:hover {
+    background-color: var(--accent-color-hover);
+    transform: translateY(-3px);
+    box-shadow: var(--button-shadow-hover);
+    color: white !important; /* Ensure text stays white */
+}
+
+.btn:hover::before, button:hover::before {
+    left: 100%;
+}
+
+.btn:disabled, button:disabled {
+    background-color: var(--secondary-text);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    opacity: 0.7;
+}
+
+.btn:disabled:hover::before, button:disabled:hover::before {
+    left: -100%; /* Prevent shimmer on disabled */
+}
+
+.btn i, button i {
+    transition: transform 0.3s ease;
+    font-size: 0.9em;
+    /* margin-left: 8px; */ /* Replaced by gap */
+}
+
+.btn:hover i, button:hover i {
+    transform: translateX(3px);
+}
+
+/* Back Button Specific Style */
+#back-button {
+    position: fixed; /* Keep it visible */
+    top: 20px;
+    left: 20px;
+    z-index: 10; /* Ensure it's above other content */
+    font-size: 0.9rem;
+    padding: 8px 15px;
+}
+
+/* Array Visualization (Binary Search Style - Blocks) */
+/* Note: This selector might need to be more specific if other pages use .array-element differently */
+.array-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow elements to wrap */
+    gap: 10px; /* Gap between blocks */
+    margin: 25px 0;
+    padding: 20px;
+    background-color: var(--background-alt);
+    border-radius: var(--card-radius);
+    min-height: 80px; /* Ensure some height */
+    align-items: center; /* Vertically center items if wrapping */
+    justify-content: center; /* Center blocks horizontally */
+    transition: background-color var(--theme-transition);
+    border: 1px solid var(--border-color);
+}
+
+.array-element {
+    width: 55px; /* Fixed width for blocks */
+    height: 55px; /* Fixed height for blocks */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-default-element);
+    color: var(--color-element-text);
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Existing transition */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    opacity: 1; /* Ensure full opacity by default */
+}
+
+/* State Styling for Array Elements (Blocks) */
+.array-element.low { background-color: var(--color-low); border-color: white; }
+.array-element.high { background-color: var(--color-high); border-color: white; }
+.array-element.mid { background-color: var(--color-mid); transform: scale(1.1); border: 2px solid white; }
+.array-element.found { background-color: var(--color-found); animation: pulse-block 1.5s infinite ease-in-out; border: 2px solid white; }
+
+/* Keyframes for found element pulse */
+@keyframes pulse-block {
+    0%, 100% { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    50% { transform: scale(1.20); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+}
+
+/* Array Visualization (Selection Sort Style - Bars) */
+.array-container.bar-chart { /* Add specific class for bar chart containers */
+    display: flex;
+    flex-wrap: nowrap; /* Bars should stay in one line */
+    gap: 5px; /* Adjust gap between bars */
+    margin: 25px 0;
+    padding: 10px 10px 40px 10px; /* Padding top/sides, more bottom for values */
+    background-color: var(--background-alt); /* Use alt background */
+    border-radius: var(--card-radius);
+    height: 300px; /* Explicit height is important for JS calculation */
+    min-height: 100px;
+    align-items: flex-end; /* Align bars to the bottom */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    overflow-y: hidden;
+    transition: background-color var(--theme-transition);
+    border: 1px solid var(--border-color);
+    position: relative; /* Needed for ::after positioning */
+}
+
+.array-bar {
+    flex: 1 0 auto; /* Grow/shrink, but base size is auto */
+    min-width: 15px; /* Minimum width for bars */
+    max-width: 50px; /* Maximum width for bars */
+    /* height is set by JS */
+    background-color: var(--color-default-element);
+    color: var(--color-element-text);
+    border-radius: 4px 4px 0 0; /* Top radius */
+    transition: height 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
+    position: relative; /* For ::after */
+    text-align: center; /* Center text if any */
+    box-sizing: border-box;
+}
+
+/* Display value below the bar */
+.array-bar::after {
+    content: attr(data-value);
+    position: absolute;
+    bottom: -25px; /* Position below the bar */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--secondary-text);
+    width: 100%;
+    text-align: center;
+}
+
+/* State Styling for Array Bars */
+.array-bar.current { background-color: var(--color-high); /* Current index being processed (outer loop) */ }
+.array-bar.min { background-color: var(--color-low); /* Current minimum found */ transform: scaleY(1.05); /* Slightly taller */}
+.array-bar.comparing { background-color: var(--color-mid); /* Element being compared */ }
+.array-bar.sorted { background-color: var(--color-found); /* Final sorted position */ }
+
+
+@keyframes pulse { /* Kept from previous CSS, adjust if needed for bars */
+    0%, 100% { transform: scale(1.0); }
+    50% { transform: scale(1.05); }
+}
+
+/* Log Area */
+.log {
+    margin-top: 25px;
+    padding: 15px 20px;
+    background-color: var(--background-alt);
+    border-radius: var(--card-radius);
+    border: 1px solid var(--border-color);
+    min-height: 100px;
+    max-height: 250px; /* Limit height */
+    overflow-y: auto;
+    transition: var(--theme-transition);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.log p {
+    margin: 0 0 8px 0; /* Adjust spacing */
+    padding-left: 10px;
+    border-left: 3px solid var(--secondary-text); /* Default border */
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.log p:last-child {
+    margin-bottom: 0;
+}
+
+/* Log message types */
+.log p.log-info { border-left-color: var(--accent-color); }
+.log p.log-success { border-left-color: var(--color-found); color: var(--color-found); }
+.log p.log-error { border-left-color: #e74c3c; color: #e74c3c; }
+.log p.log-warning { border-left-color: var(--color-high); color: var(--color-high); }
+
+
+/* Explanation & Complexity Sections */
+.explanation, .complexity {
+    margin: 25px 0;
+    padding: 20px;
+    background-color: var(--background-alt); /* Use alt background */
+    border-radius: var(--card-radius);
+    border: 1px solid var(--border-color);
+    transition: var(--theme-transition);
+}
+
+.explanation ol {
+    padding-left: 20px;
+    margin-top: 10px;
+}
+.explanation li {
+    margin-bottom: 8px;
+}
+
+.complexity {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.complexity-item {
+    flex: 1;
+    min-width: 220px;
+    padding: 15px;
+    background-color: var(--card-background); /* Inner card background */
+    border-radius: 10px; /* Smaller radius */
+    border-left: 4px solid var(--accent-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: var(--theme-transition);
+}
+
+.complexity-item h4 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-bottom: none; /* Remove h2 border style */
+    padding-bottom: 0;
+    margin-top: 0; /* Remove h2 margin */
+}
+
+
+/* Code Container */
+.code-container {
+    background-color: var(--code-background); /* Specific code background */
+    padding: 20px;
+    border-radius: var(--card-radius);
+    overflow-x: auto;
+    margin: 25px 0;
+    border: 1px solid var(--border-color);
+    transition: background-color var(--theme-transition), border-color var(--theme-transition);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+}
+
+pre {
+    margin: 0;
+    white-space: pre-wrap; /* Allow wrapping */
+    word-wrap: break-word; /* Break long lines */
+    font-size: 0.95rem; /* Slightly smaller code font */
+}
+
+code {
+    font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace; /* Monospace font stack */
+    color: var(--primary-text); /* Match primary text */
+    line-height: 1.6;
+    transition: color var(--theme-transition);
+}
+
+/* Potential Code Highlighting Class */
+.code-line-highlight {
+    background-color: rgba(var(--accent-color-rgb, 0, 123, 255), 0.15);
+    display: block; /* Ensure highlight covers the whole line */
+    margin: 0 -20px; /* Extend highlight to padding edges */
+    padding: 0 20px; /* Restore padding */
+    border-left: 3px solid var(--accent-color);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 70px 20px 20px 20px;
+    }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.7rem; }
+    h3 { font-size: 1.3rem; }
+
+    .container { padding: 20px; }
+
+    .controls, .step-controls {
+        flex-direction: column;
+        align-items: stretch; /* Make buttons/inputs full width */
+    }
+
+    input[type="number"], input[type="text"] {
+        min-width: 0; /* Allow shrinking */
+        width: 100%;
+    }
+
+    .btn, button {
+        width: 100%; /* Make buttons full width */
+        justify-content: center; /* Center button text/icon */
+    }
+
+    #back-button {
+        top: 15px;
+        left: 15px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .array-element {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .complexity {
+        flex-direction: column; /* Stack complexity items */
+    }
+} 
