@@ -4,742 +4,618 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quicksort Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/global-algo.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+        /* Styles specific to Quicksort Visualization */
         .array-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin: 20px 0;
-        }
-        .array-element {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
+            align-items: flex-end; /* Align bars at the bottom */
             justify-content: center;
-            background-color: #3498db;
-            color: white;
-            border-radius: 4px;
+            min-height: 150px; /* Increased height for bars */
+            padding: 20px 10px 10px 10px; /* Padding top reduced */
+            background-color: var(--background-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            margin-bottom: 20px;
+            gap: 3px;
+            position: relative; /* For pivot/partition lines */
+            transition: var(--theme-transition);
+        }
+
+        .array-bar {
+            width: 20px;
+            background-color: var(--color-default-element);
+            color: var(--color-element-text);
+            border: 1px solid var(--border-color);
+            border-radius: 4px 4px 0 0; /* Rounded top corners */
+            display: flex;
+            flex-direction: column; /* Stack number on top */
+            align-items: center;
+            justify-content: flex-end; /* Align number to bottom */
+            padding-bottom: 3px;
+            font-size: 0.8rem;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: height 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+            position: relative; /* For pivot label */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .array-element.pivot {
-            background-color: #e74c3c;
-            transform: scale(1.1);
+
+        /* Bar States */
+        .array-bar.pivot {
+            background-color: var(--color-pivot); /* Specific pivot color */
+            border-color: white;
+            z-index: 2;
+            transform: scaleY(1.05); /* Slightly taller */
         }
-        .array-element.sorted {
-            background-color: #2ecc71;
+        .array-bar.pivot::after {
+            content: 'P';
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--color-pivot);
         }
-        .array-element.current {
-            background-color: #f39c12;
+
+        .array-bar.comparing {
+            background-color: var(--color-high); /* Comparison color */
+            transform: scale(1.05, 1.1); /* Slightly wider and taller */
+            z-index: 1;
         }
-        .array-element.left {
-            border-left: 4px solid #9b59b6;
+        .array-bar.swapping {
+            background-color: var(--color-mid); /* Swap color */
+            animation: pulse-block 0.6s 2 ease-in-out; /* Pulse during swap */
+            z-index: 1;
         }
-        .array-element.right {
-            border-right: 4px solid #9b59b6;
+        .array-bar.partition-boundary {
+             /* Maybe add a subtle border or effect for i/j pointers? */
+             /* Example: Add a top border */
+             border-top: 3px solid var(--accent-color);
+         }
+        .array-bar.sorted {
+            background-color: var(--color-found); /* Final sorted color */
         }
-        .step-display {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-            min-height: 60px;
+
+        /* Partition Lines (Optional Enhancement) */
+        .partition-line {
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            width: 2px;
+            background-color: var(--secondary-text);
+            opacity: 0.5;
+            z-index: 0;
         }
-        .code-block {
-            background-color: #f8f9fa;
+
+        /* Controls refinement (similar to merge sort) */
+        .controls {
+            margin-bottom: 20px;
             padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            margin: 15px 0;
-        }
-        .complexity {
-            background-color: #f1c40f;
-            color: #333;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
-        .example-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .comparison-container {
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin: 20px 0;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
         }
-        .comparison-item {
-            flex: 1;
-            min-width: 300px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .comparison-item h3 {
-            margin-top: 0;
-            color: #2c3e50;
+        .control-group label {
+            white-space: nowrap;
         }
-        #pivotStrategySelect {
-            margin-left: 10px;
+        .control-group input[type="text"],
+        .control-group select,
+        .control-group input[type="range"] {
+           margin-right: 10px;
+        }
+        .log {
+            margin-top: 20px;
+            max-height: 180px;
         }
     </style>
 </head>
-<body>
-    <h1>Quicksort Visualization</h1>
-    
-    <div class="container">
-        <h2>Introduction to Quicksort</h2>
-        <p>
-            Quicksort is a divide-and-conquer sorting algorithm that is widely used due to its efficiency and 
-            relatively simple implementation. It works by:
-        </p>
-        <ol>
-            <li>Selecting a 'pivot' element from the array</li>
-            <li>Partitioning the array around the pivot (elements less than pivot go to the left, greater go to the right)</li>
-            <li>Recursively applying the above steps to the sub-arrays</li>
-        </ol>
-        <p>
-            The choice of pivot can significantly affect the algorithm's performance. In this visualization, 
-            you can explore different pivot selection strategies and see how they affect the sorting process.
-        </p>
-    </div>
+<body data-theme="dark">
+    <a href="../index.html#week3" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <h1><i class="fas fa-fighter-jet icon-margin"></i>Quicksort Visualization</h1> <!-- Changed icon -->
 
     <div class="container">
-        <h2>Quicksort Visualization</h2>
-        
+        <h2><i class="fas fa-tachometer-alt icon-margin"></i>Interactive Quicksort</h2>
+        <p>Visualize the Quicksort algorithm, known for its average-case efficiency.</p>
+
         <div class="controls">
-            <button id="generateArrayBtn">Generate Random Array</button>
-            <select id="pivotStrategySelect" aria-label="Select pivot strategy">
-                <option value="first">First Element</option>
-                <option value="last">Last Element</option>
-                <option value="middle" selected>Middle Element</option>
-                <option value="random">Random Element</option>
-                <option value="median">Median of Three</option>
-            </select>
-            <button id="startSortBtn">Start Quicksort</button>
-            <button id="nextStepBtn" disabled>Next Step</button>
-            <button id="resetBtn">Reset</button>
-        </div>
-        
-        <div class="array-container" id="arrayContainer">
-            <!-- Array elements will be rendered here -->
-        </div>
-        
-        <div class="step-display" id="stepDisplay">
-            <p>Select a pivot strategy and click "Start Quicksort" to begin the visualization.</p>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Quicksort Algorithm</h2>
-        
-        <div class="example-container">
-            <h3>Pseudocode</h3>
-            <div class="code-block">
-                <pre>
-function quicksort(array, low, high):
-    if low < high:
-        // Partition the array and get the pivot index
-        pivotIndex = partition(array, low, high)
-        
-        // Recursively sort the sub-arrays
-        quicksort(array, low, pivotIndex - 1)
-        quicksort(array, pivotIndex + 1, high)
-
-function partition(array, low, high):
-    // Select pivot (various strategies possible)
-    pivot = selectPivot(array, low, high)
-    
-    // Move pivot to the end
-    swap(array, pivotIndex, high)
-    
-    // Elements less than pivot go to the left
-    i = low - 1
-    
-    for j = low to high - 1:
-        if array[j] <= pivot:
-            i++
-            swap(array, i, j)
-    
-    // Move pivot to its final sorted position
-    swap(array, i + 1, high)
-    
-    return i + 1  // Return the pivot index
-</pre>
+             <div class="control-group">
+                <label for="initial-array">Initial Array (comma-separated):</label>
+                <input type="text" id="initial-array" value="7,2,1,6,8,5,3,4">
+            </div>
+             <div class="control-group">
+                <label for="pivot-strategy">Pivot Strategy:</label>
+                <select id="pivot-strategy">
+                    <option value="last">Last Element</option>
+                    <option value="first">First Element</option>
+                    <option value="median3">Median of Three</option>
+                    <option value="random">Random</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <button id="start-sort-btn"><i class="fas fa-play icon-margin"></i>Start Sort</button>
+                <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset</button>
+            </div>
+             <div class="control-group">
+                <button id="step-btn" disabled><i class="fas fa-step-forward icon-margin"></i>Step Forward</button>
+                <button id="auto-play-btn" disabled><i class="fas fa-fast-forward icon-margin"></i>Auto Play</button>
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="50" max="1000" value="300" step="50">
+                <span id="speed-value">300ms</span>
             </div>
         </div>
-        
-        <div class="example-container">
-            <h3>JavaScript Implementation</h3>
-            <div class="code-block">
-                <pre>
-function quicksort(array, low, high) {
+
+        <div class="array-container" id="array-container">
+            <!-- Array bars will be generated here -->
+        </div>
+
+        <div class="log" id="log"><p>Enter an array, select a pivot strategy, and click 'Start Sort'.</p></div>
+    </div>
+
+    <div class="container">
+        <h2><i class="fas fa-info-circle icon-margin"></i>How Quicksort Works</h2>
+        <div class="explanation">
+            <p>Quicksort is another efficient, comparison-based sorting algorithm that uses the Divide and Conquer strategy, but differently from Merge Sort:</p>
+            <ol>
+                <li><strong>Choose Pivot:</strong> Select an element from the array as the pivot. Common strategies include picking the first, last, median, or a random element.</li>
+                <li><strong>Partition:</strong> Rearrange the array elements such that all elements smaller than the pivot come before it, and all elements greater than the pivot come after it. After partitioning, the pivot is in its final sorted position. The exact partitioning scheme (e.g., Lomuto, Hoare) affects the implementation details.</li>
+                <li><strong>Conquer (Recurse):</strong> Recursively apply Quicksort to the two subarrays: the one with elements smaller than the pivot, and the one with elements larger than the pivot.</li>
+            </ol>
+            <ul>
+                <li><strong>Time Complexity:</strong>
+                    <ul>
+                        <li><strong>Best/Average Case: O(n log n)</strong> - Occurs when the pivot selection consistently divides the array into roughly equal halves.</li>
+                        <li><strong>Worst Case: O(n²)</strong> - Occurs when the pivot selection consistently results in highly unbalanced partitions (e.g., picking the smallest or largest element in an already sorted or reverse-sorted array). Using strategies like "Median of Three" or random pivots helps mitigate this.</li>
+                    </ul>
+                </li>
+                <li><strong>Space Complexity: O(log n)</strong> on average (due to recursive call stack depth), but can be <strong>O(n)</strong> in the worst case if the recursion depth becomes linear. In-place partitioning schemes minimize extra memory usage for the data itself.</li>
+            </ul>
+        </div>
+        <h3><i class="fas fa-code icon-margin"></i>Example Implementation (Conceptual - Lomuto Partition)</h3>
+        <pre class="code-block">
+<code>function quickSort(arr, low, high) {
     if (low < high) {
-        // Partition the array and get the pivot index
-        const pivotIndex = partition(array, low, high);
-        
-        // Recursively sort the sub-arrays
-        quicksort(array, low, pivotIndex - 1);
-        quicksort(array, pivotIndex + 1, high);
+        // pi is the partitioning index, arr[pi] is now at the right place
+        let pi = partition(arr, low, high);
+
+        // Recursively sort elements before partition and after partition
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
     }
-    return array;
 }
 
-function partition(array, low, high) {
-    // Using last element as pivot
-    const pivot = array[high];
+// Lomuto partition scheme
+function partition(arr, low, high) {
+    // Choosing the last element as the pivot
+    let pivot = arr[high];
     
     // Index of smaller element
     let i = low - 1;
-    
+
     for (let j = low; j < high; j++) {
-        // If current element is less than or equal to pivot
-        if (array[j] <= pivot) {
+        // If current element is smaller than the pivot
+        if (arr[j] < pivot) {
             i++;
-            // Swap array[i] and array[j]
-            [array[i], array[j]] = [array[j], array[i]];
+            // Swap arr[i] and arr[j]
+            [arr[i], arr[j]] = [arr[j], arr[i]];
         }
     }
-    
-    // Swap array[i+1] and array[high] (put pivot in its correct position)
-    [array[i + 1], array[high]] = [array[high], array[i + 1]];
-    
-    return i + 1; // Return the pivot index
+
+    // Swap arr[i+1] and arr[high] (put pivot in correct place)
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    return i + 1; // Return the partition index
 }
-</pre>
-            </div>
-        </div>
-    </div>
 
-    <div class="container">
-        <h2>Pivot Selection Strategies</h2>
-        
-        <div class="comparison-container">
-            <div class="comparison-item">
-                <h3>First Element</h3>
-                <p>
-                    Always chooses the first element of the array as the pivot.
-                </p>
-                <p><strong>Pros:</strong> Simple to implement.</p>
-                <p><strong>Cons:</strong> Poor performance for already sorted or nearly sorted arrays (O(n²) worst case).</p>
-            </div>
-            
-            <div class="comparison-item">
-                <h3>Last Element</h3>
-                <p>
-                    Always chooses the last element of the array as the pivot.
-                </p>
-                <p><strong>Pros:</strong> Simple to implement.</p>
-                <p><strong>Cons:</strong> Same issues as first element for reverse-sorted arrays.</p>
-            </div>
-            
-            <div class="comparison-item">
-                <h3>Middle Element</h3>
-                <p>
-                    Chooses the middle element of the array as the pivot.
-                </p>
-                <p><strong>Pros:</strong> Often provides better performance than first or last for sorted arrays.</p>
-                <p><strong>Cons:</strong> Still vulnerable to certain patterns in the data.</p>
-            </div>
-            
-            <div class="comparison-item">
-                <h3>Random Element</h3>
-                <p>
-                    Randomly selects an element from the array as the pivot.
-                </p>
-                <p><strong>Pros:</strong> Provides good average-case performance and protection against worst-case scenarios.</p>
-                <p><strong>Cons:</strong> Requires a random number generator and is non-deterministic.</p>
-            </div>
-            
-            <div class="comparison-item">
-                <h3>Median of Three</h3>
-                <p>
-                    Uses the median of the first, middle, and last elements as the pivot.
-                </p>
-                <p><strong>Pros:</strong> Excellent practical performance, reduces probability of worst-case scenarios.</p>
-                <p><strong>Cons:</strong> Slightly more complex to implement.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Time and Space Complexity</h2>
-        
-        <div class="example-container">
-            <h3>Time Complexity</h3>
-            <ul>
-                <li><strong>Best Case:</strong> O(n log n) - Occurs when the pivot always divides the array into nearly equal halves</li>
-                <li><strong>Average Case:</strong> O(n log n) - Expected performance with random data or good pivot selection</li>
-                <li><strong>Worst Case:</strong> O(n²) - Occurs when the pivot is always the smallest or largest element (e.g., with first/last pivot on sorted data)</li>
-            </ul>
-            <p>
-                The time complexity greatly depends on the pivot selection strategy. A good pivot divides the array into roughly equal halves,
-                which leads to a balanced recursion tree and O(n log n) performance.
-            </p>
-        </div>
-        
-        <div class="example-container">
-            <h3>Space Complexity</h3>
-            <ul>
-                <li><strong>Best/Average Case:</strong> O(log n) - For the recursion stack in a balanced tree</li>
-                <li><strong>Worst Case:</strong> O(n) - For the recursion stack in an unbalanced tree</li>
-            </ul>
-            <p>
-                Quicksort can be implemented in-place, meaning it doesn't require extra memory proportional to the input size
-                for the sorting itself. The space complexity comes primarily from the recursion stack.
-            </p>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Quicksort vs. Other Sorting Algorithms</h2>
-        
-        <div class="example-container">
-            <h3>Quicksort vs. Merge Sort</h3>
-            <table>
-                <tr>
-                    <th>Aspect</th>
-                    <th>Quicksort</th>
-                    <th>Merge Sort</th>
-                </tr>
-                <tr>
-                    <td>Time Complexity (Worst)</td>
-                    <td>O(n²)</td>
-                    <td>O(n log n)</td>
-                </tr>
-                <tr>
-                    <td>Time Complexity (Average)</td>
-                    <td>O(n log n)</td>
-                    <td>O(n log n)</td>
-                </tr>
-                <tr>
-                    <td>Space Complexity</td>
-                    <td>O(log n) to O(n)</td>
-                    <td>O(n)</td>
-                </tr>
-                <tr>
-                    <td>Stability</td>
-                    <td>Not stable</td>
-                    <td>Stable</td>
-                </tr>
-                <tr>
-                    <td>In-place</td>
-                    <td>Yes</td>
-                    <td>No (traditional implementation)</td>
-                </tr>
-                <tr>
-                    <td>Cache Efficiency</td>
-                    <td>Better (localized memory access)</td>
-                    <td>Worse (non-localized access)</td>
-                </tr>
-            </table>
-        </div>
-        
-        <div class="example-container">
-            <h3>When to Use Quicksort</h3>
-            <p>
-                Quicksort is often the preferred sorting algorithm when:
-            </p>
-            <ul>
-                <li>Average-case performance is more important than worst-case guarantees</li>
-                <li>Memory usage is a concern (due to in-place sorting)</li>
-                <li>The data is randomly distributed</li>
-                <li>Cache performance is important</li>
-            </ul>
-            <p>
-                Many programming language standard libraries use Quicksort or a hybrid approach that incorporates Quicksort
-                for their sorting functions (often with optimizations like switching to insertion sort for small subarrays).
-            </p>
-        </div>
+// Initial call:
+// quickSort(myArray, 0, myArray.length - 1);
+</code></pre>
     </div>
 
     <script>
-        // DOM elements
-        const arrayContainer = document.getElementById('arrayContainer');
-        const stepDisplay = document.getElementById('stepDisplay');
-        const generateArrayBtn = document.getElementById('generateArrayBtn');
-        const pivotStrategySelect = document.getElementById('pivotStrategySelect');
-        const startSortBtn = document.getElementById('startSortBtn');
-        const nextStepBtn = document.getElementById('nextStepBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        
-        // Sorting state
-        let array = [38, 27, 43, 3, 9, 82, 10];
-        let sortingSteps = [];
-        let currentStepIndex = 0;
-        let sortingInProgress = false;
-        
-        // Initialize array display
-        renderArray();
-        
-        // Add event listeners
-        generateArrayBtn.addEventListener('click', generateRandomArray);
-        startSortBtn.addEventListener('click', startQuicksort);
-        nextStepBtn.addEventListener('click', showNextStep);
-        resetBtn.addEventListener('click', resetVisualization);
-        
-        // Generate a random array
-        function generateRandomArray() {
-            const length = Math.floor(Math.random() * 5) + 5; // 5-9 elements
-            array = [];
-            for (let i = 0; i < length; i++) {
-                array.push(Math.floor(Math.random() * 90) + 10); // 10-99
+        // Theme persistence
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // DOM Elements
+        const initialArrayInput = document.getElementById('initial-array');
+        const pivotStrategySelect = document.getElementById('pivot-strategy');
+        const startSortBtn = document.getElementById('start-sort-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const stepBtn = document.getElementById('step-btn');
+        const autoPlayBtn = document.getElementById('auto-play-btn');
+        const speedSlider = document.getElementById('speed-slider');
+        const speedValueSpan = document.getElementById('speed-value');
+        const arrayContainer = document.getElementById('array-container');
+        const logElement = document.getElementById('log');
+
+        let originalArray = [];
+        let currentArrayState = [];
+        let visualizationSteps = [];
+        let currentStepIndex = -1;
+        let autoPlayInterval = null;
+        let isAutoPlaying = false;
+        let animationSpeed = parseInt(speedSlider.value);
+        let maxArrayValue = 100; // For scaling bar heights
+
+        // --- Utility Functions ---
+        function logMessage(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.classList.add(`log-${type}`);
+            logElement.prepend(p);
+            while (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
             }
-            renderArray();
-            resetVisualization();
-            
-            updateStepDisplay(`Generated a random array with ${length} elements: [${array.join(', ')}]`);
         }
-        
-        // Render the array
-        function renderArray(highlights = {}) {
+
+        function disableControls(sorting = false, autoPlaying = false) {
+            startSortBtn.disabled = sorting;
+            initialArrayInput.disabled = sorting;
+            pivotStrategySelect.disabled = sorting;
+            const endReached = currentStepIndex >= visualizationSteps.length - 1;
+            stepBtn.disabled = !sorting || endReached || autoPlaying;
+            autoPlayBtn.disabled = !sorting || endReached;
+            resetBtn.disabled = autoPlaying;
+        }
+
+        // --- Visualization Rendering ---
+        function renderArray(stepData) {
+            if (!stepData) return;
             arrayContainer.innerHTML = '';
-            
-            for (let i = 0; i < array.length; i++) {
-                const element = document.createElement('div');
-                element.className = 'array-element';
-                element.textContent = array[i];
-                
-                // Apply highlights
-                if (highlights.pivot === i) {
-                    element.classList.add('pivot');
-                }
-                if (highlights.sorted && highlights.sorted.includes(i)) {
-                    element.classList.add('sorted');
-                }
-                if (highlights.current === i) {
-                    element.classList.add('current');
-                }
-                if (highlights.left === i) {
-                    element.classList.add('left');
-                }
-                if (highlights.right === i) {
-                    element.classList.add('right');
-                }
-                
-                arrayContainer.appendChild(element);
-            }
+            currentArrayState = stepData.array; // Update current state for height calculation
+            maxArrayValue = Math.max(...currentArrayState, 1); // Find max value for scaling, ensure at least 1
+
+            currentArrayState.forEach((value, index) => {
+                const bar = document.createElement('div');
+                bar.className = 'array-bar';
+                bar.style.height = `${(value / maxArrayValue) * 100 + 10}px`; // Scale height + base height
+                bar.textContent = value;
+                bar.dataset.index = index;
+                bar.title = `Index: ${index}, Value: ${value}`;
+
+                // Apply highlights based on step data
+                if (index === stepData.pivotIndex) bar.classList.add('pivot');
+                if (stepData.compareIndices && stepData.compareIndices.includes(index)) bar.classList.add('comparing');
+                if (stepData.swapIndices && stepData.swapIndices.includes(index)) bar.classList.add('swapping');
+                if (stepData.boundaryIndices && stepData.boundaryIndices.i === index) bar.classList.add('partition-boundary'); // Example: Mark 'i'
+                if (stepData.boundaryIndices && stepData.boundaryIndices.j === index) bar.classList.add('comparing'); // Mark 'j' as comparing
+                if (stepData.sortedIndices && stepData.sortedIndices.includes(index)) bar.classList.add('sorted');
+
+                arrayContainer.appendChild(bar);
+            });
+
+            // Optional: Add partition lines (might need adjustment based on specific scheme)
+            // if(stepData.low !== undefined && stepData.high !== undefined) { ... }
         }
-        
-        // Start the quicksort visualization
-        function startQuicksort() {
-            if (sortingInProgress) return;
-            
-            // Reset previous visualization
-            resetVisualization();
-            
-            // Start the sorting process
-            sortingInProgress = true;
-            sortingSteps = [];
-            currentStepIndex = 0;
-            
-            // Generate all steps of quicksort
-            generateQuicksortSteps(array.slice(), 0, array.length - 1);
-            
-            // Update UI
-            startSortBtn.disabled = true;
-            nextStepBtn.disabled = false;
-            
-            // Show the first step
-            showCurrentStep();
-            
-            updateStepDisplay(`Starting Quicksort with ${pivotStrategySelect.value} pivot strategy. Click 'Next Step' to proceed through the algorithm.`);
+
+        // --- Quicksort Logic with Step Recording (using Lomuto for simplicity) ---
+        function generateQuicksortSteps(arr) {
+            visualizationSteps = [];
+            let arrayToSort = [...arr]; // Work on a copy
+
+            // Initial state
+             visualizationSteps.push({
+                 array: [...arrayToSort],
+                 message: `Initial array: [${arrayToSort.join(',')}]`,
+                 type: 'info'
+             });
+
+            quickSortRecursive(arrayToSort, 0, arrayToSort.length - 1);
+
+            // Final sorted state
+            visualizationSteps.push({
+                array: [...arrayToSort],
+                sortedIndices: arrayToSort.map((_, i) => i), // Mark all as sorted
+                message: `Sorting complete! Final array: [${arrayToSort.join(',')}]`,
+                type: 'success'
+            });
         }
-        
-        // Generate all steps of quicksort
-        function generateQuicksortSteps(arr, low, high, sortedIndices = []) {
+
+        function quickSortRecursive(arr, low, high) {
+             visualizationSteps.push({
+                 array: [...arr],
+                 low: low,
+                 high: high,
+                 message: `Quicksort called on subarray indices ${low} to ${high}`,
+                 type: 'info'
+             });
+
             if (low < high) {
-                // Record initial state of this partition
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Starting partition from index ${low} to ${high}.`,
-                    left: low,
-                    right: high,
-                    sorted: [...sortedIndices]
-                });
-                
-                // Select pivot based on the chosen strategy
-                const pivotIndex = selectPivot(arr, low, high);
-                const pivot = arr[pivotIndex];
-                
-                // Record pivot selection
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Selected pivot: ${pivot} (${pivotStrategySelect.value} strategy).`,
-                    pivot: pivotIndex,
-                    left: low,
-                    right: high,
-                    sorted: [...sortedIndices]
-                });
-                
-                // Move pivot to the end if not already there
-                if (pivotIndex !== high) {
-                    [arr[pivotIndex], arr[high]] = [arr[high], arr[pivotIndex]];
-                    
-                    sortingSteps.push({
-                        array: [...arr],
-                        message: `Moved pivot ${pivot} to the end of partition.`,
-                        pivot: high,
-                        left: low,
-                        right: high,
-                        sorted: [...sortedIndices]
-                    });
-                }
-                
-                // Partition the array
-                let i = low - 1;
-                
+                const pivotIndex = choosePivot(arr, low, high);
+                 visualizationSteps.push({
+                     array: [...arr],
+                     pivotIndex: pivotIndex,
+                     low: low,
+                     high: high,
+                     message: `Chosen pivot: ${arr[pivotIndex]} at index ${pivotIndex}`,
+                      type: 'info'
+                 });
+
+                 // --- Lomuto Partition --- 
+                 // (Adaptation needed for other strategies like Hoare)
+
+                 // Move pivot to end for Lomuto
+                 let pivotValue = arr[pivotIndex];
+                 if (pivotIndex !== high) {
+                     [arr[pivotIndex], arr[high]] = [arr[high], arr[pivotIndex]];
+                      visualizationSteps.push({
+                         array: [...arr],
+                         swapIndices: [pivotIndex, high],
+                         message: `Swap pivot ${pivotValue} with last element ${arr[pivotIndex]} for Lomuto partitioning.`,
+                         type: 'info'
+                     });
+                 }
+                 pivotValue = arr[high]; // Pivot is now at high index
+                 let currentPivotIdx = high;
+
+                 visualizationSteps.push({
+                     array: [...arr],
+                     pivotIndex: currentPivotIdx,
+                     low: low,
+                     high: high,
+                     message: `Partitioning subarray from index ${low} to ${high-1} around pivot ${pivotValue}.`, 
+                     type: 'info'
+                 });
+
+                let i = low - 1; // index of smaller element
+
                 for (let j = low; j < high; j++) {
-                    // Record current element being compared
-                    sortingSteps.push({
-                        array: [...arr],
-                        message: `Comparing element ${arr[j]} with pivot ${pivot}.`,
-                        pivot: high,
-                        current: j,
-                        left: low,
-                        right: high,
-                        sorted: [...sortedIndices]
-                    });
-                    
-                    if (arr[j] <= pivot) {
+                     // Highlight j (current element being compared) and pivot
+                      visualizationSteps.push({
+                         array: [...arr],
+                         pivotIndex: currentPivotIdx,
+                         compareIndices: [j],
+                         boundaryIndices: { i: i, j: j },
+                         low: low,
+                         high: high,
+                         message: `Comparing element ${arr[j]} (at j=${j}) with pivot ${pivotValue}. i is at ${i}.`,
+                         type: 'info'
+                     });
+
+                    if (arr[j] < pivotValue) {
                         i++;
-                        
-                        // Swap if needed
-                        if (i !== j) {
+                         if (i !== j) {
+                            // Swap arr[i] and arr[j]
                             [arr[i], arr[j]] = [arr[j], arr[i]];
-                            
-                            sortingSteps.push({
-                                array: [...arr],
-                                message: `${arr[i]} ≤ ${pivot}, swapping elements at indices ${i} and ${j}.`,
-                                pivot: high,
-                                current: j,
-                                left: low,
-                                right: high,
-                                sorted: [...sortedIndices]
-                            });
-                        } else {
-                            sortingSteps.push({
-                                array: [...arr],
-                                message: `${arr[j]} ≤ ${pivot}, element is already in the correct position.`,
-                                pivot: high,
-                                current: j,
-                                left: low,
-                                right: high,
-                                sorted: [...sortedIndices]
-                            });
-                        }
+                             visualizationSteps.push({
+                                 array: [...arr],
+                                 pivotIndex: currentPivotIdx,
+                                 swapIndices: [i, j],
+                                 boundaryIndices: { i: i, j: j },
+                                 low: low,
+                                 high: high,
+                                 message: `Element ${arr[i]} < pivot ${pivotValue}. Swap arr[i=${i}] (${arr[i]}) with arr[j=${j}] (${arr[j]}). Increment i to ${i}.`,
+                                 type: 'info'
+                             });
+                         } else {
+                              visualizationSteps.push({
+                                 array: [...arr],
+                                 pivotIndex: currentPivotIdx,
+                                 compareIndices: [j],
+                                 boundaryIndices: { i: i, j: j },
+                                 low: low,
+                                 high: high,
+                                 message: `Element ${arr[j]} < pivot ${pivotValue}. Increment i to ${i}. No swap needed (i==j).`,
+                                 type: 'info'
+                             });
+                         }
                     } else {
-                        sortingSteps.push({
-                            array: [...arr],
-                            message: `${arr[j]} > ${pivot}, no swap needed.`,
-                            pivot: high,
-                            current: j,
-                            left: low,
-                            right: high,
-                            sorted: [...sortedIndices]
-                        });
+                         // No swap needed, just move j
+                          visualizationSteps.push({
+                             array: [...arr],
+                             pivotIndex: currentPivotIdx,
+                             compareIndices: [j],
+                             boundaryIndices: { i: i, j: j },
+                             low: low,
+                             high: high,
+                             message: `Element ${arr[j]} >= pivot ${pivotValue}. No swap. Move j.`,
+                             type: 'info'
+                         });
                     }
                 }
-                
-                // Move pivot to its final sorted position
-                const finalPivotIndex = i + 1;
-                [arr[finalPivotIndex], arr[high]] = [arr[high], arr[finalPivotIndex]];
-                
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Moved pivot ${pivot} to its final sorted position at index ${finalPivotIndex}.`,
-                    pivot: finalPivotIndex,
-                    left: low,
-                    right: high,
-                    sorted: [...sortedIndices]
-                });
-                
-                // Mark pivot as sorted
-                const newSortedIndices = [...sortedIndices, finalPivotIndex];
-                
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Pivot ${pivot} is now in its correct position. All elements to the left are smaller, and all elements to the right are larger.`,
-                    left: low,
-                    right: high,
-                    sorted: newSortedIndices
-                });
-                
-                // Recursively sort the subarrays
-                generateQuicksortSteps(arr, low, finalPivotIndex - 1, newSortedIndices);
-                generateQuicksortSteps(arr, finalPivotIndex + 1, high, newSortedIndices);
-            } 
-            else if (low === high && !sortedIndices.includes(low)) {
-                // Single element is already sorted
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Single element ${arr[low]} at index ${low} is already sorted.`,
-                    sorted: [...sortedIndices, low]
-                });
-            }
-            
-            // If we've sorted the entire array, add a final step
-            if (low === 0 && high === arr.length - 1 && sortedIndices.length === arr.length - 1) {
-                sortingSteps.push({
-                    array: [...arr],
-                    message: `Quicksort complete! The array is now fully sorted.`,
-                    sorted: Array.from({ length: arr.length }, (_, i) => i)
-                });
+
+                // Swap pivot (arr[high]) with arr[i+1]
+                const finalPivotPosition = i + 1;
+                 if (finalPivotPosition !== high) {
+                     [arr[finalPivotPosition], arr[high]] = [arr[high], arr[finalPivotPosition]];
+                      visualizationSteps.push({
+                         array: [...arr],
+                         swapIndices: [finalPivotPosition, high],
+                         pivotIndex: finalPivotPosition, // Pivot is now at final position
+                         low: low,
+                         high: high,
+                         message: `Partition complete. Swap pivot ${arr[finalPivotPosition]} into its final position at index ${finalPivotPosition}.`,
+                         type: 'success'
+                     });
+                 } else {
+                      visualizationSteps.push({
+                         array: [...arr],
+                         pivotIndex: finalPivotPosition,
+                         low: low,
+                         high: high,
+                         message: `Partition complete. Pivot ${arr[finalPivotPosition]} already in final position ${finalPivotPosition}.`,
+                         type: 'success'
+                     });
+                 }
+
+                let pi = finalPivotPosition;
+
+                // Recursively sort elements before partition and after partition
+                quickSortRecursive(arr, low, pi - 1);
+                quickSortRecursive(arr, pi + 1, high);
+
+                 // Mark pivot as sorted after recursive calls return (optional but good visual cue)
+                 // This requires more complex state tracking or adding steps after recursion returns
+
+            } else if (low === high) {
+                // Base case: single element is sorted
+                 visualizationSteps.push({
+                     array: [...arr],
+                     sortedIndices: [low],
+                     message: `Base case: Subarray with single element ${arr[low]} at index ${low} is sorted.`,
+                     type: 'success'
+                 });
+            } else {
+                  // Base case: low > high (empty subarray)
+                 visualizationSteps.push({
+                     array: [...arr],
+                     message: `Base case: Empty subarray (low=${low}, high=${high}). Nothing to sort.`,
+                     type: 'info'
+                 });
             }
         }
-        
-        // Select pivot based on the chosen strategy
-        function selectPivot(arr, low, high) {
+
+        function choosePivot(arr, low, high) {
             const strategy = pivotStrategySelect.value;
-            
+            let pivotIndex;
+
             switch (strategy) {
                 case 'first':
-                    return low;
-                    
-                case 'last':
-                    return high;
-                    
-                case 'middle':
-                    return Math.floor((low + high) / 2);
-                    
+                    pivotIndex = low;
+                    break;
+                case 'median3':
+                    const mid = Math.floor((low + high) / 2);
+                    // Basic median of three logic (can be more robust)
+                    const values = [[arr[low], low], [arr[mid], mid], [arr[high], high]];
+                    values.sort((a, b) => a[0] - b[0]);
+                    pivotIndex = values[1][1]; // Index of the median value
+                    break;
                 case 'random':
-                    return Math.floor(Math.random() * (high - low + 1)) + low;
-                    
-                case 'median':
-                    // Median of three (first, middle, last)
-                    const first = arr[low];
-                    const middle = arr[Math.floor((low + high) / 2)];
-                    const last = arr[high];
-                    
-                    // Find the median index
-                    if ((first <= middle && middle <= last) || (last <= middle && middle <= first)) {
-                        return Math.floor((low + high) / 2);
-                    } else if ((middle <= first && first <= last) || (last <= first && first <= middle)) {
-                        return low;
-                    } else {
-                        return high;
-                    }
-                    
+                    pivotIndex = Math.floor(Math.random() * (high - low + 1)) + low;
+                    break;
+                case 'last': // Fallthrough default
                 default:
-                    return high; // Default to last element
+                    pivotIndex = high;
+                    break;
             }
+            return pivotIndex;
         }
-        
-        // Show the current step
-        function showCurrentStep() {
-            if (currentStepIndex >= sortingSteps.length) {
-                updateStepDisplay('Quicksort complete! The array is now sorted.');
-                nextStepBtn.disabled = true;
+
+        // --- Control Handlers ---
+        startSortBtn.addEventListener('click', () => {
+            const inputText = initialArrayInput.value.trim();
+            const potentialArray = inputText.split(',').map(s => s.trim()).filter(s => s !== '');
+
+            if (potentialArray.length === 0) {
+                logMessage('Please enter a non-empty array.', 'warning');
                 return;
             }
-            
-            const step = sortingSteps[currentStepIndex];
-            
-            // Update array display
-            array = [...step.array];
-            
-            // Create highlights object
-            const highlights = {
-                pivot: step.pivot,
-                current: step.current,
-                left: step.left,
-                right: step.right,
-                sorted: step.sorted
-            };
-            
-            // Render array with highlights
-            renderArray(highlights);
-            
-            // Update step display
-            updateStepDisplay(step.message);
-        }
-        
-        // Show the next step
-        function showNextStep() {
-            if (currentStepIndex < sortingSteps.length - 1) {
-                currentStepIndex++;
-                showCurrentStep();
+            if (potentialArray.every(s => !isNaN(Number(s)))) {
+                originalArray = potentialArray.map(Number);
+                currentArrayState = [...originalArray]; // Initialize state
+                logMessage(`Starting Quicksort for: [${originalArray.join(',')}] using ${pivotStrategySelect.options[pivotStrategySelect.selectedIndex].text} pivot.`, 'info');
+                isAutoPlaying = false;
+                stopAutoPlay();
+                generateQuicksortSteps([...originalArray]);
+                currentStepIndex = 0;
+                 renderArray(visualizationSteps[currentStepIndex]); // Render initial state
+                disableControls(true, false);
             } else {
-                updateStepDisplay('Quicksort complete! The array is now sorted.');
-                nextStepBtn.disabled = true;
+                logMessage('Invalid input: Please enter comma-separated numbers.', 'error');
             }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isAutoPlaying = false;
+            stopAutoPlay();
+            originalArray = [];
+            currentArrayState = [];
+            visualizationSteps = [];
+            currentStepIndex = -1;
+            initialArrayInput.value = '7,2,1,6,8,5,3,4'; // Default
+            arrayContainer.innerHTML = '';
+            logElement.innerHTML = "<p>Enter an array, select a pivot strategy, and click 'Start Sort'.</p>";
+            disableControls(false, false);
+        });
+
+        stepBtn.addEventListener('click', () => {
+            if (isAutoPlaying) return;
+            if (currentStepIndex < visualizationSteps.length - 1) {
+                currentStepIndex++;
+                renderArray(visualizationSteps[currentStepIndex]);
+                logMessage(visualizationSteps[currentStepIndex].message, visualizationSteps[currentStepIndex].type || 'info');
+                disableControls(true, false);
+            } else {
+                logMessage('Quicksort steps complete.', 'success');
+                disableControls(false, false); // Sort finished
+                stepBtn.disabled = true;
+                autoPlayBtn.disabled = true;
+            }
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValueSpan.textContent = `${animationSpeed}ms`;
+            if (isAutoPlaying) {
+                stopAutoPlay(false);
+                startAutoPlay();
+            }
+        });
+
+        function startAutoPlay() {
+            if (isAutoPlaying && autoPlayInterval) return;
+            isAutoPlaying = true;
+            autoPlayBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
+            disableControls(true, true);
+
+            autoPlayInterval = setInterval(() => {
+                if (currentStepIndex < visualizationSteps.length - 1) {
+                    currentStepIndex++;
+                    renderArray(visualizationSteps[currentStepIndex]);
+                    logMessage(visualizationSteps[currentStepIndex].message, visualizationSteps[currentStepIndex].type || 'info');
+                    disableControls(true, true);
+                } else {
+                    logMessage('Quicksort steps complete (Auto-Play).', 'success');
+                    stopAutoPlay();
+                    stepBtn.disabled = true;
+                    autoPlayBtn.disabled = true;
+                    resetBtn.disabled = false;
+                }
+            }, animationSpeed);
         }
-        
-        // Reset the visualization
-        function resetVisualization() {
-            sortingInProgress = false;
-            sortingSteps = [];
-            currentStepIndex = 0;
-            
-            // Reset UI
-            startSortBtn.disabled = false;
-            nextStepBtn.disabled = true;
-            
-            // Clear highlights
-            renderArray();
-            
-            updateStepDisplay(`Select a pivot strategy and click "Start Quicksort" to begin the visualization.`);
+
+        function stopAutoPlay(resettingState = true) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+            if (resettingState) {
+                 isAutoPlaying = false;
+            }
+            autoPlayBtn.innerHTML = '<i class="fas fa-fast-forward icon-margin"></i>Auto Play';
+             if (resettingState) {
+                const sortInProgress = currentStepIndex < visualizationSteps.length - 1 && currentStepIndex !== -1;
+                disableControls(sortInProgress, false);
+                if (!sortInProgress && currentStepIndex !== -1) {
+                     stepBtn.disabled = true;
+                     autoPlayBtn.disabled = true;
+                }
+             }
         }
-        
-        // Update the step display
-        function updateStepDisplay(message) {
-            stepDisplay.innerHTML = `<p>${message}</p>`;
-        }
+
+        autoPlayBtn.addEventListener('click', () => {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        });
+
+        // --- Initial State ---
+        speedValueSpan.textContent = `${animationSpeed}ms`;
+        disableControls(false, false);
+
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
 </html>

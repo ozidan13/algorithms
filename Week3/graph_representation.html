@@ -4,947 +4,487 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph Representation Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/global-algo.css">
+    <!-- Using Cytoscape.js for graph visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
+        /* Styles specific to Graph Representation */
+        #cy-container {
+            width: 100%;
+            height: 450px; /* Increased height */
+            display: block;
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            background-color: var(--background-alt);
+            margin-bottom: 20px;
+            transition: var(--theme-transition);
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+
+        .representation-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap; /* Allow wrapping */
+            margin-top: 20px;
         }
-        h1, h2, h3 {
-            color: #2c3e50;
+
+        .representation-box {
+            flex: 1; /* Take equal space */
+            min-width: 300px; /* Minimum width */
+            padding: 15px;
+            background-color: var(--background-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            transition: var(--theme-transition);
         }
-        .control-panel {
+
+        .representation-box h3 {
+            margin-top: 0;
+            color: var(--primary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        pre.code-block.compact {
+            max-height: 300px; /* Limit height for adjacency list/matrix */
+            overflow-y: auto;
+            font-size: 0.85rem; /* Slightly smaller font */
+            background-color: var(--background-alt);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        /* Controls refinement */
+         .controls {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .graph-container {
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 15px;
+            align-items: center;
+            /* justify-content: center; */ /* Align left for this layout */
         }
-        .representation {
-            flex: 1;
-            min-width: 300px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .graph-canvas {
-            border: 1px solid #ddd;
-            background-color: white;
-            margin-bottom: 15px;
-            cursor: crosshair;
-        }
-        .matrix-container {
-            overflow-x: auto;
-            margin-bottom: 15px;
-        }
-        table {
-            border-collapse: collapse;
-            min-width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .list-container {
-            margin-bottom: 15px;
-        }
-        .vertex-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .vertex-item {
-            margin-bottom: 10px;
-        }
-        .edges-list {
-            margin-left: 20px;
-            padding-left: 10px;
-            border-left: 2px solid #90caf9;
-        }
-        .edge-item {
-            margin: 5px 0;
-            padding: 3px 8px;
-            background-color: #e3f2fd;
-            border-radius: 3px;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        select, input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
-        .explanation {
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
-            padding: 10px 15px;
-            margin: 15px 0;
-        }
-        .complexity-table {
-            margin: 15px 0;
-            width: 100%;
-        }
-        .complexity-table th {
-            background-color: #e3f2fd;
-        }
-        .tabs {
+        .control-group {
             display: flex;
-            margin-bottom: 10px;
+            align-items: center;
+            gap: 8px;
         }
-        .tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            border-bottom: none;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
+        .control-group label {
+            white-space: nowrap;
         }
-        .tab.active {
-            background-color: #fff;
-            border-bottom: 1px solid white;
-            z-index: 1;
-        }
-        .tab-content {
-            display: none;
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin-top: -1px;
-        }
-        .tab-content.active {
-            display: block;
-        }
+         .control-group input[type="text"],
+         .control-group input[type="number"],
+         .control-group select {
+            margin-right: 10px;
+         }
+        .log {
+             margin-top: 20px;
+             max-height: 120px; /* Shorter log */
+         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
+    <a href="../index.html#week3" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <h1><i class="fas fa-project-diagram icon-margin"></i>Graph Representation Visualization</h1>
+
     <div class="container">
-        <h1>Graph Representation Visualization</h1>
-        
-        <div class="tabs">
-            <div class="tab active" data-tab="visualization">Interactive Visualization</div>
-            <div class="tab" data-tab="explanation">Graph Representation Explanation</div>
-            <div class="tab" data-tab="complexity">Space & Time Complexity</div>
-        </div>
-        
-        <div id="visualization" class="tab-content active">
-            <div class="control-panel">
-                <h3>Graph Controls</h3>
-                <div>
-                    <label for="graph-type">Graph Type:</label>
-                    <select id="graph-type">
-                        <option value="undirected">Undirected</option>
-                        <option value="directed">Directed</option>
-                    </select>
-                    
-                    <label for="graph-operation">Operation:</label>
-                    <select id="graph-operation">
-                        <option value="add-vertex">Add Vertex</option>
-                        <option value="add-edge">Add Edge</option>
-                        <option value="remove-vertex">Remove Vertex</option>
-                        <option value="remove-edge">Remove Edge</option>
-                    </select>
-                    
-                    <button id="clear-btn">Clear Graph</button>
-                </div>
-                <div style="margin-top: 10px;" id="edge-inputs">
-                    <input type="text" id="from-vertex" placeholder="From Vertex" maxlength="1" size="3">
-                    <input type="text" id="to-vertex" placeholder="To Vertex" maxlength="1" size="3">
-                    <input type="number" id="edge-weight" placeholder="Weight (optional)" min="1" max="99">
-                    <button id="apply-btn">Apply</button>
-                </div>
+        <h2><i class="fas fa-network-wired icon-margin"></i>Interactive Graph Builder</h2>
+        <p>Build a graph by adding nodes and edges, and see its representation as an Adjacency List and Adjacency Matrix.</p>
+
+        <div class="controls">
+             <div class="control-group">
+                <label for="node-id">Node ID:</label>
+                <input type="text" id="node-id" placeholder="e.g., A" size="4">
+                <button id="add-node-btn"><i class="fas fa-plus-circle icon-margin"></i>Add Node</button>
             </div>
-            
-            <div class="explanation" id="operation-explanation">
-                Click on the canvas to add vertices. Select operation and vertices to add/remove edges.
+             <div class="control-group">
+                <label for="edge-source">From:</label>
+                <input type="text" id="edge-source" placeholder="e.g., A" size="4">
+                <label for="edge-target">To:</label>
+                <input type="text" id="edge-target" placeholder="e.g., B" size="4">
+                <label for="edge-weight">Weight (optional):</label>
+                <input type="number" id="edge-weight" placeholder="e.g., 5" min="0" style="width: 60px;">
+                <button id="add-edge-btn"><i class="fas fa-long-arrow-alt-right icon-margin"></i>Add Edge</button>
             </div>
-            
-            <div class="graph-container">
-                <div class="representation">
-                    <h3>Graph Visualization</h3>
-                    <canvas id="graph-canvas" class="graph-canvas" width="400" height="300"></canvas>
-                </div>
-                
-                <div class="representation">
-                    <h3>Adjacency Matrix</h3>
-                    <div class="matrix-container" id="adjacency-matrix">
-                        <p>The graph has no vertices yet.</p>
-                    </div>
-                </div>
-                
-                <div class="representation">
-                    <h3>Adjacency List</h3>
-                    <div class="list-container" id="adjacency-list">
-                        <p>The graph has no vertices yet.</p>
-                    </div>
-                </div>
+            <div class="control-group">
+                <label for="graph-type">Graph Type:</label>
+                <select id="graph-type">
+                    <option value="undirected">Undirected</option>
+                    <option value="directed">Directed</option>
+                </select>
+                 <label for="layout-type">Layout:</label>
+                 <select id="layout-type">
+                     <option value="cose">Cose (default)</option>
+                     <option value="grid">Grid</option>
+                     <option value="circle">Circle</option>
+                     <option value="breadthfirst">Breadthfirst</option>
+                     <option value="random">Random</option>
+                 </select>
+                 <button id="reset-graph-btn"><i class="fas fa-undo icon-margin"></i>Reset Graph</button>
             </div>
         </div>
-        
-        <div id="explanation" class="tab-content">
-            <h2>Graph Representation Methods</h2>
-            <p>A graph consists of vertices (nodes) connected by edges. There are several ways to represent graphs in computer memory:</p>
-            
-            <h3>Adjacency Matrix</h3>
-            <p>An adjacency matrix is a 2D array where each cell [i][j] represents the edge between vertices i and j:</p>
-            <ul>
-                <li>For unweighted graphs: 1 if an edge exists, 0 otherwise</li>
-                <li>For weighted graphs: The weight value if an edge exists, 0 or infinity otherwise</li>
-                <li>For undirected graphs: The matrix is symmetric (if [i][j] has a value, [j][i] has the same value)</li>
-                <li>For directed graphs: The matrix may not be symmetric</li>
-            </ul>
-            
-            <div class="explanation">
-                <strong>Example:</strong> For a graph with vertices A, B, C, D with edges A-B, A-C, and B-D, the adjacency matrix would be:
-                <table>
-                    <tr>
-                        <th></th><th>A</th><th>B</th><th>C</th><th>D</th>
-                    </tr>
-                    <tr>
-                        <th>A</th><td>0</td><td>1</td><td>1</td><td>0</td>
-                    </tr>
-                    <tr>
-                        <th>B</th><td>1</td><td>0</td><td>0</td><td>1</td>
-                    </tr>
-                    <tr>
-                        <th>C</th><td>1</td><td>0</td><td>0</td><td>0</td>
-                    </tr>
-                    <tr>
-                        <th>D</th><td>0</td><td>1</td><td>0</td><td>0</td>
-                    </tr>
-                </table>
+
+        <div id="cy-container"></div>
+        <div class="log" id="log"><p>Add nodes and edges to build your graph.</p></div>
+
+        <div class="representation-container">
+            <div class="representation-box" id="adj-list-box">
+                 <h3><i class="fas fa-list-ul icon-margin"></i>Adjacency List</h3>
+                 <pre class="code-block compact" id="adj-list">{}</pre>
             </div>
-            
-            <h3>Adjacency List</h3>
-            <p>An adjacency list represents a graph as an array or map of lists where each index or key represents a vertex and contains a list of its adjacent vertices:</p>
-            <ul>
-                <li>Each vertex stores a list of its neighbors (and edge weights for weighted graphs)</li>
-                <li>More space-efficient for sparse graphs (few edges)</li>
-                <li>For undirected graphs: Each edge appears twice (once in each vertex's list)</li>
-                <li>For directed graphs: Edges only appear in the source vertex's list</li>
-            </ul>
-            
-            <div class="explanation">
-                <strong>Example:</strong> For the same graph as above:
-                <ul>
-                    <li>A → [B, C]</li>
-                    <li>B → [A, D]</li>
-                    <li>C → [A]</li>
-                    <li>D → [B]</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div id="complexity" class="tab-content">
-            <h2>Space and Time Complexity Analysis</h2>
-            
-            <p>Let's analyze the space and time complexity of both representation methods:</p>
-            <ul>
-                <li><strong>|V|</strong> = number of vertices</li>
-                <li><strong>|E|</strong> = number of edges</li>
-            </ul>
-            
-            <h3>Space Complexity</h3>
-            <table class="complexity-table">
-                <tr>
-                    <th>Representation</th>
-                    <th>Space Complexity</th>
-                    <th>Best For</th>
-                </tr>
-                <tr>
-                    <td>Adjacency Matrix</td>
-                    <td>O(|V|²)</td>
-                    <td>Dense graphs (many edges)</td>
-                </tr>
-                <tr>
-                    <td>Adjacency List</td>
-                    <td>O(|V| + |E|)</td>
-                    <td>Sparse graphs (few edges)</td>
-                </tr>
-            </table>
-            
-            <h3>Time Complexity</h3>
-            <table class="complexity-table">
-                <tr>
-                    <th>Operation</th>
-                    <th>Adjacency Matrix</th>
-                    <th>Adjacency List</th>
-                </tr>
-                <tr>
-                    <td>Add Vertex</td>
-                    <td>O(|V|²) - need to resize matrix</td>
-                    <td>O(1)</td>
-                </tr>
-                <tr>
-                    <td>Remove Vertex</td>
-                    <td>O(|V|²) - need to shift matrix</td>
-                    <td>O(|V| + |E|) - need to remove from all lists</td>
-                </tr>
-                <tr>
-                    <td>Add Edge</td>
-                    <td>O(1)</td>
-                    <td>O(1)</td>
-                </tr>
-                <tr>
-                    <td>Remove Edge</td>
-                    <td>O(1)</td>
-                    <td>O(|V|) - need to find in the list</td>
-                </tr>
-                <tr>
-                    <td>Check if edge exists</td>
-                    <td>O(1)</td>
-                    <td>O(|V|) - need to search list</td>
-                </tr>
-                <tr>
-                    <td>Find all neighbors</td>
-                    <td>O(|V|) - scan a row</td>
-                    <td>O(degree(v)) - just return the list</td>
-                </tr>
-            </table>
-            
-            <div class="explanation">
-                <strong>Practical Considerations:</strong>
-                <ul>
-                    <li>Most real-world graphs are sparse, making adjacency lists more common</li>
-                    <li>Adjacency matrices are simpler to implement and better for small graphs</li>
-                    <li>Adjacency lists are more efficient for graph algorithms like BFS and DFS</li>
-                    <li>For weighted graphs, both can store weights with minimal modifications</li>
-                </ul>
+             <div class="representation-box" id="adj-matrix-box">
+                 <h3><i class="fas fa-th icon-margin"></i>Adjacency Matrix</h3>
+                 <pre class="code-block compact" id="adj-matrix">[]</pre>
             </div>
         </div>
     </div>
 
+    <div class="container">
+        <h2><i class="fas fa-info-circle icon-margin"></i>Graph Representations Explained</h2>
+        <div class="explanation">
+            <p>Graphs can be represented in several ways, each with trade-offs in terms of space complexity and efficiency for different operations.</p>
+            <ul>
+                <li>
+                    <strong>Adjacency List:</strong>
+                    <ul>
+                        <li>Represents a graph as an array (or map) where each index (or key) corresponds to a node. The value at each index is a list (or set) of its adjacent neighbors (and optionally edge weights).</li>
+                        <li><strong>Space Complexity:</strong> O(V + E), where V is the number of vertices (nodes) and E is the number of edges. Efficient for sparse graphs (few edges relative to nodes).</li>
+                        <li><strong>Pros:</strong> Space-efficient for sparse graphs. Iterating over neighbors of a node is efficient.</li>
+                        <li><strong>Cons:</strong> Checking if an edge exists between two specific nodes (u, v) can take O(degree(u)) time.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Adjacency Matrix:</strong>
+                    <ul>
+                        <li>Represents a graph as a V x V matrix where the entry at `matrix[i][j]` indicates the presence (and possibly weight) of an edge from node i to node j. A 0 or infinity might represent no edge.</li>
+                        <li><strong>Space Complexity:</strong> O(V²), regardless of the number of edges. More suitable for dense graphs (many edges).</li>
+                        <li><strong>Pros:</strong> Checking for an edge between nodes i and j is very fast (O(1)). Adding/removing edges is O(1).</li>
+                        <li><strong>Cons:</strong> Space-inefficient for sparse graphs. Iterating over all neighbors of a node takes O(V) time. Adding/removing a node is O(V²).</li>
+                    </ul>
+                </li>
+                 <li><strong>Edge List:</strong> Simply a list of all edges in the graph, often represented as pairs or triplets (u, v, weight). Space complexity is O(E). Useful for some algorithms but less efficient for neighbor lookups.</li>
+            </ul>
+        </div>
+         <h3><i class="fas fa-code icon-margin"></i>Conceptual Data Structures</h3>
+         <pre class="code-block">
+<code>// Adjacency List (using Map for non-numeric IDs)
+const adjList = new Map();
+adjList.set('A', [{ node: 'B', weight: 5 }, { node: 'C', weight: 2 }]);
+adjList.set('B', [{ node: 'A', weight: 5 }]);
+adjList.set('C', [{ node: 'A', weight: 2 }]);
+// To check neighbors of 'A': adjList.get('A')
+
+// Adjacency Matrix (assuming nodes 0, 1, 2 correspond to A, B, C)
+// INF represents no direct edge
+const INF = Infinity;
+const adjMatrix = [
+  // A  B    C
+  [ 0,  5,   2 ], // A
+  [ 5,  0, INF ], // B
+  [ 2, INF,  0 ]  // C
+];
+// To check edge A -> C: adjMatrix[0][2] (returns 2)
+// To check edge B -> C: adjMatrix[1][2] (returns Infinity)
+</code></pre>
+    </div>
+
     <script>
-        class Graph {
-            constructor(isDirected = false) {
-                this.vertices = new Set();
-                this.adjacencyList = new Map();
-                this.isDirected = isDirected;
-                this.edges = [];
-                this.weights = new Map(); // Map of "vertex1-vertex2" => weight
-            }
-            
-            addVertex(vertex) {
-                if (!this.vertices.has(vertex)) {
-                    this.vertices.add(vertex);
-                    this.adjacencyList.set(vertex, []);
-                    return true;
-                }
-                return false;
-            }
-            
-            removeVertex(vertex) {
-                if (!this.vertices.has(vertex)) return false;
-                
-                // Remove edges connected to this vertex
-                this.adjacencyList.get(vertex).forEach(neighbor => {
-                    this.removeEdge(vertex, neighbor);
-                });
-                
-                // Remove the vertex itself
-                this.adjacencyList.delete(vertex);
-                this.vertices.delete(vertex);
-                
-                // Update edges list
-                this.edges = this.edges.filter(([v1, v2]) => v1 !== vertex && v2 !== vertex);
-                
-                return true;
-            }
-            
-            addEdge(vertex1, vertex2, weight = 1) {
-                if (!this.vertices.has(vertex1) || !this.vertices.has(vertex2)) return false;
-                
-                // Check if edge already exists
-                if (this.adjacencyList.get(vertex1).includes(vertex2)) return false;
-                
-                this.adjacencyList.get(vertex1).push(vertex2);
-                if (!this.isDirected) {
-                    this.adjacencyList.get(vertex2).push(vertex1);
-                }
-                
-                this.edges.push([vertex1, vertex2]);
-                this.weights.set(`${vertex1}-${vertex2}`, weight);
-                
-                if (!this.isDirected) {
-                    this.weights.set(`${vertex2}-${vertex1}`, weight);
-                }
-                
-                return true;
-            }
-            
-            removeEdge(vertex1, vertex2) {
-                if (!this.vertices.has(vertex1) || !this.vertices.has(vertex2)) return false;
-                
-                this.adjacencyList.set(
-                    vertex1, 
-                    this.adjacencyList.get(vertex1).filter(v => v !== vertex2)
-                );
-                
-                if (!this.isDirected) {
-                    this.adjacencyList.set(
-                        vertex2, 
-                        this.adjacencyList.get(vertex2).filter(v => v !== vertex1)
-                    );
-                }
-                
-                // Update edges list
-                this.edges = this.edges.filter(
-                    ([v1, v2]) => !(v1 === vertex1 && v2 === vertex2) && 
-                                !(this.isDirected === false && v1 === vertex2 && v2 === vertex1)
-                );
-                
-                // Remove weights
-                this.weights.delete(`${vertex1}-${vertex2}`);
-                if (!this.isDirected) {
-                    this.weights.delete(`${vertex2}-${vertex1}`);
-                }
-                
-                return true;
-            }
-            
-            getAdjacencyMatrix() {
-                const vertices = Array.from(this.vertices).sort();
-                const matrix = [];
-                
-                for (let i = 0; i < vertices.length; i++) {
-                    matrix.push(new Array(vertices.length).fill(0));
-                    
-                    const neighbors = this.adjacencyList.get(vertices[i]);
-                    for (const neighbor of neighbors) {
-                        const j = vertices.indexOf(neighbor);
-                        const weight = this.weights.get(`${vertices[i]}-${neighbor}`);
-                        matrix[i][j] = weight;
-                    }
-                }
-                
-                return { matrix, vertices };
-            }
-            
-            getEdgeWeight(vertex1, vertex2) {
-                return this.weights.get(`${vertex1}-${vertex2}`);
-            }
-            
-            getVertices() {
-                return Array.from(this.vertices).sort();
-            }
-            
-            getEdges() {
-                return this.edges;
-            }
-            
-            getNeighbors(vertex) {
-                return this.adjacencyList.get(vertex) || [];
-            }
-            
-            clear() {
-                this.vertices = new Set();
-                this.adjacencyList = new Map();
-                this.edges = [];
-                this.weights = new Map();
+        // Theme persistence
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // DOM Elements
+        const nodeIdInput = document.getElementById('node-id');
+        const addNodeBtn = document.getElementById('add-node-btn');
+        const edgeSourceInput = document.getElementById('edge-source');
+        const edgeTargetInput = document.getElementById('edge-target');
+        const edgeWeightInput = document.getElementById('edge-weight');
+        const addEdgeBtn = document.getElementById('add-edge-btn');
+        const graphTypeSelect = document.getElementById('graph-type');
+        const layoutTypeSelect = document.getElementById('layout-type');
+        const resetGraphBtn = document.getElementById('reset-graph-btn');
+        const cyContainer = document.getElementById('cy-container');
+        const logElement = document.getElementById('log');
+        const adjListBox = document.getElementById('adj-list-box');
+        const adjMatrixBox = document.getElementById('adj-matrix-box');
+        const adjListPre = document.getElementById('adj-list');
+        const adjMatrixPre = document.getElementById('adj-matrix');
+
+        let cy = null; // Cytoscape instance
+        let nodeMap = new Map(); // Map node ID to index for matrix
+        let nextNodeIndex = 0;
+        let isDirected = false;
+
+        // --- Utility Functions ---
+        function logMessage(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.classList.add(`log-${type}`);
+            logElement.prepend(p);
+            while (logElement.children.length > 5) { // Keep log shorter
+                logElement.removeChild(logElement.lastChild);
             }
         }
 
-        class GraphVisualization {
-            constructor() {
-                this.graph = new Graph(false); // Start with undirected graph
-                this.vertexPositions = new Map();
-                this.canvas = document.getElementById('graph-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.vertexRadius = 20;
-                this.selectedVertex = null;
-                this.initEventListeners();
-                this.updateRepresentations();
-            }
-            
-            initEventListeners() {
-                this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
-                
-                document.getElementById('graph-type').addEventListener('change', (e) => {
-                    const newGraph = new Graph(e.target.value === 'directed');
-                    
-                    // Copy vertices to new graph
-                    for (const vertex of this.graph.getVertices()) {
-                        newGraph.addVertex(vertex);
-                        this.vertexPositions.set(vertex, { ...this.vertexPositions.get(vertex) });
-                    }
-                    
-                    // Copy edges to new graph
-                    for (const [v1, v2] of this.graph.getEdges()) {
-                        const weight = this.graph.getEdgeWeight(v1, v2);
-                        newGraph.addEdge(v1, v2, weight);
-                    }
-                    
-                    this.graph = newGraph;
-                    this.setExplanation(`Changed to ${e.target.value} graph`);
-                    this.updateRepresentations();
-                });
-                
-                document.getElementById('apply-btn').addEventListener('click', () => {
-                    const operation = document.getElementById('graph-operation').value;
-                    const fromVertex = document.getElementById('from-vertex').value.toUpperCase();
-                    const toVertex = document.getElementById('to-vertex').value.toUpperCase();
-                    const weight = parseInt(document.getElementById('edge-weight').value) || 1;
-                    
-                    if (operation === 'add-vertex') {
-                        if (fromVertex) {
-                            this.addVertex(fromVertex);
-                        } else {
-                            this.setExplanation('Please enter a vertex label');
+        // --- Cytoscape Initialization and Styling ---
+        function initializeCytoscape() {
+             cy = cytoscape({
+                 container: cyContainer,
+                 elements: [], // Start empty
+                 style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': 'var(--color-default-element)',
+                            'label': 'data(id)',
+                            'color': 'var(--color-element-text)',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                             'border-width': 1,
+                             'border-color': 'var(--accent-color)',
+                             'font-size': '12px',
+                             'width': '30px', // Fixed size nodes
+                             'height': '30px'
                         }
-                    } else if (operation === 'remove-vertex') {
-                        if (fromVertex) {
-                            this.removeVertex(fromVertex);
-                        } else {
-                            this.setExplanation('Please enter a vertex label');
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': 'var(--accent-color)',
+                             'target-arrow-color': 'var(--accent-color)',
+                             'target-arrow-shape': isDirected ? 'triangle' : 'none',
+                             'curve-style': 'bezier',
+                             'label': 'data(weight)', // Show weight on edge
+                             'color': 'var(--secondary-text)',
+                             'font-size': '10px',
+                             'text-background-opacity': 1,
+                             'text-background-color': 'var(--background-alt)',
+                             'text-background-padding': '2px',
+                             'text-background-shape': 'roundrectangle'
                         }
-                    } else if (operation === 'add-edge') {
-                        if (fromVertex && toVertex) {
-                            this.addEdge(fromVertex, toVertex, weight);
-                        } else {
-                            this.setExplanation('Please enter both from and to vertices');
-                        }
-                    } else if (operation === 'remove-edge') {
-                        if (fromVertex && toVertex) {
-                            this.removeEdge(fromVertex, toVertex);
-                        } else {
-                            this.setExplanation('Please enter both from and to vertices');
-                        }
-                    }
-                    
-                    document.getElementById('from-vertex').value = '';
-                    document.getElementById('to-vertex').value = '';
-                    document.getElementById('edge-weight').value = '';
-                });
-                
-                document.getElementById('clear-btn').addEventListener('click', () => {
-                    this.graph.clear();
-                    this.vertexPositions.clear();
-                    this.setExplanation('Graph cleared');
-                    this.updateRepresentations();
-                });
-                
-                document.getElementById('graph-operation').addEventListener('change', (e) => {
-                    const operation = e.target.value;
-                    const edgeInputs = document.getElementById('edge-inputs');
-                    
-                    if (operation === 'add-vertex') {
-                        edgeInputs.innerHTML = `
-                            <input type="text" id="from-vertex" placeholder="Vertex Label" maxlength="1" size="3">
-                            <button id="apply-btn">Apply</button>
-                        `;
-                    } else if (operation === 'remove-vertex') {
-                        edgeInputs.innerHTML = `
-                            <input type="text" id="from-vertex" placeholder="Vertex Label" maxlength="1" size="3">
-                            <button id="apply-btn">Apply</button>
-                        `;
-                    } else if (operation === 'add-edge') {
-                        edgeInputs.innerHTML = `
-                            <input type="text" id="from-vertex" placeholder="From Vertex" maxlength="1" size="3">
-                            <input type="text" id="to-vertex" placeholder="To Vertex" maxlength="1" size="3">
-                            <input type="number" id="edge-weight" placeholder="Weight (optional)" min="1" max="99">
-                            <button id="apply-btn">Apply</button>
-                        `;
-                    } else if (operation === 'remove-edge') {
-                        edgeInputs.innerHTML = `
-                            <input type="text" id="from-vertex" placeholder="From Vertex" maxlength="1" size="3">
-                            <input type="text" id="to-vertex" placeholder="To Vertex" maxlength="1" size="3">
-                            <button id="apply-btn">Apply</button>
-                        `;
-                    }
-                    
-                    document.getElementById('apply-btn').addEventListener('click', () => {
-                        const operation = document.getElementById('graph-operation').value;
-                        const fromVertex = document.getElementById('from-vertex').value.toUpperCase();
-                        const toVertex = document.getElementById('to-vertex')?.value.toUpperCase();
-                        const weight = parseInt(document.getElementById('edge-weight')?.value) || 1;
-                        
-                        if (operation === 'add-vertex') {
-                            if (fromVertex) {
-                                this.addVertex(fromVertex);
-                            } else {
-                                this.setExplanation('Please enter a vertex label');
-                            }
-                        } else if (operation === 'remove-vertex') {
-                            if (fromVertex) {
-                                this.removeVertex(fromVertex);
-                            } else {
-                                this.setExplanation('Please enter a vertex label');
-                            }
-                        } else if (operation === 'add-edge') {
-                            if (fromVertex && toVertex) {
-                                this.addEdge(fromVertex, toVertex, weight);
-                            } else {
-                                this.setExplanation('Please enter both from and to vertices');
-                            }
-                        } else if (operation === 'remove-edge') {
-                            if (fromVertex && toVertex) {
-                                this.removeEdge(fromVertex, toVertex);
-                            } else {
-                                this.setExplanation('Please enter both from and to vertices');
-                            }
-                        }
-                        
-                        document.getElementById('from-vertex').value = '';
-                        if (document.getElementById('to-vertex')) 
-                            document.getElementById('to-vertex').value = '';
-                        if (document.getElementById('edge-weight'))
-                            document.getElementById('edge-weight').value = '';
-                    });
-                });
-                
-                // Set up tabs
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                        
-                        tab.classList.add('active');
-                        document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
-                    });
-                });
-            }
-            
-            handleCanvasClick(e) {
-                const rect = this.canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                // Check if clicked on a vertex
-                for (const [vertex, position] of this.vertexPositions.entries()) {
-                    const distance = Math.sqrt(
-                        Math.pow(x - position.x, 2) + Math.pow(y - position.y, 2)
-                    );
-                    
-                    if (distance < this.vertexRadius) {
-                        // Selected an existing vertex
-                        const operation = document.getElementById('graph-operation').value;
-                        if (operation === 'remove-vertex') {
-                            this.removeVertex(vertex);
-                            return;
-                        } else if (operation === 'add-edge' || operation === 'remove-edge') {
-                            const fromInput = document.getElementById('from-vertex');
-                            const toInput = document.getElementById('to-vertex');
-                            
-                            if (!fromInput.value) {
-                                fromInput.value = vertex;
-                            } else if (!toInput.value) {
-                                toInput.value = vertex;
-                            }
-                            return;
-                        }
-                    }
+                    },
+                     {
+                         selector: 'edge[weight=null]', // Hide label if no weight
+                         style: {
+                             'label': ''
+                         }
+                     }
+                ],
+                 layout: {
+                    name: 'cose',
+                    animate: true,
+                    padding: 30
                 }
-                
-                // If not clicked on a vertex and operation is add-vertex, add a new vertex
-                if (document.getElementById('graph-operation').value === 'add-vertex') {
-                    // Generate a new vertex label (A, B, C, etc.)
-                    const vertices = this.graph.getVertices();
-                    let label = 'A';
-                    while (vertices.includes(label)) {
-                        label = String.fromCharCode(label.charCodeAt(0) + 1);
-                        if (label > 'Z') {
-                            this.setExplanation('Maximum number of vertices reached (26)');
-                            return;
-                        }
-                    }
-                    
-                    this.addVertex(label, x, y);
-                }
-            }
-            
-            addVertex(label, x, y) {
-                if (!/^[A-Z]$/.test(label)) {
-                    this.setExplanation('Vertex label must be a single uppercase letter');
-                    return;
-                }
-                
-                if (this.graph.addVertex(label)) {
-                    // If position not provided, find a good spot
-                    if (x === undefined || y === undefined) {
-                        const canvasWidth = this.canvas.width;
-                        const canvasHeight = this.canvas.height;
-                        
-                        // Place vertices in a circle
-                        const vertices = this.graph.getVertices();
-                        const angle = (vertices.length - 1) * (2 * Math.PI / Math.min(26, vertices.length));
-                        
-                        const centerX = canvasWidth / 2;
-                        const centerY = canvasHeight / 2;
-                        const radius = Math.min(canvasWidth, canvasHeight) * 0.3;
-                        
-                        x = centerX + radius * Math.cos(angle);
-                        y = centerY + radius * Math.sin(angle);
-                    }
-                    
-                    this.vertexPositions.set(label, { x, y });
-                    this.setExplanation(`Added vertex ${label}`);
-                    this.updateRepresentations();
-                    return true;
-                } else {
-                    this.setExplanation(`Vertex ${label} already exists`);
-                    return false;
-                }
-            }
-            
-            removeVertex(label) {
-                if (this.graph.removeVertex(label)) {
-                    this.vertexPositions.delete(label);
-                    this.setExplanation(`Removed vertex ${label}`);
-                    this.updateRepresentations();
-                    return true;
-                } else {
-                    this.setExplanation(`Vertex ${label} does not exist`);
-                    return false;
-                }
-            }
-            
-            addEdge(vertex1, vertex2, weight = 1) {
-                vertex1 = vertex1.toUpperCase();
-                vertex2 = vertex2.toUpperCase();
-                
-                // Add vertices if they don't exist
-                if (!this.graph.vertices.has(vertex1)) {
-                    this.addVertex(vertex1);
-                }
-                
-                if (!this.graph.vertices.has(vertex2)) {
-                    this.addVertex(vertex2);
-                }
-                
-                if (this.graph.addEdge(vertex1, vertex2, weight)) {
-                    this.setExplanation(`Added edge ${vertex1}-${vertex2} with weight ${weight}`);
-                    this.updateRepresentations();
-                    return true;
-                } else {
-                    this.setExplanation(`Edge ${vertex1}-${vertex2} already exists`);
-                    return false;
-                }
-            }
-            
-            removeEdge(vertex1, vertex2) {
-                vertex1 = vertex1.toUpperCase();
-                vertex2 = vertex2.toUpperCase();
-                
-                if (this.graph.removeEdge(vertex1, vertex2)) {
-                    this.setExplanation(`Removed edge ${vertex1}-${vertex2}`);
-                    this.updateRepresentations();
-                    return true;
-                } else {
-                    this.setExplanation(`Edge ${vertex1}-${vertex2} does not exist`);
-                    return false;
-                }
-            }
-            
-            drawGraph() {
-                const ctx = this.ctx;
-                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // Draw edges
-                for (const [vertex1, vertex2] of this.graph.getEdges()) {
-                    const pos1 = this.vertexPositions.get(vertex1);
-                    const pos2 = this.vertexPositions.get(vertex2);
-                    const weight = this.graph.getEdgeWeight(vertex1, vertex2);
-                    
-                    this.drawEdge(pos1.x, pos1.y, pos2.x, pos2.y, this.graph.isDirected, weight);
-                }
-                
-                // Draw vertices
-                for (const [vertex, position] of this.vertexPositions.entries()) {
-                    this.drawVertex(position.x, position.y, vertex);
-                }
-            }
-            
-            drawVertex(x, y, label) {
-                const ctx = this.ctx;
-                
-                // Draw circle
-                ctx.beginPath();
-                ctx.arc(x, y, this.vertexRadius, 0, Math.PI * 2);
-                ctx.fillStyle = '#e3f2fd';
-                ctx.fill();
-                ctx.strokeStyle = '#90caf9';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw label
-                ctx.fillStyle = '#2c3e50';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(label, x, y);
-            }
-            
-            drawEdge(x1, y1, x2, y2, isDirected, weight) {
-                const ctx = this.ctx;
-                
-                // Calculate angle for arrowhead if directed
-                const angle = Math.atan2(y2 - y1, x2 - x1);
-                
-                // Adjust start and end points to be on the circumference of vertices
-                const startX = x1 + this.vertexRadius * Math.cos(angle);
-                const startY = y1 + this.vertexRadius * Math.sin(angle);
-                
-                let endX, endY;
-                if (isDirected) {
-                    // For directed graphs, stop before the vertex to make room for arrowhead
-                    endX = x2 - (this.vertexRadius + 10) * Math.cos(angle - Math.PI / 6);
-                    endY = y2 - (this.vertexRadius + 10) * Math.sin(angle - Math.PI / 6);
-                } else {
-                    endX = x2 - this.vertexRadius * Math.cos(angle);
-                    endY = y2 - this.vertexRadius * Math.sin(angle);
-                }
-                
-                // Draw line
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.strokeStyle = '#007bff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw arrowhead if directed
-                if (isDirected) {
-                    const arrowSize = 10;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(endX, endY);
-                    ctx.lineTo(
-                        endX - arrowSize * Math.cos(angle - Math.PI / 6),
-                        endY - arrowSize * Math.sin(angle - Math.PI / 6)
-                    );
-                    ctx.lineTo(
-                        endX - arrowSize * Math.cos(angle + Math.PI / 6),
-                        endY - arrowSize * Math.sin(angle + Math.PI / 6)
-                    );
-                    ctx.closePath();
-                    ctx.fillStyle = '#007bff';
-                    ctx.fill();
-                }
-                
-                // Draw weight
-                const weightX = (startX + endX) / 2;
-                const weightY = (startY + endY) / 2;
-                
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(weightX, weightY, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-                
-                ctx.fillStyle = '#007bff';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(weight, weightX, weightY);
-            }
-            
-            renderAdjacencyMatrix() {
-                const container = document.getElementById('adjacency-matrix');
-                const { matrix, vertices } = this.graph.getAdjacencyMatrix();
-                
-                if (vertices.length === 0) {
-                    container.innerHTML = '<p>The graph has no vertices yet.</p>';
-                    return;
-                }
-                
-                let html = '<table>';
-                
-                // Header row
-                html += '<tr><th></th>';
-                for (const vertex of vertices) {
-                    html += `<th>${vertex}</th>`;
-                }
-                html += '</tr>';
-                
-                // Data rows
-                for (let i = 0; i < vertices.length; i++) {
-                    html += `<tr><th>${vertices[i]}</th>`;
-                    for (let j = 0; j < vertices.length; j++) {
-                        html += `<td>${matrix[i][j] || 0}</td>`;
-                    }
-                    html += '</tr>';
-                }
-                
-                html += '</table>';
-                container.innerHTML = html;
-            }
-            
-            renderAdjacencyList() {
-                const container = document.getElementById('adjacency-list');
-                const vertices = this.graph.getVertices();
-                
-                if (vertices.length === 0) {
-                    container.innerHTML = '<p>The graph has no vertices yet.</p>';
-                    return;
-                }
-                
-                let html = '<ul class="vertex-list">';
-                
-                for (const vertex of vertices) {
-                    const neighbors = this.graph.getNeighbors(vertex);
-                    
-                    html += `<li class="vertex-item">
-                        <strong>${vertex}</strong>
-                        <div class="edges-list">`;
-                    
-                    if (neighbors.length === 0) {
-                        html += '<span>No neighbors</span>';
-                    } else {
-                        for (const neighbor of neighbors) {
-                            const weight = this.graph.getEdgeWeight(vertex, neighbor);
-                            html += `<span class="edge-item">${neighbor} (${weight})</span>`;
-                        }
-                    }
-                    
-                    html += '</div></li>';
-                }
-                
-                html += '</ul>';
-                container.innerHTML = html;
-            }
-            
-            setExplanation(text) {
-                document.getElementById('operation-explanation').textContent = text;
-            }
-            
-            updateRepresentations() {
-                this.drawGraph();
-                this.renderAdjacencyMatrix();
-                this.renderAdjacencyList();
-            }
+            });
+            logMessage('Graph initialized. Add nodes and edges.', 'info');
+            updateRepresentations();
         }
 
-        // Initialize the visualization when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new GraphVisualization();
-        });
+        function updateGraphType() {
+             isDirected = graphTypeSelect.value === 'directed';
+             if (cy) {
+                 cy.style().selector('edge').style({ 'target-arrow-shape': isDirected ? 'triangle' : 'none' }).update();
+                 // Edges might need to be re-added if changing from directed to undirected to show both ways
+                 // For simplicity here, we just update the style.
+                 logMessage(`Graph type set to ${isDirected ? 'Directed' : 'Undirected'}.`, 'info');
+                 updateRepresentations(); // Representations change based on directedness
+             }
+         }
+
+         function applyLayout() {
+            if (cy) {
+                const layoutName = layoutTypeSelect.value;
+                cy.layout({ name: layoutName, animate: true, padding: 30 }).run();
+                logMessage(`Applied ${layoutName} layout.`, 'info');
+            }
+         }
+
+        // --- Graph Operations ---
+        function addNode() {
+            const nodeId = nodeIdInput.value.trim();
+            if (!nodeId) {
+                logMessage('Node ID cannot be empty.', 'error');
+                return;
+            }
+            if (!cy) {
+                logMessage('Initialize graph first.', 'error');
+                return;
+            }
+             if (cy.getElementById(nodeId).length > 0) {
+                 logMessage(`Node "${nodeId}" already exists.`, 'warning');
+                 return;
+             }
+
+            cy.add({ data: { id: nodeId } });
+            nodeMap.set(nodeId, nextNodeIndex++); // Map ID to matrix index
+             applyLayout(); // Re-run layout after adding node
+            logMessage(`Added node "${nodeId}".`, 'success');
+            nodeIdInput.value = '';
+            updateRepresentations();
+        }
+
+        function addEdge() {
+            const source = edgeSourceInput.value.trim();
+            const target = edgeTargetInput.value.trim();
+            const weightStr = edgeWeightInput.value.trim();
+            const weight = weightStr ? parseFloat(weightStr) : null;
+
+            if (!source || !target) {
+                logMessage('Edge source and target cannot be empty.', 'error');
+                return;
+            }
+             if (weightStr && isNaN(weight)) {
+                 logMessage('Invalid weight: must be a number.', 'error');
+                 return;
+             }
+             if (!cy) {
+                logMessage('Initialize graph first.', 'error');
+                return;
+            }
+             if (cy.getElementById(source).empty() || cy.getElementById(target).empty()) {
+                 logMessage('Both source and target nodes must exist.', 'error');
+                 return;
+             }
+            if (source === target) {
+                logMessage('Self-loops are not currently supported in this visualization.', 'warning');
+                return;
+            }
+
+            const edgeId = `${source}-${target}`; // Simple ID
+            const reverseEdgeId = `${target}-${source}`;
+
+             // Check if edge already exists (especially for undirected)
+             if (cy.getElementById(edgeId).length > 0 || (!isDirected && cy.getElementById(reverseEdgeId).length > 0)) {
+                 logMessage(`Edge between "${source}" and "${target}" already exists.`, 'warning');
+                 return;
+             }
+
+            cy.add({
+                 data: {
+                     id: edgeId,
+                     source: source,
+                     target: target,
+                     weight: weight
+                 }
+             });
+             logMessage(`Added edge ${source} -> ${target}` + (weight !== null ? ` (Weight: ${weight})` : ''), 'success');
+             // Don't apply layout on edge add, can be disruptive
+
+             // For undirected graph, add the reverse edge visually (Cytoscape handles this internally often)
+             // But for representations, we need to consider it.
+            edgeSourceInput.value = '';
+            edgeTargetInput.value = '';
+            edgeWeightInput.value = '';
+            updateRepresentations();
+        }
+
+        function resetGraph() {
+            if (cy) {
+                cy.destroy();
+            }
+            nodeMap.clear();
+            nextNodeIndex = 0;
+            adjListPre.textContent = '{}';
+            adjMatrixPre.textContent = '[]';
+             logElement.innerHTML = '<p>Graph reset.</p>';
+             initializeCytoscape();
+         }
+
+        // --- Representation Updates ---
+        function updateRepresentations() {
+            if (!cy) return;
+
+            // Adjacency List
+            const adjList = {};
+            cy.nodes().forEach(node => {
+                adjList[node.id()] = [];
+                 node.connectedEdges().forEach(edge => {
+                    // Determine neighbor based on edge direction and graph type
+                    let neighborId = null;
+                    let sourceId = edge.source().id();
+                    let targetId = edge.target().id();
+
+                    if (sourceId === node.id()) { // Outgoing edge
+                        neighborId = targetId;
+                    } else if (!isDirected && targetId === node.id()) { // Incoming edge on undirected graph
+                        neighborId = sourceId;
+                    }
+
+                    if (neighborId) {
+                         adjList[node.id()].push({ node: neighborId, weight: edge.data('weight') });
+                    }
+                });
+                 // Sort neighbors for consistent output
+                 adjList[node.id()].sort((a, b) => a.node.localeCompare(b.node));
+            });
+            adjListPre.textContent = JSON.stringify(adjList, (key, value) => {
+                // Custom stringify to handle null weights better
+                if (value && typeof value === 'object' && value.weight === null) {
+                    return { node: value.node }; // Omit weight if null
+                }
+                 return value;
+            }, 2);
+
+            // Adjacency Matrix
+            const matrixSize = nodeMap.size;
+            // Initialize matrix with Infinity (no edge)
+            const adjMatrix = Array(matrixSize).fill(0).map(() => Array(matrixSize).fill(Infinity));
+            const nodeIds = Array.from(nodeMap.keys()).sort(); // Ensure consistent order
+
+             // Update nodeMap based on sorted order (important for matrix consistency)
+             nodeMap.clear();
+             nodeIds.forEach((id, index) => nodeMap.set(id, index));
+
+            // Fill diagonal with 0
+            for(let i = 0; i < matrixSize; i++) adjMatrix[i][i] = 0;
+
+            // Fill edges
+            cy.edges().forEach(edge => {
+                const sourceId = edge.source().id();
+                const targetId = edge.target().id();
+                const weight = edge.data('weight') ?? 1; // Default weight 1 if null
+                const sourceIndex = nodeMap.get(sourceId);
+                const targetIndex = nodeMap.get(targetId);
+
+                if (sourceIndex !== undefined && targetIndex !== undefined) {
+                    adjMatrix[sourceIndex][targetIndex] = weight;
+                    if (!isDirected) {
+                        adjMatrix[targetIndex][sourceIndex] = weight; // Add reverse edge for undirected
+                    }
+                }
+            });
+
+            // Format matrix for display
+            let matrixString = '      ' + nodeIds.join('     ') + '\n'; // Header row
+            matrixString += '    ' + '- '.repeat(nodeIds.length * 3) + '\n';
+            adjMatrix.forEach((row, i) => {
+                 matrixString += nodeIds[i].padEnd(3) + ' | ';
+                 matrixString += row.map(val => String(val === Infinity ? 'INF' : val).padStart(3)).join(' | ') + ' |\n';
+            });
+            adjMatrixPre.textContent = matrixString.trim();
+        }
+
+        // --- Event Listeners ---
+        addNodeBtn.addEventListener('click', addNode);
+        addEdgeBtn.addEventListener('click', addEdge);
+        graphTypeSelect.addEventListener('change', updateGraphType);
+        layoutTypeSelect.addEventListener('change', applyLayout);
+        resetGraphBtn.addEventListener('click', resetGraph);
+
+         // Allow adding node/edge on Enter key press in relevant inputs
+         nodeIdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNodeBtn.click(); });
+         edgeTargetInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEdgeBtn.click(); });
+         edgeWeightInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEdgeBtn.click(); });
+
+        // --- Initial Setup ---
+        initializeCytoscape();
+
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
 </html>
