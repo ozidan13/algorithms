@@ -13,17 +13,21 @@
             padding: 0;
         }
 
+        html {
+            font-size: 100%; /* Base font size (usually 16px) */
+        }
+
         :root {
             /* Main Colors - Dark Theme as Default */
             --primary-text: #e0e0e0;
             --secondary-text: #a0a0a0;
-            --accent-color: #007bff;
-            --accent-color-hover: #0091ff;
-            --accent-secondary: #8a7ef8;
+            --accent-color: #007bff; /* Default Blue */
+            --accent-color-hover: #0091ff; /* Default Blue Hover */
+            --accent-secondary: #8a7ef8; /* Secondary Accent Blue */
             --background-main: #121212;
             --background-alt: #1e1e1e;
             --border-color: rgba(255, 255, 255, 0.1);
-            
+
             /* Card Variables - Dark Theme */
             --card-radius: 16px;
             --card-background: #1e1e1e;
@@ -31,7 +35,7 @@
             --card-footer-bg: rgba(255, 255, 255, 0.02);
             --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
             --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.4);
-            
+
             /* UI Elements */
             --button-radius: 12px;
             --section-padding: 80px 0;
@@ -39,93 +43,60 @@
             --topic-item-bg: #1e1e1e;
             --tab-background: #2a2a2a;
             --tab-hover: #333333;
-            --scroll-top-bg: rgba(0, 123, 255, 0.5);
-            --scroll-top-hover: rgba(0, 145, 255, 0.7);
+            --scroll-top-bg: rgba(0, 123, 255, 0.5); /* Default Blue */
+            --scroll-top-hover: rgba(0, 145, 255, 0.7); /* Default Blue Hover */
             --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
-            
+            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); /* Default Blue */
+            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.4); /* Default Blue Hover */
+
             /* Gradients - Dark Theme */
             --hero-gradient: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
             --footer-gradient: linear-gradient(135deg, #121212 0%, #181818 100%);
-            
+
             /* Transitions */
             --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            
-            /* Color Scheme - Default Blue */
-            --color-scheme: 'blue';
-        }
-
-        /* Pistachio Green Color Scheme */
-        [data-color-scheme="green"] {
-            --accent-color: #7cb342;
-            --accent-color-hover: #8bc34a;
-            --accent-secondary: #689f38;
-            --scroll-top-bg: rgba(124, 179, 66, 0.5);
-            --scroll-top-hover: rgba(139, 195, 74, 0.7);
-            /* Button shadows - only for main action buttons */
-            --main-button-shadow: 0 4px 15px rgba(124, 179, 66, 0.3);
-            --main-button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.4);
+            --transition-duration: 0.3s; /* Consistent duration */
         }
 
         [data-theme="light"] {
             /* Main Colors - Light Theme */
             --primary-text: #2c3e50;
             --secondary-text: #34495e;
+            /* Accent color remains blue */
             --accent-color: #007bff;
             --accent-color-hover: #0069d9;
             --accent-secondary: #6c5ce7;
             --background-main: #f8f9fa;
             --background-alt: #ffffff;
             --border-color: rgba(0, 0, 0, 0.1);
-            
+
             /* Card Variables - Light Theme */
             --card-background: #ffffff;
             --card-header-bg: rgba(0, 0, 0, 0.02);
             --card-footer-bg: rgba(0, 0, 0, 0.01);
             --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
-            
+
             /* UI Elements */
             --topic-background: #f5f5f7;
             --topic-item-bg: #ffffff;
             --tab-background: #f0f0f0;
             --tab-hover: #e0e0e0;
-            --scroll-top-bg: rgba(0, 123, 255, 0.3);
-            --scroll-top-hover: rgba(0, 145, 255, 0.5);
+            --scroll-top-bg: rgba(0, 123, 255, 0.3); /* Default Blue */
+            --scroll-top-hover: rgba(0, 145, 255, 0.5); /* Default Blue Hover */
             --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
-            
+            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.2); /* Default Blue */
+            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.3); /* Default Blue Hover */
+
             /* Gradients - Light Theme */
             --hero-gradient: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             --footer-gradient: linear-gradient(135deg, #f8f9fa 0%, #f5f7fa 100%);
-            /* Box shadows for light+green theme */
-            --card-shadow: 0 10px 25px rgba(105, 159, 56, 0.15);
-            --card-shadow-hover: 0 15px 35px rgba(105, 159, 56, 0.25);
-            --toggle-shadow: 0 2px 15px rgba(105, 159, 56, 0.15);
-            /* Button shadows */
-            --button-shadow: 0 4px 15px rgba(124, 179, 66, 0.2);
-            --button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.3);
         }
 
-        /* Light Theme with Green Color Scheme */
-        [data-theme="light"][data-color-scheme="green"] {
-            --accent-color: #7cb342;
-            --accent-color-hover: #8bc34a;
-            --accent-secondary: #689f38;
-            --scroll-top-bg: rgba(124, 179, 66, 0.3);
-            --scroll-top-hover: rgba(139, 195, 74, 0.5);
-            /* Button shadows - only for main action buttons */
-            --main-button-shadow: 0 4px 15px rgba(124, 179, 66, 0.2);
-            --main-button-shadow-hover: 0 8px 25px rgba(124, 179, 66, 0.3);
-        }
-
-        /* Animation Keyframes */
+        /* Animation Keyframes (Consolidated & Optimized) */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
         }
 
         @keyframes scaleIn {
@@ -143,45 +114,53 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
         @keyframes pulse {
-            0% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-            100% { opacity: 0.5; transform: scale(1); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
         @keyframes float {
             0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-5px); } /* Reduced float height */
             100% { transform: translateY(0); }
         }
 
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        @keyframes rotateIn {
-            from { transform: rotate(-10deg); opacity: 0; }
-            to { transform: rotate(0); opacity: 1; }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            40% { transform: translateY(-8px); } /* Reduced bounce height */
+            60% { transform: translateY(-4px); }
         }
 
         @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles animation */
+        @keyframes floatingParticles {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        /* Ripple effect animation */
+        @keyframes ripple {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 0.7;
+            }
+            100% {
+                width: 200vh;
+                height: 200vh;
+                opacity: 0;
+            }
+        }
+
+        /* Gradient text animation */
+        @keyframes gradientText {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
@@ -198,6 +177,7 @@
             -moz-osx-font-smoothing: grayscale;
             transition: background-color 0.5s ease, color 0.5s ease;
             scroll-behavior: smooth;
+            animation: gradientFlow 15s ease infinite; /* Kept subtle background flow */
         }
 
         a {
@@ -240,7 +220,12 @@
         h3 { font-size: 1.8rem; }
         h4 { font-size: 1.2rem; }
 
-        h2::after {
+        /* Consistent heading underlines */
+        h2::after,
+        .week-header h2::after,
+        .topics h3::after,
+        .features h4::after,
+        .footer-section h3::after {
             content: '';
             position: absolute;
             bottom: -10px;
@@ -251,17 +236,25 @@
             border-radius: 3px;
         }
 
-        .week-header h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
+        .week-header h2::after,
+        .topics h3::after {
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background-color: var(--accent-color);
-            border-radius: 3px;
+            width: 50px; /* Slightly smaller for centered ones */
         }
+
+        .features h4::after {
+            bottom: -5px;
+            width: 30px;
+            height: 2px;
+        }
+
+        .footer-section h3::after {
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+        }
+
 
         p {
             margin-bottom: 1.2rem;
@@ -275,7 +268,7 @@
             padding: 0 40px;
         }
 
-        /* Header - Hero Section */
+        /* Header - Hero Section (Optimized) */
         header {
             min-height: 100vh;
             display: flex;
@@ -288,10 +281,10 @@
             overflow: hidden;
             transition: background 0.5s ease;
             background-size: 200% 200%;
-            animation: gradientFlow 15s ease infinite;
+            animation: gradientFlow 15s ease infinite; /* Kept subtle background flow */
         }
 
-        /* Infinity animations for the hero section background */
+        /* Subtle overlay PLUS original animations */
         header::before {
             content: '';
             position: absolute;
@@ -299,19 +292,12 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(10, 132, 255, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle at 20% 30%, rgba(0, 123, 255, 0.06) 0%, transparent 70%); /* Using accent color */
             z-index: 0;
-            animation: pulse 8s ease-in-out infinite alternate;
+            animation: pulse 8s ease-in-out infinite alternate; /* Keep subtle pulse */
         }
 
-        /* Floating particles */
-        @keyframes floatingParticles {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            50% { opacity: 0.7; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
-        }
-
-        /* Create floating elements */
+        /* Floating particles elements */
         .floating-particle {
             position: absolute;
             width: 8px;
@@ -324,86 +310,15 @@
             animation: floatingParticles 15s linear infinite;
         }
 
-        .floating-particle:nth-child(1) {
-            bottom: -10px;
-            left: 10%;
-            width: 12px;
-            height: 12px;
-            animation-duration: 25s;
-            animation-delay: 0s;
-        }
-
-        .floating-particle:nth-child(2) {
-            bottom: -10px;
-            left: 20%;
-            width: 18px;
-            height: 18px;
-            animation-duration: 30s;
-            animation-delay: 2s;
-        }
-
-        .floating-particle:nth-child(3) {
-            bottom: -10px;
-            left: 30%;
-            width: 10px;
-            height: 10px;
-            animation-duration: 20s;
-            animation-delay: 5s;
-        }
-
-        .floating-particle:nth-child(4) {
-            bottom: -10px;
-            left: 50%;
-            width: 15px;
-            height: 15px;
-            animation-duration: 28s;
-            animation-delay: 7s;
-        }
-
-        .floating-particle:nth-child(5) {
-            bottom: -10px;
-            left: 70%;
-            width: 9px;
-            height: 9px;
-            animation-duration: 22s;
-            animation-delay: 3s;
-        }
-
-        .floating-particle:nth-child(6) {
-            bottom: -10px;
-            left: 80%;
-            width: 14px;
-            height: 14px;
-            animation-duration: 26s;
-            animation-delay: 1s;
-        }
-
-        .floating-particle:nth-child(7) {
-            bottom: -10px;
-            left: 40%;
-            width: 11px;
-            height: 11px;
-            animation-duration: 24s;
-            animation-delay: 4s;
-        }
-
-        .floating-particle:nth-child(8) {
-            bottom: -10px;
-            left: 60%;
-            width: 16px;
-            height: 16px;
-            animation-duration: 29s;
-            animation-delay: 8s;
-        }
-
-        .floating-particle:nth-child(9) {
-            bottom: -10px;
-            left: 90%;
-            width: 13px;
-            height: 13px;
-            animation-duration: 27s;
-            animation-delay: 6s;
-        }
+        .floating-particle:nth-child(1) { bottom: -10px; left: 10%; width: 12px; height: 12px; animation-duration: 25s; animation-delay: 0s; }
+        .floating-particle:nth-child(2) { bottom: -10px; left: 20%; width: 18px; height: 18px; animation-duration: 30s; animation-delay: 2s; }
+        .floating-particle:nth-child(3) { bottom: -10px; left: 30%; width: 10px; height: 10px; animation-duration: 20s; animation-delay: 5s; }
+        .floating-particle:nth-child(4) { bottom: -10px; left: 50%; width: 15px; height: 15px; animation-duration: 28s; animation-delay: 7s; }
+        .floating-particle:nth-child(5) { bottom: -10px; left: 70%; width: 9px; height: 9px; animation-duration: 22s; animation-delay: 3s; }
+        .floating-particle:nth-child(6) { bottom: -10px; left: 80%; width: 14px; height: 14px; animation-duration: 26s; animation-delay: 1s; }
+        .floating-particle:nth-child(7) { bottom: -10px; left: 40%; width: 11px; height: 11px; animation-duration: 24s; animation-delay: 4s; }
+        .floating-particle:nth-child(8) { bottom: -10px; left: 60%; width: 16px; height: 16px; animation-duration: 29s; animation-delay: 8s; }
+        .floating-particle:nth-child(9) { bottom: -10px; left: 90%; width: 13px; height: 13px; animation-duration: 27s; animation-delay: 6s; }
 
         /* Infinity animation using gradients */
         .infinity-animation {
@@ -440,19 +355,6 @@
         .ripple-effect:nth-child(2) { animation-delay: 2s; }
         .ripple-effect:nth-child(3) { animation-delay: 4s; }
 
-        @keyframes ripple {
-            0% {
-                width: 20px;
-                height: 20px;
-                opacity: 0.7;
-            }
-            100% {
-                width: 200vh;
-                height: 200vh;
-                opacity: 0;
-            }
-        }
-
         /* Modern grid overlay */
         .grid-overlay {
             position: absolute;
@@ -460,12 +362,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            opacity: 0.3;
+            background-image:
+                linear-gradient(to right, var(--border-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px; /* Slightly larger grid */
+            opacity: 0.15; /* Reduced opacity */
             z-index: 0;
+            color: var(--primary-text);
+            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s; /* Combine animations */
         }
 
         header .container {
@@ -485,19 +389,14 @@
             margin-bottom: 30px;
             color: var(--primary-text);
             animation: fadeInDown 1.2s ease-out;
+            /* Restore gradient text animation */
             background: linear-gradient(90deg, var(--primary-text), var(--accent-color), var(--accent-secondary), var(--primary-text));
             background-size: 300% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-fill-color: transparent;
-            animation: gradientText 6s ease infinite;
-        }
-
-        @keyframes gradientText {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s; /* Combine animations */
         }
 
         header p {
@@ -509,23 +408,7 @@
             line-height: 1.8;
         }
 
-        /* More modern button styling */
-        header .btn {
-            padding: 16px 36px;
-            font-size: 1.2rem;
-            animation: scaleIn 1.2s ease-out 0.6s backwards;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
-            background-size: 200% 100%;
-            transition: all 0.4s ease;
-        }
-
-        header .btn:hover {
-            background-position: 100% 0;
-            transform: translateY(-5px);
-            box-shadow: var(--button-shadow-hover, 0 10px 30px rgba(0, 113, 227, 0.4));
-        }
+        /* Header button uses general .btn styles now */
 
         /* Scroll down indicator */
         .scroll-indicator {
@@ -539,7 +422,7 @@
             color: var(--secondary-text);
             font-size: 0.9rem;
             opacity: 0.8;
-            animation: fadeInUp 1s ease-out 1.5s backwards;
+            animation: fadeInUp 1s ease-out 1.5s backwards, bounce 2s infinite 2s; /* Added delay to bounce */
             z-index: 2;
         }
 
@@ -549,26 +432,91 @@
 
         .scroll-indicator i {
             font-size: 1.5rem;
-            animation: bounce 2s infinite;
+            /* animation: bounce 2s infinite; */ /* Animation combined above */
         }
 
-        @media (max-width: 1068px) {
-            header h1 { font-size: 3.8rem; }
-            header p { font-size: 1.3rem; max-width: 700px; }
+        /* General Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 14px 30px;
+            border-radius: var(--button-radius);
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--button-shadow);
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            gap: 10px;
+            margin: 5px; /* Reduced margin */
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
         }
 
-        @media (max-width: 768px) {
-            header h1 { font-size: 3rem; }
-            header p { font-size: 1.2rem; }
+        /* Subtle shimmer effect on hover */
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease; /* Slightly slower shimmer */
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color-hover);
+            transform: translateY(-3px); /* Keep subtle lift */
+            box-shadow: var(--button-shadow-hover);
+            color: white; /* Ensure text remains white */
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn i {
+            transition: transform 0.3s ease;
+            font-size: 0.9em;
+            margin-left: 8px; /* Keep space */
+        }
+
+        .btn:hover i {
+            transform: translateX(3px); /* Keep subtle icon move */
+        }
+
+        /* Header-specific button styling overrides */
+        header .btn {
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            animation: scaleIn 1.2s ease-out 0.6s backwards;
+            /* Remove gradient background for consistency */
+            /* background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)); */
+            /* background-size: 200% 100%; */
+            /* transition: all 0.4s ease; */ /* Use default transition */
+        }
+
+        header .btn:hover {
+            /* background-position: 100% 0; */
+            transform: translateY(-5px); /* Slightly more lift for hero button */
+            box-shadow: var(--button-shadow-hover);
         }
 
         /* Week Sections */
         .week-container {
             padding: var(--section-padding);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
             position: relative;
+            /* Initial state for intersection observer */
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
         .week-container::before {
@@ -596,7 +544,7 @@
         .week-header h2 {
             font-size: 3rem;
             color: var(--primary-text);
-            margin-bottom: 25px;
+            margin-bottom: 25px; /* Adjusted for ::after */
             position: relative;
             display: inline-block;
         }
@@ -612,9 +560,11 @@
         .topics {
             background-color: var(--topic-background);
             padding: 40px;
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius); /* Use variable */
             margin-bottom: 60px;
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            transition: background-color var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -627,12 +577,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%); /* Reduced intensity */
             pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .topics:hover::before {
+             opacity: 0.5;
         }
 
         .topics h3 {
-            margin-bottom: 30px;
+            margin-bottom: 30px; /* Adjusted for ::after */
             color: var(--primary-text);
             font-size: 2rem;
             text-align: center;
@@ -640,18 +595,6 @@
             display: inline-block;
             left: 50%;
             transform: translateX(-50%);
-        }
-
-        .topics h3::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
-            background-color: var(--accent-color);
-            border-radius: 3px;
         }
 
         .topics ul {
@@ -669,30 +612,47 @@
             border-radius: 30px;
             display: inline-flex;
             align-items: center;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Simplified shadow */
             font-weight: 500;
-            transition: transform 0.3s ease, 
-                        box-shadow 0.3s ease,
-                        background-color 0.3s ease,
-                        color 0.3s ease;
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             position: relative;
             overflow: hidden;
             border: 1px solid transparent;
+            /* Initial state for animation */
+            opacity: 0;
+            transform: translateX(-20px);
         }
 
-        .topics li::before {
+        /* Visible state for animation */
+        .week-container.visible .topics li {
+             transition: opacity 0.5s ease, transform 0.5s ease;
+             opacity: 1;
+             transform: translateX(0);
+        }
+
+        .topics li::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .topics li:hover {
-            /*border-image: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)) 1;*/
-            transform: translateY(-5px);
+            transform: translateY(-4px); /* Reduced lift */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            /* animation: float 2s ease-in-out infinite; */ /* Removed continuous float */
+        }
+
+        .topics li:hover::before {
+            opacity: 1;
         }
 
         .topics li i {
@@ -701,12 +661,12 @@
             text-align: center;
         }
 
-        /* Algorithm Grid and Cards */
+        /* Algorithm Grid and Cards (Optimized) */
         .algo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 40px;
-            perspective: 1000px;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Slightly adjusted minmax */
+            gap: 35px; /* Slightly reduced gap */
+            /* perspective: 1000px; */ /* Removed perspective for simpler hover */
         }
 
         .algo-card {
@@ -714,25 +674,37 @@
             border-radius: var(--card-radius);
             overflow: hidden;
             box-shadow: var(--card-shadow);
-            transition: transform 0.4s ease, 
-                        box-shadow 0.4s ease,
-                        background-color 0.3s ease;
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
             position: relative;
             display: flex;
             flex-direction: column;
             padding-bottom: 0;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
+            /* transform-style: preserve-3d; */ /* Removed */
+            /* backface-visibility: hidden; */ /* Removed */
+            /* Initial state for animation */
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        .algo-card::before {
+        /* Visible state for animation */
+        .week-container.visible .algo-card {
+            transition: opacity 0.6s ease, transform 0.6s ease,
+                        box-shadow var(--transition-duration) ease, /* Keep hover transition */
+                        background-color var(--transition-duration) ease; /* Keep theme transition */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .algo-card::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
             opacity: 0.5;
             pointer-events: none;
             z-index: 1;
@@ -740,7 +712,8 @@
         }
 
         .algo-card:hover {
-            transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
+            transform: translateY(-8px); /* Simpler hover effect */
+            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */ /* Removed complex transform */
             box-shadow: var(--card-shadow-hover);
         }
 
@@ -756,20 +729,20 @@
             font-size: 1.4rem;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease, border-color var(--transition-duration) ease;
             position: relative;
             overflow: hidden;
         }
 
-        .algo-card-header::before {
+        .algo-card-header::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
-            width: 200%;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.7s ease; /* Slower shimmer */
         }
 
         .algo-card:hover .algo-card-header::before {
@@ -794,11 +767,11 @@
             margin: 20px 0;
             font-size: 1rem;
             color: var(--secondary-text);
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.03); /* Slightly less contrast */
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid var(--accent-color);
-            transition: background-color 0.3s ease;
+            transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease;
         }
 
         [data-theme="light"] .complexity {
@@ -808,6 +781,7 @@
         .complexity span {
             font-weight: 600;
             color: var(--accent-color);
+            transition: color var(--transition-duration) ease;
         }
 
         .features {
@@ -816,21 +790,11 @@
 
         .features h4 {
             font-size: 1.1rem;
-            margin-bottom: 15px;
+            margin-bottom: 15px; /* Adjusted for ::after */
             color: var(--primary-text);
             position: relative;
             display: inline-block;
-        }
-
-        .features h4::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 30px;
-            height: 2px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
+            transition: color var(--transition-duration) ease;
         }
 
         .features ul {
@@ -838,6 +802,7 @@
             margin-bottom: 20px;
             list-style-type: none;
             color: var(--secondary-text);
+            transition: color var(--transition-duration) ease;
         }
 
         .features li {
@@ -856,6 +821,7 @@
             font-size: 0.9rem;
             width: 20px;
             text-align: center;
+            transition: color var(--transition-duration) ease;
         }
 
         .algo-card-footer {
@@ -863,7 +829,7 @@
             background-color: var(--card-footer-bg);
             border-top: 1px solid var(--border-color);
             text-align: center;
-            transition: background-color 0.3s ease;
+            transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease;
         }
 
         .algo-card-footer .btn {
@@ -879,7 +845,7 @@
             color: var(--secondary-text);
             padding: 100px 0 60px;
             margin-top: 100px;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background var(--transition-duration) ease, color var(--transition-duration) ease;
             position: relative;
             overflow: hidden;
         }
@@ -894,14 +860,14 @@
             background: linear-gradient(90deg, transparent, var(--border-color), transparent);
         }
 
-        footer::after {
+        footer::after { /* Subtle overlay */
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
             pointer-events: none;
         }
 
@@ -921,22 +887,11 @@
         }
 
         .footer-section h3 {
-            margin-bottom: 25px;
+            margin-bottom: 25px; /* Adjusted for ::after */
             font-size: 1.4rem;
             color: var(--primary-text);
             position: relative;
             display: inline-block;
-        }
-
-        .footer-section h3::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
         }
 
         .footer-section ul {
@@ -953,7 +908,7 @@
         }
 
         .footer-section a {
-            color: var(--accent-color);
+            color: var(--accent-color); /* Use accent color directly */
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -963,10 +918,16 @@
             color: var(--accent-color-hover);
         }
 
+        /* Icon spacing helper class */
+        .icon-margin {
+            margin-right: 10px;
+        }
+
         .footer-section a i {
+            /* Replaced by .icon-margin */
             font-size: 0.9rem;
             transition: transform 0.3s ease;
-            margin-right: 12px;
+            /* margin-right: 12px; */ /* Use .icon-margin */
             width: 20px;
             text-align: center;
         }
@@ -990,7 +951,7 @@
             font-weight: 500;
         }
 
-        /* Scroll to Top Button - Enhanced */
+        /* Scroll to Top Button - Cleaned Up */
         .scroll-top {
             position: fixed;
             bottom: 30px;
@@ -1006,8 +967,12 @@
             cursor: pointer;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
-            box-shadow: var(--button-shadow, 0 4px 15px rgba(0, 0, 0, 0.15));
+            transition: opacity var(--transition-duration) ease,
+                        visibility var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            box-shadow: var(--button-shadow); /* Use button shadow */
             z-index: 100;
             transform: translateY(20px) scale(0.9);
         }
@@ -1021,7 +986,7 @@
         .scroll-top:hover {
             background-color: var(--scroll-top-hover);
             transform: translateY(-5px) scale(1.05);
-            box-shadow: var(--button-shadow-hover, 0 6px 20px rgba(0, 0, 0, 0.2));
+            box-shadow: var(--button-shadow-hover);
         }
 
         .scroll-top i {
@@ -1033,7 +998,7 @@
             transform: translateY(-3px);
         }
 
-        /* Dark Mode Toggle - Enhanced */
+        /* Dark Mode Toggle - Cleaned Up */
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -1048,18 +1013,20 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             overflow: hidden;
         }
 
-        .theme-toggle::before {
+        .theme-toggle::before { /* Subtle glow effect */
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -1075,29 +1042,22 @@
         .theme-toggle i {
             font-size: 1.6rem;
             color: var(--primary-text);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color var(--transition-duration) ease;
         }
 
         .theme-toggle:hover i {
             transform: rotate(20deg);
         }
 
-        /* Sun icon in dark mode (default) */
-        .theme-toggle i.fa-sun {
-            color: #ffd60a;
-            text-shadow: 0 0 10px rgba(255, 214, 10, 0.5);
+        /* Icons based on theme */
+        .theme-toggle i.fa-sun { color: #ffd60a; text-shadow: 0 0 10px rgba(255, 214, 10, 0.5); }
+        [data-theme="light"] .theme-toggle i.fa-moon { color: #6e6e73; text-shadow: none; }
+
+        /* Tab Navigation - Cleaned Up */
+        .tab-container {
+            margin-bottom: 60px;
         }
 
-        /* Moon icon in light mode */
-        [data-theme="light"] .theme-toggle i.fa-moon {
-            color: #6e6e73;
-        }
-
-        /* Tab Navigation - Enhanced */
-        .tab-container { 
-            margin-bottom: 60px; 
-        }
-        
         .tab-buttons {
             display: flex;
             gap: 15px;
@@ -1112,7 +1072,10 @@
             padding: 14px 28px;
             cursor: pointer;
             border-radius: 30px;
-            transition: all 0.3s ease;
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             font-weight: 500;
             font-size: 1.1rem;
             color: var(--primary-text);
@@ -1121,7 +1084,7 @@
             overflow: hidden;
         }
 
-        .tab-btn::before {
+        .tab-btn::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
@@ -1129,13 +1092,13 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
+            transition: left 0.7s ease;
         }
 
         .tab-btn.active {
             background-color: var(--accent-color);
             color: white;
-            box-shadow: var(--button-shadow, 0 5px 15px rgba(0, 113, 227, 0.3));
+            box-shadow: var(--button-shadow); /* Use button shadow */
             transform: translateY(-2px);
         }
 
@@ -1150,480 +1113,148 @@
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s ease;
+            /* animation: fadeIn 0.5s ease; */ /* Let JS handle fade if needed */
         }
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.5s ease; /* Keep fade in for content switch */
         }
 
-        /* Responsive Design - Apple Inspired Breakpoints */
+        /* Responsive Design - Adjusted Breakpoints */
         @media (max-width: 1068px) {
-            .container {
-                padding: 0 20px;
+            html {
+                font-size: 93.75%; /* 15px */
             }
-            h1 { font-size: 3rem; }
-            h2 { font-size: 2rem; }
-            header { padding: 100px 0 80px 0; }
-            header h1 { font-size: 3.5rem; }
-            header p { font-size: 1.3rem; }
-            .week-header h2 { font-size: 2.5rem; }
-            .topics h3 { font-size: 1.6rem; }
-            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-            .footer-content { justify-content: space-around; } /* Adjust footer spacing */
-
+            .container { padding: 0 30px; } /* Slightly more padding */
+            /* Removed specific h1, h2 overrides */
+            header { min-height: auto; padding: 120px 0 80px 0; } /* Adjust padding */
+            /* Removed specific header h1, p overrides */
+            /* Removed specific week-header h2 override */
+            /* Removed specific topics h3 override */
+            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+            .footer-content { justify-content: space-around; }
         }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 1.8rem; }
-            header { padding: 80px 0 60px 0; }
-            header h1 { font-size: 3rem; }
-            header p { font-size: 1.2rem; }
-            .week-header h2 { font-size: 2rem; }
-            .topics h3 { font-size: 1.4rem; }
-            .algo-grid { grid-template-columns: 1fr; } /* Single column on smaller screens */
-            .topics ul { flex-direction: column; align-items: center; } /* Stack topics on smaller screens */
-            .topics li { margin-bottom: 10px; }
-            .footer-content { flex-direction: column; text-align: center; } /* Stack footer sections */
-            .footer-section { margin-bottom: 30px; }
+             html {
+                 font-size: 81.25%; /* 13px */
+             }
+             .container { padding: 0 20px; }
+            /* Removed specific h1, h2 overrides */
+            header { padding: 100px 0 60px 0; }
+            /* Removed specific header h1, p overrides */
+            /* Removed specific week-header h2 override */
+            /* Removed specific topics h3 override */
+            .algo-grid { grid-template-columns: 1fr; gap: 25px; } /* Single column, less gap */
+            .topics ul { flex-direction: column; align-items: center; gap: 10px; } /* Stack topics */
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-section { margin-bottom: 30px; padding: 0 10px; }
             .footer-section h3, .copyright { text-align: center; }
-        }
-
-
-        /* Animations - Fade In */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-
-        /* Scroll to Top Button - Minimalist */
-        .scroll-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 45px;
-            height: 45px;
-            background-color: rgba(0, 0, 0, 0.1); /* Subtle dark background */
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity var(--transition-duration), visibility var(--transition-duration), background-color var(--transition-duration);
-            box-shadow: var(--card-shadow);
-            z-index: 100;
-        }
-
-        .scroll-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .scroll-top:hover {
-            background-color: rgba(0, 0, 0, 0.2); /* Slightly darker on hover */
-        }
-
-        .scroll-top i {
-            font-size: 1.2rem;
-        }
-
-
-        /* Tab Navigation - Keeping it simple, can be removed if not needed */
-        .tab-container { margin-bottom: 60px; }
-        .tab-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center; /* Center tabs */
-            margin-bottom: 30px;
-        }
-
-        .tab-btn {
-            background-color: #f0f0f0; /* Light tab background */
-            border: none;
-            padding: 12px 25px;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: background-color var(--transition-duration), color var(--transition-duration);
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
-        .tab-btn.active {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .tab-btn:hover:not(.active) {
-            background-color: #e0e0e0; /* Slightly darker on hover */
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* Dark Mode Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--card-background);
-            box-shadow: var(--card-shadow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-toggle i {
-            font-size: 1.5rem;
-            color: var(--primary-text);
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        /* Apply animations to elements */
-        header h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: var(--primary-text);
-            animation: fadeInDown 1s ease-out;
-        }
-
-        header p {
-            font-size: 1.4rem;
-            max-width: 900px;
-            margin-bottom: 40px;
-            color: var(--secondary-text);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        header .btn {
-            animation: scaleIn 1s ease-out 0.5s both;
-        }
-
-        .week-container {
-            padding: var(--section-padding);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .week-container.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .algo-card {
-            animation: fadeIn 0.5s ease-out;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        }
-
-        /* Staggered animation for cards */
-        .algo-grid .algo-card:nth-child(1) { animation-delay: 0.1s; }
-        .algo-grid .algo-card:nth-child(2) { animation-delay: 0.2s; }
-        .algo-grid .algo-card:nth-child(3) { animation-delay: 0.3s; }
-        .algo-grid .algo-card:nth-child(4) { animation-delay: 0.4s; }
-
-        .btn {
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .btn:hover {
-            animation: pulse 0.8s ease-in-out infinite;
-        }
-
-        .topics li:hover {
-            animation: float 2s ease-in-out infinite;
-        }
-
-        /* Add styles for icon spacing */
-        .icon-margin {
-            margin-right: 10px;
-        }
-
-        /* Improve spacing in buttons */
-        .btn i {
-            transition: transform 0.3s ease;
-            font-size: 0.9em;
-            margin-left: 8px; /* Add space between text and icon */
-        }
-
-        /* Improve spacing in topic items */
-        .topics li i {
-            margin-right: 10px; /* Add space between icon and text */
-            width: 20px; /* Ensure consistent width for icons */
-            text-align: center; /* Center icons in their space */
-        }
-
-        /* Improve spacing in footer links */
-        .footer-section a i {
-            font-size: 0.9rem;
-            transition: transform 0.3s ease;
-            margin-right: 12px; /* Add space between icon and text */
-            width: 20px; /* Ensure consistent width for icons */
-            text-align: center; /* Center icons in their space */
+            .theme-toggle { width: 50px; height: 50px; } /* Slightly smaller toggle */
+            .scroll-top { width: 45px; height: 45px; bottom: 20px; right: 20px; } /* Adjust scroll top */
         }
 
         /* Add spacing for heading icons */
-        h1 i, h2 i, h3 i {
-            margin-right: 10px;
+        h1 i.icon-margin, h2 i.icon-margin, h3 i.icon-margin {
+            margin-right: 12px; /* Consistent spacing */
         }
 
-        /* Ensure features list icons alignment */
-        .features li::before {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            width: 20px; /* Ensure consistent width */
-            text-align: center; /* Center icon */
+        /* Info Section below Header */
+        .info-section {
+            padding: 40px 0;
+            background-color: var(--background-alt);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 60px;
+            transition: background-color var(--theme-transition), border-color var(--theme-transition);
         }
 
-        /* General Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 14px 30px;
-            border-radius: var(--button-radius);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin: 10px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
-            font-size: 1.1rem;
-            position: relative;
-            overflow: hidden;
-            gap: 10px;
+        .info-section .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around; /* Adjust alignment */
+            /* align-items: center; Removed to allow stretch */
+            gap: 30px;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-
-        .btn:hover {
-            background-color: var(--accent-color-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 113, 227, 0.4);
-            color: white;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn i {
-            transition: transform 0.3s ease;
-            font-size: 0.9em;
-            margin-left: 8px;
-        }
-
-        .btn:hover i {
-            transform: translateX(4px);
-        }
-
-        /* Header-specific button styling overrides general styling */
-        header .btn {
-            padding: 16px 36px;
-            font-size: 1.2rem;
-            animation: scaleIn 1.2s ease-out 0.6s backwards;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
-            background-size: 200% 100%;
-            transition: all 0.4s ease;
-        }
-
-        header .btn:hover {
-            background-position: 100% 0;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 113, 227, 0.4);
-        }
-
-        /* Color Scheme Toggle */
-        .color-scheme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 85px; /* Position next to theme toggle */
-            z-index: 1000;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
+        .info-block {
             background-color: var(--card-background);
-            box-shadow: var(--toggle-shadow);
+            padding: 25px 30px;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            flex: 1 0 0; /* Ensure equal width distribution */
+            min-width: 300px; /* Ensure blocks don't get too small */
+            max-width: 450px; /* Limit max width */
+            text-align: center; /* Ensure text is centered */
+            transition: background-color var(--theme-transition), box-shadow var(--theme-transition);
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
+            justify-content: center; /* Center icon and content horizontally */
+            gap: 20px; /* Increased gap */
+            height: 100%; /* Added to ensure block stretches */
+            min-height: 170px;
         }
 
-        .color-scheme-toggle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .info-block i {
+            font-size: 2rem; /* Slightly larger icon */
+            color: var(--accent-color);
+            transition: color var(--theme-transition);
+            flex-shrink: 0; /* Prevent icon from shrinking */
         }
 
-        .color-scheme-toggle:hover {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        .color-scheme-toggle:hover::before {
-            opacity: 1;
-        }
-
-        .color-scheme-toggle i {
-            font-size: 1.6rem;
+        .info-block p {
+            margin: 0;
+            font-size: 1.1rem;
             color: var(--primary-text);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: color var(--theme-transition);
         }
 
-        .color-scheme-toggle:hover i {
-            transform: rotate(20deg);
+        /* Style the div wrapper created by JS for mentorship */
+        .info-block > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center text and button */
+            gap: 10px;
+            text-align: center;
         }
 
-        /* Color the palette icon based on the color scheme */
-        [data-color-scheme="blue"] .color-scheme-toggle i.fa-palette {
-            color: #007bff;
-            text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        .info-block a {
+            font-weight: 600;
         }
 
-        [data-color-scheme="green"] .color-scheme-toggle i.fa-palette {
-            color: #7cb342;
-            text-shadow: 0 0 10px rgba(124, 179, 66, 0.5);
-        }
-
-        /* Custom styles for theme-specific header gradients */
-        [data-color-scheme="green"] header h1 {
-            background: linear-gradient(90deg, var(--primary-text), #7cb342, #689f38, var(--primary-text));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
-        }
-
-        /* Target only main buttons for special shadows in pistachio theme */
-        [data-color-scheme="green"] header .btn,
-        [data-color-scheme="green"] .algo-card-footer .btn {
-            box-shadow: var(--main-button-shadow);
-        }
-
-        [data-color-scheme="green"] header .btn:hover,
-        [data-color-scheme="green"] .algo-card-footer .btn:hover {
-            box-shadow: var(--main-button-shadow-hover);
-        }
-
-        /* Keep original shadow for cards and topics in pistachio theme */
-        [data-color-scheme="green"] .algo-card,
-        [data-color-scheme="green"] .topics,
-        [data-color-scheme="green"] .topics li {
-            box-shadow: var(--card-shadow);
-        }
-
-        [data-color-scheme="green"] .algo-card:hover {
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        /* Set scroll-top button to use the green theme shadow */
-        [data-color-scheme="green"] .scroll-top {
-            box-shadow: var(--main-button-shadow);
-        }
-
-        [data-color-scheme="green"] .scroll-top:hover {
-            box-shadow: var(--main-button-shadow-hover);
-        }
-
-        [data-color-scheme="green"] .infinity-animation {
-            background: linear-gradient(45deg, transparent 0%, #7cb342 30%, #689f38 70%, transparent 100%);
-            background-size: 400% 400%;
-            opacity: 0.03;
-            z-index: 0;
-            animation: gradientFlow 10s ease infinite;
-            mix-blend-mode: overlay;
-        }
-
-        [data-color-scheme="green"] .ripple-effect {
-            border: 2px solid #7cb342;
-        }
-
-        [data-color-scheme="green"] h2::after,
-        [data-color-scheme="green"] .week-header h2::after,
-        [data-color-scheme="green"] .topics h3::after,
-        [data-color-scheme="green"] .features h4::after,
-        [data-color-scheme="green"] .footer-section h3::after {
-            background-color: #7cb342;
-        }
-
-        [data-color-scheme="green"] .complexity {
-            border-left: 3px solid #7cb342;
-        }
-
-        [data-color-scheme="green"] .features li::before {
-            color: #7cb342;
+        @media (max-width: 768px) {
+            .info-section .container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .info-block {
+                 max-width: none; /* Allow full width on small screens */
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Dark Mode Toggle Button - Enhanced -->
+    <!-- Dark Mode Toggle Button -->
     <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <i class="fas fa-sun"></i>
+        <i class="fas fa-sun"></i> <!-- Default icon for dark mode -->
     </div>
-    
-    <!-- Color Scheme Toggle Button -->
+
+    <!-- Color Scheme Toggle Button REMOVED -->
+    <!--
     <div class="color-scheme-toggle" id="colorSchemeToggle" aria-label="Toggle color scheme">
         <i class="fas fa-palette"></i>
     </div>
-    
+    -->
+
     <header>
-        <!-- Background animation elements -->
+        <!-- Background animation elements (Restored) -->
         <div class="infinity-animation"></div>
         <div class="grid-overlay"></div>
+        <!-- Removed floating particles and ripple effect -->
+        <!-- Removed infinity animation div -->
+
+        <!-- Floating Particles -->
         <div class="floating-particle"></div>
         <div class="floating-particle"></div>
         <div class="floating-particle"></div>
@@ -1633,22 +1264,36 @@
         <div class="floating-particle"></div>
         <div class="floating-particle"></div>
         <div class="floating-particle"></div>
+
+        <!-- Ripple Effects -->
         <div class="ripple-effect"></div>
         <div class="ripple-effect"></div>
         <div class="ripple-effect"></div>
-        
+
         <div class="container">
             <h1><i class="fas fa-code icon-margin"></i>Algorithms & Data Structures | Osama</h1>
             <p>Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the "Grokking Algorithms" approach.</p>
-            <a href="#weeks" class="btn primary-btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
+            <a href="#weeks" class="btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
         </div>
-        
+
         <!-- Scroll down indicator -->
         <div class="scroll-indicator">
             <span>Scroll to discover</span>
             <i class="fas fa-chevron-down"></i>
         </div>
     </header>
+
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <div id="user-counter-block" class="info-block">
+                <!-- User counter content will be injected here -->
+            </div>
+            <div id="mentorship-info-block" class="info-block">
+                <!-- Mentorship info will be injected here -->
+            </div>
+        </div>
+    </section>
 
     <main class="container" id="weeks">
         <section id="week1" class="week-container">
@@ -1969,7 +1614,7 @@
         <!-- Updated Week 4 Section -->
         <section id="week4" class="week-container">
             <div class="week-header">
-                <h2>Week 4: Optimization and Proximity Algorithms</h2>
+                <h2><i class="fas fa-brain icon-margin"></i>Week 4: Optimization and Proximity Algorithms</h2>
             </div>
             <div class="week-description">
                 <p>Conclude your journey with advanced algorithm paradigms. Explore Greedy Algorithms, Dynamic Programming, and the K-Nearest Neighbors algorithm for complex problem-solving.</p>
@@ -2102,17 +1747,17 @@
                         </li>
                         <li>
                             <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">
-                                <i class="fab fa-whatsapp"></i>Get a Mentorship
+                                <i class="fab fa-whatsapp icon-margin"></i>Get a Mentorship
                             </a>
                         </li>
                         <li>
                             <a href="#" target="_blank" rel="noopener noreferrer">
-                                <i class="fas fa-chalkboard-teacher"></i>Join Online Workshops
+                                <i class="fas fa-chalkboard-teacher icon-margin"></i>Join Online Workshops
                             </a>
                         </li>
                         <li>
                             <a href="#" target="_blank" rel="noopener noreferrer">
-                                <i class="fas fa-code"></i>Contribute to Project
+                                <i class="fas fa-code icon-margin"></i>Contribute to Project
                             </a>
                         </li>
                     </ul>
@@ -2123,22 +1768,22 @@
                     <ul>
                         <li>
                             <a href="#week1">
-                                <i class="fas fa-rocket"></i>Week 1: Algorithm Foundations
+                                <i class="fas fa-rocket icon-margin"></i>Week 1: Algorithm Foundations
                             </a>
                         </li>
                         <li>
                             <a href="#week2">
-                                <i class="fas fa-project-diagram"></i>Week 2: Data Structures & Recursion
+                                <i class="fas fa-project-diagram icon-margin"></i>Week 2: Data Structures & Recursion
                             </a>
                         </li>
                         <li>
                             <a href="#week3">
-                                <i class="fas fa-network-wired"></i>Week 3: Sorting, Hashing & Graphs
+                                <i class="fas fa-network-wired icon-margin"></i>Week 3: Sorting, Hashing & Graphs
                             </a>
                         </li>
                         <li>
                             <a href="#week4">
-                                <i class="fas fa-brain"></i>Week 4: Optimization & KNN
+                                <i class="fas fa-brain icon-margin"></i>Week 4: Optimization & KNN
                             </a>
                         </li>
                     </ul>
@@ -2156,17 +1801,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Dark mode functionality - Enhanced
+            // Dark mode functionality - Simplified
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = themeToggle.querySelector('i');
-            const body = document.body;
-            const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
             const savedTheme = localStorage.getItem('theme');
-            
-            // Color scheme toggle functionality
-            const colorSchemeToggle = document.getElementById('colorSchemeToggle');
-            const savedColorScheme = localStorage.getItem('colorScheme');
-            
+
+            // REMOVED: Color scheme toggle functionality
+            // const colorSchemeToggle = document.getElementById('colorSchemeToggle');
+            // const savedColorScheme = localStorage.getItem('colorScheme');
+
             // Function to apply theme
             const applyTheme = (theme) => {
                 if (theme === 'dark') {
@@ -2178,271 +1821,104 @@
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-moon');
                 }
+                // Apply theme transition *after* setting the attribute
+                document.documentElement.style.transition = 'background-color 0.5s ease, color 0.5s ease';
             };
-            
-            // Function to apply color scheme
-            const applyColorScheme = (scheme) => {
-                document.documentElement.setAttribute('data-color-scheme', scheme);
-                
-                // Generate pistachio images if green scheme is selected
-                if (scheme === 'green') {
-                    generatePistachioImages();
-                    // We no longer need the updateGradients function since we're using CSS variables
-                } else {
-                    resetFloatingParticles();
-                }
-            };
-            
-            // Remove the updateGradients function since we're now using CSS selectors
-            
-            // Apply initial theme - Make dark the default
-            if (savedTheme === 'light') {
-                applyTheme('light');
-            } else {
-                // Default to dark mode if no theme is saved or if saved theme is dark
-                applyTheme('dark');
-                if (!savedTheme) {
-                    localStorage.setItem('theme', 'dark');
-                }
-            }
-            
-            // Apply initial color scheme - Blue is default
-            if (savedColorScheme === 'green') {
-                applyColorScheme('green');
-            } else {
-                applyColorScheme('blue');
-                if (!savedColorScheme) {
-                    localStorage.setItem('colorScheme', 'blue');
-                }
-            }
-            
-            // Theme toggle animation
-            themeToggle.addEventListener('click', () => {
-                themeToggle.classList.add('animate__animated', 'animate__rubberBand');
-                setTimeout(() => {
-                    themeToggle.classList.remove('animate__animated', 'animate__rubberBand');
-                }, 1000);
-                
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                // Apply theme change with animation
-                document.documentElement.style.transition = 'all 0.5s ease';
-                applyTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-                
-                // Add animation to cards
-                document.querySelectorAll('.algo-card').forEach(card => {
-                    card.style.transition = 'all 0.5s ease';
-                });
-            });
-            
-            // Color scheme toggle
-            colorSchemeToggle.addEventListener('click', () => {
-                colorSchemeToggle.classList.add('animate__animated', 'animate__rubberBand');
-                setTimeout(() => {
-                    colorSchemeToggle.classList.remove('animate__animated', 'animate__rubberBand');
-                }, 1000);
-                
-                const currentColorScheme = document.documentElement.getAttribute('data-color-scheme');
-                const newColorScheme = currentColorScheme === 'blue' ? 'green' : 'blue';
-                
-                // Apply color scheme change with animation
-                document.documentElement.style.transition = 'all 0.5s ease';
-                applyColorScheme(newColorScheme);
-                localStorage.setItem('colorScheme', newColorScheme);
-            });
-            
-            // Function to generate pistachio images using canvas
-            function generatePistachioImages() {
-                // Clear existing floating particles
-                const existingParticles = document.querySelectorAll('.floating-particle');
-                existingParticles.forEach(particle => {
-                    particle.innerHTML = '';
-                    particle.style.background = 'transparent';
-                    
-                    // Create a canvas element for each particle
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 40;
-                    canvas.height = 40;
-                    canvas.style.width = '100%';
-                    canvas.style.height = '100%';
-                    
-                    particle.appendChild(canvas);
-                    
-                    // Draw pistachio shape
-                    const ctx = canvas.getContext('2d');
-                    drawPistachio(ctx, canvas.width, canvas.height);
-                });
-                
-                // Adjust particle sizes for the pistachio theme
-                document.querySelectorAll('.floating-particle').forEach((particle, index) => {
-                    // Make particles larger for pistachio images
-                    const size = 20 + (index % 3) * 10; // 20px, 30px, or 40px depending on index
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    
-                    // Slow down animation for more natural floating
-                    const currentDuration = parseFloat(getComputedStyle(particle).animationDuration);
-                    particle.style.animationDuration = (currentDuration * 1.5) + 's';
-                });
-            }
-            
-            // Function to draw a pistachio on canvas
-            function drawPistachio(ctx, width, height) {
-                const centerX = width / 2;
-                const centerY = height / 2;
-                const size = Math.min(width, height) * 0.8;
-                
-                // Draw pistachio shell (outer part)
-                ctx.beginPath();
-                ctx.fillStyle = '#967259'; // Brown shell color
-                ctx.ellipse(centerX, centerY, size/2, size/3, Math.PI/4, 0, 2 * Math.PI);
-                ctx.fill();
-                
-                // Draw the crack in the shell
-                ctx.beginPath();
-                ctx.strokeStyle = '#78604b'; // Darker brown for crack
-                ctx.lineWidth = 1;
-                ctx.moveTo(centerX - size/4, centerY - size/5);
-                ctx.lineTo(centerX + size/4, centerY + size/5);
-                ctx.stroke();
-                
-                // Draw pistachio nut (inner part)
-                ctx.beginPath();
-                ctx.fillStyle = '#ACD15F'; // Light green for pistachio meat
-                ctx.ellipse(centerX, centerY, size/3.5, size/5, Math.PI/4, 0, 2 * Math.PI);
-                ctx.fill();
-                
-                // Add highlight/dimension to the nut
-                ctx.beginPath();
-                ctx.fillStyle = '#87aa44'; // Slightly darker green for dimension
-                ctx.ellipse(centerX + size/10, centerY + size/10, size/7, size/10, Math.PI/4, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-            
-            // Function to reset floating particles to the original style
-            function resetFloatingParticles() {
-                document.querySelectorAll('.floating-particle').forEach((particle, index) => {
-                    // Remove canvas if present
-                    const canvas = particle.querySelector('canvas');
-                    if (canvas) {
-                        particle.removeChild(canvas);
-                    }
-                    
-                    // Reset to original style
-                    particle.style.background = 'var(--accent-color)';
-                    
-                    // Reset particle sizes to original values based on the original CSS
-                    if (index === 0) {
-                        particle.style.width = '12px';
-                        particle.style.height = '12px';
-                        particle.style.animationDuration = '25s';
-                    } else if (index === 1) {
-                        particle.style.width = '18px';
-                        particle.style.height = '18px';
-                        particle.style.animationDuration = '30s';
-                    } else if (index === 2) {
-                        particle.style.width = '10px';
-                        particle.style.height = '10px';
-                        particle.style.animationDuration = '20s';
-                    } else if (index === 3) {
-                        particle.style.width = '15px';
-                        particle.style.height = '15px';
-                        particle.style.animationDuration = '28s';
-                    } else if (index === 4) {
-                        particle.style.width = '9px';
-                        particle.style.height = '9px';
-                        particle.style.animationDuration = '22s';
-                    } else if (index === 5) {
-                        particle.style.width = '14px';
-                        particle.style.height = '14px';
-                        particle.style.animationDuration = '26s';
-                    } else if (index === 6) {
-                        particle.style.width = '11px';
-                        particle.style.height = '11px';
-                        particle.style.animationDuration = '24s';
-                    } else if (index === 7) {
-                        particle.style.width = '16px';
-                        particle.style.height = '16px';
-                        particle.style.animationDuration = '29s';
-                    } else if (index === 8) {
-                        particle.style.width = '13px';
-                        particle.style.height = '13px';
-                        particle.style.animationDuration = '27s';
-                    }
-                });
+
+            // REMOVED: Function to apply color scheme
+            // const applyColorScheme = (scheme) => { ... };
+            // REMOVED: generatePistachioImages, drawPistachio, resetFloatingParticles
+
+            // Apply initial theme - Default to dark if nothing saved
+            const initialTheme = savedTheme || 'dark';
+            applyTheme(initialTheme);
+            if (!savedTheme) {
+                localStorage.setItem('theme', 'dark');
             }
 
-            // Section animations - Enhanced
+            // REMOVED: Apply initial color scheme logic
+
+            // Theme toggle click listener
+            themeToggle.addEventListener('click', () => {
+                // REMOVED: Animate.css classes
+                // themeToggle.classList.add('animate__animated', 'animate__rubberBand');
+                // setTimeout(() => {
+                //     themeToggle.classList.remove('animate__animated', 'animate__rubberBand');
+                // }, 1000);
+
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+
+                // REMOVED: Redundant transition setting on cards
+            });
+
+            // REMOVED: Color scheme toggle click listener
+
+            // Section animations - Using Intersection Observer with CSS classes
             const sections = document.querySelectorAll('.week-container');
-            const observer = new IntersectionObserver((entries) => {
+            const observerOptions = {
+                 root: null, // relative to document viewport
+                 rootMargin: '0px',
+                 threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+
+            const observerCallback = (entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        
-                        // Staggered card animations
+
+                        // Apply staggered delays using CSS variables
                         const cards = entry.target.querySelectorAll('.algo-card');
                         cards.forEach((card, index) => {
-                            card.style.opacity = '0';
-                            card.style.transform = 'translateY(30px)';
-                            setTimeout(() => {
-                                card.style.opacity = '1';
-                                card.style.transform = 'translateY(0)';
-                            }, 150 * (index + 1));
+                            card.style.transitionDelay = `${150 * index}ms`;
                         });
-                        
-                        // Animate topic items
+
                         const topics = entry.target.querySelectorAll('.topics li');
                         topics.forEach((topic, index) => {
-                            topic.style.opacity = '0';
-                            topic.style.transform = 'translateX(-20px)';
-                            setTimeout(() => {
-                                topic.style.opacity = '1';
-                                topic.style.transform = 'translateX(0)';
-                            }, 100 * (index + 1));
+                            topic.style.transitionDelay = `${100 * index}ms`;
                         });
+
+                        observer.unobserve(entry.target); // Optional: Stop observing once visible
                     }
                 });
-            }, { threshold: 0.1 });
+            };
 
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
             sections.forEach(section => observer.observe(section));
 
-            // Enhanced scroll to top functionality
+            // Scroll to top functionality - Simplified
             const scrollTopBtn = document.getElementById('scrollTop');
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 300) {
-                    if (!scrollTopBtn.classList.contains('visible')) {
-                        scrollTopBtn.classList.add('visible');
-                    }
+                    scrollTopBtn.classList.add('visible');
                 } else {
                     scrollTopBtn.classList.remove('visible');
                 }
             });
-            
+
             scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({ 
-                    top: 0, 
-                    behavior: 'smooth' 
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
                 });
-                
-                // Add bounce animation
-                scrollTopBtn.classList.add('animate__animated', 'animate__bounceOut');
-                setTimeout(() => {
-                    scrollTopBtn.classList.remove('animate__animated', 'animate__bounceOut');
-                }, 1000);
+                // REMOVED: Bounce animation on click
             });
 
-            // Smooth scroll for anchor links with offset for fixed header
+            // Smooth scroll for anchor links (keep existing logic)
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        const headerOffset = 80;
-                        const elementPosition = target.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                         // Basic offset calculation (adjust if you have a fixed header)
+                         const headerOffset = 80; // Estimate header height
+                         const elementPosition = targetElement.getBoundingClientRect().top;
+                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
                         window.scrollTo({
                             top: offsetPosition,
                             behavior: 'smooth'
@@ -2451,42 +1927,61 @@
                 });
             });
 
-            // Enhanced hover effects for buttons
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('mouseenter', () => {
-                    btn.style.transform = 'translateY(-5px)';
-                });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.transform = 'translateY(0)';
-                });
-            });
-            
-            // Animate cards on hover
-            const cards = document.querySelectorAll('.algo-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'translateY(-10px) rotateX(2deg) rotateY(2deg)';
-                    card.style.boxShadow = getComputedStyle(document.documentElement).getPropertyValue('--card-shadow-hover');
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
-                    card.style.boxShadow = getComputedStyle(document.documentElement).getPropertyValue('--card-shadow');
-                });
-            });
+            // REMOVED: JS hover effects for buttons and cards (handled by CSS :hover)
 
-            // Initial animation for all sections
-            setTimeout(() => {
-                sections.forEach(section => section.classList.add('visible'));
-                
-                // Initial animation for header elements
-                document.querySelector('header h1').classList.add('animate__animated', 'animate__fadeInDown');
-                document.querySelector('header p').classList.add('animate__animated', 'animate__fadeInUp');
-                document.querySelector('header .btn').classList.add('animate__animated', 'animate__fadeIn');
-            }, 300);
+            // REMOVED: Initial animation setTimeout block
+
+            // --- Inlined Functions ---
+
+            // Function to populate the user counter block (from users_counter.js)
+            function populateUserCounter() {
+                const counterBlock = document.getElementById('user-counter-block');
+                if (!counterBlock) {
+                    console.error('User counter block element not found!');
+                    return;
+                }
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-users';
+                const text = document.createElement('p');
+                text.textContent = '3,865 students are currently studying on the platform';
+                counterBlock.innerHTML = '';
+                counterBlock.appendChild(icon);
+                counterBlock.appendChild(text);
+            }
+
+            // Mentorship Info Block Populator (from notification.js)
+            function populateMentorshipBlock() {
+                const block = document.getElementById('mentorship-info-block');
+                if (!block) {
+                    console.error('Mentorship info block element not found!');
+                    return;
+                }
+                block.innerHTML = '';
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-user-tie';
+                const contentWrapper = document.createElement('div');
+                const text = document.createElement('p');
+                text.textContent = 'Looking for private mentorship? Enhance your learning!';
+                text.style.marginBottom = '0';
+                const button = document.createElement('a');
+                button.href = 'https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0';
+                button.textContent = 'Chat on WhatsApp';
+                button.className = 'btn';
+                button.style.padding = '8px 16px';
+                button.style.fontSize = '0.9rem';
+                button.target = '_blank';
+                button.rel = 'noopener noreferrer';
+                contentWrapper.appendChild(text);
+                contentWrapper.appendChild(button);
+                block.appendChild(icon);
+                block.appendChild(contentWrapper);
+            }
+
+            // --- Initialize Components ---
+            populateUserCounter();
+            populateMentorshipBlock();
+
         });
     </script>
-    <script src="./notifications/notification.js"></script>
-    <script src="./components/users_counter.js"></script>
 </body>
 </html>
