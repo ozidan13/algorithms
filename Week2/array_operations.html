@@ -3,547 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Array Operations</title>
+    <title>Array Operations Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/global-algo.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .operation-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+        /* Refined styles */
         .array-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin: 20px 0;
+            flex-wrap: wrap; /* Allow wrapping if too many elements */
+            align-items: center;
+            justify-content: center; /* Center elements */
+            min-height: 60px;
+            padding: 15px;
+            background-color: var(--background-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            margin-bottom: 20px;
+            gap: 5px; /* Consistent gap */
+            transition: var(--theme-transition);
         }
+
         .array-element {
-            width: 40px;
-            height: 40px;
+            min-width: 45px; /* Slightly wider for better visibility */
+            height: 45px;
+            background-color: var(--color-default-element);
+            color: var(--color-element-text);
+            border: 1px solid var(--color-default-element);
+            border-radius: var(--element-radius);
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #3498db;
-            color: white;
-            border-radius: 4px;
             font-weight: bold;
-            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            position: relative; /* Needed for index display */
+            /* Smoother transition */
+            transition: transform 0.4s ease-in-out, background-color 0.4s ease-in-out, opacity 0.4s ease-in-out;
         }
-        .array-element.highlight {
-            background-color: #e74c3c;
+
+        .array-element::before {
+            content: attr(data-index);
+            position: absolute;
+            bottom: -20px; /* Position index below */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+        }
+
+        /* Animation states */
+        .array-element.highlight-access {
+            background-color: var(--color-mid); /* Use mid color for access */
             transform: scale(1.1);
         }
-        .array-element.new {
-            background-color: #2ecc71;
+        .array-element.highlight-insert {
+            background-color: var(--color-low); /* Use low color for insert */
+            transform: scale(1.1);
         }
-        .array-element.shifting {
-            background-color: #f39c12;
+        .array-element.highlight-delete {
+            background-color: var(--color-high); /* Use high color for delete */
+            transform: scale(1.1);
         }
-        .empty-slot {
-            width: 40px;
-            height: 40px;
+         .array-element.removing {
+             opacity: 0;
+             transform: scale(0.5) translateY(-20px);
+         }
+         .array-element.adding {
+             opacity: 0;
+             transform: scale(0.5) translateY(20px);
+         }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap; /* Allow controls to wrap */
+            gap: 15px; /* Increased gap */
+            align-items: center;
+        }
+
+        .control-group {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background-color: #ddd;
-            color: #555;
-            border-radius: 4px;
-            border: 2px dashed #bbb;
+            gap: 8px;
         }
-        .code-block {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            margin: 15px 0;
+
+        .control-group label {
+            white-space: nowrap; /* Prevent label wrapping */
         }
-        .complexity {
-            background-color: #f1c40f;
-            color: #333;
+
+        .control-group input[type="number"],
+        .control-group input[type="text"] {
+            width: 60px; /* Slightly wider input */
+        }
+
+        .complexity-badge {
+            font-size: 0.75rem;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 10px;
+            background-color: var(--secondary-text);
+            color: var(--background-main);
+            margin-left: 5px;
+            vertical-align: middle; /* Align better with buttons */
+            cursor: default; /* Indicate it's not clickable */
+            opacity: 0.8;
         }
-        .operation-info {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
+
+        .log {
+            margin-top: 20px;
+            max-height: 150px; /* Slightly more height */
         }
-        .info-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-        }
-        #comparison-chart {
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
-        }
-        .step-display {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-            min-height: 60px;
-        }
+
     </style>
 </head>
-<body>
-    <h1>Array Operations</h1>
-    
-    <div class="container">
-        <h2>Introduction to Arrays</h2>
-        <p>
-            Arrays are one of the most fundamental data structures in computer science. They store elements in 
-            contiguous memory locations, which allows for constant-time access to any element using its index.
-            However, inserting and deleting elements can be costly operations since they may require shifting 
-            elements to maintain the contiguous arrangement.
-        </p>
-        <p>
-            In this visualization, you'll explore various array operations and their time complexities:
-        </p>
-        <ul>
-            <li><strong>Access:</strong> O(1) - Direct access using an index</li>
-            <li><strong>Search:</strong> O(n) - Linear search through the array</li>
-            <li><strong>Insertion:</strong> O(n) - Need to shift elements to make space</li>
-            <li><strong>Deletion:</strong> O(n) - Need to shift elements to fill the gap</li>
-        </ul>
-    </div>
+<body data-theme="dark">
+    <a href="../index.html#week2" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <h1><i class="fas fa-cogs icon-margin"></i>Array Operations Visualization</h1>
 
     <div class="container">
-        <h2>Array Visualization</h2>
+        <h2><i class="fas fa-tasks icon-margin"></i>Interactive Demonstration</h2>
+        <p>Visualize common array operations: Access, Insertion, and Deletion.</p>
+
         <div class="controls">
-            <button id="resetBtn">Reset Array</button>
-            <input type="number" id="valueInput" placeholder="Enter a value" min="0" max="99">
-            <input type="number" id="indexInput" placeholder="Enter an index" min="0">
-            <button id="accessBtn">Access Element</button>
-            <button id="insertBtn">Insert Element</button>
-            <button id="deleteBtn">Delete Element</button>
-            <button id="searchBtn">Search Element</button>
+            <div class="control-group">
+                <label for="initial-array">Initial Array (comma-separated):</label>
+                <input type="text" id="initial-array" value="5,8,2,10,15">
+                <button id="generate-btn"><i class="fas fa-sync-alt icon-margin"></i>Generate</button>
+                 <button id="clear-btn" title="Clear Array"><i class="fas fa-trash-alt icon-margin"></i>Clear</button>
+            </div>
         </div>
-        
-        <div class="array-container" id="arrayContainer"></div>
-        
-        <div class="step-display" id="stepDisplay">
-            <p>Use the controls above to interact with the array.</p>
+
+        <div class="array-container" id="array-container"></div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="access-index">Index:</label>
+                <input type="number" id="access-index" min="0">
+                <button id="access-btn"><i class="fas fa-search icon-margin"></i>Access</button>
+                <span class="complexity-badge" title="Access by index is constant time">O(1)</span>
+            </div>
+            <div class="control-group">
+                <label for="insert-index">Index:</label>
+                <input type="number" id="insert-index" min="0">
+                <label for="insert-value">Value:</label>
+                <input type="number" id="insert-value">
+                <button id="insert-btn"><i class="fas fa-plus icon-margin"></i>Insert</button>
+                <span class="complexity-badge" title="Insertion may require shifting elements">O(n)</span>
+            </div>
+            <div class="control-group">
+                <label for="delete-index">Index:</label>
+                <input type="number" id="delete-index" min="0">
+                <button id="delete-btn"><i class="fas fa-minus icon-margin"></i>Delete</button>
+                <span class="complexity-badge" title="Deletion may require shifting elements">O(n)</span>
+            </div>
         </div>
+
+        <div class="log" id="log"><p>Enter an initial array or perform an operation.</p></div>
     </div>
 
     <div class="container">
-        <h2>Operation Details</h2>
-        
-        <div class="operation-container">
-            <h3>Access Operation <span class="complexity">O(1)</span></h3>
-            <p>
-                Accessing an element in an array is a constant-time operation. Since arrays store elements in 
-                contiguous memory locations, we can directly calculate the memory address of any element 
-                using its index.
-            </p>
-            <div class="code-block">
-                <pre>
-function access(array, index) {
-    if (index >= 0 && index < array.length) {
-        return array[index];  // O(1) operation
-    }
-    return "Index out of bounds";
-}
-                </pre>
-            </div>
+        <h2><i class="fas fa-info-circle icon-margin"></i>How Array Operations Work</h2>
+        <div class="explanation">
+            <ul>
+                <li><strong>Access (O(1)):</strong> Retrieving an element at a specific index is very fast. Since arrays store elements contiguously, the memory address can be calculated directly: <code>address = base_address + index * element_size</code>.</li>
+                <li><strong>Insertion (O(n)):</strong> Adding an element at a specific index requires shifting all subsequent elements one position to the right to make space. In the worst case (inserting at the beginning), this takes time proportional to the number of elements (n). Inserting at the end is O(1) if there's space (amortized O(1) for dynamic arrays).</li>
+                <li><strong>Deletion (O(n)):</strong> Removing an element at a specific index requires shifting all subsequent elements one position to the left to fill the gap. Similar to insertion, the worst case (deleting from the beginning) is O(n). Deleting from the end is O(1).</li>
+            </ul>
         </div>
-        
-        <div class="operation-container">
-            <h3>Search Operation <span class="complexity">O(n)</span></h3>
-            <p>
-                Searching for an element in an unsorted array requires checking each element until we find a 
-                match or reach the end of the array. This is a linear-time operation in the worst case.
-            </p>
-            <div class="code-block">
-                <pre>
-function search(array, value) {
-    for (let i = 0; i < array.length; i++) {  // O(n) operation
-        if (array[i] === value) {
-            return i;  // Found the value at index i
+        <h3><i class="fas fa-code icon-margin"></i>Example Implementation (Conceptual)</h3>
+        <pre class="code-block">
+<code>class ArrayWrapper {
+    constructor() {
+        this.array = [];
+    }
+
+    access(index) {
+        if (index < 0 || index >= this.array.length) {
+            throw new Error("Index out of bounds");
         }
+        // Direct access: O(1)
+        return this.array[index];
     }
-    return -1;  // Value not found
+
+    insert(index, value) {
+        if (index < 0 || index > this.array.length) { // Allow inserting at the end
+            throw new Error("Index out of bounds");
+        }
+        // Shift elements: O(n)
+        this.array.splice(index, 0, value);
+    }
+
+    delete(index) {
+        if (index < 0 || index >= this.array.length) {
+            throw new Error("Index out of bounds");
+        }
+        // Shift elements: O(n)
+        this.array.splice(index, 1);
+    }
 }
-                </pre>
-            </div>
-        </div>
-        
-        <div class="operation-container">
-            <h3>Insertion Operation <span class="complexity">O(n)</span></h3>
-            <p>
-                Inserting an element at a specific position requires shifting all elements after that position 
-                to make space. This is a linear-time operation in the worst case (insertion at the beginning).
-            </p>
-            <div class="code-block">
-                <pre>
-function insert(array, index, value) {
-    if (index < 0 || index > array.length) {
-        return "Invalid index";
-    }
-    // Shift elements to make space
-    for (let i = array.length; i > index; i--) {  // O(n) operation in worst case
-        array[i] = array[i - 1];
-    }
-    array[index] = value;
-    return array;
-}
-                </pre>
-            </div>
-        </div>
-        
-        <div class="operation-container">
-            <h3>Deletion Operation <span class="complexity">O(n)</span></h3>
-            <p>
-                Deleting an element requires shifting all elements after it to fill the gap.
-                This is a linear-time operation in the worst case (deletion at the beginning).
-            </p>
-            <div class="code-block">
-                <pre>
-function deleteElement(array, index) {
-    if (index < 0 || index >= array.length) {
-        return "Invalid index";
-    }
-    // Shift elements to fill the gap
-    for (let i = index; i < array.length - 1; i++) {  // O(n) operation in worst case
-        array[i] = array[i + 1];
-    }
-    array.length--;  // Reduce the array length
-    return array;
-}
-                </pre>
-            </div>
-        </div>
+</code></pre>
     </div>
 
-    <div class="container">
-        <h2>Performance Comparison</h2>
-        <div id="comparison-chart"></div>
-        <p>
-            This chart compares the performance of different array operations. As you can see:
-        </p>
-        <ul>
-            <li>Access operations remain constant regardless of array size</li>
-            <li>Search, insert, and delete operations scale linearly with array size</li>
-            <li>For very large arrays, the cost of insert and delete operations becomes significant</li>
-        </ul>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Initialize the array with some values
-        let array = [8, 15, 23, 42, 37, 16, 9, 31];
-        const maxArraySize = 15;
-        
-        // DOM elements
-        const arrayContainer = document.getElementById('arrayContainer');
-        const valueInput = document.getElementById('valueInput');
-        const indexInput = document.getElementById('indexInput');
-        const stepDisplay = document.getElementById('stepDisplay');
-        
-        // Buttons
-        document.getElementById('resetBtn').addEventListener('click', resetArray);
-        document.getElementById('accessBtn').addEventListener('click', accessElement);
-        document.getElementById('insertBtn').addEventListener('click', insertElement);
-        document.getElementById('deleteBtn').addEventListener('click', deleteElement);
-        document.getElementById('searchBtn').addEventListener('click', searchElement);
-        
-        // Initially render the array
-        renderArray();
-        
-        // Function to render the array
-        function renderArray() {
+        // Theme persistence
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // DOM Elements
+        const initialArrayInput = document.getElementById('initial-array');
+        const generateBtn = document.getElementById('generate-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const arrayContainer = document.getElementById('array-container');
+        const accessIndexInput = document.getElementById('access-index');
+        const accessBtn = document.getElementById('access-btn');
+        const insertIndexInput = document.getElementById('insert-index');
+        const insertValueInput = document.getElementById('insert-value');
+        const insertBtn = document.getElementById('insert-btn');
+        const deleteIndexInput = document.getElementById('delete-index');
+        const deleteBtn = document.getElementById('delete-btn');
+        const logElement = document.getElementById('log');
+
+        let currentArray = [];
+        const animationDelay = 400; // ms, adjusted for smoother transition
+
+        // --- Utility Functions ---
+        function logMessage(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.classList.add(`log-${type}`);
+            logElement.prepend(p);
+            // Keep log concise
+            while (logElement.children.length > 8) {
+                logElement.removeChild(logElement.lastChild);
+            }
+        }
+
+        function isValidNumber(value) {
+            return value !== '' && !isNaN(Number(value));
+        }
+
+        // --- Visualization Logic ---
+        function renderArray(highlightIndex = -1, highlightType = '') {
             arrayContainer.innerHTML = '';
-            for (let i = 0; i < array.length; i++) {
+            currentArray.forEach((value, index) => {
                 const element = document.createElement('div');
                 element.className = 'array-element';
-                element.textContent = array[i];
-                element.dataset.index = i;
+                element.textContent = value;
+                element.dataset.index = index; // Store index for styling
+
+                if (index === highlightIndex && highlightType) {
+                    element.classList.add(`highlight-${highlightType}`);
+                }
+
                 arrayContainer.appendChild(element);
-            }
+            });
+            // Update input max values based on current array size
+            accessIndexInput.max = Math.max(0, currentArray.length - 1);
+            insertIndexInput.max = currentArray.length; // Can insert at the end
+            deleteIndexInput.max = Math.max(0, currentArray.length - 1);
         }
-        
-        // Reset the array to initial state
-        function resetArray() {
-            array = [8, 15, 23, 42, 37, 16, 9, 31];
-            renderArray();
-            updateStepDisplay('Array has been reset to its initial state.');
+
+         async function animateAndRender(highlightIndex = -1, highlightType = '') {
+            return new Promise(resolve => {
+                renderArray(highlightIndex, highlightType);
+                // Slight delay to allow rendering before resolving if needed
+                setTimeout(resolve, 50);
+            });
         }
-        
-        // Access an element
-        function accessElement() {
-            const index = parseInt(indexInput.value);
-            if (isNaN(index) || index < 0 || index >= array.length) {
-                updateStepDisplay('Invalid index. Please enter a valid index.');
-                return;
-            }
-            
-            // Highlight the accessed element
-            renderArray();
-            const elements = document.querySelectorAll('.array-element');
-            elements[index].classList.add('highlight');
-            
-            updateStepDisplay(`Accessed element at index ${index}: ${array[index]}. This is an O(1) operation.`);
-        }
-        
-        // Insert an element
-        async function insertElement() {
-            const value = parseInt(valueInput.value);
-            const index = parseInt(indexInput.value);
-            
-            if (isNaN(value)) {
-                updateStepDisplay('Please enter a valid value to insert.');
-                return;
-            }
-            
-            if (isNaN(index) || index < 0 || index > array.length) {
-                updateStepDisplay('Invalid index. Please enter a valid index.');
-                return;
-            }
-            
-            if (array.length >= maxArraySize) {
-                updateStepDisplay('Array is at maximum capacity. Delete some elements first.');
-                return;
-            }
-            
-            // Visualize insertion process
-            renderArray();
-            
-            updateStepDisplay(`Step 1: Make space for the new element at index ${index}.`);
-            await sleep(1000);
-            
-            // Add a temporary element at the end
-            array.push(null);
-            renderArray();
-            
-            // Visualize shifting elements
-            updateStepDisplay(`Step 2: Shift elements from index ${index} to the right.`);
-            await sleep(1000);
-            
-            for (let i = array.length - 1; i > index; i--) {
-                array[i] = array[i - 1];
+
+        // --- Event Handlers ---
+        generateBtn.addEventListener('click', () => {
+            const inputText = initialArrayInput.value.trim();
+            if (!inputText) {
+                currentArray = [];
+                logMessage('Generated an empty array.', 'info');
                 renderArray();
-                document.querySelectorAll('.array-element')[i].classList.add('shifting');
-                await sleep(500);
-            }
-            
-            // Insert the new element
-            array[index] = value;
-            renderArray();
-            document.querySelectorAll('.array-element')[index].classList.add('new');
-            
-            updateStepDisplay(`Step 3: Insert value ${value} at index ${index}. Operation complete.`);
-            
-            await sleep(1000);
-            renderArray();
-            updateStepDisplay(`Inserted ${value} at index ${index}. This is an O(n) operation because ${array.length - index - 1} elements had to be shifted.`);
-        }
-        
-        // Delete an element
-        async function deleteElement() {
-            const index = parseInt(indexInput.value);
-            
-            if (isNaN(index) || index < 0 || index >= array.length) {
-                updateStepDisplay('Invalid index. Please enter a valid index.');
                 return;
             }
-            
-            // Visualize deletion process
-            renderArray();
-            document.querySelectorAll('.array-element')[index].classList.add('highlight');
-            
-            updateStepDisplay(`Step 1: Remove element ${array[index]} at index ${index}.`);
-            await sleep(1000);
-            
-            // Visualize shifting elements
-            updateStepDisplay(`Step 2: Shift elements after index ${index} to the left.`);
-            await sleep(1000);
-            
-            for (let i = index; i < array.length - 1; i++) {
-                array[i] = array[i + 1];
+            const potentialArray = inputText.split(',').map(s => s.trim()).filter(s => s !== '');
+            if (potentialArray.every(isValidNumber)) {
+                currentArray = potentialArray.map(Number);
+                logMessage(`Generated array: [${currentArray.join(', ')}]`, 'success');
                 renderArray();
-                if (i < array.length - 1) {
-                    document.querySelectorAll('.array-element')[i].classList.add('shifting');
-                }
-                await sleep(500);
-            }
-            
-            // Remove the last element
-            array.pop();
-            
-            renderArray();
-            updateStepDisplay(`Deleted element at index ${index}. This is an O(n) operation because ${array.length - index} elements had to be shifted.`);
-        }
-        
-        // Search for an element
-        async function searchElement() {
-            const value = parseInt(valueInput.value);
-            
-            if (isNaN(value)) {
-                updateStepDisplay('Please enter a valid value to search for.');
-                return;
-            }
-            
-            renderArray();
-            updateStepDisplay(`Searching for value ${value}...`);
-            await sleep(1000);
-            
-            let found = false;
-            
-            for (let i = 0; i < array.length; i++) {
-                // Highlight the current element being checked
-                renderArray();
-                document.querySelectorAll('.array-element')[i].classList.add('highlight');
-                await sleep(500);
-                
-                if (array[i] === value) {
-                    found = true;
-                    updateStepDisplay(`Found value ${value} at index ${i}. This required checking ${i + 1} elements (O(n) operation).`);
-                    break;
-                }
-                
-                if (i === array.length - 1) {
-                    updateStepDisplay(`Value ${value} not found in the array. Had to check all ${array.length} elements (O(n) operation).`);
-                }
-            }
-        }
-        
-        // Helper function to update the step display
-        function updateStepDisplay(message) {
-            stepDisplay.innerHTML = `<p>${message}</p>`;
-        }
-        
-        // Helper function for sleep
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        
-        // Initialize the performance comparison chart
-        const ctx = document.getElementById('comparison-chart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [10, 100, 1000, 10000, 100000],
-                datasets: [
-                    {
-                        label: 'Access O(1)',
-                        data: [1, 1, 1, 1, 1],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                        borderWidth: 2,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Search O(n)',
-                        data: [5, 50, 500, 5000, 50000],
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.2)',
-                        borderWidth: 2,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Insert O(n)',
-                        data: [5, 50, 500, 5000, 50000],
-                        borderColor: '#2ecc71',
-                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                        borderWidth: 2,
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Delete O(n)',
-                        data: [5, 50, 500, 5000, 50000],
-                        borderColor: '#f39c12',
-                        backgroundColor: 'rgba(243, 156, 18, 0.2)',
-                        borderWidth: 2,
-                        tension: 0.1
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Array Size'
-                        },
-                        type: 'logarithmic'
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Operations Count'
-                        },
-                        type: 'logarithmic'
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Array Operations Performance'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${context.raw} operations`;
-                            }
-                        }
-                    }
-                }
+            } else {
+                logMessage('Invalid input: Please enter comma-separated numbers.', 'error');
             }
         });
+
+        clearBtn.addEventListener('click', () => {
+            currentArray = [];
+            logMessage('Array cleared.', 'info');
+            renderArray();
+            initialArrayInput.value = ''; // Clear input field as well
+        });
+
+        accessBtn.addEventListener('click', async () => {
+            const index = parseInt(accessIndexInput.value);
+
+            if (!isValidNumber(accessIndexInput.value)) {
+                 logMessage('Invalid index: Please enter a number.', 'error');
+                 return;
+            }
+             if (currentArray.length === 0) {
+                 logMessage('Cannot access from an empty array.', 'warning');
+                 return;
+             }
+            if (index < 0 || index >= currentArray.length) {
+                logMessage(`Index ${index} is out of bounds (valid indices: 0 to ${currentArray.length - 1}).`, 'error');
+                renderArray(); // Clear previous highlights
+                return;
+            }
+
+            logMessage(`Accessing element at index ${index}...`, 'info');
+            await animateAndRender(index, 'access');
+            await new Promise(resolve => setTimeout(resolve, animationDelay * 1.5)); // Hold highlight
+            logMessage(`Value at index ${index} is ${currentArray[index]}. Access is O(1).`, 'success');
+            await animateAndRender(); // Clear highlight
+        });
+
+        insertBtn.addEventListener('click', async () => {
+            const index = parseInt(insertIndexInput.value);
+            const value = insertValueInput.value; // Keep as string for validation
+
+            if (!isValidNumber(insertIndexInput.value) || !isValidNumber(value)) {
+                logMessage('Invalid input: Index and Value must be numbers.', 'error');
+                return;
+            }
+            const numericValue = Number(value);
+            if (index < 0 || index > currentArray.length) {
+                logMessage(`Index ${index} is out of bounds (valid indices for insert: 0 to ${currentArray.length}).`, 'error');
+                return;
+            }
+
+            logMessage(`Inserting value ${numericValue} at index ${index}... Requires shifting ${currentArray.length - index} elements.`, 'info');
+
+            // 1. Visually make space (conceptually)
+            // Add placeholder element with 'adding' animation
+            const tempArray = [...currentArray];
+            tempArray.splice(index, 0, '*'); // Use a placeholder
+            arrayContainer.innerHTML = '';
+            tempArray.forEach((val, i) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                if (i === index) {
+                    element.textContent = numericValue; // Show the value being added
+                    element.classList.add('adding');
+                    element.style.opacity = '0'; // Start invisible
+                    element.style.backgroundColor = 'var(--color-low)'; // Insert color
+                } else {
+                    element.textContent = val;
+                }
+                element.dataset.index = i; // Use potential new index
+                arrayContainer.appendChild(element);
+            });
+
+            // Trigger the fade-in animation
+            await new Promise(resolve => setTimeout(resolve, 50)); // Allow DOM update
+            const addedElement = arrayContainer.children[index];
+            if (addedElement) {
+                 addedElement.style.opacity = '1';
+                 addedElement.style.transform = 'scale(1) translateY(0)';
+                 addedElement.classList.add('highlight-insert'); // Add highlight during animation
+            }
+
+            // Wait for animation
+            await new Promise(resolve => setTimeout(resolve, animationDelay));
+
+            // 2. Update the actual array data
+            currentArray.splice(index, 0, numericValue);
+
+            // 3. Re-render the final state
+            await animateAndRender(); // Render with correct indices and clear highlights
+            logMessage(`Value ${numericValue} inserted at index ${index}. Insertion cost is O(n).`, 'success');
+        });
+
+
+        deleteBtn.addEventListener('click', async () => {
+            const index = parseInt(deleteIndexInput.value);
+
+             if (!isValidNumber(deleteIndexInput.value)) {
+                 logMessage('Invalid index: Please enter a number.', 'error');
+                 return;
+             }
+            if (currentArray.length === 0) {
+                logMessage('Cannot delete from an empty array.', 'warning');
+                return;
+            }
+            if (index < 0 || index >= currentArray.length) {
+                logMessage(`Index ${index} is out of bounds (valid indices: 0 to ${currentArray.length - 1}).`, 'error');
+                renderArray(); // Clear previous highlights
+                return;
+            }
+
+            const deletedValue = currentArray[index];
+            logMessage(`Deleting element ${deletedValue} at index ${index}... Requires shifting ${currentArray.length - 1 - index} elements.`, 'info');
+
+            // 1. Highlight the element to be deleted
+            await animateAndRender(index, 'delete');
+            await new Promise(resolve => setTimeout(resolve, animationDelay * 0.5)); // Short pause
+
+            // 2. Animate removal
+            const elementToRemove = arrayContainer.children[index];
+            if (elementToRemove) {
+                elementToRemove.classList.add('removing');
+            }
+            await new Promise(resolve => setTimeout(resolve, animationDelay)); // Wait for removal animation
+
+            // 3. Update the actual array data
+            currentArray.splice(index, 1);
+
+            // 4. Re-render the final state
+            await animateAndRender(); // Render with correct indices
+            logMessage(`Element ${deletedValue} deleted from index ${index}. Deletion cost is O(n).`, 'success');
+        });
+
+        // --- Initial Render ---
+        generateBtn.click(); // Generate initial array on load
+
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
 </html>

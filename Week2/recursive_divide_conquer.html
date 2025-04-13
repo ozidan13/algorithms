@@ -3,298 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursive Divide and Conquer</title>
+    <title>Divide & Conquer Visualization: Merge Sort</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/global-algo.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .example-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .controls {
-            margin: 20px 0;
+        .visualization-container {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
+            gap: 40px;
+            padding: 20px;
+            background-color: var(--background-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            margin: 25px 0;
+            overflow-x: auto;
+            transition: var(--theme-transition);
+            position: relative;
         }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .array-box {
+
+        .level {
             display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin: 10px 0;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px;
+            width: 100%;
+            min-height: 50px;
+            position: relative;
         }
+
+        .array-segment {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: var(--element-radius);
+            background-color: var(--background-main);
+            padding: 5px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .array-element {
-            width: 40px;
-            height: 40px;
+            min-width: 35px;
+            height: 35px;
+            background-color: var(--color-default-element);
+            color: var(--color-element-text);
+            border: 1px solid var(--color-default-element);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #3498db;
-            color: white;
-            border-radius: 4px;
             font-weight: bold;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin: 0 2px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
-        .array-element.highlight {
-            background-color: #e74c3c;
+
+        .array-segment.dividing {
+            box-shadow: 0 0 10px var(--color-mid);
+            background-color: rgba(142, 68, 173, 0.1);
+        }
+        .array-segment.merging {
+            box-shadow: 0 0 10px var(--color-low);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+        .array-segment.sorted {
+            border-color: var(--color-found);
+            box-shadow: 0 0 8px var(--color-found);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .array-element.comparing {
+            background-color: var(--color-high);
             transform: scale(1.1);
         }
-        .array-element.sorted {
-            background-color: #2ecc71;
+        .array-element.moving {
+            background-color: var(--color-mid);
+            transform: scale(1.1);
         }
-        .array-element.merged {
-            background-color: #f39c12;
-        }
-        .tree-container {
-            width: 100%;
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-        .tree {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .tree-level {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin: 20px 0;
-        }
-        .tree-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 10px;
-            min-width: 80px;
-        }
-        .node-content {
-            padding: 5px 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-            border: 1px solid #3498db;
-            font-size: 12px;
-            text-align: center;
-            min-width: 70px;
-        }
-        .node-connector {
+
+        .array-segment::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
             width: 2px;
-            height: 20px;
-            background-color: #3498db;
-            margin: 5px 0;
+            height: 40px;
+            background-color: var(--secondary-text);
+            z-index: -1;
+            opacity: 0.6;
         }
-        .step-display {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
-            min-height: 60px;
+        .level:first-child .array-segment::before {
+            display: none;
         }
-        .code-block {
-            background-color: #f8f9fa;
+
+        .controls {
+            margin-bottom: 20px;
             padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            margin: 15px 0;
+            background-color: var(--background-alt);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
         }
-        .complexity {
-            background-color: #f1c40f;
-            color: #333;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-left: 10px;
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .recursion-tree {
-            overflow-x: auto;
-            padding: 20px 0;
+        .control-group label {
+            white-space: nowrap;
         }
-        .tree-diagram {
-            width: fit-content;
-            margin: 0 auto;
+        .control-group input[type="text"],
+        .control-group input[type="range"] {
+            margin-right: 10px;
+        }
+        .log {
+            margin-top: 20px;
+            max-height: 180px;
         }
     </style>
 </head>
-<body>
-    <h1>Recursive Divide and Conquer</h1>
-    
-    <div class="container">
-        <h2>Introduction to Divide and Conquer</h2>
-        <p>
-            Divide and conquer is a recursive algorithmic paradigm that breaks down a problem into 
-            multiple smaller subproblems of the same type, solves them independently, and then 
-            combines their results to solve the original problem.
-        </p>
-        <p>
-            This approach consists of three main steps:
-        </p>
-        <ol>
-            <li><strong>Divide:</strong> Break the problem into smaller, more manageable subproblems</li>
-            <li><strong>Conquer:</strong> Solve each subproblem recursively</li>
-            <li><strong>Combine:</strong> Merge the solutions of the subproblems into a solution for the original problem</li>
-        </ol>
-        <p>
-            Divide and conquer algorithms are often implemented using recursion and can lead to efficient 
-            solutions for many problems. In this visualization, we'll explore the Merge Sort algorithm, 
-            a classic example of divide and conquer.
-        </p>
-    </div>
+<body data-theme="dark">
+    <a href="../index.html#week2" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <h1><i class="fas fa-sort-amount-down icon-margin"></i>Divide & Conquer Visualization: Merge Sort</h1>
 
     <div class="container">
-        <h2>Merge Sort Visualization</h2>
-        <p>
-            Merge Sort is a sorting algorithm that follows the divide and conquer approach.
-            It divides the input array into two halves, recursively sorts them, and then 
-            merges the sorted halves to produce a sorted output.
-        </p>
-        
+        <h2><i class="fas fa-microchip icon-margin"></i>Interactive Merge Sort</h2>
+        <p>Visualize the Merge Sort algorithm, a classic example of Divide and Conquer.</p>
+
         <div class="controls">
-            <button id="generateArrayBtn">Generate Random Array</button>
-            <button id="startSortBtn">Start Merge Sort</button>
-            <button id="nextStepBtn" disabled>Next Step</button>
-            <button id="resetBtn" disabled>Reset</button>
-        </div>
-        
-        <div class="array-box" id="arrayContainer">
-            <!-- Array elements will be rendered here -->
-        </div>
-        
-        <div class="step-display" id="stepDisplay">
-            <p>Generate a random array or start with the current array to begin the visualization.</p>
-        </div>
-        
-        <div class="tree-container">
-            <div class="tree" id="recursionTree">
-                <!-- Recursion tree will be rendered here -->
+            <div class="control-group">
+                <label for="initial-array">Initial Array (comma-separated):</label>
+                <input type="text" id="initial-array" value="8,3,1,7,0,10,2">
+            </div>
+            <div class="control-group">
+                <button id="start-sort-btn"><i class="fas fa-play icon-margin"></i>Start Sort</button>
+                <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset</button>
+            </div>
+            <div class="control-group">
+                <button id="step-btn" disabled><i class="fas fa-step-forward icon-margin"></i>Step Forward</button>
+                <button id="auto-play-btn" disabled><i class="fas fa-fast-forward icon-margin"></i>Auto Play</button>
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="100" max="1000" value="500" step="50">
+                <span id="speed-value">500ms</span>
             </div>
         </div>
+
+        <div class="visualization-container" id="visualization-container">
+            <!-- Visualization levels will be generated here -->
+        </div>
+
+        <div class="log" id="log"><p>Enter an array and click 'Start Sort' to begin.</p></div>
     </div>
 
     <div class="container">
-        <h2>Merge Sort Algorithm</h2>
-        
-        <div class="example-container">
-            <h3>Merge Sort Pseudocode</h3>
-            <div class="code-block">
-                <pre>
-function mergeSort(array):
-    if array.length <= 1:
-        return array  // Base case: already sorted
-        
-    // Divide step
-    middle = array.length / 2
-    leftHalf = array[0...middle-1]
-    rightHalf = array[middle...array.length-1]
-    
-    // Conquer step (recursive calls)
-    leftSorted = mergeSort(leftHalf)
-    rightSorted = mergeSort(rightHalf)
-    
-    // Combine step
-    return merge(leftSorted, rightSorted)
-
-function merge(left, right):
-    result = []
-    leftIndex = 0
-    rightIndex = 0
-    
-    // Compare elements from both arrays and add the smaller one to result
-    while leftIndex < left.length and rightIndex < right.length:
-        if left[leftIndex] <= right[rightIndex]:
-            result.add(left[leftIndex])
-            leftIndex++
-        else:
-            result.add(right[rightIndex])
-            rightIndex++
-    
-    // Add remaining elements
-    while leftIndex < left.length:
-        result.add(left[leftIndex])
-        leftIndex++
-        
-    while rightIndex < right.length:
-        result.add(right[rightIndex])
-        rightIndex++
-        
-    return result
-</pre>
-            </div>
+        <h2><i class="fas fa-info-circle icon-margin"></i>How Merge Sort Works</h2>
+        <div class="explanation">
+            <p>Merge Sort follows the Divide and Conquer paradigm:</p>
+            <ol>
+                <li><strong>Divide:</strong> If the array has more than one element, divide it recursively into two halves (left and right) until each subarray contains only one element (which is inherently sorted).</li>
+                <li><strong>Conquer:</strong> Recursively sort the two subarrays using Merge Sort.</li>
+                <li><strong>Combine:</strong> Merge the two sorted subarrays back into a single sorted array. This merge step involves comparing elements from both subarrays and placing the smaller element into the resulting array, repeating until all elements from both subarrays are merged.</li>
+            </ol>
+            <ul>
+                <li><strong>Time Complexity:</strong> O(n log n) in all cases (worst, average, best). The dividing step takes O(log n) levels of recursion, and the merging step at each level takes O(n) time.</li>
+                <li><strong>Space Complexity:</strong> O(n) because it typically requires an auxiliary array of size n to store the merged results during the combine step.</li>
+            </ul>
         </div>
-        
-        <div class="example-container">
-            <h3>JavaScript Implementation</h3>
-            <div class="code-block">
-                <pre>
-function mergeSort(array) {
-    // Base case
-    if (array.length <= 1) {
-        return array;
+        <h3><i class="fas fa-code icon-margin"></i>Example Implementation (Conceptual)</h3>
+        <pre class="code-block">
+<code>function mergeSort(arr) {
+    if (arr.length <= 1) {
+        return arr; // Base case: array is already sorted
     }
-    
-    // Divide step
-    const middle = Math.floor(array.length / 2);
-    const leftHalf = array.slice(0, middle);
-    const rightHalf = array.slice(middle);
-    
-    // Conquer step (recursive calls)
-    const leftSorted = mergeSort(leftHalf);
-    const rightSorted = mergeSort(rightHalf);
-    
-    // Combine step
-    return merge(leftSorted, rightSorted);
+
+    // Divide
+    const mid = Math.floor(arr.length / 2);
+    const leftHalf = arr.slice(0, mid);
+    const rightHalf = arr.slice(mid);
+
+    // Conquer (Recursive calls)
+    const sortedLeft = mergeSort(leftHalf);
+    const sortedRight = mergeSort(rightHalf);
+
+    // Combine (Merge)
+    return merge(sortedLeft, sortedRight);
 }
 
 function merge(left, right) {
     let result = [];
     let leftIndex = 0;
     let rightIndex = 0;
-    
-    // Compare elements from both arrays
+
+    // Compare elements and add the smaller one to the result
     while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] <= right[rightIndex]) {
+        if (left[leftIndex] < right[rightIndex]) {
             result.push(left[leftIndex]);
             leftIndex++;
         } else {
@@ -302,405 +211,385 @@ function merge(left, right) {
             rightIndex++;
         }
     }
-    
-    // Add remaining elements
-    return result
-        .concat(left.slice(leftIndex))
-        .concat(right.slice(rightIndex));
+
+    // Add any remaining elements from left or right subarray
+    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
 }
-</pre>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Time and Space Complexity</h2>
-        
-        <div class="example-container">
-            <h3>Time Complexity <span class="complexity">O(n log n)</span></h3>
-            <p>
-                Merge Sort has a time complexity of O(n log n) in all cases (best, average, and worst).
-                This is because:
-            </p>
-            <ul>
-                <li>The <strong>dividing step</strong> takes O(log n) time as we repeatedly divide the array in half</li>
-                <li>The <strong>merging step</strong> takes O(n) time at each level because we need to compare and merge all elements</li>
-                <li>Overall, we have O(log n) levels of recursion, and at each level, we do O(n) work, resulting in O(n log n)</li>
-            </ul>
-            
-            <div class="recursion-tree">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/800px-Merge_sort_algorithm_diagram.svg.png" alt="Merge Sort Recursion Tree" style="max-width: 100%;">
-                <p class="text-center">Illustration of the Merge Sort recursion tree and time complexity</p>
-            </div>
-        </div>
-        
-        <div class="example-container">
-            <h3>Space Complexity <span class="complexity">O(n)</span></h3>
-            <p>
-                Merge Sort has a space complexity of O(n) because:
-            </p>
-            <ul>
-                <li>We need extra space to store the merged arrays at each level of recursion</li>
-                <li>The maximum amount of extra space needed at any point is proportional to the input size</li>
-                <li>Additionally, the recursion itself requires O(log n) space on the call stack</li>
-            </ul>
-            <p>
-                This higher space complexity is one of the trade-offs when using Merge Sort compared to algorithms like Quick Sort,
-                which can be implemented with O(log n) space complexity.
-            </p>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Advantages and Disadvantages</h2>
-        
-        <div class="example-container">
-            <h3>Advantages of Merge Sort</h3>
-            <ul>
-                <li><strong>Stable sorting:</strong> Preserves the relative order of equal elements</li>
-                <li><strong>Guaranteed O(n log n) performance:</strong> Unlike Quick Sort, which can degrade to O(n²) in the worst case</li>
-                <li><strong>Well-suited for external sorting:</strong> When data doesn't fit into memory</li>
-                <li><strong>Parallelizable:</strong> The divide and conquer approach makes it easy to parallelize</li>
-            </ul>
-        </div>
-        
-        <div class="example-container">
-            <h3>Disadvantages of Merge Sort</h3>
-            <ul>
-                <li><strong>Extra space required:</strong> O(n) auxiliary space is needed</li>
-                <li><strong>Not adaptive:</strong> Doesn't take advantage of partially sorted arrays</li>
-                <li><strong>Not in-place:</strong> Requires additional memory proportional to the input size</li>
-                <li><strong>Overhead for small arrays:</strong> For small arrays, simpler algorithms like Insertion Sort may be faster</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Other Divide and Conquer Algorithms</h2>
-        
-        <div class="example-container">
-            <h3>Quick Sort</h3>
-            <p>
-                Another divide and conquer sorting algorithm that partitions the array around a pivot element.
-                It has an average case time complexity of O(n log n) but can degrade to O(n²) in the worst case.
-            </p>
-        </div>
-        
-        <div class="example-container">
-            <h3>Binary Search</h3>
-            <p>
-                A searching algorithm that divides the search interval in half at each step.
-                It has a time complexity of O(log n) and requires a sorted array.
-            </p>
-        </div>
-        
-        <div class="example-container">
-            <h3>Strassen's Matrix Multiplication</h3>
-            <p>
-                An algorithm for multiplying matrices that is faster than the naive method for large matrices.
-                It uses divide and conquer to reduce the number of recursive calls.
-            </p>
-        </div>
-        
-        <div class="example-container">
-            <h3>Closest Pair of Points</h3>
-            <p>
-                An algorithm to find the closest pair of points in a set of points in a plane.
-                It uses divide and conquer to achieve O(n log n) time complexity.
-            </p>
-        </div>
+</code></pre>
     </div>
 
     <script>
-        // DOM elements
-        const arrayContainer = document.getElementById('arrayContainer');
-        const recursionTree = document.getElementById('recursionTree');
-        const stepDisplay = document.getElementById('stepDisplay');
-        const generateArrayBtn = document.getElementById('generateArrayBtn');
-        const startSortBtn = document.getElementById('startSortBtn');
-        const nextStepBtn = document.getElementById('nextStepBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        
-        // Initial state
-        let array = [38, 27, 43, 3, 9, 82, 10];
-        let sortingSteps = [];
-        let currentStepIndex = 0;
-        let sortingInProgress = false;
-        
-        // Initialize array display
-        renderArray();
-        
-        // Add event listeners
-        generateArrayBtn.addEventListener('click', generateRandomArray);
-        startSortBtn.addEventListener('click', startMergeSort);
-        nextStepBtn.addEventListener('click', showNextStep);
-        resetBtn.addEventListener('click', resetVisualization);
-        
-        // Function to generate a random array
-        function generateRandomArray() {
-            const length = Math.floor(Math.random() * 5) + 5; // 5-9 elements
-            array = [];
-            for (let i = 0; i < length; i++) {
-                array.push(Math.floor(Math.random() * 90) + 10); // 10-99
+        // Theme persistence
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // DOM Elements
+        const initialArrayInput = document.getElementById('initial-array');
+        const startSortBtn = document.getElementById('start-sort-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const stepBtn = document.getElementById('step-btn');
+        const autoPlayBtn = document.getElementById('auto-play-btn');
+        const speedSlider = document.getElementById('speed-slider');
+        const speedValueSpan = document.getElementById('speed-value');
+        const visualizationContainer = document.getElementById('visualization-container');
+        const logElement = document.getElementById('log');
+
+        let originalArray = [];
+        let visualizationSteps = [];
+        let currentStepIndex = -1;
+        let autoPlayInterval = null;
+        let isAutoPlaying = false;
+        let animationSpeed = 500;
+
+        // --- Utility Functions ---
+        function logMessage(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.classList.add(`log-${type}`);
+            logElement.prepend(p);
+            while (logElement.children.length > 10) {
+                logElement.removeChild(logElement.lastChild);
             }
-            renderArray();
-            resetVisualization();
-            
-            updateStepDisplay(`Generated a random array with ${length} elements: [${array.join(', ')}]`);
         }
-        
-        // Function to render the array
-        function renderArray() {
-            arrayContainer.innerHTML = '';
-            for (let i = 0; i < array.length; i++) {
+
+        function disableControls(sorting = false, autoPlaying = false) {
+            startSortBtn.disabled = sorting;
+            initialArrayInput.disabled = sorting;
+            const endReached = currentStepIndex >= visualizationSteps.length - 1;
+            stepBtn.disabled = !sorting || endReached || autoPlaying;
+            autoPlayBtn.disabled = !sorting || endReached;
+            resetBtn.disabled = autoPlaying;
+        }
+
+        // --- Visualization Rendering ---
+        function renderStep(stepIndex) {
+            if (stepIndex < 0 || stepIndex >= visualizationSteps.length) return;
+
+            const step = visualizationSteps[stepIndex];
+            visualizationContainer.innerHTML = '';
+
+            const levels = {};
+            visualizationSteps.slice(0, stepIndex + 1).forEach(s => {
+                if (!levels[s.depth]) {
+                    levels[s.depth] = [];
+                }
+                const existingIndex = levels[s.depth].findIndex(item => item.id === s.id);
+                if (existingIndex !== -1) {
+                    levels[s.depth][existingIndex] = s;
+                } else {
+                    levels[s.depth].push(s);
+                }
+            });
+
+            Object.keys(levels).sort((a,b) => a - b).forEach(depth => {
+                const levelElement = document.createElement('div');
+                levelElement.className = 'level';
+                levelElement.dataset.depth = depth;
+
+                levels[depth].forEach(segmentInfo => {
+                    const segmentElement = createSegmentElement(segmentInfo);
+                    levelElement.appendChild(segmentElement);
+                });
+
+                visualizationContainer.appendChild(levelElement);
+            });
+
+            logMessage(step.message, step.type || 'info');
+        }
+
+        function createSegmentElement(segmentInfo) {
+            const segmentElement = document.createElement('div');
+            segmentElement.className = 'array-segment';
+            segmentElement.dataset.id = segmentInfo.id;
+            if (segmentInfo.status) {
+                segmentElement.classList.add(segmentInfo.status);
+            }
+
+            segmentInfo.array.forEach((value, index) => {
                 const element = document.createElement('div');
                 element.className = 'array-element';
-                element.textContent = array[i];
-                arrayContainer.appendChild(element);
-            }
-        }
-        
-        // Function to start the merge sort visualization
-        function startMergeSort() {
-            if (sortingInProgress) return;
-            
-            // Reset the visualization
-            resetVisualization();
-            
-            // Start the sorting
-            sortingInProgress = true;
-            sortingSteps = [];
-            
-            // Generate all steps of merge sort
-            generateMergeSortSteps(array.slice(), 0, array.length - 1, 0);
-            
-            // Update UI
-            startSortBtn.disabled = true;
-            nextStepBtn.disabled = false;
-            resetBtn.disabled = false;
-            
-            // Show the first step
-            currentStepIndex = 0;
-            showCurrentStep();
-            
-            updateStepDisplay(`Starting Merge Sort on array [${array.join(', ')}]. Click 'Next Step' to proceed through the algorithm.`);
-        }
-        
-        // Function to generate all steps of merge sort
-        function generateMergeSortSteps(arr, start, end, level) {
-            // Base case
-            if (start >= end) {
-                sortingSteps.push({
-                    type: 'base_case',
-                    array: arr.slice(),
-                    start: start,
-                    end: end,
-                    level: level,
-                    message: `Base case reached for subarray [${arr.slice(start, end + 1).join(', ')}]`
-                });
-                return arr.slice(start, end + 1);
-            }
-            
-            // Divide step
-            const mid = Math.floor((start + end) / 2);
-            
-            sortingSteps.push({
-                type: 'divide',
-                array: arr.slice(),
-                start: start,
-                mid: mid,
-                end: end,
-                level: level,
-                message: `Dividing array [${arr.slice(start, end + 1).join(', ')}] into [${arr.slice(start, mid + 1).join(', ')}] and [${arr.slice(mid + 1, end + 1).join(', ')}]`
-            });
-            
-            // Conquer step (recursive calls)
-            const leftArray = generateMergeSortSteps(arr.slice(), start, mid, level + 1);
-            const rightArray = generateMergeSortSteps(arr.slice(), mid + 1, end, level + 1);
-            
-            // Merge step
-            const merged = merge(leftArray, rightArray);
-            
-            // Update original array
-            for (let i = 0; i < merged.length; i++) {
-                arr[start + i] = merged[i];
-            }
-            
-            sortingSteps.push({
-                type: 'merge',
-                array: arr.slice(),
-                start: start,
-                mid: mid,
-                end: end,
-                level: level,
-                leftArray: leftArray,
-                rightArray: rightArray,
-                mergedArray: merged,
-                message: `Merging [${leftArray.join(', ')}] and [${rightArray.join(', ')}] into [${merged.join(', ')}]`
-            });
-            
-            return merged;
-        }
-        
-        // Function to merge two sorted arrays
-        function merge(left, right) {
-            let result = [];
-            let leftIndex = 0;
-            let rightIndex = 0;
-            
-            // Compare elements from both arrays
-            while (leftIndex < left.length && rightIndex < right.length) {
-                if (left[leftIndex] <= right[rightIndex]) {
-                    result.push(left[leftIndex]);
-                    leftIndex++;
-                } else {
-                    result.push(right[rightIndex]);
-                    rightIndex++;
+                element.textContent = value;
+
+                if (segmentInfo.status === 'merging' && segmentInfo.comparisonIndices) {
+                    if (segmentInfo.comparisonIndices.includes(index + segmentInfo.range[0])) {
+                        element.classList.add('comparing');
+                    }
                 }
-            }
-            
-            // Add remaining elements
-            return result
-                .concat(left.slice(leftIndex))
-                .concat(right.slice(rightIndex));
+                if (segmentInfo.status === 'merging' && segmentInfo.movedIndex !== undefined) {
+                    if (index + segmentInfo.range[0] === segmentInfo.movedIndex) {
+                        element.classList.add('moving');
+                    }
+                }
+
+                segmentElement.appendChild(element);
+            });
+            return segmentElement;
         }
-        
-        // Function to show the current step
-        function showCurrentStep() {
-            if (currentStepIndex >= sortingSteps.length) {
-                updateStepDisplay('Sorting complete! The array is now sorted.');
-                nextStepBtn.disabled = true;
+
+        // --- Merge Sort Logic with Visualization Steps ---
+        function generateMergeSortSteps(arr) {
+            visualizationSteps = [];
+            let segmentIdCounter = 0;
+
+            function mergeSortRecursive(subArray, depth, rangeStart) {
+                const currentId = segmentIdCounter++;
+                const currentRange = [rangeStart, rangeStart + subArray.length -1];
+
+                visualizationSteps.push({
+                    id: currentId,
+                    array: [...subArray],
+                    depth: depth,
+                    status: 'dividing',
+                    range: currentRange,
+                    message: `Divide: [${subArray.join(',')}] at depth ${depth} (Indices ${currentRange[0]}-${currentRange[1]})`,
+                    type: 'info'
+                });
+
+                if (subArray.length <= 1) {
+                    visualizationSteps.push({
+                        id: currentId,
+                        array: [...subArray],
+                        depth: depth,
+                        status: 'sorted',
+                        range: currentRange,
+                        message: `Base case: [${subArray.join(',')}] is sorted.`,
+                        type: 'success'
+                    });
+                    return subArray;
+                }
+
+                const mid = Math.floor(subArray.length / 2);
+                const leftHalf = subArray.slice(0, mid);
+                const rightHalf = subArray.slice(mid);
+
+                const sortedLeft = mergeSortRecursive(leftHalf, depth + 1, rangeStart);
+                const sortedRight = mergeSortRecursive(rightHalf, depth + 1, rangeStart + mid);
+
+                return merge(sortedLeft, sortedRight, depth, currentId, currentRange);
+            }
+
+            function merge(left, right, depth, targetId, targetRange) {
+                visualizationSteps.push({
+                    id: targetId,
+                    array: [],
+                    depth: depth,
+                    status: 'merging',
+                    range: targetRange,
+                    message: `Merge: Left [${left.join(',')}] and Right [${right.join(',')}] into indices ${targetRange[0]}-${targetRange[1]}`, 
+                    type: 'info'
+                });
+
+                let result = [];
+                let leftIndex = 0;
+                let rightIndex = 0;
+                let originalLeftIndex = targetRange[0];
+                let originalRightIndex = targetRange[0] + left.length;
+
+                while (leftIndex < left.length && rightIndex < right.length) {
+                    const comparisonMessage = `Compare Left[${leftIndex}] (${left[leftIndex]}) and Right[${rightIndex}] (${right[rightIndex]})`;
+                    visualizationSteps.push({
+                        id: targetId,
+                        array: [...result],
+                        depth: depth,
+                        status: 'merging',
+                        range: targetRange,
+                        comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
+                        message: comparisonMessage,
+                        type: 'info'
+                    });
+
+                    if (left[leftIndex] < right[rightIndex]) {
+                        const movedVal = left[leftIndex];
+                        const movedOriginalIndex = originalLeftIndex + leftIndex;
+                        result.push(movedVal);
+                        visualizationSteps.push({
+                            id: targetId,
+                            array: [...result],
+                            depth: depth,
+                            status: 'merging',
+                            range: targetRange,
+                            comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
+                            movedIndex: movedOriginalIndex,
+                            message: `Move ${movedVal} from Left to result.`,
+                            type: 'info'
+                        });
+                        leftIndex++;
+                    } else {
+                        const movedVal = right[rightIndex];
+                        const movedOriginalIndex = originalRightIndex + rightIndex;
+                        result.push(movedVal);
+                        visualizationSteps.push({
+                            id: targetId,
+                            array: [...result],
+                            depth: depth,
+                            status: 'merging',
+                            range: targetRange,
+                            comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
+                            movedIndex: movedOriginalIndex,
+                            message: `Move ${movedVal} from Right to result.`,
+                            type: 'info'
+                        });
+                        rightIndex++;
+                    }
+                }
+
+                const remainingLeft = left.slice(leftIndex);
+                const remainingRight = right.slice(rightIndex);
+                if (remainingLeft.length > 0) {
+                    visualizationSteps.push({
+                        id: targetId,
+                        array: [...result, ...remainingLeft],
+                        depth: depth,
+                        status: 'merging',
+                        range: targetRange,
+                        message: `Add remaining from Left: [${remainingLeft.join(',')}]`,
+                        type: 'info'
+                    });
+                }
+                if (remainingRight.length > 0) {
+                    visualizationSteps.push({
+                        id: targetId,
+                        array: [...result, ...remainingLeft, ...remainingRight],
+                        depth: depth,
+                        status: 'merging',
+                        range: targetRange,
+                        message: `Add remaining from Right: [${remainingRight.join(',')}]`,
+                        type: 'info'
+                    });
+                }
+
+                result = result.concat(remainingLeft).concat(remainingRight);
+
+                visualizationSteps.push({
+                    id: targetId,
+                    array: [...result],
+                    depth: depth,
+                    status: 'sorted',
+                    range: targetRange,
+                    message: `Merged into [${result.join(',')}] (Indices ${targetRange[0]}-${targetRange[1]})`, 
+                    type: 'success'
+                });
+
+                return result;
+            }
+
+            const sortedArray = mergeSortRecursive(arr, 0, 0);
+            logMessage(`Sorting complete! Final array: [${sortedArray.join(',')}]`, 'success');
+        }
+
+        // --- Control Handlers ---
+        startSortBtn.addEventListener('click', () => {
+            const inputText = initialArrayInput.value.trim();
+            const potentialArray = inputText.split(',').map(s => s.trim()).filter(s => s !== '');
+
+            if (potentialArray.length === 0) {
+                logMessage('Please enter a non-empty array.', 'warning');
                 return;
             }
-            
-            const step = sortingSteps[currentStepIndex];
-            
-            // Update step display
-            updateStepDisplay(step.message);
-            
-            // Highlight the relevant portion of the array
-            renderArrayWithHighlight(step);
-            
-            // Update the recursion tree
-            updateRecursionTree();
-        }
-        
-        // Function to render the array with highlighting
-        function renderArrayWithHighlight(step) {
-            arrayContainer.innerHTML = '';
-            
-            for (let i = 0; i < step.array.length; i++) {
-                const element = document.createElement('div');
-                element.className = 'array-element';
-                element.textContent = step.array[i];
-                
-                if (step.type === 'divide' && i >= step.start && i <= step.end) {
-                    element.classList.add('highlight');
-                } else if (step.type === 'merge' && i >= step.start && i <= step.end) {
-                    element.classList.add('merged');
-                } else if (step.type === 'base_case' && i >= step.start && i <= step.end) {
-                    element.classList.add('sorted');
+            if (potentialArray.every(s => !isNaN(Number(s)))) {
+                originalArray = potentialArray.map(Number);
+                logMessage(`Starting Merge Sort for: [${originalArray.join(',')}]`, 'info');
+                isAutoPlaying = false;
+                stopAutoPlay();
+                generateMergeSortSteps([...originalArray]);
+                currentStepIndex = -1;
+                visualizationContainer.innerHTML = '';
+                const initialStep = visualizationSteps.find(step => step.depth === 0 && step.status === 'dividing');
+                if (initialStep) {
+                    visualizationContainer.appendChild(createSegmentElement(initialStep));
                 }
-                
-                arrayContainer.appendChild(element);
+                disableControls(true, false);
+            } else {
+                logMessage('Invalid input: Please enter comma-separated numbers.', 'error');
             }
-        }
-        
-        // Function to update the recursion tree
-        function updateRecursionTree() {
-            recursionTree.innerHTML = '';
-            
-            // Group steps by level
-            const levelSteps = {};
-            
-            for (let i = 0; i <= currentStepIndex; i++) {
-                const step = sortingSteps[i];
-                if (!levelSteps[step.level]) {
-                    levelSteps[step.level] = [];
-                }
-                
-                // Only add unique subarrays
-                const subarray = step.array.slice(step.start, step.end + 1).join(',');
-                const exists = levelSteps[step.level].some(s => 
-                    s.array.slice(s.start, s.end + 1).join(',') === subarray);
-                
-                if (!exists) {
-                    levelSteps[step.level].push(step);
-                }
-            }
-            
-            // Create tree levels
-            const levels = Object.keys(levelSteps).sort((a, b) => a - b);
-            
-            for (const level of levels) {
-                const treeLevel = document.createElement('div');
-                treeLevel.className = 'tree-level';
-                
-                for (const step of levelSteps[level]) {
-                    const treeNode = document.createElement('div');
-                    treeNode.className = 'tree-node';
-                    
-                    const nodeContent = document.createElement('div');
-                    nodeContent.className = 'node-content';
-                    nodeContent.textContent = step.array.slice(step.start, step.end + 1).join(', ');
-                    
-                    if (step.type === 'merge') {
-                        nodeContent.style.backgroundColor = '#f39c12';
-                        nodeContent.style.color = 'white';
-                    } else if (step.type === 'base_case') {
-                        nodeContent.style.backgroundColor = '#2ecc71';
-                        nodeContent.style.color = 'white';
-                    }
-                    
-                    treeNode.appendChild(nodeContent);
-                    
-                    // Add connector if not the first level
-                    if (level > 0) {
-                        const connector = document.createElement('div');
-                        connector.className = 'node-connector';
-                        treeNode.appendChild(connector);
-                    }
-                    
-                    treeLevel.appendChild(treeNode);
-                }
-                
-                recursionTree.appendChild(treeLevel);
-            }
-        }
-        
-        // Function to show the next step
-        function showNextStep() {
-            if (currentStepIndex < sortingSteps.length) {
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isAutoPlaying = false;
+            stopAutoPlay();
+            originalArray = [];
+            visualizationSteps = [];
+            currentStepIndex = -1;
+            initialArrayInput.value = '8,3,1,7,0,10,2';
+            visualizationContainer.innerHTML = '';
+            logElement.innerHTML = '<p>Enter an array and click \'Start Sort\' to begin.</p>';
+            disableControls(false, false);
+        });
+
+        stepBtn.addEventListener('click', () => {
+            if (isAutoPlaying) return;
+
+            if (currentStepIndex < visualizationSteps.length - 1) {
                 currentStepIndex++;
-                showCurrentStep();
+                renderStep(currentStepIndex);
+                disableControls(true, false);
+            } else {
+                logMessage('Merge Sort steps complete.', 'success');
+                disableControls(false, false);
+                stepBtn.disabled = true;
+                autoPlayBtn.disabled = true;
+            }
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValueSpan.textContent = `${animationSpeed}ms`;
+            if (isAutoPlaying) {
+                stopAutoPlay(false);
+                startAutoPlay();
+            }
+        });
+
+        function startAutoPlay() {
+            if (isAutoPlaying && autoPlayInterval) return;
+
+            isAutoPlaying = true;
+            autoPlayBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
+            disableControls(true, true);
+
+            autoPlayInterval = setInterval(() => {
+                if (currentStepIndex < visualizationSteps.length - 1) {
+                    currentStepIndex++;
+                    renderStep(currentStepIndex);
+                    disableControls(true, true);
+                } else {
+                    logMessage('Merge Sort steps complete (Auto-Play).', 'success');
+                    stopAutoPlay();
+                    stepBtn.disabled = true;
+                    autoPlayBtn.disabled = true;
+                    resetBtn.disabled = false;
+                }
+            }, animationSpeed);
+        }
+
+        function stopAutoPlay(resettingState = true) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+            if (resettingState) {
+                isAutoPlaying = false;
+            }
+            autoPlayBtn.innerHTML = '<i class="fas fa-fast-forward icon-margin"></i>Auto Play';
+            if (resettingState) {
+                const sortInProgress = currentStepIndex < visualizationSteps.length - 1 && currentStepIndex !== -1;
+                disableControls(sortInProgress, false);
+                if (!sortInProgress && currentStepIndex !== -1) {
+                    stepBtn.disabled = true;
+                    autoPlayBtn.disabled = true;
+                }
             }
         }
-        
-        // Function to reset the visualization
-        function resetVisualization() {
-            sortingInProgress = false;
-            sortingSteps = [];
-            currentStepIndex = 0;
-            
-            // Reset UI
-            startSortBtn.disabled = false;
-            nextStepBtn.disabled = true;
-            resetBtn.disabled = true;
-            
-            // Clear highlighting
-            renderArray();
-            
-            // Clear recursion tree
-            recursionTree.innerHTML = '';
-            
-            updateStepDisplay('Visualization reset. Click "Start Merge Sort" to begin.');
-        }
-        
-        // Function to update the step display
-        function updateStepDisplay(message) {
-            stepDisplay.innerHTML = `<p>${message}</p>`;
-        }
+
+        autoPlayBtn.addEventListener('click', () => {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        });
+
+        // --- Initial State ---
+        speedValueSpan.textContent = `${animationSpeed}ms`;
+        disableControls(false, false);
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
 </html>
