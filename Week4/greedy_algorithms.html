@@ -5,60 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greedy Algorithms Visualization</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #f4f7f9;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --light-text-color: #555;
+            --border-color: #e0e0e0;
+            --code-bg: #f8f9fa;
+            --highlight-bg: #e8f4f8;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            max-width: 1000px;
+            color: var(--text-color);
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 30px;
+            background-color: var(--background-color);
         }
         h1, h2, h3 {
-            color: #2c3e50;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5em;
+            font-size: 2.5em;
+        }
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.3em;
+            font-size: 1.8em;
+        }
+        h3 {
+            font-size: 1.4em;
+        }
+        p {
+            margin-bottom: 1em;
+            color: var(--light-text-color);
+        }
+        ul, ol {
+            margin-bottom: 1em;
+            padding-left: 25px;
+        }
+        li {
+            margin-bottom: 0.5em;
         }
         .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            background-color: var(--container-bg);
+            border-radius: 10px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
         }
         .controls {
-            margin: 20px 0;
+            margin: 25px 0;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
         }
         button {
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-size: 0.95em;
+            font-weight: 500;
         }
         button:hover {
             background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(0);
         }
         button:disabled {
             background-color: #bdc3c7;
             cursor: not-allowed;
+            transform: translateY(0);
         }
-        select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        select, input[type="number"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95em;
+            min-width: 150px;
         }
+        input[type="number"] {
+            width: 100px;
+        }
+
         .visualization-container {
-            margin: 20px 0;
-            min-height: 300px;
-            border: 1px solid #ddd;
+            margin: 25px 0;
+            min-height: 350px;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 15px;
+            padding: 20px;
             position: relative;
+            background-color: #fdfdfd;
+            overflow: hidden; /* Ensure contents stay within border */
         }
         .item {
             display: inline-flex;
@@ -69,65 +129,96 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .item-label {
             position: absolute;
-            bottom: 5px;
-            font-size: 12px;
-            background-color: rgba(0,0,0,0.7);
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            background-color: rgba(0,0,0,0.75);
             color: white;
-            padding: 2px 5px;
+            padding: 2px 6px;
             border-radius: 3px;
+            white-space: nowrap;
         }
         .selected {
-            border: 2px solid #e74c3c;
+            border: 2px solid var(--error-color);
             transform: scale(1.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
         .step-display {
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-radius: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--highlight-bg);
+            border: 1px solid #cde9f2;
+            border-radius: 6px;
             min-height: 60px;
+            font-size: 0.95em;
+        }
+        .step-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
         .code-block {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
+            background-color: var(--code-bg);
+            padding: 15px 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
             overflow-x: auto;
-            font-family: monospace;
-            margin: 15px 0;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            margin: 20px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        pre {
+            margin: 0;
         }
         .complexity {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
-            margin: 20px 0;
+            margin: 25px 0;
         }
         .complexity-item {
             flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
+            min-width: 220px;
+            padding: 15px;
+            background-color: var(--code-bg);
+            border-radius: 6px;
+            border-left: 5px solid var(--primary-color);
+        }
+        .complexity-item h4 {
+            margin-top: 0;
+            margin-bottom: 0.5em;
+            color: var(--secondary-color);
         }
         .tabs {
             display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
         }
         .tab {
-            padding: 10px 20px;
+            padding: 12px 25px;
             cursor: pointer;
-            border: 1px solid transparent;
+            border: 2px solid transparent;
+            border-bottom: none;
+            margin-bottom: -2px;
+            color: var(--light-text-color);
+            font-weight: 500;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .tab:hover {
+            color: var(--primary-color);
         }
         .tab.active {
-            border: 1px solid #ddd;
-            border-bottom: 1px solid white;
-            border-radius: 4px 4px 0 0;
-            margin-bottom: -1px;
-            background-color: white;
+            border: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--container-bg);
+            border-radius: 8px 8px 0 0;
+            background-color: var(--container-bg);
+            color: var(--primary-color);
         }
         .tab-content {
             display: none;
@@ -136,40 +227,53 @@
             display: block;
         }
         .example-container {
-            margin: 20px 0;
-            padding: 15px;
+            margin: 25px 0;
+            padding: 20px;
             background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
+            border-radius: 6px;
+            border-left: 5px solid var(--primary-color);
         }
         .comparison-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin: 20px 0;
+            gap: 25px;
+            margin: 25px 0;
         }
         .comparison-item {
             flex: 1;
             min-width: 300px;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
+            background-color: var(--code-bg);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
         .comparison-item h3 {
             margin-top: 0;
-            color: #2c3e50;
+            color: var(--secondary-color);
+            font-size: 1.2em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5em;
         }
         .activity-log {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-            max-height: 200px;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: var(--code-bg);
+            border-radius: 6px;
+            border-left: 5px solid var(--primary-color);
+            max-height: 250px;
             overflow-y: auto;
+            font-size: 0.9em;
+            line-height: 1.4;
         }
         .activity-log p {
-            margin: 5px 0;
+            margin: 8px 0;
+            color: var(--light-text-color);
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+        .activity-log p:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
         }
     </style>
 </head>
