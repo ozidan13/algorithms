@@ -7,6 +7,33 @@
     <link rel="icon" type="image/svg+xml" href="public/logo.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <meta name="description" content="Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the 'Grokking Algorithms' approach.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--accent-color)',
+                        secondary: 'var(--accent-secondary)',
+                        dark: 'var(--background-main)',
+                        light: 'var(--primary-text)'
+                    },
+                    borderRadius: {
+                        card: 'var(--card-radius)',
+                        button: 'var(--button-radius)'
+                    },
+                    boxShadow: {
+                        card: 'var(--card-shadow)',
+                        'card-hover': 'var(--card-shadow-hover)',
+                        button: 'var(--button-shadow)',
+                        'button-hover': 'var(--button-shadow-hover)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         /* Reset and Core Styles - Apple Inspired */
         *, *::before, *::after {
@@ -262,6 +289,14 @@
             margin-bottom: 1.2rem;
             color: var(--secondary-text);
             transition: color 0.3s ease;
+        }
+
+        /* Specific font sizes for header elements */
+        header h1 {
+            font-size: 4.5rem; /* Increased size for header h1 */
+        }
+        header h3 {
+            font-size: 2.2rem; /* Increased size for header h3 */
         }
 
         .container {
@@ -831,13 +866,813 @@
             border-top: 1px solid var(--border-color);
             text-align: center;
             transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease;
+            /* Added CSS to replace Tailwind */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Replaces space-y-2 */
         }
 
         .algo-card-footer .btn {
+            padding: 12px 25px; /* Keep original padding */
+            font-size: 1rem; /* Keep original font size */
+            /* Removed min-width: 140px; and width: auto; */
+             /* Added CSS to replace Tailwind */
+            width: 100%;     /* Replaces w-full */
+            height: 3rem;      /* Replaces h-12 */
+            display: flex;     /* Replaces flex */
+            align-items: center; /* Replaces items-center */
+            justify-content: center; /* Replaces justify-center */
+            /* Ensure base .btn styles are not overridden unnecessarily */
+        }
+
+        /* Style for icons within footer buttons */
+        .algo-card-footer .btn i {
+             margin-right: 0.5rem; /* Replaces mr-2 */
+             /* Ensure icon styles from general .btn i are considered */
+        }
+
+        /* Footer */
+        footer {
+            background: var(--footer-gradient);
+            color: var(--secondary-text);
+            padding: 100px 0 60px;
+            margin-top: 100px;
+            transition: background var(--transition-duration) ease, color var(--transition-duration) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        footer::after { /* Subtle overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 280px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 25px; /* Adjusted for ::after */
+            font-size: 1.4rem;
+            color: var(--primary-text);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-section li:hover {
+            transform: translateX(5px);
+        }
+
+        .footer-section a {
+            color: var(--accent-color); /* Use accent color directly */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-color-hover);
+        }
+
+        /* Icon spacing helper class */
+        .icon-margin {
+            margin-right: 10px;
+        }
+
+        .footer-section a i {
+            /* Replaced by .icon-margin */
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            /* margin-right: 12px; */ /* Use .icon-margin */
+            width: 20px;
+            text-align: center;
+        }
+
+        .footer-section a:hover i {
+            transform: translateX(3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .copyright a {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Scroll to Top Button - Cleaned Up */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--scroll-top-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-duration) ease,
+                        visibility var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            box-shadow: var(--button-shadow); /* Use button shadow */
+            z-index: 100;
+            transform: translateY(20px) scale(0.9);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .scroll-top:hover {
+            background-color: var(--scroll-top-hover);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--button-shadow-hover);
+        }
+
+        .scroll-top i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .scroll-top:hover i {
+            transform: translateY(-3px);
+        }
+
+        /* Dark Mode Toggle - Cleaned Up */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: var(--card-background);
+            box-shadow: var(--toggle-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before { /* Subtle glow effect */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .theme-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .theme-toggle i {
+            font-size: 1.6rem;
+            color: var(--primary-text);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color var(--transition-duration) ease;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
+
+        /* Icons based on theme */
+        .theme-toggle i.fa-sun { color: #ffd60a; text-shadow: 0 0 10px rgba(255, 214, 10, 0.5); }
+        [data-theme="light"] .theme-toggle i.fa-moon { color: #6e6e73; text-shadow: none; }
+
+        /* Tab Navigation - Cleaned Up */
+        .tab-container {
+            margin-bottom: 60px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            background-color: var(--tab-background);
+            border: none;
+            padding: 14px 28px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: var(--primary-text);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before { /* Shimmer effect */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: var(--button-shadow); /* Use button shadow */
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background-color: var(--tab-hover);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-content {
+            display: none;
+            /* animation: fadeIn 0.5s ease; */ /* Let JS handle fade if needed */
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease; /* Keep fade in for content switch */
+        }
+
+        /* Responsive Design - Adjusted Breakpoints */
+        @media (max-width: 1068px) {
+            html {
+                font-size: 93.75%; /* 15px */
+            }
+            .container { padding: 0 30px; } /* Slightly more padding */
+            /* Removed specific h1, h2 overrides */
+            header { min-height: auto; padding: 120px 0 80px 0; } /* Adjust padding */
+            /* Removed specific header h1, p overrides */
+            /* Removed specific week-header h2 override */
+            /* Removed specific topics h3 override */
+            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+            .footer-content { justify-content: space-around; }
+        }
+
+        @media (max-width: 768px) {
+             html {
+                 font-size: 81.25%; /* 13px */
+             }
+             .container { padding: 0 20px; }
+            /* Removed specific h1, h2 overrides */
+            header { padding: 100px 0 60px 0; }
+            /* Removed specific header h1, p overrides */
+            /* Removed specific week-header h2 override */
+            /* Removed specific topics h3 override */
+            .algo-grid { grid-template-columns: 1fr; gap: 25px; } /* Single column, less gap */
+            .topics ul { flex-direction: column; align-items: center; gap: 10px; } /* Stack topics */
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-section { margin-bottom: 30px; padding: 0 10px; }
+            .footer-section h3, .copyright { text-align: center; }
+            .theme-toggle { width: 50px; height: 50px; } /* Slightly smaller toggle */
+            .scroll-top { width: 45px; height: 45px; bottom: 20px; right: 20px; } /* Adjust scroll top */
+        }
+
+        /* Add spacing for heading icons */
+        h1 i.icon-margin, h2 i.icon-margin, h3 i.icon-margin {
+            margin-right: 12px; /* Consistent spacing */
+        }
+
+        /* Info Section below Header */
+        .info-section {
+            padding: 40px 0;
+            background-color: var(--background-alt);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 60px;
+            transition: background-color var(--theme-transition), border-color var(--theme-transition);
+        }
+
+        .info-section .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around; /* Adjust alignment */
+            /* align-items: center; Removed to allow stretch */
+            gap: 30px;
+        }
+
+        .info-block {
+            background-color: var(--card-background);
+            padding: 25px 30px;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            flex: 1 0 0; /* Ensure equal width distribution */
+            min-width: 300px; /* Ensure blocks don't get too small */
+            max-width: 450px; /* Limit max width */
+            text-align: center; /* Ensure text is centered */
+            transition: background-color var(--theme-transition), box-shadow var(--theme-transition);
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center icon and content horizontally */
+            gap: 20px; /* Increased gap */
+            height: 100%; /* Added to ensure block stretches */
+            min-height: 170px;
+        }
+
+        .info-block i {
+            font-size: 2rem; /* Slightly larger icon */
+            color: var(--accent-color);
+            transition: color var(--theme-transition);
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .info-block p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--primary-text);
+            transition: color var(--theme-transition);
+        }
+
+        /* Style the div wrapper created by JS for mentorship */
+        .info-block > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center text and button */
+            gap: 10px;
+            text-align: center;
+        }
+
+        .info-block a {
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .info-section .container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .info-block {
+                 max-width: none; /* Allow full width on small screens */
+            }
+        }
+
+        /* WhatsApp Button Style */
+        .btn-whatsapp {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+        }
+        .btn-whatsapp:hover {
+            background-color: #128C7E; /* Darker WhatsApp Green */
+            color: white; /* Ensure text stays white on hover */
+            transform: translateY(-3px); /* Maintain hover lift */
+            box-shadow: var(--button-shadow-hover); /* Maintain hover shadow */
+        }
+        /* Apply shimmer effect specifically to whatsapp button if needed, or ensure general .btn::before handles it */
+        .btn-whatsapp::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-whatsapp:hover::before {
+            left: 100%;
+        }
+
+
+        /* Header-specific button styling overrides */
+        header .btn {
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            animation: scaleIn 1.2s ease-out 0.6s backwards;
+            /* Remove gradient background for consistency */
+            /* background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)); */
+            /* background-size: 200% 100%; */
+            /* transition: all 0.4s ease; */ /* Use default transition */
+        }
+
+        header .btn:hover {
+            /* background-position: 100% 0; */
+            transform: translateY(-5px); /* Slightly more lift for hero button */
+            box-shadow: var(--button-shadow-hover);
+        }
+
+        /* Week Sections */
+        .week-container {
+            padding: var(--section-padding);
+            position: relative;
+            /* Initial state for intersection observer */
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .week-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            opacity: 0.5;
+        }
+
+        .week-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .week-header {
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .week-header h2 {
+            font-size: 3rem;
+            color: var(--primary-text);
+            margin-bottom: 25px; /* Adjusted for ::after */
+            position: relative;
+            display: inline-block;
+        }
+
+        .week-description {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            text-align: center;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .topics {
+            background-color: var(--topic-background);
+            padding: 40px;
+            border-radius: var(--border-radius); /* Use variable */
+            margin-bottom: 60px;
+            transition: background-color var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topics::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%); /* Reduced intensity */
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .topics:hover::before {
+             opacity: 0.5;
+        }
+
+        .topics h3 {
+            margin-bottom: 30px; /* Adjusted for ::after */
+            color: var(--primary-text);
+            font-size: 2rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .topics ul {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .topics li {
+            background-color: var(--topic-item-bg);
+            color: var(--primary-text);
             padding: 12px 25px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Simplified shadow */
+            font-weight: 500;
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            /* Initial state for animation */
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        /* Visible state for animation */
+        .week-container.visible .topics li {
+             transition: opacity 0.5s ease, transform 0.5s ease;
+             opacity: 1;
+             transform: translateX(0);
+        }
+
+        .topics li::before { /* Subtle gradient overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .topics li:hover {
+            transform: translateY(-4px); /* Reduced lift */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            /* animation: float 2s ease-in-out infinite; */ /* Removed continuous float */
+        }
+
+        .topics li:hover::before {
+            opacity: 1;
+        }
+
+        .topics li i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Algorithm Grid and Cards (Optimized) */
+        .algo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Slightly adjusted minmax */
+            gap: 35px; /* Slightly reduced gap */
+            /* perspective: 1000px; */ /* Removed perspective for simpler hover */
+        }
+
+        .algo-card {
+            background-color: var(--card-background);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0;
+            /* transform-style: preserve-3d; */ /* Removed */
+            /* backface-visibility: hidden; */ /* Removed */
+            /* Initial state for animation */
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Visible state for animation */
+        .week-container.visible .algo-card {
+            transition: opacity 0.6s ease, transform 0.6s ease,
+                        box-shadow var(--transition-duration) ease, /* Keep hover transition */
+                        background-color var(--transition-duration) ease; /* Keep theme transition */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .algo-card::before { /* Subtle gradient overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .algo-card:hover {
+            transform: translateY(-8px); /* Simpler hover effect */
+            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */ /* Removed complex transform */
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .algo-card:hover::before {
+            opacity: 0.8;
+        }
+
+        .algo-card-header {
+            background-color: var(--card-header-bg);
+            color: var(--primary-text);
+            padding: 25px 20px;
+            font-weight: 600;
+            font-size: 1.4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease, border-color var(--transition-duration) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .algo-card-header::before { /* Shimmer effect */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.7s ease; /* Slower shimmer */
+        }
+
+        .algo-card:hover .algo-card-header::before {
+            left: 100%;
+        }
+
+        .algo-card-body {
+            padding: 30px;
+            flex-grow: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .algo-card-body p {
+            color: var(--secondary-text);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .complexity {
+            margin: 20px 0;
             font-size: 1rem;
-            width: auto;
-            min-width: 140px;
+            color: var(--secondary-text);
+            background-color: rgba(255, 255, 255, 0.03); /* Slightly less contrast */
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+            transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease;
+        }
+
+        [data-theme="light"] .complexity {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .complexity span {
+            font-weight: 600;
+            color: var(--accent-color);
+            transition: color var(--transition-duration) ease;
+        }
+
+        .features {
+            margin-top: 25px;
+        }
+
+        .features h4 {
+            font-size: 1.1rem;
+            margin-bottom: 15px; /* Adjusted for ::after */
+            color: var(--primary-text);
+            position: relative;
+            display: inline-block;
+            transition: color var(--transition-duration) ease;
+        }
+
+        .features ul {
+            padding-left: 15px;
+            margin-bottom: 20px;
+            list-style-type: none;
+            color: var(--secondary-text);
+            transition: color var(--transition-duration) ease;
+        }
+
+        .features li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            width: 20px;
+            text-align: center;
+            transition: color var(--transition-duration) ease;
+        }
+
+        .algo-card-footer {
+            padding: 20px;
+            background-color: var(--card-footer-bg);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease;
+            /* Added CSS to replace Tailwind */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Replaces space-y-2 */
+        }
+
+        .algo-card-footer .btn {
+            padding: 12px 25px; /* Keep original padding */
+            font-size: 1rem; /* Keep original font size */
+            /* Removed min-width: 140px; and width: auto; */
+             /* Added CSS to replace Tailwind */
+            width: 100%;     /* Replaces w-full */
+            height: 3rem;      /* Replaces h-12 */
+            display: flex;     /* Replaces flex */
+            align-items: center; /* Replaces items-center */
+            justify-content: center; /* Replaces justify-center */
+            /* Ensure base .btn styles are not overridden unnecessarily */
+        }
+
+        /* Style for icons within footer buttons */
+        .algo-card-footer .btn i {
+             margin-right: 0.5rem; /* Replaces mr-2 */
+             /* Ensure icon styles from general .btn i are considered */
         }
 
         /* Footer */
@@ -1332,7 +2167,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/binary_search.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week1/binary_search.html" class="btn"><i class="fas fa-search"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1354,7 +2190,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/selection_sort.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week1/selection_sort.html" class="btn"><i class="fas fa-sort-amount-up"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1372,7 +2209,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/recursion_examples.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week1/recursion_examples.html" class="btn"><i class="fas fa-redo"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1390,7 +2228,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/big_o_visualization.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week1/big_o_visualization.html" class="btn"><i class="fas fa-tachometer-alt"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
@@ -1434,7 +2273,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week2/array_operations.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week2/array_operations.html" class="btn"><i class="fas fa-table"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1456,7 +2296,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week2/linked_list.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week2/linked_list.html" class="btn"><i class="fas fa-link"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1478,7 +2319,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week2/recursive_divide_conquer.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week2/recursive_divide_conquer.html" class="btn"><i class="fas fa-object-ungroup"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1496,7 +2338,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week2/memory_visualization.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week2/memory_visualization.html" class="btn"><i class="fas fa-memory"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
@@ -1541,7 +2384,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week3/quicksort_visualization.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week3/quicksort_visualization.html" class="btn"><i class="fas fa-sort"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1563,7 +2407,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week3/hash_table.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week3/hash_table.html" class="btn"><i class="fas fa-hashtag"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1581,7 +2426,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week3/graph_representation.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week3/graph_representation.html" class="btn"><i class="fas fa-project-diagram"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1603,7 +2449,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week3/graph_traversal.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week3/graph_traversal.html" class="btn"><i class="fas fa-route"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
@@ -1649,7 +2496,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/greedy_algorithms.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week4/greedy_algorithms.html" class="btn"><i class="fas fa-hand-holding-usd"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1671,7 +2519,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/dynamic_programming.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week4/dynamic_programming.html" class="btn"><i class="fas fa-layer-group"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1693,7 +2542,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/knapsack_problem.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week4/knapsack_problem.html" class="btn"><i class="fas fa-shopping-bag"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
@@ -1715,7 +2565,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/knn_classifier.html" class="btn">Explore <i class="fas fa-external-link-alt"></i></a>
+                        <a href="Week4/knn_classifier.html" class="btn"><i class="fas fa-users-cog"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
