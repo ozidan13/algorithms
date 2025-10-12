@@ -1,490 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Representation Visualization</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
-    <!-- Using Cytoscape.js for graph visualization -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+    <title>رحلة مواصلات واقعية - جراف تفاعلي عصري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
     <style>
-        /* Styles specific to Graph Representation */
-        #cy-container {
-            width: 100%;
-            height: 450px; /* Increased height */
-            display: block;
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            background-color: var(--background-alt);
-            margin-bottom: 20px;
-            transition: var(--theme-transition);
+        body {
+            background: linear-gradient(135deg, #22295a 0%, #171c29 100%);
+            color: #e2e2e2;
+            font-family: 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; }
+        .main-container { max-width: 1050px; margin: 0 auto; padding: 30px 10px; }
+        .header, .explanation-box, .result-box {
+            background: linear-gradient(135deg, #26345d 60%, #2d395b 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px #181f3f33;
+            padding: 30px 20px 18px 20px;
+            margin-bottom: 27px;
+            border: 2px solid #324081;
         }
-
-        .representation-container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap; /* Allow wrapping */
-            margin-top: 20px;
-        }
-
-        .representation-box {
-            flex: 1; /* Take equal space */
-            min-width: 300px; /* Minimum width */
-            padding: 15px;
-            background-color: var(--background-main);
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            transition: var(--theme-transition);
-        }
-
-        .representation-box h3 {
-            margin-top: 0;
-            color: var(--primary-text);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
+        .header h1 {
+            color: #22c55e;
+            font-size: 2.25rem;
             margin-bottom: 10px;
+            font-weight: 900;
+            letter-spacing: .8px; }
+        .subtitle {
+            color: #a4f9c6;
+            font-size: 1.17rem;
+            margin-bottom: 8px; 
+            font-weight: 600;
+            font-family: 'Cairo',sans-serif; }
+        .explanation-title {
+            color: #86b4ff; font-size: 1.09rem;
+            margin-bottom: 9px; font-family: 'Cairo',sans-serif; font-weight: bold; }
+        .explanation-box {
+            font-size: 1.12rem; 
+            line-height: 2.15; color: #e4f5fa;
+            border-right: 6px solid #22c55e; 
+            background: linear-gradient(120deg, #23355455 80%, #152036 100%);
+            font-family: 'Cairo',sans-serif;
         }
-
-        pre.code-block.compact {
-            max-height: 300px; /* Limit height for adjacency list/matrix */
-            overflow-y: auto;
-            font-size: 0.85rem; /* Slightly smaller font */
-            background-color: var(--background-alt);
-            border: 1px solid var(--border-color);
-            padding: 10px;
+        .highlight {
+            color: #4ade80; font-weight: 900; background: #151e3455; border-radius: 6px; padding: 2px 7px; font-size: 1.08em;}
+        #cy {
+            width: 100%; height: 500px; background: #151a2b; border-radius: 19px; margin-bottom: 22px;
+            box-shadow: 0 6px 20px #23294633; border: 1.5px solid #395baa;
         }
-
-        /* Controls refinement */
-         .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            /* justify-content: center; */ /* Align left for this layout */
+        .tool-box {
+            background: #212a4a;
+            border-radius: 12px; padding: 16px;
+            margin-bottom: 17px; display: flex; gap: 14px;
+            align-items: center; flex-wrap: wrap;
         }
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .tool-box select, .tool-box button {
+            font-size: 1rem; border-radius: 8px;
+            border: none; padding: 9px 20px;
+            background: #e8ffe3; color: #20332c;
         }
-        .control-group label {
-            white-space: nowrap;
-        }
-         .control-group input[type="text"],
-         .control-group input[type="number"],
-         .control-group select {
-            margin-right: 10px;
-         }
-        .log {
-             margin-top: 20px;
-             max-height: 120px; /* Shorter log */
-         }
+        .tool-box button {
+            background: linear-gradient(135deg,#22c55e 70%,#74faa8 100%); color: #183241; font-weight: bold; font-family: 'Cairo',sans-serif;}
+        .tool-box button:hover { box-shadow: 0 2px 13px #22c55e79;}
+        .result-box { font-size: 1.13rem; color: #ffeebb; font-family: 'Cairo',sans-serif; margin-bottom:15px; padding-bottom:3px; }
+        .result-path { color: #67e9a0; margin: 0 2px; font-weight: bold;font-size: 1.14em; }
+        @media (max-width:700px) { #cy { height: 240px; } .main-container { padding: 6px; } }
     </style>
 </head>
-<body data-theme="dark">
-    <a href="../index.html#week3" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
-
-    <h1><i class="fas fa-project-diagram icon-margin"></i>Graph Representation Visualization</h1>
-
-    <div class="container">
-        <h2><i class="fas fa-network-wired icon-margin"></i>Interactive Graph Builder</h2>
-        <p>Build a graph by adding nodes and edges, and see its representation as an Adjacency List and Adjacency Matrix.</p>
-
-        <div class="controls">
-             <div class="control-group">
-                <label for="node-id">Node ID:</label>
-                <input type="text" id="node-id" placeholder="e.g., A" size="4">
-                <button id="add-node-btn"><i class="fas fa-plus-circle icon-margin"></i>Add Node</button>
-            </div>
-             <div class="control-group">
-                <label for="edge-source">From:</label>
-                <input type="text" id="edge-source" placeholder="e.g., A" size="4">
-                <label for="edge-target">To:</label>
-                <input type="text" id="edge-target" placeholder="e.g., B" size="4">
-                <label for="edge-weight">Weight (optional):</label>
-                <input type="number" id="edge-weight" placeholder="e.g., 5" min="0" style="width: 60px;">
-                <button id="add-edge-btn"><i class="fas fa-long-arrow-alt-right icon-margin"></i>Add Edge</button>
-            </div>
-            <div class="control-group">
-                <label for="graph-type">Graph Type:</label>
-                <select id="graph-type">
-                    <option value="undirected">Undirected</option>
-                    <option value="directed">Directed</option>
-                </select>
-                 <label for="layout-type">Layout:</label>
-                 <select id="layout-type">
-                     <option value="cose">Cose (default)</option>
-                     <option value="grid">Grid</option>
-                     <option value="circle">Circle</option>
-                     <option value="breadthfirst">Breadthfirst</option>
-                     <option value="random">Random</option>
-                 </select>
-                 <button id="reset-graph-btn"><i class="fas fa-undo icon-margin"></i>Reset Graph</button>
-            </div>
-        </div>
-
-        <div id="cy-container"></div>
-        <div class="log" id="log"><p>Add nodes and edges to build your graph.</p></div>
-
-        <div class="representation-container">
-            <div class="representation-box" id="adj-list-box">
-                 <h3><i class="fas fa-list-ul icon-margin"></i>Adjacency List</h3>
-                 <pre class="code-block compact" id="adj-list">{}</pre>
-            </div>
-             <div class="representation-box" id="adj-matrix-box">
-                 <h3><i class="fas fa-th icon-margin"></i>Adjacency Matrix</h3>
-                 <pre class="code-block compact" id="adj-matrix">[]</pre>
-            </div>
-        </div>
+<body>
+<div class="main-container">
+    <div class="header">
+        <h1>شرح الـ Graph... كيف أوصل للأسرع؟ 🚍</h1>
     </div>
-
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>Graph Representations Explained</h2>
-        <div class="explanation">
-            <p>Graphs can be represented in several ways, each with trade-offs in terms of space complexity and efficiency for different operations.</p>
-            <ul>
-                <li>
-                    <strong>Adjacency List:</strong>
-                    <ul>
-                        <li>Represents a graph as an array (or map) where each index (or key) corresponds to a node. The value at each index is a list (or set) of its adjacent neighbors (and optionally edge weights).</li>
-                        <li><strong>Space Complexity:</strong> O(V + E), where V is the number of vertices (nodes) and E is the number of edges. Efficient for sparse graphs (few edges relative to nodes).</li>
-                        <li><strong>Pros:</strong> Space-efficient for sparse graphs. Iterating over neighbors of a node is efficient.</li>
-                        <li><strong>Cons:</strong> Checking if an edge exists between two specific nodes (u, v) can take O(degree(u)) time.</li>
-                    </ul>
-                </li>
-                <li>
-                    <strong>Adjacency Matrix:</strong>
-                    <ul>
-                        <li>Represents a graph as a V x V matrix where the entry at `matrix[i][j]` indicates the presence (and possibly weight) of an edge from node i to node j. A 0 or infinity might represent no edge.</li>
-                        <li><strong>Space Complexity:</strong> O(V²), regardless of the number of edges. More suitable for dense graphs (many edges).</li>
-                        <li><strong>Pros:</strong> Checking for an edge between nodes i and j is very fast (O(1)). Adding/removing edges is O(1).</li>
-                        <li><strong>Cons:</strong> Space-inefficient for sparse graphs. Iterating over all neighbors of a node takes O(V) time. Adding/removing a node is O(V²).</li>
-                    </ul>
-                </li>
-                 <li><strong>Edge List:</strong> Simply a list of all edges in the graph, often represented as pairs or triplets (u, v, weight). Space complexity is O(E). Useful for some algorithms but less efficient for neighbor lookups.</li>
-            </ul>
-        </div>
-         <h3><i class="fas fa-code icon-margin"></i>Conceptual Data Structures</h3>
-         <pre class="code-block">
-<code>// Adjacency List (using Map for non-numeric IDs)
-const adjList = new Map();
-adjList.set('A', [{ node: 'B', weight: 5 }, { node: 'C', weight: 2 }]);
-adjList.set('B', [{ node: 'A', weight: 5 }]);
-adjList.set('C', [{ node: 'A', weight: 2 }]);
-// To check neighbors of 'A': adjList.get('A')
-
-// Adjacency Matrix (assuming nodes 0, 1, 2 correspond to A, B, C)
-// INF represents no direct edge
-const INF = Infinity;
-const adjMatrix = [
-  // A  B    C
-  [ 0,  5,   2 ], // A
-  [ 5,  0, INF ], // B
-  [ 2, INF,  0 ]  // C
-];
-// To check edge A -> C: adjMatrix[0][2] (returns 2)
-// To check edge B -> C: adjMatrix[1][2] (returns Infinity)
-</code></pre>
+    <div class="explanation-box">
+        <div class="explanation-title">السيناريو: شخص يريد التحرك من بيته إلى الجامعة</div>
+        <span class="highlight">كل Node تعبر عن مكان:</span> Home (المنزل)، Bus1 (ركوب باص)، Metro (ركوب مترو/تبديل مواصلة)، Uni (الجامعة)
+        <br><br>المسارات:
+        <ul dir="ltr" style="margin-top: 9px;direction:ltr; color:#d5eaff; font-weight: 700;">
+            <li>Home → Walk → Bus1 → Metro → Uni</li>
+            <li>Home → Taxi → Uni</li>
+            <li>Home → Walk → Uni</li>
+        </ul>
+        <b style="color:#ffec7c;">أسرع طريق؟ الأقصر فعلياً؟ النظام يحسبها أوتوماتيكياً أيًا كان ترتيب النقاط أو المسافة!</b><br>
+        <span style="color:#88ffcd;">جرب تختار البداية والنهاية وشوف الشرح التفاعلي بلون الطريق.</span>
     </div>
-
-    <script>
-        // Theme persistence
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
-
-        // DOM Elements
-        const nodeIdInput = document.getElementById('node-id');
-        const addNodeBtn = document.getElementById('add-node-btn');
-        const edgeSourceInput = document.getElementById('edge-source');
-        const edgeTargetInput = document.getElementById('edge-target');
-        const edgeWeightInput = document.getElementById('edge-weight');
-        const addEdgeBtn = document.getElementById('add-edge-btn');
-        const graphTypeSelect = document.getElementById('graph-type');
-        const layoutTypeSelect = document.getElementById('layout-type');
-        const resetGraphBtn = document.getElementById('reset-graph-btn');
-        const cyContainer = document.getElementById('cy-container');
-        const logElement = document.getElementById('log');
-        const adjListBox = document.getElementById('adj-list-box');
-        const adjMatrixBox = document.getElementById('adj-matrix-box');
-        const adjListPre = document.getElementById('adj-list');
-        const adjMatrixPre = document.getElementById('adj-matrix');
-
-        let cy = null; // Cytoscape instance
-        let nodeMap = new Map(); // Map node ID to index for matrix
-        let nextNodeIndex = 0;
-        let isDirected = false;
-
-        // --- Utility Functions ---
-        function logMessage(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            logElement.prepend(p);
-            while (logElement.children.length > 5) { // Keep log shorter
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
-
-        // --- Cytoscape Initialization and Styling ---
-        function initializeCytoscape() {
-             cy = cytoscape({
-                 container: cyContainer,
-                 elements: [], // Start empty
-                 style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': 'var(--color-default-element)',
-                            'label': 'data(id)',
-                            'color': 'var(--color-element-text)',
-                            'text-valign': 'center',
-                            'text-halign': 'center',
-                             'border-width': 1,
-                             'border-color': 'var(--accent-color)',
-                             'font-size': '12px',
-                             'width': '30px', // Fixed size nodes
-                             'height': '30px'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': 'var(--accent-color)',
-                             'target-arrow-color': 'var(--accent-color)',
-                             'target-arrow-shape': isDirected ? 'triangle' : 'none',
-                             'curve-style': 'bezier',
-                             'label': 'data(weight)', // Show weight on edge
-                             'color': 'var(--secondary-text)',
-                             'font-size': '10px',
-                             'text-background-opacity': 1,
-                             'text-background-color': 'var(--background-alt)',
-                             'text-background-padding': '2px',
-                             'text-background-shape': 'roundrectangle'
-                        }
-                    },
-                     {
-                         selector: 'edge[weight=null]', // Hide label if no weight
-                         style: {
-                             'label': ''
-                         }
-                     }
-                ],
-                 layout: {
-                    name: 'cose',
-                    animate: true,
-                    padding: 30
-                }
-            });
-            logMessage('Graph initialized. Add nodes and edges.', 'info');
-            updateRepresentations();
-        }
-
-        function updateGraphType() {
-             isDirected = graphTypeSelect.value === 'directed';
-             if (cy) {
-                 cy.style().selector('edge').style({ 'target-arrow-shape': isDirected ? 'triangle' : 'none' }).update();
-                 // Edges might need to be re-added if changing from directed to undirected to show both ways
-                 // For simplicity here, we just update the style.
-                 logMessage(`Graph type set to ${isDirected ? 'Directed' : 'Undirected'}.`, 'info');
-                 updateRepresentations(); // Representations change based on directedness
-             }
-         }
-
-         function applyLayout() {
-            if (cy) {
-                const layoutName = layoutTypeSelect.value;
-                cy.layout({ name: layoutName, animate: true, padding: 30 }).run();
-                logMessage(`Applied ${layoutName} layout.`, 'info');
-            }
-         }
-
-        // --- Graph Operations ---
-        function addNode() {
-            const nodeId = nodeIdInput.value.trim();
-            if (!nodeId) {
-                logMessage('Node ID cannot be empty.', 'error');
-                return;
-            }
-            if (!cy) {
-                logMessage('Initialize graph first.', 'error');
-                return;
-            }
-             if (cy.getElementById(nodeId).length > 0) {
-                 logMessage(`Node "${nodeId}" already exists.`, 'warning');
-                 return;
-             }
-
-            cy.add({ data: { id: nodeId } });
-            nodeMap.set(nodeId, nextNodeIndex++); // Map ID to matrix index
-             applyLayout(); // Re-run layout after adding node
-            logMessage(`Added node "${nodeId}".`, 'success');
-            nodeIdInput.value = '';
-            updateRepresentations();
-        }
-
-        function addEdge() {
-            const source = edgeSourceInput.value.trim();
-            const target = edgeTargetInput.value.trim();
-            const weightStr = edgeWeightInput.value.trim();
-            const weight = weightStr ? parseFloat(weightStr) : null;
-
-            if (!source || !target) {
-                logMessage('Edge source and target cannot be empty.', 'error');
-                return;
-            }
-             if (weightStr && isNaN(weight)) {
-                 logMessage('Invalid weight: must be a number.', 'error');
-                 return;
-             }
-             if (!cy) {
-                logMessage('Initialize graph first.', 'error');
-                return;
-            }
-             if (cy.getElementById(source).empty() || cy.getElementById(target).empty()) {
-                 logMessage('Both source and target nodes must exist.', 'error');
-                 return;
-             }
-            if (source === target) {
-                logMessage('Self-loops are not currently supported in this visualization.', 'warning');
-                return;
-            }
-
-            const edgeId = `${source}-${target}`; // Simple ID
-            const reverseEdgeId = `${target}-${source}`;
-
-             // Check if edge already exists (especially for undirected)
-             if (cy.getElementById(edgeId).length > 0 || (!isDirected && cy.getElementById(reverseEdgeId).length > 0)) {
-                 logMessage(`Edge between "${source}" and "${target}" already exists.`, 'warning');
-                 return;
-             }
-
-            cy.add({
-                 data: {
-                     id: edgeId,
-                     source: source,
-                     target: target,
-                     weight: weight
-                 }
-             });
-             logMessage(`Added edge ${source} -> ${target}` + (weight !== null ? ` (Weight: ${weight})` : ''), 'success');
-             // Don't apply layout on edge add, can be disruptive
-
-             // For undirected graph, add the reverse edge visually (Cytoscape handles this internally often)
-             // But for representations, we need to consider it.
-            edgeSourceInput.value = '';
-            edgeTargetInput.value = '';
-            edgeWeightInput.value = '';
-            updateRepresentations();
-        }
-
-        function resetGraph() {
-            if (cy) {
-                cy.destroy();
-            }
-            nodeMap.clear();
-            nextNodeIndex = 0;
-            adjListPre.textContent = '{}';
-            adjMatrixPre.textContent = '[]';
-             logElement.innerHTML = '<p>Graph reset.</p>';
-             initializeCytoscape();
-         }
-
-        // --- Representation Updates ---
-        function updateRepresentations() {
-            if (!cy) return;
-
-            // Adjacency List
-            const adjList = {};
-            cy.nodes().forEach(node => {
-                adjList[node.id()] = [];
-                 node.connectedEdges().forEach(edge => {
-                    // Determine neighbor based on edge direction and graph type
-                    let neighborId = null;
-                    let sourceId = edge.source().id();
-                    let targetId = edge.target().id();
-
-                    if (sourceId === node.id()) { // Outgoing edge
-                        neighborId = targetId;
-                    } else if (!isDirected && targetId === node.id()) { // Incoming edge on undirected graph
-                        neighborId = sourceId;
-                    }
-
-                    if (neighborId) {
-                         adjList[node.id()].push({ node: neighborId, weight: edge.data('weight') });
-                    }
-                });
-                 // Sort neighbors for consistent output
-                 adjList[node.id()].sort((a, b) => a.node.localeCompare(b.node));
-            });
-            adjListPre.textContent = JSON.stringify(adjList, (key, value) => {
-                // Custom stringify to handle null weights better
-                if (value && typeof value === 'object' && value.weight === null) {
-                    return { node: value.node }; // Omit weight if null
-                }
-                 return value;
-            }, 2);
-
-            // Adjacency Matrix
-            const matrixSize = nodeMap.size;
-            // Initialize matrix with Infinity (no edge)
-            const adjMatrix = Array(matrixSize).fill(0).map(() => Array(matrixSize).fill(Infinity));
-            const nodeIds = Array.from(nodeMap.keys()).sort(); // Ensure consistent order
-
-             // Update nodeMap based on sorted order (important for matrix consistency)
-             nodeMap.clear();
-             nodeIds.forEach((id, index) => nodeMap.set(id, index));
-
-            // Fill diagonal with 0
-            for(let i = 0; i < matrixSize; i++) adjMatrix[i][i] = 0;
-
-            // Fill edges
-            cy.edges().forEach(edge => {
-                const sourceId = edge.source().id();
-                const targetId = edge.target().id();
-                const weight = edge.data('weight') ?? 1; // Default weight 1 if null
-                const sourceIndex = nodeMap.get(sourceId);
-                const targetIndex = nodeMap.get(targetId);
-
-                if (sourceIndex !== undefined && targetIndex !== undefined) {
-                    adjMatrix[sourceIndex][targetIndex] = weight;
-                    if (!isDirected) {
-                        adjMatrix[targetIndex][sourceIndex] = weight; // Add reverse edge for undirected
-                    }
-                }
-            });
-
-            // Format matrix for display
-            let matrixString = '      ' + nodeIds.join('     ') + '\n'; // Header row
-            matrixString += '    ' + '- '.repeat(nodeIds.length * 3) + '\n';
-            adjMatrix.forEach((row, i) => {
-                 matrixString += nodeIds[i].padEnd(3) + ' | ';
-                 matrixString += row.map(val => String(val === Infinity ? 'INF' : val).padStart(3)).join(' | ') + ' |\n';
-            });
-            adjMatrixPre.textContent = matrixString.trim();
-        }
-
-        // --- Event Listeners ---
-        addNodeBtn.addEventListener('click', addNode);
-        addEdgeBtn.addEventListener('click', addEdge);
-        graphTypeSelect.addEventListener('change', updateGraphType);
-        layoutTypeSelect.addEventListener('change', applyLayout);
-        resetGraphBtn.addEventListener('click', resetGraph);
-
-         // Allow adding node/edge on Enter key press in relevant inputs
-         nodeIdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNodeBtn.click(); });
-         edgeTargetInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEdgeBtn.click(); });
-         edgeWeightInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEdgeBtn.click(); });
-
-        // --- Initial Setup ---
-        initializeCytoscape();
-
-    </script>
+    <div class="tool-box">
+        <select id="start-node"></select>
+        <span style="font-size: 1.35rem;font-weight:bold;">→</span>
+        <select id="end-node"></select>
+        <button onclick="findPath()">🔍 احسب الطريق الأسرع</button>
+    </div>
+    <div id="cy"></div>
+    <div class="result-box" id="result"></div>
+    
+</div>
+<script>
+let graph = {
+  'Home':   [{node:'Walk',dist:7}, {node:'Taxi',dist:18}],
+  'Walk':   [{node:'Bus1',dist:3}, {node:'Uni',dist:15}],
+  'Bus1':   [{node:'Metro',dist:4}],
+  'Metro':  [{node:'Uni',dist:5}],
+  'Taxi':   [{node:'Uni',dist:7}],
+  'Uni':    []
+};
+const allNodes = Object.keys(graph);
+const cyLayout = {
+  name: 'preset',
+  positions: {
+    'Home': {x:90, y:350},
+    'Walk': {x:230, y:320},
+    'Bus1': {x:390, y:340},
+    'Metro': {x:470, y:170},
+    'Taxi': {x:230, y:180},
+    'Uni': {x:600, y:90}
+  }
+};
+let cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: [
+    ...allNodes.map(n=>({group:'nodes',data:{id:n,label:n}})),
+    {data:{source:'Home',target:'Walk',label:'7m'}},
+    {data:{source:'Home',target:'Taxi',label:'18m'}},
+    {data:{source:'Walk',target:'Bus1',label:'3m'}},
+    {data:{source:'Walk',target:'Uni',label:'15m'}},
+    {data:{source:'Bus1',target:'Metro',label:'4m'}},
+    {data:{source:'Metro',target:'Uni',label:'5m'}},
+    {data:{source:'Taxi',target:'Uni',label:'7m'}},
+  ],
+  style: [
+    { selector: 'node', style: {'background-color': '#22c55e', 'label': 'data(label)', 'width':55,'height':55,'font-size': '18.5px','color':'#24243d','text-valign':'center','text-halign':'center','font-family':"'Cairo',sans-serif"} },
+    { selector: 'edge', style: {'width':5,'line-color':'#8d9eff','target-arrow-color':'#8d9eff','target-arrow-shape':'triangle','label': 'data(label)','font-size': '15px', 'color':'#ffeebb','curve-style':'bezier'} },
+    { selector: '.highlighted', style: {'background-color': '#ffeebb','line-color': '#4ade80','width':6,'color':'#21897c','font-weight':'bold','text-outline-color':'#fff','text-outline-width':3} }
+  ],
+  layout: cyLayout,
+  userZoomingEnabled: true,
+  userPanningEnabled: true,
+  boxSelectionEnabled: false,
+  autoungrabify: false // يسمح بتحريك الـ nodes بحرية بالماوس
+});
+let startSel = document.getElementById('start-node');
+let endSel = document.getElementById('end-node');
+allNodes.forEach(n => {
+  let opt1=document.createElement('option'); opt1.value=n; opt1.textContent=n; startSel.appendChild(opt1);
+  let opt2=document.createElement('option'); opt2.value=n; opt2.textContent=n; endSel.appendChild(opt2);
+});
+endSel.value = "Uni";
+function findPath(){
+  let start = startSel.value, end = endSel.value;
+  let resultDiv = document.getElementById('result');
+  if(start===end){resultDiv.innerHTML='<span style="color:#fbbf24;">اختار نقطتين مختلفتين!</span>'; return;}
+  let r = dijkstra(graph, start, end);
+  cy.elements().removeClass('highlighted');
+  for(let i=0;i<r.path.length-1;i++){
+    cy.getElementById(r.path[i]).addClass('highlighted');
+    let eid1 = 'edge[source="'+r.path[i]+'"][target="'+r.path[i+1]+'"];';
+    let eid2 = 'edge[source="'+r.path[i+1]+'"][target="'+r.path[i]+'"];';
+    cy.$(eid1).addClass('highlighted');
+    cy.$(eid2).addClass('highlighted');
+  }
+  cy.getElementById(r.path[r.path.length-1]).addClass('highlighted');
+  if(r.distance===Infinity||r.path.length<2){
+      resultDiv.innerHTML='<span style="color:#f87171;">لا يوجد طريق أو المسافة منقوصة!</span>';
+  }else{
+      resultDiv.innerHTML = `<div style='color:#4ade80; font-size:1.09rem;'>أسرع طريق من <b>${start}</b> إلى <b>${end}</b>:</div><div class='result-path'>${r.path.join(' ← ')}</div><div style='color:#fbbf24;padding-top:4px;'>الزمن الكلي: <b>${r.distance} دقيقة</b></div><div style='color:#7dcfff; margin-top:7px;'>كل خطوط الرحلة ملونة - جرب تغير البداية والنهاية!😉</div>`;
+  }
+}
+function dijkstra(graph, start, end) {
+  let dist={}, prev={}, q=new Set(Object.keys(graph));
+  for(let v in graph) dist[v]=Infinity, prev[v]=null; dist[start]=0;
+  while(q.size>0){
+    let curr,min=1e9;q.forEach(n=>{if(dist[n]<min)min=dist[n],curr=n;});
+    if(curr===end||min===Infinity)break;
+    q.delete(curr);
+    for(let n of graph[curr]){let d=dist[curr]+n.dist;if(d<dist[n.node])dist[n.node]=d,prev[n.node]=curr;}
+  }
+  let path=[],c=end; while(c) path.unshift(c),c=prev[c];
+  return {path,distance:dist[end]};
+}
+</script>
 </body>
 </html>
