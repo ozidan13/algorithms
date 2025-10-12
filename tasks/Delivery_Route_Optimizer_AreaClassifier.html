@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Route Optimizer & Area Classifier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .panel h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        button.success {
+            background: #28a745;
+        }
+
+        button.success:hover {
+            background: #218838;
+        }
+
+        .delivery-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .delivery-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #e9ecef;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .delivery-item span {
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .delivery-item button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 500px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            cursor: crosshair;
+        }
+
+        .canvas-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .canvas-hint {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .legend {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+
+        .knn-result {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .knn-result h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .driver-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .zone-card {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .zone-card:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+        }
+
+        .zone-card.selected {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .zone-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .zone-count {
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚚 Delivery Route Optimizer</h1>
+        <p class="subtitle">Optimize routes with Greedy Algorithm & Classify deliveries with K-Nearest Neighbors</p>
+
+        <div class="main-grid">
+            <!-- Left Panel: Route Management -->
+            <div class="panel">
+                <h2>📍 Delivery Locations</h2>
+                
+                <div class="input-group">
+                    <label>Add New Delivery Point (X, Y coordinates)</label>
+                    <div class="input-row">
+                        <input type="number" id="inputX" placeholder="X (0-600)" min="0" max="600" value="">
+                        <input type="number" id="inputY" placeholder="Y (0-400)" min="0" max="400" value="">
+                        <button onclick="addDeliveryPoint()">Add Point</button>
+                    </div>
+                </div>
+
+                <div class="delivery-list" id="deliveryList">
+                    <p style="color: #6c757d; text-align: center;">No delivery points added yet. Add points or click on canvas.</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="success" onclick="calculateRoute()">🚀 Calculate Route</button>
+                    <button class="danger" onclick="clearAll()">🗑️ Clear All</button>
+                </div>
+
+                <div class="legend">
+                    <strong>Legend:</strong>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff6b6b;"></div>
+                        <span>Depot/Start Point</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4ecdc4;"></div>
+                        <span>Delivery Points</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <span>Optimized Route</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #feca57;"></div>
+                        <span>Driver Zones</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: KNN Classifier -->
+            <div class="panel">
+                <h2>🎯 Area Classifier (KNN)</h2>
+                
+                <div class="input-group">
+                    <label>New Delivery Request (X, Y coordinates)</label>
+                    <div class="input-row">
+                        <input type="number" id="newX" placeholder="X (0-600)" min="0" max="600" value="">
+                        <input type="number" id="newY" placeholder="Y (0-400)" min="0" max="400" value="">
+                        <button class="secondary" onclick="classifyRequest()">Classify Request</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>K-Value (Number of nearest neighbors)</label>
+                    <input type="number" id="kValue" value="3" min="1" max="10" style="width: 100%;">
+                </div>
+
+                <div class="driver-zones" id="driverZones">
+                    <!-- Driver zones will be populated dynamically -->
+                </div>
+
+                <div id="knnResult"></div>
+            </div>
+        </div>
+
+        <!-- Canvas Visualization -->
+        <div class="canvas-container">
+            <canvas id="canvas" width="800" height="500"></canvas>
+            <div class="canvas-hint">💡 Click on canvas to add delivery points</div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div class="panel">
+            <h2>📊 Route Statistics & Performance</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Deliveries</div>
+                    <div class="stat-value" id="statDeliveries">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Distance</div>
+                    <div class="stat-value" id="statDistance">0 km</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Est. Time</div>
+                    <div class="stat-value" id="statTime">0 min</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Zones</div>
+                    <div class="stat-value" id="statZones">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg. Zone Load</div>
+                    <div class="stat-value" id="statAvgLoad">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const depot = { x: 50, y: 50 }; // Starting point for all deliveries
+        let deliveryPoints = [];
+        let optimizedRoute = [];
+        let driverZones = [];
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9'];
+
+        // Initialize driver zones (3 zones for this example)
+        function initializeZones() {
+            driverZones = [
+                { id: 1, name: 'Zone North', center: { x: 400, y: 150 }, points: [], color: '#ff6b6b' },
+                { id: 2, name: 'Zone Central', center: { x: 400, y: 250 }, points: [], color: '#4ecdc4' },
+                { id: 3, name: 'Zone South', center: { x: 400, y: 350 }, points: [], color: '#45b7d1' }
+            ];
+            updateDriverZonesDisplay();
+            drawCanvas();
+        }
+
+        // Calculate Euclidean distance between two points
+        function calculateDistance(p1, p2) {
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Convert pixel distance to km (1 pixel = 0.1 km for visualization)
+        function pixelsToKm(pixels) {
+            return (pixels * 0.1).toFixed(2);
+        }
+
+        // Greedy Nearest Neighbor Algorithm for Route Optimization
+        function greedyNearestNeighbor(points) {
+            if (points.length === 0) return [];
+            
+            const route = [];
+            const unvisited = [...points];
+            let current = depot;
+            
+            route.push({ ...depot, order: 0 });
+            
+            while (unvisited.length > 0) {
+                let nearestIndex = 0;
+                let minDistance = Infinity;
+                
+                for (let i = 0; i < unvisited.length; i++) {
+                    const dist = calculateDistance(current, unvisited[i]);
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        nearestIndex = i;
+                    }
+                }
+                
+                const nearest = unvisited.splice(nearestIndex, 1)[0];
+                nearest.order = route.length;
+                route.push(nearest);
+                current = nearest;
+            }
+            
+            // Return to depot
+            route.push({ ...depot, order: route.length });
+            
+            return route;
+        }
+
+        // K-Nearest Neighbors Classifier
+        function knnClassify(newPoint, k = 3) {
+            if (deliveryPoints.length === 0) {
+                return null;
+            }
+
+            // Calculate distances to all delivery points
+            const distances = deliveryPoints.map(point => ({
+                point: point,
+                distance: calculateDistance(newPoint, point),
+                zone: point.zone
+            }));
+
+            // Sort by distance and take k nearest
+            distances.sort((a, b) => a.distance - b.distance);
+            const kNearest = distances.slice(0, Math.min(k, distances.length));
+
+            // Count votes for each zone
+            const votes = {};
+            kNearest.forEach(item => {
+                if (item.zone) {
+                    votes[item.zone.id] = (votes[item.zone.id] || 0) + 1;
+                }
+            });
+
+            // Find zone with most votes
+            let maxVotes = 0;
+            let predictedZone = null;
+            for (const [zoneId, count] of Object.entries(votes)) {
+                if (count > maxVotes) {
+                    maxVotes = count;
+                    predictedZone = driverZones.find(z => z.id === parseInt(zoneId));
+                }
+            }
+
+            // If no votes (no zones assigned yet), use nearest zone center
+            if (!predictedZone) {
+                let minDist = Infinity;
+                driverZones.forEach(zone => {
+                    const dist = calculateDistance(newPoint, zone.center);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        predictedZone = zone;
+                    }
+                });
+            }
+
+            return {
+                zone: predictedZone,
+                neighbors: kNearest,
+                confidence: maxVotes / Math.min(k, kNearest.length)
+            };
+        }
+
+        // Assign delivery points to zones using KNN
+        function assignPointsToZones() {
+            deliveryPoints.forEach(point => {
+                let minDist = Infinity;
+                let assignedZone = null;
+                
+                driverZones.forEach(zone => {
+                    const dist = calculateDistance(point, zone.center);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        assignedZone = zone;
+                    }
+                });
+                
+                point.zone = assignedZone;
+                if (!assignedZone.points.includes(point)) {
+                    assignedZone.points.push(point);
+                }
+            });
+            
+            updateDriverZonesDisplay();
+        }
+
+        // Add delivery point
+        function addDeliveryPoint() {
+            const x = parseInt(document.getElementById('inputX').value);
+            const y = parseInt(document.getElementById('inputY').value);
+            
+            if (isNaN(x) || isNaN(y) || x < 0 || x > 600 || y < 0 || y > 400) {
+                alert('Please enter valid coordinates (X: 0-600, Y: 0-400)');
+                return;
+            }
+            
+            deliveryPoints.push({ x, y, id: deliveryPoints.length + 1 });
+            document.getElementById('inputX').value = '';
+            document.getElementById('inputY').value = '';
+            
+            updateDeliveryList();
+            assignPointsToZones();
+            drawCanvas();
+        }
+
+        // Remove delivery point
+        function removeDeliveryPoint(index) {
+            deliveryPoints.splice(index, 1);
+            // Reassign IDs
+            deliveryPoints.forEach((point, i) => point.id = i + 1);
+            
+            // Clear zone assignments
+            driverZones.forEach(zone => zone.points = []);
+            assignPointsToZones();
+            
+            updateDeliveryList();
+            optimizedRoute = [];
+            drawCanvas();
+            updateStats();
+        }
+
+        // Update delivery list display
+        function updateDeliveryList() {
+            const list = document.getElementById('deliveryList');
+            
+            if (deliveryPoints.length === 0) {
+                list.innerHTML = '<p style="color: #6c757d; text-align: center;">No delivery points added yet. Add points or click on canvas.</p>';
+                return;
+            }
+            
+            list.innerHTML = deliveryPoints.map((point, index) => `
+                <div class="delivery-item">
+                    <span><strong>#${point.id}</strong> - (${point.x}, ${point.y})${point.zone ? ' - ' + point.zone.name : ''}</span>
+                    <button class="danger" onclick="removeDeliveryPoint(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Calculate optimal route
+        function calculateRoute() {
+            if (deliveryPoints.length === 0) {
+                alert('Please add delivery points first!');
+                return;
+            }
+            
+            optimizedRoute = greedyNearestNeighbor(deliveryPoints);
+            drawCanvas();
+            updateStats();
+        }
+
+        // Classify new request
+        function classifyRequest() {
+            const x = parseInt(document.getElementById('newX').value);
+            const y = parseInt(document.getElementById('newY').value);
+            const k = parseInt(document.getElementById('kValue').value);
+            
+            if (isNaN(x) || isNaN(y) || x < 0 || x > 600 || y < 0 || y > 400) {
+                alert('Please enter valid coordinates (X: 0-600, Y: 0-400)');
+                return;
+            }
+            
+            if (deliveryPoints.length === 0) {
+                alert('Please add delivery points first to train the classifier!');
+                return;
+            }
+            
+            const result = knnClassify({ x, y }, k);
+            
+            if (result) {
+                const resultDiv = document.getElementById('knnResult');
+                resultDiv.innerHTML = `
+                    <div class="knn-result">
+                        <h3>Classification Result</h3>
+                        <p><strong>Location:</strong> (${x}, ${y})</p>
+                        <p><strong>Assigned Zone:</strong> ${result.zone.name}</p>
+                        <p><strong>Confidence:</strong> ${(result.confidence * 100).toFixed(1)}%</p>
+                        <p><strong>Based on ${result.neighbors.length} nearest neighbors</strong></p>
+                        <div style="margin-top: 10px;">
+                            <strong>Nearest Deliveries:</strong>
+                            ${result.neighbors.map((n, i) => `
+                                <div style="margin: 5px 0;">
+                                    ${i + 1}. Point #${n.point.id} - Distance: ${pixelsToKm(n.distance)} km
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                // Visualize the new point
+                drawCanvas();
+                ctx.fillStyle = '#ff00ff';
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Draw lines to nearest neighbors
+                result.neighbors.forEach(neighbor => {
+                    ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(neighbor.point.x, neighbor.point.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+                
+                // Label
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('NEW', x - 15, y - 15);
+            }
+        }
+
+        // Update driver zones display
+        function updateDriverZonesDisplay() {
+            const container = document.getElementById('driverZones');
+            container.innerHTML = driverZones.map(zone => `
+                <div class="zone-card" style="border-color: ${zone.color};">
+                    <div class="zone-header" style="color: ${zone.color};">${zone.name}</div>
+                    <div class="zone-count">${zone.points.length}</div>
+                    <div style="font-size: 12px; color: #6c757d;">deliveries</div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('statDeliveries').textContent = deliveryPoints.length;
+            
+            if (optimizedRoute.length > 0) {
+                let totalDistance = 0;
+                for (let i = 0; i < optimizedRoute.length - 1; i++) {
+                    totalDistance += calculateDistance(optimizedRoute[i], optimizedRoute[i + 1]);
+                }
+                
+                const distanceKm = pixelsToKm(totalDistance);
+                const timeMinutes = Math.ceil(parseFloat(distanceKm) * 2); // Assume 2 min per km
+                
+                document.getElementById('statDistance').textContent = distanceKm + ' km';
+                document.getElementById('statTime').textContent = timeMinutes + ' min';
+            } else {
+                document.getElementById('statDistance').textContent = '0 km';
+                document.getElementById('statTime').textContent = '0 min';
+            }
+            
+            const activeZones = driverZones.filter(z => z.points.length > 0).length;
+            document.getElementById('statZones').textContent = activeZones;
+            
+            const avgLoad = deliveryPoints.length > 0 ? Math.ceil(deliveryPoints.length / Math.max(activeZones, 1)) : 0;
+            document.getElementById('statAvgLoad').textContent = avgLoad;
+        }
+
+        // Draw canvas
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw zone circles (background)
+            driverZones.forEach(zone => {
+                ctx.fillStyle = zone.color + '20';
+                ctx.strokeStyle = zone.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(zone.center.x, zone.center.y, 80, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Zone label
+                ctx.fillStyle = zone.color;
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(zone.name, zone.center.x, zone.center.y - 90);
+            });
+            
+            // Draw optimized route
+            if (optimizedRoute.length > 1) {
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(optimizedRoute[0].x, optimizedRoute[0].y);
+                
+                for (let i = 1; i < optimizedRoute.length; i++) {
+                    ctx.lineTo(optimizedRoute[i].x, optimizedRoute[i].y);
+                }
+                ctx.stroke();
+                
+                // Draw arrows
+                for (let i = 0; i < optimizedRoute.length - 1; i++) {
+                    const p1 = optimizedRoute[i];
+                    const p2 = optimizedRoute[i + 1];
+                    drawArrow(p1.x, p1.y, p2.x, p2.y);
+                }
+            }
+            
+            // Draw depot
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(depot.x, depot.y, 12, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('D', depot.x, depot.y);
+            
+            // Draw delivery points
+            deliveryPoints.forEach((point, index) => {
+                ctx.fillStyle = point.zone ? point.zone.color : '#4ecdc4';
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Draw order number if route is calculated
+                if (optimizedRoute.length > 0 && point.order !== undefined) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(point.order, point.x, point.y);
+                }
+                
+                // Draw point ID
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.fillText('#' + point.id, point.x, point.y - 18);
+            });
+        }
+
+        // Draw arrow helper
+        function drawArrow(fromX, fromY, toX, toY) {
+            const headLength = 10;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            // Calculate midpoint for arrow
+            const midX = (fromX + toX) / 2;
+            const midY = (fromY + toY) / 2;
+            
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.moveTo(midX, midY);
+            ctx.lineTo(
+                midX - headLength * Math.cos(angle - Math.PI / 6),
+                midY - headLength * Math.sin(angle - Math.PI / 6)
+            );
+            ctx.lineTo(
+                midX - headLength * Math.cos(angle + Math.PI / 6),
+                midY - headLength * Math.sin(angle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Canvas click handler
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = Math.round((e.clientX - rect.left) * scaleX);
+            const y = Math.round((e.clientY - rect.top) * scaleY);
+            
+            deliveryPoints.push({ x, y, id: deliveryPoints.length + 1 });
+            updateDeliveryList();
+            assignPointsToZones();
+            drawCanvas();
+        });
+
+        // Clear all
+        function clearAll() {
+            if (deliveryPoints.length > 0 && !confirm('Are you sure you want to clear all delivery points?')) {
+                return;
+            }
+            
+            deliveryPoints = [];
+            optimizedRoute = [];
+            driverZones.forEach(zone => zone.points = []);
+            
+            updateDeliveryList();
+            updateDriverZonesDisplay();
+            drawCanvas();
+            updateStats();
+            
+            document.getElementById('knnResult').innerHTML = '';
+        }
+
+        // Initialize
+        initializeZones();
+        updateStats();
+    </script>
+</body>
+</html>

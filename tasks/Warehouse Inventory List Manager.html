@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Inventory List Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #dd6b20;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .inventory-visual {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 200px;
+            overflow-x: auto;
+        }
+
+        .linked-list-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+            min-width: min-content;
+        }
+
+        .node-card {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 180px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .node-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .node-card.head {
+            border-color: #48bb78;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+        }
+
+        .node-card.tail {
+            border-color: #f56565;
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+        }
+
+        .node-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .node-badge.head {
+            background: #48bb78;
+        }
+
+        .node-badge.tail {
+            background: #f56565;
+        }
+
+        .node-name {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .node-quantity {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .node-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .node-actions .btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .arrow {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .arrow-bidirectional {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .arrow-right {
+            color: #48bb78;
+        }
+
+        .arrow-left {
+            color: #f56565;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .highlight-green {
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            color: #f56565;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .recent-change {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .recent-change-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .recent-change-value {
+            font-weight: bold;
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Warehouse Inventory List Manager</h1>
+
+        <div class="main-grid">
+            <!-- Control Panel -->
+            <div class="panel">
+                <h2>Control Panel</h2>
+                
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" placeholder="Enter product name">
+                </div>
+
+                <div class="form-group">
+                    <label for="productQuantity">Quantity</label>
+                    <input type="number" id="productQuantity" placeholder="Enter quantity" min="1" value="1">
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="addProduct()">➕ Add Product</button>
+                    <button class="btn btn-secondary" id="undoBtn" onclick="undo()" disabled>↶ Undo</button>
+                    <button class="btn btn-secondary" id="redoBtn" onclick="redo()" disabled>↷ Redo</button>
+                </div>
+
+                <div class="recent-change" id="recentChange">
+                    <div class="recent-change-label">Most Recent Change:</div>
+                    <div class="recent-change-value" id="recentChangeValue">No changes yet</div>
+                </div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="panel">
+                <h2>Statistics</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value" id="totalProducts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Units</div>
+                        <div class="stat-value" id="totalUnits">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Visual -->
+        <div class="panel">
+            <h2>Doubly Linked List Visualization</h2>
+            <div class="inventory-visual">
+                <div id="linkedListContainer" class="linked-list-container">
+                    <div class="empty-state">No products in inventory. Add your first product above!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Panel -->
+        <div class="panel">
+            <h2>🔍 Linked List vs Array Operations Comparison</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Linked List Steps</th>
+                        <th>Array Steps</th>
+                        <th>Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Insert at Beginning</strong></td>
+                        <td class="highlight-green">O(1) - 1 step</td>
+                        <td class="highlight-red">O(n) - Must shift all elements</td>
+                        <td>✅ Linked List</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Insert at End</strong></td>
+                        <td class="highlight-green">O(1) - 1 step (with tail)</td>
+                        <td>O(1) - Direct access</td>
+                        <td>🤝 Tie</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete at Beginning</strong></td>
+                        <td class="highlight-green">O(1) - 1 step</td>
+                        <td class="highlight-red">O(n) - Must shift all elements</td>
+                        <td>✅ Linked List</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete at Middle</strong></td>
+                        <td>O(n) - Must traverse to find</td>
+                        <td class="highlight-red">O(n) - Must shift after delete</td>
+                        <td>🤝 Similar</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Access Element</strong></td>
+                        <td class="highlight-red">O(n) - Must traverse</td>
+                        <td class="highlight-green">O(1) - Direct index access</td>
+                        <td>✅ Array</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory Usage</strong></td>
+                        <td class="highlight-red">Higher (extra pointers)</td>
+                        <td class="highlight-green">Lower (contiguous)</td>
+                        <td>✅ Array</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Node class for Doubly Linked List
+        class Node {
+            constructor(name, quantity) {
+                this.name = name;
+                this.quantity = quantity;
+                this.next = null;
+                this.prev = null;
+                this.id = Date.now() + Math.random(); // Unique identifier
+            }
+        }
+
+        // Doubly Linked List class
+        class DoublyLinkedList {
+            constructor() {
+                this.head = null;
+                this.tail = null;
+                this.size = 0;
+            }
+
+            // Add product at the end
+            addAtEnd(name, quantity) {
+                const newNode = new Node(name, quantity);
+                
+                if (!this.head) {
+                    this.head = newNode;
+                    this.tail = newNode;
+                } else {
+                    this.tail.next = newNode;
+                    newNode.prev = this.tail;
+                    this.tail = newNode;
+                }
+                
+                this.size++;
+                return newNode;
+            }
+
+            // Remove a node by ID
+            remove(nodeId) {
+                let current = this.head;
+                
+                while (current) {
+                    if (current.id === nodeId) {
+                        if (current.prev) {
+                            current.prev.next = current.next;
+                        } else {
+                            this.head = current.next;
+                        }
+                        
+                        if (current.next) {
+                            current.next.prev = current.prev;
+                        } else {
+                            this.tail = current.prev;
+                        }
+                        
+                        this.size--;
+                        return current;
+                    }
+                    current = current.next;
+                }
+                return null;
+            }
+
+            // Update a node
+            update(nodeId, newQuantity) {
+                let current = this.head;
+                
+                while (current) {
+                    if (current.id === nodeId) {
+                        const oldQuantity = current.quantity;
+                        current.quantity = newQuantity;
+                        return { oldQuantity, newQuantity };
+                    }
+                    current = current.next;
+                }
+                return null;
+            }
+
+            // Get all nodes as array
+            toArray() {
+                const result = [];
+                let current = this.head;
+                
+                while (current) {
+                    result.push(current);
+                    current = current.next;
+                }
+                
+                return result;
+            }
+
+            // Get total units
+            getTotalUnits() {
+                let total = 0;
+                let current = this.head;
+                
+                while (current) {
+                    total += parseInt(current.quantity);
+                    current = current.next;
+                }
+                
+                return total;
+            }
+
+            // Clear all nodes
+            clear() {
+                this.head = null;
+                this.tail = null;
+                this.size = 0;
+            }
+        }
+
+        // Command class for undo/redo
+        class Command {
+            constructor(type, data, execute, undo) {
+                this.type = type;
+                this.data = data;
+                this.execute = execute;
+                this.undo = undo;
+            }
+        }
+
+        // Global state
+        const inventory = new DoublyLinkedList();
+        const undoStack = [];
+        const redoStack = [];
+        let lastAction = 'No changes yet';
+
+        // Add product
+        function addProduct() {
+            const nameInput = document.getElementById('productName');
+            const quantityInput = document.getElementById('productQuantity');
+            
+            const name = nameInput.value.trim();
+            const quantity = parseInt(quantityInput.value);
+            
+            if (!name) {
+                alert('Please enter a product name');
+                return;
+            }
+            
+            if (!quantity || quantity < 1) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+
+            const command = new Command(
+                'ADD',
+                { name, quantity },
+                function() {
+                    const node = inventory.addAtEnd(this.data.name, this.data.quantity);
+                    this.nodeId = node.id;
+                    lastAction = `Added: ${this.data.name} (${this.data.quantity} units)`;
+                    updateUI();
+                },
+                function() {
+                    inventory.remove(this.nodeId);
+                    lastAction = `Undone: Add ${this.data.name}`;
+                    updateUI();
+                }
+            );
+
+            executeCommand(command);
+            
+            // Clear inputs
+            nameInput.value = '';
+            quantityInput.value = '1';
+            nameInput.focus();
+        }
+
+        // Edit product
+        function editProduct(nodeId) {
+            const nodes = inventory.toArray();
+            const node = nodes.find(n => n.id === nodeId);
+            
+            if (!node) return;
+            
+            const newQuantity = prompt(`Edit quantity for ${node.name}:`, node.quantity);
+            
+            if (newQuantity === null || newQuantity.trim() === '') return;
+            
+            const quantity = parseInt(newQuantity);
+            
+            if (isNaN(quantity) || quantity < 1) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+
+            const oldQuantity = node.quantity;
+
+            const command = new Command(
+                'EDIT',
+                { nodeId, oldQuantity, newQuantity: quantity },
+                function() {
+                    inventory.update(this.data.nodeId, this.data.newQuantity);
+                    lastAction = `Edited: ${node.name} (${this.data.oldQuantity} → ${this.data.newQuantity})`;
+                    updateUI();
+                },
+                function() {
+                    inventory.update(this.data.nodeId, this.data.oldQuantity);
+                    lastAction = `Undone: Edit ${node.name}`;
+                    updateUI();
+                }
+            );
+
+            executeCommand(command);
+        }
+
+        // Remove product
+        function removeProduct(nodeId) {
+            const nodes = inventory.toArray();
+            const node = nodes.find(n => n.id === nodeId);
+            
+            if (!node) return;
+            
+            if (!confirm(`Remove ${node.name} from inventory?`)) return;
+
+            const command = new Command(
+                'REMOVE',
+                { node: { ...node } },
+                function() {
+                    inventory.remove(this.data.node.id);
+                    lastAction = `Removed: ${this.data.node.name}`;
+                    updateUI();
+                },
+                function() {
+                    // Re-add the node
+                    const newNode = inventory.addAtEnd(this.data.node.name, this.data.node.quantity);
+                    this.data.node.id = newNode.id;
+                    lastAction = `Undone: Remove ${this.data.node.name}`;
+                    updateUI();
+                }
+            );
+
+            executeCommand(command);
+        }
+
+        // Execute command
+        function executeCommand(command) {
+            command.execute();
+            undoStack.push(command);
+            redoStack.length = 0; // Clear redo stack
+            updateButtons();
+        }
+
+        // Undo
+        function undo() {
+            if (undoStack.length === 0) return;
+            
+            const command = undoStack.pop();
+            command.undo();
+            redoStack.push(command);
+            updateButtons();
+        }
+
+        // Redo
+        function redo() {
+            if (redoStack.length === 0) return;
+            
+            const command = redoStack.pop();
+            command.execute();
+            undoStack.push(command);
+            updateButtons();
+        }
+
+        // Update undo/redo buttons
+        function updateButtons() {
+            document.getElementById('undoBtn').disabled = undoStack.length === 0;
+            document.getElementById('redoBtn').disabled = redoStack.length === 0;
+        }
+
+        // Update UI
+        function updateUI() {
+            const nodes = inventory.toArray();
+            const container = document.getElementById('linkedListContainer');
+            
+            // Update stats
+            document.getElementById('totalProducts').textContent = inventory.size;
+            document.getElementById('totalUnits').textContent = inventory.getTotalUnits();
+            document.getElementById('recentChangeValue').textContent = lastAction;
+            
+            // Update visual representation
+            if (nodes.length === 0) {
+                container.innerHTML = '<div class="empty-state">No products in inventory. Add your first product above!</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            nodes.forEach((node, index) => {
+                const isHead = index === 0;
+                const isTail = index === nodes.length - 1;
+                
+                html += `
+                    <div class="node-card ${isHead ? 'head' : ''} ${isTail ? 'tail' : ''}">
+                        ${isHead ? '<span class="node-badge head">HEAD</span>' : ''}
+                        ${isTail ? '<span class="node-badge tail">TAIL</span>' : ''}
+                        <div class="node-name">${node.name}</div>
+                        <div class="node-quantity">Qty: ${node.quantity}</div>
+                        <div class="node-actions">
+                            <button class="btn btn-warning" onclick="editProduct(${node.id})">✏️</button>
+                            <button class="btn btn-danger" onclick="removeProduct(${node.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                
+                if (index < nodes.length - 1) {
+                    html += `
+                        <div class="arrow-bidirectional">
+                            <span class="arrow arrow-right">→</span>
+                            <span class="arrow arrow-left">←</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+            
+            if (e.key === 'Enter' && (document.activeElement.id === 'productName' || document.activeElement.id === 'productQuantity')) {
+                addProduct();
+            }
+        });
+
+        // Initialize
+        updateUI();
+        updateButtons();
+    </script>
+</body>
+</html>

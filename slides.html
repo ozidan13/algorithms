@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en" data-overlayscrollbars-initialize="" class="lenis" data-overlayscrollbars="" data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithms & Data Structures - Professional Slides | Osama</title>
+    <link rel="icon" type="image/svg+xml" href="public/logo.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css">
+    
+    <!-- Lenis Smooth Scrolling -->
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.19/dist/lenis.min.js"></script>
+    
+    <!-- OverlayScrollbars -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/styles/overlayscrollbars.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <style>
+        :root {
+            /* BOTANIST-Inspired Natural Color Palette */
+            --sage-green: #8B9A7A;
+            --forest-green: #5A6B4F;
+            --earth-brown: #8B7355;
+            --warm-beige: #F5F1E8;
+            --soft-cream: #FEFCF7;
+            --charcoal: #2C2C2C;
+            --stone-gray: #6B6B6B;
+            --mist-gray: #E8E6E1;
+            --natural-white: #FFFFFF;
+            --accent-terracotta: #C4A484;
+            
+            /* Natural Text Colors */
+            --text-primary: var(--charcoal);
+            --text-secondary: var(--stone-gray);
+            --text-light: var(--natural-white);
+            --text-accent: var(--forest-green);
+            
+            /* Organic Backgrounds */
+            --bg-primary: var(--soft-cream);
+            --bg-secondary: var(--warm-beige);
+            --bg-card: var(--natural-white);
+            --bg-overlay: rgba(139, 154, 122, 0.1);
+            
+            /* Natural Gradients */
+            --natural-gradient: linear-gradient(135deg, 
+                var(--soft-cream) 0%, 
+                var(--warm-beige) 50%, 
+                var(--mist-gray) 100%);
+            --earth-gradient: linear-gradient(145deg, 
+                var(--sage-green) 0%, 
+                var(--forest-green) 100%);
+            --card-gradient: linear-gradient(145deg, 
+                var(--natural-white) 0%, 
+                rgba(245, 241, 232, 0.8) 100%);
+            
+            /* Organic Typography - Japanese-inspired */
+            --header-font: "Hiragino Sans", "Yu Gothic", "Meiryo", "Segoe UI", sans-serif;
+            --body-font: "Hiragino Sans", "Yu Gothic", "Meiryo", "Segoe UI", sans-serif;
+            --accent-font: "Times New Roman", serif;
+            
+            /* Natural Transitions - Lenis-inspired */
+            --smooth-transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --gentle-transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            --subtle-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Organic Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 3rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+            
+            /* Natural Shadows */
+            --soft-shadow: 0 4px 20px rgba(44, 44, 44, 0.08);
+            --gentle-shadow: 0 8px 30px rgba(44, 44, 44, 0.12);
+            --natural-shadow: 0 12px 40px rgba(44, 44, 44, 0.15);
+            
+            /* Border Radius */
+            --radius-small: 4px;
+            --radius-medium: 8px;
+            --radius-large: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background: var(--natural-gradient);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-weight: 300;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Natural Background Layer - BOTANIST Style */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 154, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(196, 164, 132, 0.08) 0%, transparent 50%),
+                var(--natural-gradient);
+            z-index: -2;
+        }
+
+        /* Transition Cover - BOTANIST Style */
+        .transition-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--natural-gradient);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .transition-cover.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Main Container - Card-based Layout */
+        .main-container {
+            min-height: 100vh;
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2xl);
+        }
+
+        /* Card Container - BOTANIST Inspired */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Individual Card - BOTANIST Style */
+        .algorithm-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--natural-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--smooth-transition);
+            border: 1px solid rgba(139, 154, 122, 0.1);
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Natural overlay for each card */
+        .algorithm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(245, 241, 232, 0.95) 100%
+            );
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        .algorithm-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(44, 44, 44, 0.2);
+        }
+
+        /* Botanical Decorative Elements */
+        .algorithm-card::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(139, 154, 122, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: organicPulse 4s ease-in-out infinite;
+        }
+
+        /* Typography - BOTANIST Style */
+        .algorithm-card h1 {
+            font-family: var(--header-font);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+            text-align: center;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .algorithm-card h1::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--sage-green), transparent);
+            border-radius: 2px;
+        }
+
+        .algorithm-card h2 {
+            font-family: var(--header-font);
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 300;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+            position: relative;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+
+        .algorithm-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--sage-green);
+            border-radius: 1px;
+        }
+
+        .algorithm-card h3 {
+            font-family: var(--header-font);
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 300;
+            margin-bottom: var(--space-md);
+            color: var(--text-secondary);
+            letter-spacing: -0.005em;
+            line-height: 1.4;
+        }
+
+        .algorithm-card p {
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            line-height: 1.7;
+            margin-bottom: var(--space-md);
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 0.01em;
+        }
+
+        .algorithm-card ul {
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            line-height: 1.7;
+            margin: var(--space-md) 0;
+            padding-left: var(--space-lg);
+            color: var(--text-secondary);
+        }
+
+        .algorithm-card li {
+            margin-bottom: var(--space-xs);
+            position: relative;
+        }
+
+        .algorithm-card li::marker {
+            color: var(--sage-green);
+        }
+
+        /* Code Container - BOTANIST Style */
+        .code-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-large);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid rgba(139, 154, 122, 0.2);
+            position: relative;
+            overflow-x: auto;
+            box-shadow: var(--soft-shadow);
+        }
+
+        .code-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(90deg, 
+                rgba(139, 154, 122, 0.8), 
+                rgba(90, 107, 79, 0.8), 
+                rgba(196, 164, 132, 0.8));
+            border-radius: var(--radius-large) var(--radius-large) 0 0;
+        }
+
+        .code-container pre {
+            margin-top: 40px;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: transparent;
+        }
+
+        /* Interactive Elements - BOTANIST Style */
+        .algorithm-demo {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-xl);
+            padding: var(--space-md);
+            margin: var(--space-md) 0;
+            border: 1px solid rgba(139, 154, 122, 0.2);
+            box-shadow: var(--soft-shadow);
+            position: relative;
+        }
+
+        .visualization-area {
+            background: rgba(245, 241, 232, 0.8);
+            border-radius: var(--radius-large);
+            padding: var(--space-sm);
+            margin: var(--space-sm) 0;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1px solid rgba(139, 154, 122, 0.1);
+            box-shadow: inset 0 2px 8px rgba(139, 154, 122, 0.1);
+        }
+
+        .array-visualization {
+            display: flex;
+            gap: 12px;
+            margin: var(--space-sm) 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .array-element {
+            width: 64px;
+            height: 64px;
+            background: var(--natural-white);
+            border-radius: var(--radius-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            transition: var(--smooth-transition);
+            border: 1px solid rgba(139, 154, 122, 0.2);
+            box-shadow: var(--soft-shadow);
+            position: relative;
+        }
+
+        .array-element::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--sage-green);
+            border-radius: inherit;
+            opacity: 0;
+            transition: var(--smooth-transition);
+            z-index: -1;
+        }
+
+        .array-element.current {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 154, 122, 0.2);
+            border-color: var(--sage-green);
+        }
+
+        .array-element.current::before {
+            opacity: 0.15;
+        }
+
+        .array-element.comparing {
+            animation: organicPulse 1.5s infinite;
+            border-color: var(--sage-green);
+        }
+
+        .array-element.comparing::before {
+            background: var(--sage-green);
+            opacity: 0.2;
+        }
+
+        .array-element.sorted {
+            border-color: var(--sage-green);
+            box-shadow: 0 0 20px rgba(139, 154, 122, 0.3);
+        }
+
+        .array-element.sorted::before {
+            background: var(--sage-green);
+            opacity: 0.25;
+        }
+
+        /* Buttons - BOTANIST Style */
+        .controls {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            margin: var(--space-lg) 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--natural-white);
+            color: var(--text-primary);
+            border: 1px solid rgba(139, 154, 122, 0.2);
+            padding: 14px 28px;
+            border-radius: var(--radius-medium);
+            font-size: 1rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: var(--smooth-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--soft-shadow);
+            position: relative;
+            overflow: hidden;
+            font-family: var(--body-font);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--sage-green);
+            opacity: 0;
+            transition: var(--smooth-transition);
+            z-index: -1;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--gentle-shadow);
+            border-color: var(--sage-green);
+            color: var(--natural-white);
+        }
+
+        .btn:hover::before {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: var(--soft-shadow);
+        }
+
+        /* Complexity Indicators - BOTANIST Style */
+        .complexity-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 8px;
+            border: 1px solid rgba(139, 154, 122, 0.2);
+            box-shadow: var(--soft-shadow);
+        }
+
+        .complexity-o1 { 
+            background: linear-gradient(135deg, var(--sage-green), var(--forest-green)); 
+            color: white; 
+        }
+        .complexity-ologn { 
+            background: linear-gradient(135deg, var(--forest-green), var(--earth-brown)); 
+            color: white; 
+        }
+        .complexity-on { 
+            background: linear-gradient(135deg, var(--accent-terracotta), var(--earth-brown)); 
+            color: white; 
+        }
+        .complexity-on2 { 
+            background: linear-gradient(135deg, var(--earth-brown), var(--charcoal)); 
+            color: white; 
+        }
+
+        /* Smooth Scroll Navigation - BOTANIST Style */
+        .scroll-navigation {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-large);
+            padding: 16px 8px;
+            border: 1px solid rgba(139, 154, 122, 0.15);
+            box-shadow: var(--natural-shadow);
+        }
+
+        .scroll-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(139, 154, 122, 0.3);
+            cursor: pointer;
+            transition: var(--smooth-transition);
+            position: relative;
+        }
+
+        .scroll-dot.active {
+            background: var(--sage-green);
+            transform: scale(1.3);
+        }
+
+        .scroll-dot:hover {
+            background: var(--sage-green);
+            transform: scale(1.2);
+        }
+
+        /* Natural Animations */
+        @keyframes fadeInNatural {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes organicPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        @keyframes leafFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: var(--space-md);
+                gap: var(--space-lg);
+            }
+            
+            .algorithm-card {
+                padding: var(--space-lg);
+                min-height: 70vh;
+            }
+            
+            .scroll-navigation {
+                right: 20px;
+            }
+            
+            .array-element {
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--sage-green);
+            font-size: 2rem;
+            animation: leafFloat 2s ease-in-out infinite;
+            z-index: 1000;
+        }
+
+        /* Feature Grid - BOTANIST Style */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin: var(--space-lg) 0;
+        }
+
+        .feature-card {
+            background: var(--card-gradient);
+            border-radius: var(--radius-large);
+            padding: var(--space-lg);
+            border: 1px solid rgba(139, 154, 122, 0.1);
+            transition: var(--smooth-transition);
+            box-shadow: var(--soft-shadow);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--gentle-shadow);
+        }
+
+        .step-indicator {
+            background: rgba(139, 154, 122, 0.1);
+            border-radius: var(--radius-medium);
+            padding: var(--space-sm);
+            margin: var(--space-sm) 0;
+            border-left: 4px solid var(--sage-green);
+            font-family: var(--body-font);
+        }
+
+        /* Phase Badge */
+        .phase-badge {
+            display: inline-block;
+            background: rgba(139, 154, 122, 0.15);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            box-shadow: var(--soft-shadow);
+            border: 1px solid rgba(139, 154, 122, 0.2);
+        }
+
+        /* Linked List Styles */
+        .linked-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .graph-node {
+            width: 60px;
+            height: 60px;
+            background: var(--sage-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: var(--smooth-transition);
+            cursor: pointer;
+        }
+
+        .graph-node:hover {
+            transform: scale(1.1);
+            box-shadow: var(--gentle-shadow);
+        }
+    </style>
+</head>
+<body>
+    <div class="transition-cover"></div>
+    
+    <section id="main-slider" class="splide">
+        <div class="splide__track">
+            <ul class="splide__list">
+            <li class="splide__slide">
+                <div class="algorithm-card" id="card-0">
+            <h1>Algorithms & Data Structures</h1>
+            <p style="text-align: center; font-size: 1.3rem; color: var(--sage-green); margin-top: var(--space-lg);">
+                Professional Presentation by Osama
+            </p>
+            <div style="text-align: center; margin-top: var(--space-xl);">
+                <div class="phase-badge">Interactive Learning Experience</div>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Introduction Card -->
+                <div class="algorithm-card" id="card-1">
+            <h2>Introduction to Algorithms</h2>
+            <p>Algorithms are step-by-step procedures for solving computational problems. They form the foundation of computer science and software engineering.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Efficiency</h3>
+                    <p>Algorithms help us solve problems in the most efficient way possible, optimizing for time and space complexity.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Problem Solving</h3>
+                    <p>They provide systematic approaches to break down complex problems into manageable steps.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Optimization</h3>
+                    <p>Good algorithms can dramatically improve the performance of software applications.</p>
+                </div>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Big O Notation Card -->
+                <div class="algorithm-card" id="card-2">
+            <h2>Big O Notation</h2>
+            <p>Big O notation describes the performance characteristics of algorithms, helping us understand how they scale with input size.</p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin: 2rem 0;">
+                <span class="complexity-indicator complexity-o1">O(1) - Constant</span>
+                <span class="complexity-indicator complexity-ologn">O(log n) - Logarithmic</span>
+                <span class="complexity-indicator complexity-on">O(n) - Linear</span>
+                <span class="complexity-indicator complexity-on2">O(n²) - Quadratic</span>
+            </div>
+            
+            <div class="code-container">
+                <pre><code class="language-javascript">
+// O(1) - Constant Time
+function getFirstElement(arr) {
+    return arr[0];
+}
+
+// O(n) - Linear Time
+function findElement(arr, target) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === target) return i;
+    }
+    return -1;
+}
+                </code></pre>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Sorting Algorithms Card -->
+                <div class="algorithm-card" id="card-3">
+            <h2>Sorting Algorithms</h2>
+            <p>Sorting algorithms arrange elements in a specific order. Let's explore Selection Sort with an interactive demonstration.</p>
+            
+            <div class="algorithm-demo">
+                <h3>Selection Sort Visualization</h3>
+                <div class="visualization-area">
+                    <div class="array-visualization" id="selectionSortDemo">
+                        <div class="array-element">64</div>
+                        <div class="array-element">34</div>
+                        <div class="array-element">25</div>
+                        <div class="array-element">12</div>
+                        <div class="array-element">22</div>
+                        <div class="array-element">11</div>
+                        <div class="array-element">90</div>
+                    </div>
+                    <div class="step-indicator" id="sortStep">Click "Start Sort" to see the algorithm in action</div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="startSelectionSort()">
+                        <i class="fas fa-play"></i> Start Sort
+                    </button>
+                    <button class="btn" onclick="resetSelectionSort()">
+                        <i class="fas fa-refresh"></i> Reset
+                    </button>
+                </div>
+            </div>
+            
+            <div class="code-container">
+                <pre><code class="language-javascript">
+function selectionSort(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+        let minIndex = i;
+        for (let j = i + 1; j < arr.length; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex !== i) {
+            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+        }
+    }
+    return arr;
+}
+                </code></pre>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Recursion Card -->
+                <div class="algorithm-card" id="card-4">
+            <h2>Recursion</h2>
+            <p>Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem.</p>
+            
+            <div class="algorithm-demo">
+                <h3>Factorial Calculation</h3>
+                <div class="visualization-area">
+                    <div id="recursionDemo" style="font-family: monospace; text-align: left;">
+                        <div>factorial(5)</div>
+                        <div style="margin-left: 20px;">factorial(4)</div>
+                        <div style="margin-left: 40px;">factorial(3)</div>
+                        <div style="margin-left: 60px;">factorial(2)</div>
+                        <div style="margin-left: 80px;">factorial(1)</div>
+                        <div style="margin-left: 100px;">return 1</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="animateRecursion()">
+                        <i class="fas fa-play"></i> Animate Recursion
+                    </button>
+                </div>
+            </div>
+            
+            <div class="code-container">
+                <pre><code class="language-javascript">
+function factorial(n) {
+    // Base case
+    if (n <= 1) {
+        return 1;
+    }
+    // Recursive case
+    return n * factorial(n - 1);
+}
+
+console.log(factorial(5)); // Output: 120
+                </code></pre>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Data Structures Card -->
+                <div class="algorithm-card" id="card-5">
+            <h2>Data Structures</h2>
+            <p>Data structures organize and store data efficiently. Let's explore some fundamental structures.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Arrays</h3>
+                    <p>Sequential collection of elements stored in contiguous memory locations.</p>
+                    <div class="complexity-indicator complexity-o1">Access: O(1)</div>
+                </div>
+                <div class="feature-card">
+                    <h3>Linked Lists</h3>
+                    <p>Dynamic data structure where elements are stored in nodes with pointers.</p>
+                    <div class="complexity-indicator complexity-on">Search: O(n)</div>
+                </div>
+                <div class="feature-card">
+                    <h3>Stacks</h3>
+                    <p>LIFO (Last In, First Out) data structure with push and pop operations.</p>
+                    <div class="complexity-indicator complexity-o1">Push/Pop: O(1)</div>
+                </div>
+                <div class="feature-card">
+                    <h3>Queues</h3>
+                    <p>FIFO (First In, First Out) data structure with enqueue and dequeue operations.</p>
+                    <div class="complexity-indicator complexity-o1">Enqueue/Dequeue: O(1)</div>
+                </div>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Linked List Demo Card -->
+                <div class="algorithm-card" id="card-6">
+            <h2>Linked List Operations</h2>
+            <p>Interactive demonstration of linked list operations.</p>
+            
+            <div class="algorithm-demo">
+                <h3>Linked List Visualization</h3>
+                <div class="visualization-area">
+                    <div id="linkedListDemo" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="addToLinkedList()">
+                        <i class="fas fa-plus"></i> Add Node
+                    </button>
+                    <button class="btn" onclick="removeFromLinkedList()">
+                        <i class="fas fa-minus"></i> Remove Node
+                    </button>
+                </div>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Graph Algorithms Card -->
+                <div class="algorithm-card" id="card-7">
+            <h2>Graph Algorithms</h2>
+            <p>Graphs represent relationships between objects. Let's explore traversal algorithms.</p>
+            
+            <div class="algorithm-demo">
+                <h3>Graph Traversal</h3>
+                <div class="visualization-area">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
+                        <div class="graph-node">A</div>
+                        <div class="graph-node">B</div>
+                        <div class="graph-node">C</div>
+                        <div class="graph-node">D</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="startBFS()">
+                        <i class="fas fa-sitemap"></i> BFS Traversal
+                    </button>
+                    <button class="btn" onclick="startDFS()">
+                        <i class="fas fa-project-diagram"></i> DFS Traversal
+                    </button>
+                </div>
+            </div>
+            
+            <div class="code-container">
+                <pre><code class="language-javascript">
+// Breadth-First Search
+function bfs(graph, start) {
+    const visited = new Set();
+    const queue = [start];
+    const result = [];
+    
+    while (queue.length > 0) {
+        const vertex = queue.shift();
+        if (!visited.has(vertex)) {
+            visited.add(vertex);
+            result.push(vertex);
+            queue.push(...graph[vertex]);
+        }
+    }
+    return result;
+}
+                </code></pre>
+                </div>
+            </li>
+            <li class="splide__slide">
+                <!-- Conclusion Card -->
+                <div class="algorithm-card" id="card-8">
+            <h2>Conclusion</h2>
+            <p>Algorithms and data structures are fundamental to computer science and software development. They provide:</p>
+            
+            <ul>
+                <li>Efficient problem-solving techniques</li>
+                <li>Optimized performance for applications</li>
+                <li>Systematic approaches to complex challenges</li>
+                <li>Foundation for advanced computer science concepts</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: var(--space-xl);">
+                <div class="phase-badge">Thank you for your attention!</div>
+                <p style="margin-top: var(--space-md); font-style: italic; color: var(--sage-green);">
+                    Continue exploring and practicing these concepts to master algorithmic thinking.
+                </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/js/splide.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var splide = new Splide('#main-slider', {
+                direction: 'ttb',
+                height: '100vh',
+                wheel: true,
+                arrows: false,
+                pagination: true,
+            });
+            splide.mount();
+        });
+
+        // Initialize OverlayScrollbars
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof OverlayScrollbars !== 'undefined') {
+                OverlayScrollbars(document.body, {
+                    className: 'os-theme-dark',
+                    resize: 'none',
+                    sizeAutoCapable: true,
+                    clipAlways: true,
+                    normalizeRTL: true,
+                    paddingAbsolute: false,
+                    autoUpdate: null,
+                    autoUpdateInterval: 33,
+                    updateOnLoad: ['img'],
+                    nativeScrollbarsOverlaid: {
+                        showNativeScrollbars: false,
+                        initialize: true
+                    },
+                    overflowBehavior: {
+                        x: 'hidden',
+                        y: 'scroll'
+                    },
+                    scrollbars: {
+                        visibility: 'auto',
+                        autoHide: 'never',
+                        autoHideDelay: 800,
+                        dragScrolling: true,
+                        clickScrolling: false,
+                        touchSupport: true,
+                        snapHandle: false
+                    }
+                });
+            }
+        });
+
+        // Smooth Scroll Navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollDots = document.querySelectorAll('.scroll-dot');
+            const cards = document.querySelectorAll('.algorithm-card');
+
+            scrollDots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const targetIndex = parseInt(dot.dataset.target);
+                    const targetCard = document.getElementById(`card-${targetIndex}`);
+                    
+                    if (targetCard) {
+                        // Update active dot
+                        scrollDots.forEach(d => d.classList.remove('active'));
+                        dot.classList.add('active');
+                        
+                        // Smooth scroll to target
+                        lenis.scrollTo(targetCard, {
+                            offset: -50,
+                            duration: 1.2,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                        });
+                    }
+                });
+            });
+
+            // Update active dot on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const cardId = entry.target.id;
+                        const cardIndex = cardId.split('-')[1];
+                        
+                        scrollDots.forEach(dot => {
+                            dot.classList.remove('active');
+                            if (dot.dataset.target === cardIndex) {
+                                dot.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.5,
+                rootMargin: '-10% 0px -10% 0px'
+            });
+
+            cards.forEach(card => observer.observe(card));
+        });
+
+        // Algorithm Animations
+        let sortArray = [64, 34, 25, 12, 22, 11, 90];
+        let sortStep = 0;
+
+        function startSelectionSort() {
+            const elements = document.querySelectorAll('#selectionSortDemo .array-element');
+            const stepIndicator = document.getElementById('sortStep');
+            
+            sortArray = [64, 34, 25, 12, 22, 11, 90];
+            sortStep = 0;
+            
+            elements.forEach((el, index) => {
+                el.textContent = sortArray[index];
+                el.classList.remove('current', 'comparing', 'sorted');
+            });
+            
+            stepIndicator.textContent = 'Starting Selection Sort...';
+            
+            function sortStepAnimation() {
+                if (sortStep < sortArray.length - 1) {
+                    let minIndex = sortStep;
+                    
+                    // Find minimum element
+                    for (let j = sortStep + 1; j < sortArray.length; j++) {
+                        if (sortArray[j] < sortArray[minIndex]) {
+                            minIndex = j;
+                        }
+                    }
+                    
+                    // Swap if needed
+                    if (minIndex !== sortStep) {
+                        [sortArray[sortStep], sortArray[minIndex]] = [sortArray[minIndex], sortArray[sortStep]];
+                    }
+                    
+                    // Update display
+                    elements.forEach((el, index) => {
+                        el.textContent = sortArray[index];
+                        el.classList.remove('current', 'comparing', 'sorted');
+                        if (index <= sortStep) {
+                            el.classList.add('sorted');
+                        }
+                    });
+                    
+                    stepIndicator.textContent = `Step ${sortStep + 1}: Found minimum ${sortArray[sortStep]} and placed it in position ${sortStep}`;
+                    sortStep++;
+                    
+                    setTimeout(sortStepAnimation, 2000);
+                } else {
+                    elements.forEach(el => el.classList.add('sorted'));
+                    stepIndicator.textContent = 'Sorting complete! All elements are now in ascending order.';
+                }
+            }
+            
+            sortStepAnimation();
+        }
+
+        function resetSelectionSort() {
+            const elements = document.querySelectorAll('#selectionSortDemo .array-element');
+            const stepIndicator = document.getElementById('sortStep');
+            
+            sortArray = [64, 34, 25, 12, 22, 11, 90];
+            elements.forEach((el, index) => {
+                el.textContent = sortArray[index];
+                el.classList.remove('current', 'comparing', 'sorted');
+            });
+            
+            stepIndicator.textContent = 'Click "Start Sort" to see the algorithm in action';
+            sortStep = 0;
+        }
+
+        // Recursion Animation
+        function animateRecursion() {
+            const recursionDemo = document.getElementById('recursionDemo');
+            const lines = recursionDemo.children;
+            
+            // Reset animation
+            Array.from(lines).forEach(line => {
+                line.style.opacity = '0.3';
+                line.style.transform = 'translateX(-20px)';
+                line.innerHTML = line.innerHTML.split(' <span')[0]; // Remove return values
+            });
+            
+            // Animate each line
+            Array.from(lines).forEach((line, index) => {
+                setTimeout(() => {
+                    line.style.transition = 'all 0.5s ease-out';
+                    line.style.opacity = '1';
+                    line.style.transform = 'translateX(0)';
+                    
+                    if (index === lines.length - 1) {
+                        line.style.color = 'var(--sage-green)';
+                        line.style.fontWeight = 'bold';
+                    }
+                }, index * 800);
+            });
+            
+            // Show return values
+            setTimeout(() => {
+                const returnValues = [
+                    'factorial(1) = 1',
+                    'factorial(2) = 2 × 1 = 2',
+                    'factorial(3) = 3 × 2 = 6',
+                    'factorial(4) = 4 × 6 = 24',
+                    'factorial(5) = 5 × 24 = 120'
+                ];
+                
+                returnValues.forEach((value, index) => {
+                    setTimeout(() => {
+                        const line = lines[lines.length - 2 - index];
+                        line.innerHTML += ` <span style="color: var(--accent-terracotta); margin-left: 20px;">→ ${value}</span>`;
+                    }, index * 600);
+                });
+            }, 4000);
+        }
+
+        // Linked List Operations
+        let linkedListData = [10, 20, 30];
+
+        function addToLinkedList() {
+            const newValue = Math.floor(Math.random() * 90) + 10;
+            linkedListData.push(newValue);
+            updateLinkedListDisplay();
+        }
+
+        function removeFromLinkedList() {
+            if (linkedListData.length > 1) {
+                linkedListData.pop();
+                updateLinkedListDisplay();
+            }
+        }
+
+        function updateLinkedListDisplay() {
+            const container = document.getElementById('linkedListDemo');
+            container.innerHTML = '';
+            
+            linkedListData.forEach((value, index) => {
+                const nodeDiv = document.createElement('div');
+                nodeDiv.className = 'linked-node';
+                nodeDiv.innerHTML = `
+                    <div style="background: var(--sage-green); padding: 15px; border-radius: 8px; color: white; font-weight: bold;">${value}</div>
+                    ${index === 0 ? '<div style="margin-top: 5px; font-size: 0.8rem;">Head</div>' : ''}
+                `;
+                container.appendChild(nodeDiv);
+                
+                if (index < linkedListData.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.style.cssText = 'color: var(--sage-green); font-size: 1.5rem;';
+                    arrow.textContent = '→';
+                    container.appendChild(arrow);
+                }
+            });
+            
+            // Add NULL node
+            const nullNode = document.createElement('div');
+            nullNode.innerHTML = `
+                <div style="color: var(--sage-green); font-size: 1.5rem;">→</div>
+                <div class="linked-node">
+                    <div style="background: #666; padding: 15px; border-radius: 8px; color: white; font-weight: bold;">NULL</div>
+                    <div style="margin-top: 5px; font-size: 0.8rem;">Tail</div>
+                </div>
+            `;
+            container.appendChild(nullNode);
+        }
+
+        // Graph Traversal
+        function startBFS() {
+            const nodes = document.querySelectorAll('.graph-node');
+            const visitOrder = ['A', 'B', 'C', 'D'];
+            
+            nodes.forEach(node => {
+                node.style.background = 'var(--sage-green)';
+            });
+            
+            visitOrder.forEach((nodeLabel, index) => {
+                setTimeout(() => {
+                    const node = Array.from(nodes).find(n => n.textContent === nodeLabel);
+                    node.style.background = 'var(--forest-green)';
+                    node.style.transform = 'scale(1.2)';
+                    
+                    setTimeout(() => {
+                        node.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 1000);
+            });
+        }
+
+        function startDFS() {
+            const nodes = document.querySelectorAll('.graph-node');
+            const visitOrder = ['A', 'C', 'D', 'B'];
+            
+            nodes.forEach(node => {
+                node.style.background = 'var(--sage-green)';
+            });
+            
+            visitOrder.forEach((nodeLabel, index) => {
+                setTimeout(() => {
+                    const node = Array.from(nodes).find(n => n.textContent === nodeLabel);
+                    node.style.background = 'var(--accent-terracotta)';
+                    node.style.transform = 'scale(1.2)';
+                    
+                    setTimeout(() => {
+                        node.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 1000);
+            });
+        }
+
+        // Initialize linked list display
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLinkedListDisplay();
+            
+            // Hide scroll indicator after first scroll
+            let hasScrolled = false;
+            window.addEventListener('scroll', () => {
+                if (!hasScrolled) {
+                    document.querySelector('.scroll-indicator').style.opacity = '0';
+                    hasScrolled = true;
+                }
+            });
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                const currentActive = document.querySelector('.scroll-dot.active');
+                const currentIndex = parseInt(currentActive.dataset.target);
+                
+                if (diff > 0 && currentIndex < 8) {
+                    // Swipe left - next card
+                    document.querySelector(`[data-target="${currentIndex + 1}"]`).click();
+                } else if (diff < 0 && currentIndex > 0) {
+                    // Swipe right - previous card
+                    document.querySelector(`[data-target="${currentIndex - 1}"]`).click();
+                }
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const currentActive = document.querySelector('.scroll-dot.active');
+            const currentIndex = parseInt(currentActive.dataset.target);
+            
+            if (e.key === 'ArrowDown' && currentIndex < 8) {
+                e.preventDefault();
+                document.querySelector(`[data-target="${currentIndex + 1}"]`).click();
+            } else if (e.key === 'ArrowUp' && currentIndex > 0) {
+                e.preventDefault();
+                document.querySelector(`[data-target="${currentIndex - 1}"]`).click();
+            }
+        });
+    </script>
+</body>
+</html>

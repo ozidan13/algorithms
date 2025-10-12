@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network Graph & Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .graph-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        #graphCanvas {
+            width: 100%;
+            height: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .control-group h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid #333;
+        }
+
+        .user-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #fafafa;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .user-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .user-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        #hashTableDisplay {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Social Network Visualizer</h1>
+            <p>Graph Algorithms | Friend Recommendations | Hash Table Storage</p>
+        </header>
+
+        <div class="main-content">
+            <div class="graph-section">
+                <svg id="graphCanvas"></svg>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <span>Normal Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #4caf50;"></div>
+                        <span>Selected Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff9800;"></div>
+                        <span>Visiting Node</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f44336;"></div>
+                        <span>Path/Community</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3>📊 Network Stats</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="nodeCount">0</div>
+                            <div class="stat-label">USERS</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="edgeCount">0</div>
+                            <div class="stat-label">CONNECTIONS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>👤 User Selection</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Click a node or select from list:</p>
+                    <div class="user-list" id="userList"></div>
+                    <div id="selectedUserInfo" class="info-box" style="display: none;">
+                        <strong>Selected:</strong> <span id="selectedUserName"></span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🔍 Graph Algorithms</h3>
+                    <button onclick="runBFS()" id="bfsBtn">BFS: Find Shortest Path</button>
+                    <button onclick="runDFS()" id="dfsBtn">DFS: Discover Community</button>
+                    <button onclick="findRecommendations()" id="recBtn">Find Friend Recommendations</button>
+                    <button onclick="resetGraph()" style="background: #e91e63;">Reset Visualization</button>
+                    <div id="algorithmResult"></div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🔐 Hash Table Lookup</h3>
+                    <input type="number" id="userIdInput" placeholder="Enter User ID (e.g., 1, 2, 3...)">
+                    <button onclick="lookupUser()">Lookup User Profile</button>
+                    <div id="lookupResult"></div>
+                    <div id="hashTableDisplay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== HASH TABLE IMPLEMENTATION ====================
+        class HashNode {
+            constructor(key, value) {
+                this.key = key;
+                this.value = value;
+                this.next = null;
+            }
+        }
+
+        class HashTable {
+            constructor(size = 10) {
+                this.size = size;
+                this.buckets = new Array(size).fill(null);
+                this.count = 0;
+            }
+
+            // Simple hash function
+            hash(key) {
+                return key % this.size;
+            }
+
+            // Insert with collision handling (chaining)
+            insert(key, value) {
+                const index = this.hash(key);
+                const newNode = new HashNode(key, value);
+
+                if (!this.buckets[index]) {
+                    this.buckets[index] = newNode;
+                    this.count++;
+                } else {
+                    // Collision detected - use chaining
+                    let current = this.buckets[index];
+
+                    // Check if key already exists
+                    while (current) {
+                        if (current.key === key) {
+                            current.value = value; // Update value
+                            return;
+                        }
+                        if (!current.next) break;
+                        current = current.next;
+                    }
+
+                    // Add to end of chain
+                    current.next = newNode;
+                    this.count++;
+                }
+            }
+
+            // Get value by key
+            get(key) {
+                const index = this.hash(key);
+                let current = this.buckets[index];
+
+                while (current) {
+                    if (current.key === key) {
+                        return current.value;
+                    }
+                    current = current.next;
+                }
+
+                return null;
+            }
+
+            // Display hash table structure
+            display() {
+                let output = 'Hash Table Structure:\n';
+                output += '='.repeat(30) + '\n';
+
+                for (let i = 0; i < this.size; i++) {
+                    output += `Bucket [${i}]: `;
+
+                    if (!this.buckets[i]) {
+                        output += 'empty\n';
+                    } else {
+                        let current = this.buckets[i];
+                        let chain = [];
+
+                        while (current) {
+                            chain.push(`(${current.key}: ${current.value.name})`);
+                            current = current.next;
+                        }
+
+                        output += chain.join(' -> ') + '\n';
+                    }
+                }
+
+                return output;
+            }
+        }
+
+        // ==================== GRAPH STRUCTURE ====================
+        class Graph {
+            constructor() {
+                this.adjacencyList = {};
+                this.nodes = [];
+            }
+
+            addNode(id, name) {
+                if (!this.adjacencyList[id]) {
+                    this.adjacencyList[id] = [];
+                    this.nodes.push({ id, name, x: 0, y: 0 });
+                }
+            }
+
+            addEdge(id1, id2) {
+                if (this.adjacencyList[id1] && this.adjacencyList[id2]) {
+                    if (!this.adjacencyList[id1].includes(id2)) {
+                        this.adjacencyList[id1].push(id2);
+                        this.adjacencyList[id2].push(id1);
+                    }
+                }
+            }
+
+            getNode(id) {
+                return this.nodes.find(node => node.id === id);
+            }
+        }
+
+        // ==================== GLOBAL VARIABLES ====================
+        const graph = new Graph();
+        const hashTable = new HashTable(10);
+        let selectedNode = null;
+        let animationInProgress = false;
+
+        // ==================== INITIALIZE SAMPLE NETWORK ====================
+        function initializeSocialNetwork() {
+            // Create users
+            const users = [
+                { id: 1, name: 'Alice' },
+                { id: 2, name: 'Bob' },
+                { id: 3, name: 'Charlie' },
+                { id: 4, name: 'Diana' },
+                { id: 5, name: 'Eve' },
+                { id: 6, name: 'Frank' },
+                { id: 7, name: 'Grace' },
+                { id: 8, name: 'Henry' },
+                { id: 9, name: 'Ivy' },
+                { id: 10, name: 'Jack' },
+                { id: 11, name: 'Kate' },
+                { id: 12, name: 'Liam' }
+            ];
+
+            // Add users to graph and hash table
+            users.forEach(user => {
+                graph.addNode(user.id, user.name);
+                hashTable.insert(user.id, user);
+            });
+
+            // Create connections (friendships)
+            const connections = [
+                [1, 2], [1, 3], [1, 4],
+                [2, 3], [2, 5],
+                [3, 4], [3, 6],
+                [4, 7],
+                [5, 6], [5, 8],
+                [6, 7], [6, 9],
+                [7, 10],
+                [8, 9], [8, 11],
+                [9, 10],
+                [10, 11], [10, 12],
+                [11, 12]
+            ];
+
+            connections.forEach(([id1, id2]) => {
+                graph.addEdge(id1, id2);
+            });
+
+            positionNodes();
+            renderGraph();
+            updateStats();
+            populateUserList();
+            updateHashTableDisplay();
+        }
+
+        // ==================== GRAPH VISUALIZATION ====================
+        function positionNodes() {
+            const svg = document.getElementById('graphCanvas');
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) * 0.35;
+
+            graph.nodes.forEach((node, index) => {
+                const angle = (2 * Math.PI * index) / graph.nodes.length;
+                node.x = centerX + radius * Math.cos(angle);
+                node.y = centerY + radius * Math.sin(angle);
+            });
+        }
+
+        function renderGraph(highlightedEdges = [], highlightedNodes = [], visitingNode = null) {
+            const svg = document.getElementById('graphCanvas');
+            svg.innerHTML = '';
+
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+            // Draw edges
+            Object.keys(graph.adjacencyList).forEach(nodeId => {
+                const node1 = graph.getNode(parseInt(nodeId));
+
+                graph.adjacencyList[nodeId].forEach(neighborId => {
+                    if (parseInt(nodeId) < neighborId) {
+                        const node2 = graph.getNode(neighborId);
+                        const isHighlighted = highlightedEdges.some(
+                            edge => (edge[0] === node1.id && edge[1] === node2.id) ||
+                                   (edge[1] === node1.id && edge[0] === node2.id)
+                        );
+
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', node1.x);
+                        line.setAttribute('y1', node1.y);
+                        line.setAttribute('x2', node2.x);
+                        line.setAttribute('y2', node2.y);
+                        line.setAttribute('stroke', isHighlighted ? '#f44336' : '#ccc');
+                        line.setAttribute('stroke-width', isHighlighted ? '4' : '2');
+                        svg.appendChild(line);
+                    }
+                });
+            });
+
+            // Draw nodes
+            graph.nodes.forEach(node => {
+                const isSelected = selectedNode && selectedNode.id === node.id;
+                const isHighlighted = highlightedNodes.includes(node.id);
+                const isVisiting = visitingNode === node.id;
+
+                let fillColor = '#667eea';
+                if (isSelected) fillColor = '#4caf50';
+                else if (isVisiting) fillColor = '#ff9800';
+                else if (isHighlighted) fillColor = '#f44336';
+
+                // Node circle
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', node.x);
+                circle.setAttribute('cy', node.y);
+                circle.setAttribute('r', isSelected || isVisiting ? '25' : '20');
+                circle.setAttribute('fill', fillColor);
+                circle.setAttribute('stroke', '#fff');
+                circle.setAttribute('stroke-width', '3');
+                circle.setAttribute('cursor', 'pointer');
+                circle.onclick = () => selectNode(node);
+
+                if (isVisiting) {
+                    circle.classList.add('pulse');
+                }
+
+                svg.appendChild(circle);
+
+                // Node label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', node.x);
+                text.setAttribute('y', node.y + 5);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('fill', 'white');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('pointer-events', 'none');
+                text.textContent = node.id;
+                svg.appendChild(text);
+
+                // Name below node
+                const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                nameText.setAttribute('x', node.x);
+                nameText.setAttribute('y', node.y + 40);
+                nameText.setAttribute('text-anchor', 'middle');
+                nameText.setAttribute('fill', '#333');
+                nameText.setAttribute('font-size', '11');
+                nameText.textContent = node.name;
+                svg.appendChild(nameText);
+            });
+        }
+
+        // ==================== USER INTERACTION ====================
+        function selectNode(node) {
+            if (animationInProgress) return;
+
+            selectedNode = node;
+            renderGraph();
+
+            document.getElementById('selectedUserInfo').style.display = 'block';
+            document.getElementById('selectedUserName').textContent = `${node.name} (ID: ${node.id})`;
+        }
+
+        function resetGraph() {
+            selectedNode = null;
+            animationInProgress = false;
+            renderGraph();
+            document.getElementById('selectedUserInfo').style.display = 'none';
+            document.getElementById('algorithmResult').innerHTML = '';
+            enableButtons();
+        }
+
+        // ==================== BFS ALGORITHM ====================
+        async function runBFS() {
+            if (!selectedNode) {
+                showResult('warning-box', 'Please select a starting user first!');
+                return;
+            }
+
+            if (animationInProgress) return;
+            animationInProgress = true;
+            disableButtons();
+
+            // Pick a random target node different from selected
+            const targetNode = graph.nodes.find(n => n.id !== selectedNode.id && Math.random() > 0.7) || 
+                              graph.nodes[graph.nodes.length - 1];
+
+            showResult('info-box', `Finding shortest path from ${selectedNode.name} to ${targetNode.name}...`);
+
+            const queue = [selectedNode.id];
+            const visited = new Set([selectedNode.id]);
+            const parent = { [selectedNode.id]: null };
+            let found = false;
+
+            while (queue.length > 0 && !found) {
+                const currentId = queue.shift();
+
+                // Animate visiting node
+                renderGraph([], Array.from(visited), currentId);
+                await sleep(800);
+
+                if (currentId === targetNode.id) {
+                    found = true;
+                    break;
+                }
+
+                for (const neighborId of graph.adjacencyList[currentId]) {
+                    if (!visited.has(neighborId)) {
+                        visited.add(neighborId);
+                        parent[neighborId] = currentId;
+                        queue.push(neighborId);
+                    }
+                }
+            }
+
+            if (found) {
+                // Reconstruct path
+                const path = [];
+                let current = targetNode.id;
+
+                while (current !== null) {
+                    path.unshift(current);
+                    current = parent[current];
+                }
+
+                // Highlight path
+                const edges = [];
+                for (let i = 0; i < path.length - 1; i++) {
+                    edges.push([path[i], path[i + 1]]);
+                }
+
+                renderGraph(edges, path);
+                showResult('success-box', 
+                    `✅ Shortest path found! Length: ${path.length - 1} hops<br>` +
+                    `Path: ${path.map(id => graph.getNode(id).name).join(' → ')}`
+                );
+            }
+
+            animationInProgress = false;
+            enableButtons();
+        }
+
+        // ==================== DFS ALGORITHM ====================
+        async function runDFS() {
+            if (!selectedNode) {
+                showResult('warning-box', 'Please select a starting user first!');
+                return;
+            }
+
+            if (animationInProgress) return;
+            animationInProgress = true;
+            disableButtons();
+
+            showResult('info-box', `Discovering ${selectedNode.name}'s community using DFS...`);
+
+            const visited = new Set();
+            const community = [];
+            const edges = [];
+
+            async function dfs(nodeId, parentId = null) {
+                visited.add(nodeId);
+                community.push(nodeId);
+
+                if (parentId !== null) {
+                    edges.push([parentId, nodeId]);
+                }
+
+                // Animate current node
+                renderGraph(edges, community, nodeId);
+                await sleep(800);
+
+                for (const neighborId of graph.adjacencyList[nodeId]) {
+                    if (!visited.has(neighborId)) {
+                        await dfs(neighborId, nodeId);
+                    }
+                }
+            }
+
+            await dfs(selectedNode.id);
+
+            renderGraph(edges, community);
+            showResult('success-box', 
+                `✅ Community discovered! Size: ${community.length} users<br>` +
+                `Members: ${community.map(id => graph.getNode(id).name).join(', ')}`
+            );
+
+            animationInProgress = false;
+            enableButtons();
+        }
+
+        // ==================== FRIEND RECOMMENDATIONS ====================
+        async function findRecommendations() {
+            if (!selectedNode) {
+                showResult('warning-box', 'Please select a user first!');
+                return;
+            }
+
+            if (animationInProgress) return;
+            animationInProgress = true;
+            disableButtons();
+
+            showResult('info-box', `Finding friends of friends for ${selectedNode.name}...`);
+
+            const userId = selectedNode.id;
+            const directFriends = new Set(graph.adjacencyList[userId]);
+            const friendsOfFriends = new Set();
+            const highlightNodes = [userId];
+            const highlightEdges = [];
+
+            // First hop - direct friends
+            for (const friendId of directFriends) {
+                highlightNodes.push(friendId);
+                highlightEdges.push([userId, friendId]);
+            }
+
+            renderGraph(highlightEdges, highlightNodes);
+            await sleep(1000);
+
+            // Second hop - friends of friends
+            for (const friendId of directFriends) {
+                for (const fofId of graph.adjacencyList[friendId]) {
+                    if (fofId !== userId && !directFriends.has(fofId)) {
+                        friendsOfFriends.add(fofId);
+                        highlightNodes.push(fofId);
+                        highlightEdges.push([friendId, fofId]);
+
+                        renderGraph(highlightEdges, highlightNodes, fofId);
+                        await sleep(600);
+                    }
+                }
+            }
+
+            renderGraph(highlightEdges, highlightNodes);
+
+            if (friendsOfFriends.size > 0) {
+                const recommendations = Array.from(friendsOfFriends)
+                    .map(id => graph.getNode(id).name)
+                    .join(', ');
+
+                showResult('success-box', 
+                    `✅ Found ${friendsOfFriends.size} recommendations!<br>` +
+                    `People you may know: ${recommendations}`
+                );
+            } else {
+                showResult('info-box', 'No new recommendations found. Everyone is already connected!');
+            }
+
+            animationInProgress = false;
+            enableButtons();
+        }
+
+        // ==================== HASH TABLE LOOKUP ====================
+        function lookupUser() {
+            const userId = parseInt(document.getElementById('userIdInput').value);
+
+            if (isNaN(userId)) {
+                showLookupResult('warning-box', 'Please enter a valid user ID!');
+                return;
+            }
+
+            const user = hashTable.get(userId);
+
+            if (user) {
+                const hashIndex = hashTable.hash(userId);
+                showLookupResult('success-box', 
+                    `<strong>User Found!</strong><br>` +
+                    `ID: ${user.id}<br>` +
+                    `Name: ${user.name}<br>` +
+                    `Hash Index: ${hashIndex}<br>` +
+                    `Friends: ${graph.adjacencyList[userId].length}`
+                );
+
+                // Select the node
+                const node = graph.getNode(userId);
+                if (node) selectNode(node);
+            } else {
+                showLookupResult('warning-box', `User with ID ${userId} not found in hash table!`);
+            }
+        }
+
+        function updateHashTableDisplay() {
+            document.getElementById('hashTableDisplay').textContent = hashTable.display();
+        }
+
+        // ==================== UI HELPERS ====================
+        function updateStats() {
+            document.getElementById('nodeCount').textContent = graph.nodes.length;
+
+            let edgeCount = 0;
+            Object.keys(graph.adjacencyList).forEach(nodeId => {
+                edgeCount += graph.adjacencyList[nodeId].length;
+            });
+            document.getElementById('edgeCount').textContent = edgeCount / 2;
+        }
+
+        function populateUserList() {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+
+            graph.nodes.forEach(node => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.textContent = `${node.id}. ${node.name}`;
+                div.onclick = () => selectNode(node);
+                userList.appendChild(div);
+            });
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('algorithmResult');
+            resultDiv.className = type;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+
+        function showLookupResult(type, message) {
+            const resultDiv = document.getElementById('lookupResult');
+            resultDiv.className = type;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+
+        function disableButtons() {
+            document.getElementById('bfsBtn').disabled = true;
+            document.getElementById('dfsBtn').disabled = true;
+            document.getElementById('recBtn').disabled = true;
+        }
+
+        function enableButtons() {
+            document.getElementById('bfsBtn').disabled = false;
+            document.getElementById('dfsBtn').disabled = false;
+            document.getElementById('recBtn').disabled = false;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ==================== INITIALIZE ON LOAD ====================
+        window.onload = () => {
+            initializeSocialNetwork();
+        };
+
+        window.onresize = () => {
+            positionNodes();
+            renderGraph();
+        };
+    </script>
+</body>
+</html>

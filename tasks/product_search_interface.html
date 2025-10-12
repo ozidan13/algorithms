@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Product Search Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-input-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-linear {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-linear:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-binary {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-binary:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-both {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-both:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .algorithm-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .algorithm-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comparisons-badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .product-list {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .product-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .product-item.checking {
+            background: #fff3cd;
+            border-color: #ffc107;
+            transform: scale(1.02);
+        }
+
+        .product-item.found {
+            background: #d4edda;
+            border-color: #28a745;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        .product-item.not-checked {
+            background: #f8f9fa;
+            color: #999;
+        }
+
+        .product-item.eliminated {
+            background: #f8d7da;
+            border-color: #dc3545;
+            opacity: 0.5;
+        }
+
+        .comparison-chart {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .comparison-chart h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chart-label {
+            width: 120px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .chart-bar-container {
+            flex: 1;
+            background: #e9ecef;
+            border-radius: 8px;
+            height: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease-out;
+        }
+
+        .chart-bar.linear {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .chart-bar.binary {
+            background: linear-gradient(90deg, #27ae60, #229954);
+        }
+
+        .recursion-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .recursion-section h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .recursion-demos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .recursion-calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .recursion-calculator h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .recursion-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .recursion-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .recursion-input button {
+            padding: 10px 20px;
+        }
+
+        .call-stack {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .call-stack-item {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .call-stack-return {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .result-display {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        @media (max-width: 768px) {
+            .results-container,
+            .recursion-demos {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .search-input-container {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Fast Product Search Interface</h1>
+        <p class="subtitle">Compare Linear vs Binary Search Performance in Real-Time</p>
+
+        <div class="search-section">
+            <div class="search-input-container">
+                <input type="text" id="searchInput" placeholder="Enter product name to search (e.g., Laptop, Phone, Headphones...)">
+                <button class="btn-linear" onclick="startLinearSearch()">Linear Search</button>
+                <button class="btn-binary" onclick="startBinarySearch()">Binary Search</button>
+                <button class="btn-both" onclick="startBothSearches()">Compare Both</button>
+            </div>
+            <div id="statusMessage"></div>
+        </div>
+
+        <div class="results-container">
+            <div class="algorithm-section">
+                <h3>
+                    Linear Search
+                    <span class="comparisons-badge" id="linearComparisons">0 comparisons</span>
+                </h3>
+                <div class="product-list" id="linearList"></div>
+            </div>
+
+            <div class="algorithm-section">
+                <h3>
+                    Binary Search
+                    <span class="comparisons-badge" id="binaryComparisons">0 comparisons</span>
+                </h3>
+                <div class="product-list" id="binaryList"></div>
+            </div>
+        </div>
+
+        <div class="comparison-chart">
+            <h2>📊 Performance Comparison</h2>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Linear Search:</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar linear" id="linearBar" style="width: 0%">
+                            <span id="linearBarText">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Binary Search:</div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar binary" id="binaryBar" style="width: 0%">
+                            <span id="binaryBarText">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recursion-section">
+            <h2>🔄 Recursion Demo - Call Stack Visualization</h2>
+            <div class="recursion-demos">
+                <div class="recursion-calculator">
+                    <h3>Factorial Calculator</h3>
+                    <div class="recursion-input">
+                        <input type="number" id="factorialInput" placeholder="Enter a number (1-12)" min="1" max="12">
+                        <button class="btn-linear" onclick="calculateFactorial()">Calculate</button>
+                    </div>
+                    <div class="call-stack" id="factorialStack"></div>
+                    <div class="result-display" id="factorialResult">Result: -</div>
+                </div>
+
+                <div class="recursion-calculator">
+                    <h3>Fibonacci Calculator</h3>
+                    <div class="recursion-input">
+                        <input type="number" id="fibonacciInput" placeholder="Enter a number (1-15)" min="1" max="15">
+                        <button class="btn-binary" onclick="calculateFibonacci()">Calculate</button>
+                    </div>
+                    <div class="call-stack" id="fibonacciStack"></div>
+                    <div class="result-display" id="fibonacciResult">Result: -</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate 100 product names
+        const productCategories = [
+            ['Laptop', 'Desktop', 'Tablet', 'Monitor', 'Keyboard', 'Mouse', 'Webcam', 'Microphone'],
+            ['Phone', 'Charger', 'Headphones', 'Earbuds', 'Speaker', 'Smartwatch', 'Fitness Tracker'],
+            ['Camera', 'Lens', 'Tripod', 'Memory Card', 'Flash', 'Camera Bag'],
+            ['Router', 'Modem', 'Switch', 'Cable', 'Adapter', 'Hub', 'Extender'],
+            ['Hard Drive', 'SSD', 'USB Drive', 'External Drive', 'NAS'],
+            ['Printer', 'Scanner', 'Ink', 'Paper', 'Toner'],
+            ['TV', 'Soundbar', 'Remote', 'Streaming Device', 'Antenna'],
+            ['Console', 'Controller', 'Game', 'Headset', 'Gaming Chair'],
+            ['Chair', 'Desk', 'Lamp', 'Stand', 'Mat'],
+            ['Battery', 'Power Bank', 'Surge Protector', 'Extension Cord']
+        ];
+
+        const brands = ['Sony', 'Samsung', 'LG', 'Apple', 'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Microsoft'];
+        const modifiers = ['Pro', 'Plus', 'Ultra', 'Max', 'Mini', 'Lite', 'Premium', 'Essential', 'Advanced', 'Basic'];
+
+        let products = [];
+        productCategories.forEach(category => {
+            category.forEach(item => {
+                brands.slice(0, 3).forEach(brand => {
+                    products.push(`${brand} ${item}`);
+                });
+                if (products.length < 100) {
+                    modifiers.slice(0, 2).forEach(mod => {
+                        products.push(`${item} ${mod}`);
+                    });
+                }
+            });
+        });
+
+        products = products.slice(0, 100).sort();
+
+        let linearComparisons = 0;
+        let binaryComparisons = 0;
+        let searchInProgress = false;
+
+        // Initialize product lists
+        function initializeProductLists() {
+            const linearList = document.getElementById('linearList');
+            const binaryList = document.getElementById('binaryList');
+
+            linearList.innerHTML = '';
+            binaryList.innerHTML = '';
+
+            products.forEach((product, index) => {
+                const linearItem = document.createElement('div');
+                linearItem.className = 'product-item';
+                linearItem.id = `linear-${index}`;
+                linearItem.textContent = product;
+                linearList.appendChild(linearItem);
+
+                const binaryItem = document.createElement('div');
+                binaryItem.className = 'product-item';
+                binaryItem.id = `binary-${index}`;
+                binaryItem.textContent = product;
+                binaryList.appendChild(binaryItem);
+            });
+        }
+
+        // Reset all product items to default state
+        function resetProductItems() {
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.className = 'product-item';
+            });
+            linearComparisons = 0;
+            binaryComparisons = 0;
+            updateComparisonBadges();
+            updateChart();
+        }
+
+        // Update comparison badges
+        function updateComparisonBadges() {
+            document.getElementById('linearComparisons').textContent = `${linearComparisons} comparisons`;
+            document.getElementById('binaryComparisons').textContent = `${binaryComparisons} comparisons`;
+        }
+
+        // Update comparison chart
+        function updateChart() {
+            const maxComparisons = Math.max(linearComparisons, binaryComparisons, 1);
+            const linearPercent = (linearComparisons / maxComparisons) * 100;
+            const binaryPercent = (binaryComparisons / maxComparisons) * 100;
+
+            document.getElementById('linearBar').style.width = linearPercent + '%';
+            document.getElementById('linearBarText').textContent = linearComparisons;
+
+            document.getElementById('binaryBar').style.width = binaryPercent + '%';
+            document.getElementById('binaryBarText').textContent = binaryComparisons;
+        }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        // Sleep function for animation delays
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Linear Search Algorithm
+        async function performLinearSearch(searchTerm) {
+            linearComparisons = 0;
+            const normalizedSearch = searchTerm.toLowerCase().trim();
+
+            for (let i = 0; i < products.length; i++) {
+                const item = document.getElementById(`linear-${i}`);
+                item.className = 'product-item checking';
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                linearComparisons++;
+                updateComparisonBadges();
+
+                await sleep(50);
+
+                if (products[i].toLowerCase().includes(normalizedSearch)) {
+                    item.className = 'product-item found';
+                    return i;
+                }
+
+                item.className = 'product-item not-checked';
+            }
+
+            return -1;
+        }
+
+        // Binary Search Algorithm
+        async function performBinarySearch(searchTerm) {
+            binaryComparisons = 0;
+            const normalizedSearch = searchTerm.toLowerCase().trim();
+            let left = 0;
+            let right = products.length - 1;
+            let foundIndex = -1;
+
+            while (left <= right) {
+                const mid = Math.floor((left + right) / 2);
+                const item = document.getElementById(`binary-${mid}`);
+
+                item.className = 'product-item checking';
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                binaryComparisons++;
+                updateComparisonBadges();
+
+                await sleep(300);
+
+                const comparison = products[mid].toLowerCase().localeCompare(normalizedSearch);
+
+                if (products[mid].toLowerCase().includes(normalizedSearch)) {
+                    item.className = 'product-item found';
+                    foundIndex = mid;
+                    break;
+                } else if (products[mid].toLowerCase() < normalizedSearch) {
+                    // Mark eliminated left side
+                    for (let i = left; i <= mid; i++) {
+                        if (i !== mid) {
+                            document.getElementById(`binary-${i}`).className = 'product-item eliminated';
+                        }
+                    }
+                    left = mid + 1;
+                    item.className = 'product-item eliminated';
+                } else {
+                    // Mark eliminated right side
+                    for (let i = mid; i <= right; i++) {
+                        if (i !== mid) {
+                            document.getElementById(`binary-${i}`).className = 'product-item eliminated';
+                        }
+                    }
+                    right = mid - 1;
+                    item.className = 'product-item eliminated';
+                }
+            }
+
+            // If not found, do a linear scan for partial matches
+            if (foundIndex === -1) {
+                for (let i = 0; i < products.length; i++) {
+                    if (products[i].toLowerCase().includes(normalizedSearch)) {
+                        const item = document.getElementById(`binary-${i}`);
+                        item.className = 'product-item found';
+                        foundIndex = i;
+                        binaryComparisons++;
+                        updateComparisonBadges();
+                        break;
+                    }
+                }
+            }
+
+            return foundIndex;
+        }
+
+        // Start Linear Search
+        async function startLinearSearch() {
+            if (searchInProgress) return;
+
+            const searchTerm = document.getElementById('searchInput').value;
+            if (!searchTerm) {
+                showStatus('Please enter a product name to search', 'error');
+                return;
+            }
+
+            searchInProgress = true;
+            resetProductItems();
+            showStatus('🔍 Performing Linear Search...', 'info');
+
+            const result = await performLinearSearch(searchTerm);
+
+            if (result !== -1) {
+                showStatus(`✅ Found "${products[result]}" at position ${result + 1} with ${linearComparisons} comparisons`, 'success');
+            } else {
+                showStatus(`❌ Product not found. Checked all ${linearComparisons} items`, 'error');
+            }
+
+            updateChart();
+            searchInProgress = false;
+        }
+
+        // Start Binary Search
+        async function startBinarySearch() {
+            if (searchInProgress) return;
+
+            const searchTerm = document.getElementById('searchInput').value;
+            if (!searchTerm) {
+                showStatus('Please enter a product name to search', 'error');
+                return;
+            }
+
+            searchInProgress = true;
+            resetProductItems();
+            showStatus('🔍 Performing Binary Search...', 'info');
+
+            const result = await performBinarySearch(searchTerm);
+
+            if (result !== -1) {
+                showStatus(`✅ Found "${products[result]}" at position ${result + 1} with ${binaryComparisons} comparisons`, 'success');
+            } else {
+                showStatus(`❌ Product not found after ${binaryComparisons} comparisons`, 'error');
+            }
+
+            updateChart();
+            searchInProgress = false;
+        }
+
+        // Start Both Searches
+        async function startBothSearches() {
+            if (searchInProgress) return;
+
+            const searchTerm = document.getElementById('searchInput').value;
+            if (!searchTerm) {
+                showStatus('Please enter a product name to search', 'error');
+                return;
+            }
+
+            searchInProgress = true;
+            resetProductItems();
+            showStatus('🔍 Comparing Linear and Binary Search...', 'info');
+
+            // Run both searches simultaneously
+            const [linearResult, binaryResult] = await Promise.all([
+                performLinearSearch(searchTerm),
+                performBinarySearch(searchTerm)
+            ]);
+
+            const diff = linearComparisons - binaryComparisons;
+            const improvement = ((diff / linearComparisons) * 100).toFixed(1);
+
+            if (linearResult !== -1 || binaryResult !== -1) {
+                showStatus(
+                    `✅ Search Complete! Binary search used ${binaryComparisons} comparisons vs Linear search ${linearComparisons} comparisons. ` +
+                    `Binary is ${Math.abs(improvement)}% ${diff > 0 ? 'faster' : 'slower'}!`,
+                    'success'
+                );
+            } else {
+                showStatus(`❌ Product not found in both searches`, 'error');
+            }
+
+            updateChart();
+            searchInProgress = false;
+        }
+
+        // Factorial Calculation with Call Stack Visualization
+        let factorialCallStack = [];
+
+        function factorialRecursive(n, depth = 0) {
+            factorialCallStack.push({
+                type: 'call',
+                value: n,
+                depth: depth,
+                message: `factorial(${n})`
+            });
+
+            if (n <= 1) {
+                factorialCallStack.push({
+                    type: 'return',
+                    value: 1,
+                    depth: depth,
+                    message: `factorial(${n}) returns 1`
+                });
+                return 1;
+            }
+
+            const result = n * factorialRecursive(n - 1, depth + 1);
+
+            factorialCallStack.push({
+                type: 'return',
+                value: result,
+                depth: depth,
+                message: `factorial(${n}) returns ${result}`
+            });
+
+            return result;
+        }
+
+        async function calculateFactorial() {
+            const input = document.getElementById('factorialInput').value;
+            const n = parseInt(input);
+
+            if (!n || n < 1 || n > 12) {
+                alert('Please enter a number between 1 and 12');
+                return;
+            }
+
+            factorialCallStack = [];
+            const stackDiv = document.getElementById('factorialStack');
+            stackDiv.innerHTML = '<p style="text-align: center; color: #666;">Building call stack...</p>';
+
+            const result = factorialRecursive(n);
+
+            // Animate the call stack
+            stackDiv.innerHTML = '';
+            for (let i = 0; i < factorialCallStack.length; i++) {
+                await sleep(200);
+                const call = factorialCallStack[i];
+                const item = document.createElement('div');
+                item.className = call.type === 'return' ? 'call-stack-item call-stack-return' : 'call-stack-item';
+                item.style.marginLeft = (call.depth * 20) + 'px';
+                item.innerHTML = `<strong>${call.type === 'call' ? '→' : '←'}</strong> ${call.message}`;
+                stackDiv.appendChild(item);
+                stackDiv.scrollTop = stackDiv.scrollHeight;
+            }
+
+            document.getElementById('factorialResult').textContent = `Result: ${n}! = ${result}`;
+        }
+
+        // Fibonacci Calculation with Call Stack Visualization
+        let fibonacciCallStack = [];
+        let fibCallCount = 0;
+
+        function fibonacciRecursive(n, depth = 0) {
+            fibCallCount++;
+
+            if (fibCallCount > 1000) return 0; // Prevent too many calls
+
+            fibonacciCallStack.push({
+                type: 'call',
+                value: n,
+                depth: depth,
+                message: `fib(${n})`
+            });
+
+            if (n <= 1) {
+                fibonacciCallStack.push({
+                    type: 'return',
+                    value: n,
+                    depth: depth,
+                    message: `fib(${n}) returns ${n}`
+                });
+                return n;
+            }
+
+            const result = fibonacciRecursive(n - 1, depth + 1) + fibonacciRecursive(n - 2, depth + 1);
+
+            fibonacciCallStack.push({
+                type: 'return',
+                value: result,
+                depth: depth,
+                message: `fib(${n}) returns ${result}`
+            });
+
+            return result;
+        }
+
+        async function calculateFibonacci() {
+            const input = document.getElementById('fibonacciInput').value;
+            const n = parseInt(input);
+
+            if (!n || n < 1 || n > 15) {
+                alert('Please enter a number between 1 and 15');
+                return;
+            }
+
+            fibonacciCallStack = [];
+            fibCallCount = 0;
+            const stackDiv = document.getElementById('fibonacciStack');
+            stackDiv.innerHTML = '<p style="text-align: center; color: #666;">Building call stack...</p>';
+
+            const result = fibonacciRecursive(n);
+
+            // Animate the call stack (show limited calls for visibility)
+            stackDiv.innerHTML = '';
+            const maxDisplay = Math.min(fibonacciCallStack.length, 50);
+            for (let i = 0; i < maxDisplay; i++) {
+                await sleep(100);
+                const call = fibonacciCallStack[i];
+                const item = document.createElement('div');
+                item.className = call.type === 'return' ? 'call-stack-item call-stack-return' : 'call-stack-item';
+                item.style.marginLeft = Math.min(call.depth * 15, 100) + 'px';
+                item.innerHTML = `<strong>${call.type === 'call' ? '→' : '←'}</strong> ${call.message}`;
+                stackDiv.appendChild(item);
+                stackDiv.scrollTop = stackDiv.scrollHeight;
+            }
+
+            if (fibonacciCallStack.length > maxDisplay) {
+                stackDiv.innerHTML += `<p style="text-align: center; color: #999; margin-top: 10px;">... and ${fibonacciCallStack.length - maxDisplay} more calls</p>`;
+            }
+
+            document.getElementById('fibonacciResult').textContent = `Result: fib(${n}) = ${result} (${fibCallCount} total calls)`;
+        }
+
+        // Initialize on page load
+        initializeProductLists();
+        showStatus('👋 Ready! Enter a product name and click a search button to begin', 'info');
+    </script>
+</body>
+</html>
