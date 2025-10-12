@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hash Table Voting System - Linear Probing</title>
+    <title>Hash Table Voting System - FIXED</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,6 @@
             color: #e0e0e0;
             min-height: 100vh;
             padding: 20px;
-            direction: ltr;
         }
 
         .main-container {
@@ -124,7 +123,6 @@
         .bucket.highlight-probe {
             border-color: #fbbf24;
             box-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
-            transform: scale(1.03);
         }
 
         .bucket-index {
@@ -440,10 +438,6 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
-
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
         }
 
         @media (max-width: 768px) {
@@ -469,8 +463,8 @@
     <div class="main-container">
         <!-- Header -->
         <div class="header">
-            <h1>🗳️ Hash Table - Linear Probing</h1>
-            <p class="subtitle">One name per slot - Find next empty if occupied</p>
+            <h1>🗳️ Hash Table Voting System</h1>
+            <p class="subtitle">Direct O(1) Check - Prevent Duplicate Voting</p>
         </div>
 
         <!-- Statistics -->
@@ -481,7 +475,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="attempts">0</div>
-                <div class="stat-label">Attempts</div>
+                <div class="stat-label">Vote Attempts</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="rejected">0</div>
@@ -501,28 +495,28 @@
             <div class="section">
                 <div class="controls-section">
                     <div class="explanation-box">
-                        <h3>🎯 Linear Probing</h3>
-                        <p><strong>Simple Rule:</strong> One name per slot only</p>
+                        <h3>🎯 Why Hash Table?</h3>
+                        <p><strong>Problem:</strong> Prevent duplicate voting efficiently</p>
 
                         <div class="comparison">
                             <div class="comp-card array">
                                 <div>❌ Array</div>
                                 <div class="complexity">O(n)</div>
-                                <div style="font-size: 0.85rem;">Check all</div>
+                                <div style="font-size: 0.85rem;">Check all voters</div>
                             </div>
                             <div class="comp-card hashtable">
                                 <div>✅ Hash Table</div>
                                 <div class="complexity">O(1)</div>
-                                <div style="font-size: 0.85rem;">Direct access</div>
+                                <div style="font-size: 0.85rem;">Direct check</div>
                             </div>
                         </div>
 
                         <p style="font-size: 0.9rem; margin-top: 15px;">
-                            <strong>If collision:</strong><br>
-                            1️⃣ Calculate index<br>
-                            2️⃣ Slot occupied? → Try next slot<br>
-                            3️⃣ Keep trying until empty found<br>
-                            4️⃣ Store name in empty slot
+                            <strong>How it works:</strong><br>
+                            1️⃣ Name → Hash Function → Index<br>
+                            2️⃣ Search entire table for duplicate<br>
+                            3️⃣ If not found → Store at calculated index<br>
+                            4️⃣ If found → Reject duplicate
                         </p>
                     </div>
 
@@ -530,7 +524,7 @@
                         <input 
                             type="text" 
                             id="voter-name" 
-                            placeholder="Enter voter name (e.g., Ahmed)"
+                            placeholder="Enter voter name (e.g., John)"
                         />
                         <div class="button-group">
                             <button class="vote-btn" onclick="vote()">
@@ -549,78 +543,69 @@
 
         <!-- Code Implementation Section -->
         <div class="code-section">
-            <h2>💻 Linear Probing Code</h2>
+            <h2>💻 Hash Table Implementation - CORRECTED</h2>
 
             <div class="code-explanation">
-                <strong>📌 Linear Probing:</strong> If slot is occupied, try the next one, then next, until empty slot found
+                <strong>🔧 THE FIX:</strong> Check if EXACT name exists anywhere in table, not just if slot is occupied
             </div>
 
-            <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Hash Function</h3>
-            <div class="code-block">
-                <pre><code><span class="keyword">function</span> <span class="function">hashFunction</span>(name) {
-    <span class="keyword">let</span> hash = <span class="number">0</span>;
-    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < name.length; i++) {
-        hash = hash + (name.charCodeAt(i) * (i + <span class="number">1</span>));
-    }
-    <span class="keyword">return</span> hash % <span class="number">10</span>;
-}</code></pre>
-            </div>
-
-            <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Vote with Linear Probing</h3>
+            <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Corrected Vote Logic</h3>
             <div class="code-block">
                 <pre><code><span class="keyword">function</span> <span class="function">vote</span>(name) {
-    <span class="comment">// Calculate starting index</span>
-    <span class="keyword">let</span> index = <span class="function">hashFunction</span>(name);
-    <span class="keyword">let</span> startIndex = index;
-
-    <span class="comment">// Check if name already exists ANYWHERE</span>
+    <span class="comment">// Step 1: Check if this EXACT name already exists ANYWHERE</span>
     <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">10</span>; i++) {
         <span class="keyword">if</span> (hashTable[i] === name) {
-            <span class="function">console</span>.log(<span class="string">"❌ Already voted!"</span>);
+            <span class="function">console</span>.log(<span class="string">`❌ "</span>${name}<span class="string">" already voted at index </span>${i}<span class="string">`</span>);
             <span class="keyword">return</span> <span class="keyword">false</span>;
         }
     }
 
-    <span class="comment">// Find empty slot using linear probing</span>
+    <span class="comment">// Step 2: Name not found - Calculate index and find empty slot</span>
+    <span class="keyword">let</span> index = <span class="function">hashFunction</span>(name);
     <span class="keyword">let</span> tries = <span class="number">0</span>;
+
     <span class="keyword">while</span> (tries < <span class="number">10</span>) {
         <span class="keyword">if</span> (hashTable[index] === <span class="keyword">null</span>) {
-            <span class="comment">// Empty slot found!</span>
+            <span class="comment">// Empty slot found - Store name</span>
             hashTable[index] = name;
-            <span class="function">console</span>.log(<span class="string">`✅ Stored at index </span>${index}<span class="string">`</span>);
+            <span class="function">console</span>.log(<span class="string">`✅ "</span>${name}<span class="string">" stored at index </span>${index}<span class="string">`</span>);
             <span class="keyword">return</span> <span class="keyword">true</span>;
         }
-
-        <span class="comment">// Slot occupied, try next</span>
+        <span class="comment">// Slot occupied - Try next slot (linear probing)</span>
         index = (index + <span class="number">1</span>) % <span class="number">10</span>;
         tries++;
     }
 
-    <span class="function">console</span>.log(<span class="string">"❌ Table full!"</span>);
+    <span class="function">console</span>.log(<span class="string">"❌ Table full"</span>);
     <span class="keyword">return</span> <span class="keyword">false</span>;
 }</code></pre>
             </div>
 
             <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Example</h3>
             <div class="code-block">
-                <pre><code><span class="comment">// Omar votes</span>
-<span class="function">vote</span>(<span class="string">"Omar"</span>);
-<span class="comment">// hash("Omar") = 4 → Store at index 4</span>
+                <pre><code><span class="comment">// John votes</span>
+<span class="function">vote</span>(<span class="string">"John"</span>);
+<span class="comment">// Check table: "John" not found</span>
+<span class="comment">// hash("John") = 8 → Empty → Store at 8</span>
+<span class="comment">// ✅ ACCEPTED</span>
 
-<span class="comment">// Ahmed votes (same hash as Omar!)</span>
-<span class="function">vote</span>(<span class="string">"Ahmed"</span>);
-<span class="comment">// hash("Ahmed") = 4 → Occupied!</span>
-<span class="comment">// Try index 5 → Empty → Store at 5 ✅</span>
+<span class="comment">// Syed votes</span>
+<span class="function">vote</span>(<span class="string">"Syed"</span>);
+<span class="comment">// Check table: "Syed" not found</span>
+<span class="comment">// hash("Syed") = 8 → Occupied by "John"</span>
+<span class="comment">// Try index 9 → Empty → Store at 9</span>
+<span class="comment">// ✅ ACCEPTED (No false rejection!)</span>
 
-<span class="comment">// Ahmed tries again</span>
-<span class="function">vote</span>(<span class="string">"Ahmed"</span>);
-<span class="comment">// Found "Ahmed" at index 5 → ❌ Reject</span></code></pre>
+<span class="comment">// John tries again</span>
+<span class="function">vote</span>(<span class="string">"John"</span>);
+<span class="comment">// Check table: "John" found at index 8</span>
+<span class="comment">// ❌ REJECTED - Already voted!</span></code></pre>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== VARIABLES ====================
+        // ==================== GLOBAL VARIABLES ====================
         const TABLE_SIZE = 10;
         let hashTable = new Array(TABLE_SIZE).fill(null);
         let totalVotes = 0;
@@ -638,9 +623,9 @@
 
         // ==================== INITIALIZE ====================
         function initializeSampleVoters() {
-            const sampleVoters = ['Omar', 'Mohammed', 'Fatima', 'Sara', 'Ahmed'];
+            const samples = ['John', 'Alice', 'Bob', 'David', 'Ahmed'];
 
-            sampleVoters.forEach(name => {
+            samples.forEach(name => {
                 // Find empty slot using linear probing
                 let index = hashFunction(name);
                 let tries = 0;
@@ -658,11 +643,11 @@
 
             renderHashTable();
             updateStats();
-            log('✅ System loaded with 5 voters', 'success');
-            log('💡 Each voter in separate slot', 'info');
+            log('✅ System initialized with 5 voters', 'success');
+            log('💡 Try any name - duplicates will be caught!', 'info');
         }
 
-        // ==================== MAIN VOTE FUNCTION ====================
+        // ==================== MAIN VOTE FUNCTION - FIXED ====================
         async function vote() {
             const nameInput = document.getElementById('voter-name');
             const name = nameInput.value.trim();
@@ -677,11 +662,11 @@
 
             log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━`, 'info');
-            log(`🆕 Attempting to vote: "${name}"`, 'info');
+            log(`🆕 Vote attempt: "${name}"`, 'info');
 
             await sleep(300);
 
-            // Step 1: Check if name already exists ANYWHERE in table
+            // STEP 1: Check if EXACT name already exists ANYWHERE in table
             let foundAt = -1;
             for (let i = 0; i < TABLE_SIZE; i++) {
                 if (hashTable[i] === name) {
@@ -691,7 +676,7 @@
             }
 
             if (foundAt !== -1) {
-                // Name already exists - REJECT
+                // Name found - REJECT
                 rejected++;
                 updateStats();
                 highlightBucket(foundAt);
@@ -702,49 +687,50 @@
                 return;
             }
 
-            // Step 2: Find empty slot using linear probing
+            // STEP 2: Name not found - Calculate index
             let index = hashFunction(name);
-            let startIndex = index;
             log(`🔍 Hash Function: "${name}" → Index ${index}`, 'info');
 
             await sleep(500);
 
+            // STEP 3: Find empty slot using linear probing
             let tries = 0;
-            let probeCount = 0;
+            let startIndex = index;
 
             while (tries < TABLE_SIZE) {
-                highlightBucket(index, true);
-                await sleep(300);
+                if (tries > 0) {
+                    highlightBucket(index, true);
+                    await sleep(200);
+                } else {
+                    highlightBucket(index);
+                    await sleep(300);
+                }
 
                 if (hashTable[index] === null) {
-                    // Empty slot found!
+                    // Empty slot found - Store name
                     hashTable[index] = name;
                     totalVotes++;
                     renderHashTable();
                     updateStats();
 
-                    if (probeCount > 0) {
-                        log(`🔄 Probed ${probeCount} slot(s) due to collision`, 'warning');
+                    if (tries > 0) {
+                        log(`🔄 Probed ${tries} slot(s) to find empty space`, 'warning');
                     }
-                    log(`✅ Vote ACCEPTED: Stored at index ${index}`, 'success');
-                    log(`⚡ Search done efficiently!`, 'success');
+                    log(`✅ Vote ACCEPTED: "${name}" stored at index ${index}`, 'success');
+                    log(`⚡ Duplicate check completed!`, 'success');
                     nameInput.value = '';
                     return;
                 }
 
-                // Slot occupied, try next
-                log(`📍 Index ${index} occupied by "${hashTable[index]}" - trying next...`, 'warning');
+                // Slot occupied - Try next
+                if (tries === 0) {
+                    log(`📍 Index ${index} occupied - trying next slot...`, 'warning');
+                }
                 index = (index + 1) % TABLE_SIZE;
                 tries++;
-                probeCount++;
-
-                // Avoid infinite loop
-                if (index === startIndex && tries > 0) {
-                    break;
-                }
             }
 
-            // Table is full
+            // Table full
             rejected++;
             updateStats();
             log(`❌ Vote REJECTED: Table is full!`, 'error');
@@ -803,7 +789,7 @@
             }
         }
 
-        // ==================== UPDATE STATISTICS ====================
+        // ==================== UPDATE STATS ====================
         function updateStats() {
             document.getElementById('total-votes').textContent = totalVotes;
             document.getElementById('attempts').textContent = attempts;
@@ -848,7 +834,7 @@
         // ==================== INIT ====================
         window.onload = function() {
             initializeSampleVoters();
-            log('🎉 Welcome to Hash Table with Linear Probing!', 'success');
+            log('🎉 Welcome to Hash Table Voting System!', 'success');
         };
     </script>
 </body>
