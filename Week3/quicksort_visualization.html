@@ -7,236 +7,450 @@
     <title>QuickSort | الترتيب السريع</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { theme: { extend: { colors: { neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', pink: '#EC4899' } }, fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] } } } }</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', red: '#EF4444' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             background: #020617;
             color: #E2E8F0;
-            overflow-x: hidden
+            overflow-x: hidden;
         }
 
         .glass-card {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08)
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #EC4899, #8B5CF6);
+            background: linear-gradient(135deg, #EF4444, #8B5CF6);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent
+            -webkit-text-fill-color: transparent;
         }
 
         .rtl-block {
             direction: rtl;
-            text-align: right
+            text-align: right;
         }
 
         .bar {
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            width: 35px;
             border-radius: 6px 6px 0 0;
+            font-weight: bold;
+            font-family: 'Fira Code';
             transition: all 0.3s;
-            position: relative
+            position: relative;
+            min-width: 30px;
+            font-size: 0.7rem;
         }
 
         .bar .val {
             position: absolute;
-            top: -22px;
+            top: -20px;
             color: #94a3b8;
-            font-family: 'Fira Code';
-            font-size: 0.75rem
-        }
-
-        .bar.pivot {
-            background: linear-gradient(180deg, #EC4899, #BE185D);
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5)
-        }
-
-        .bar.comparing {
-            background: linear-gradient(180deg, #F59E0B, #D97706)
-        }
-
-        .bar.swapping {
-            background: linear-gradient(180deg, #EF4444, #DC2626);
-            animation: shake 0.3s
-        }
-
-        .bar.sorted {
-            background: linear-gradient(180deg, #10B981, #059669)
+            font-size: 0.65rem;
         }
 
         .bar.default {
-            background: linear-gradient(180deg, #3B82F6, #1D4ED8)
+            background: linear-gradient(180deg, #3B82F6, #1D4ED8);
+        }
+
+        .bar.pivot {
+            background: linear-gradient(180deg, #EF4444, #B91C1C);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .bar.comparing {
+            background: linear-gradient(180deg, #F59E0B, #D97706);
+        }
+
+        .bar.swapping {
+            animation: shake 0.2s ease;
+            background: linear-gradient(180deg, #8B5CF6, #6D28D9);
+        }
+
+        .bar.sorted {
+            background: linear-gradient(180deg, #10B981, #059669);
+        }
+
+        .bar.left {
+            background: linear-gradient(180deg, #3B82F6, #1D4ED8);
+            border: 2px solid #60A5FA;
+        }
+
+        .bar.right {
+            background: linear-gradient(180deg, #8B5CF6, #6D28D9);
+            border: 2px solid #A78BFA;
         }
 
         @keyframes shake {
 
             0%,
             100% {
-                transform: translateX(0)
+                transform: translateY(0)
             }
 
-            25% {
-                transform: translateX(-5px)
+            50% {
+                transform: translateY(-8px)
             }
+        }
 
-            75% {
-                transform: translateX(5px)
-            }
+        .arr-item {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code';
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 6px;
+            background: #1E293B;
+            border: 2px solid #334155;
+        }
+
+        .arr-item.pivot {
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+            border-color: #F87171;
+            color: white;
+        }
+
+        .arr-item.left {
+            background: #1E3A5F;
+            border-color: #3B82F6;
+        }
+
+        .arr-item.right {
+            background: #3B1F5C;
+            border-color: #8B5CF6;
+        }
+
+        .arr-item.done {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: #34D399;
+            color: white;
         }
     </style>
 </head>
 
 <body>
-    <nav class="fixed top-0 w-full z-50 glass-card">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
         <div class="container mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="../index.html#week3" class="flex items-center gap-3">
+            <a href="../index.html#week3" class="flex items-center gap-3 hover:opacity-80 transition">
                 <div
-                    class="w-8 h-8 rounded bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white">
-                    <i class="fas fa-arrow-left text-sm"></i></div><span class="font-bold">Quick<span
-                        class="text-pink-500">Sort</span></span>
+                    class="w-8 h-8 rounded bg-gradient-to-br from-red-500 to-purple-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Quick<span class="text-red-500">Sort</span></span>
             </a>
         </div>
     </nav>
 
-    <header class="relative pt-32 pb-16 px-6 overflow-hidden">
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[128px]"></div>
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
         <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-pink-400 mb-6">
-                <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>WEEK 3</div>
-            <h1 class="text-5xl md:text-6xl font-black mb-4"><span class="text-gradient">Quick</span>Sort</h1>
-            <h2 class="text-2xl font-bold text-slate-400 font-arabic mb-6">الترتيب السريع - Divide & Conquer</h2>
-
-            <div class="max-w-3xl mx-auto mb-10">
-                <div class="p-5 bg-pink-950/30 border border-pink-900/50 rounded-2xl rtl-block">
-                    <h3 class="text-xl font-bold text-pink-400 mb-3 font-arabic">⚡ إزاي QuickSort بيشتغل؟</h3>
-                    <p class="text-pink-100/90 font-arabic leading-loose">اختار عنصر <span
-                            class="text-yellow-400">Pivot</span> ورتب الباقي: الأصغر شمال والأكبر يمين!</p>
-                    <div class="grid grid-cols-3 gap-3 mt-4">
-                        <div class="bg-slate-900/50 p-3 rounded-xl border border-pink-700 text-center">
-                            <div class="text-2xl">🎯</div>
-                            <div class="text-pink-400 font-bold text-sm">1. اختار Pivot</div>
-                        </div>
-                        <div class="bg-slate-900/50 p-3 rounded-xl border border-yellow-700 text-center">
-                            <div class="text-2xl">↔️</div>
-                            <div class="text-yellow-400 font-bold text-sm">2. Partition</div>
-                        </div>
-                        <div class="bg-slate-900/50 p-3 rounded-xl border border-purple-700 text-center">
-                            <div class="text-2xl">🔄</div>
-                            <div class="text-purple-400 font-bold text-sm">3. Recurse</div>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-3 bg-purple-900/20 rounded-xl border border-purple-500/30">
-                        <p class="text-purple-300 text-sm">💡 Average: <span class="text-white font-bold">O(n log
-                                n)</span> - In-place: مش محتاج ذاكرة إضافية!</p>
-                    </div>
-                </div>
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-red-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                WEEK 3 • خوارزميات الترتيب
             </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Quick</span>Sort</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">الترتيب السريع</h2>
         </div>
     </header>
 
-    <section id="demo" class="py-16 px-6">
-        <div class="container mx-auto max-w-4xl">
-            <div class="glass-card p-6 rounded-2xl border border-slate-700/50" data-aos="fade-up">
-                <div class="flex flex-wrap gap-3 mb-4 justify-center items-center">
-                    <select id="pivot-strategy"
-                        class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm">
-                        <option value="last">Pivot: Last</option>
-                        <option value="first">Pivot: First</option>
-                        <option value="random">Pivot: Random</option>
-                    </select>
-                    <button id="random-btn"
-                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition text-sm"><i
-                            class="fas fa-dice mr-1"></i>Random</button>
-                    <button id="sort-btn"
-                        class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-lg hover:shadow-lg transition text-sm"><i
-                            class="fas fa-play mr-1"></i>Sort</button>
-                    <button id="step-btn"
-                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition text-sm"><i
-                            class="fas fa-step-forward mr-1"></i>Step</button>
-                    <button id="reset-btn"
-                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition text-sm"><i
-                            class="fas fa-redo mr-1"></i>Reset</button>
-                    <input type="range" id="speed" min="50" max="500" value="200" class="w-20 accent-pink-500">
-                </div>
-                <div class="flex gap-3 justify-center mb-3 text-xs">
-                    <div class="flex items-center gap-1">
-                        <div class="w-3 h-3 rounded bg-gradient-to-b from-pink-500 to-pink-700"></div><span
-                            class="text-slate-400">Pivot</span>
+    <!-- What is QuickSort -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-bolt text-red-500 mr-3"></i>إيه هو
+                QuickSort؟</h2>
+
+            <div class="glass-card p-8 rounded-2xl border border-red-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-red-400 mb-6 font-arabic">⚡ الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه توزيع الورق</h4>
+                            <p class="text-slate-300">
+                                تخيل عندك <span class="text-red-400 font-bold">ورق كوتشينة</span> وعايز ترتبه:
+                            </p>
+                            <ol class="mt-3 space-y-2 text-slate-300 list-decimal list-inside">
+                                <li>اختار ورقة واحدة تكون <span class="text-red-400 font-bold">"Pivot" (المحور)</span>
+                                </li>
+                                <li>وزع باقي الورق: اللي <span class="text-blue-400">أصغر</span> على الشمال، واللي <span
+                                        class="text-purple-400">أكبر</span> على اليمين</li>
+                                <li>الـ Pivot دلوقتي في <span class="text-emerald-400 font-bold">مكانه الصح</span>!</li>
+                                <li>كرر نفس الخطوات للشمال واليمين</li>
+                            </ol>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">🎯 خطوات الخوارزمية</h4>
+                            <div class="grid md:grid-cols-3 gap-4 mt-4">
+                                <div class="p-4 bg-red-950/30 rounded-lg border border-red-700 text-center">
+                                    <div class="text-3xl mb-2">🎯</div>
+                                    <h5 class="text-red-400 font-bold">1. اختار Pivot</h5>
+                                    <p class="text-sm text-slate-400 mt-1">عادة آخر عنصر أو عشوائي</p>
+                                </div>
+                                <div class="p-4 bg-purple-950/30 rounded-lg border border-purple-700 text-center">
+                                    <div class="text-3xl mb-2">↔️</div>
+                                    <h5 class="text-purple-400 font-bold">2. Partition</h5>
+                                    <p class="text-sm text-slate-400 mt-1">رتب حوالين الـ Pivot</p>
+                                </div>
+                                <div class="p-4 bg-emerald-950/30 rounded-lg border border-emerald-700 text-center">
+                                    <div class="text-3xl mb-2">🔁</div>
+                                    <h5 class="text-emerald-400 font-bold">3. Recurse</h5>
+                                    <p class="text-sm text-slate-400 mt-1">كرر للشمال واليمين</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">⚡ التعقيد</h4>
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div class="p-3 bg-emerald-950/30 rounded-lg border border-emerald-700">
+                                    <span class="text-emerald-400 font-bold">Average Case</span>
+                                    <p class="text-lg font-mono text-emerald-400">O(n log n)</p>
+                                    <p class="text-xs text-slate-500">لما الـ Pivot بيقسم بالتساوي</p>
+                                </div>
+                                <div class="p-3 bg-red-950/30 rounded-lg border border-red-700">
+                                    <span class="text-red-400 font-bold">Worst Case</span>
+                                    <p class="text-lg font-mono text-red-400">O(n²)</p>
+                                    <p class="text-xs text-slate-500">لما الـ array مترتبة و Pivot سيء</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <div class="w-3 h-3 rounded bg-gradient-to-b from-yellow-500 to-yellow-700"></div><span
-                            class="text-slate-400">Comparing</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <div class="w-3 h-3 rounded bg-gradient-to-b from-emerald-500 to-emerald-700"></div><span
-                            class="text-slate-400">Sorted</span>
-                    </div>
-                </div>
-                <div id="bars"
-                    class="flex items-end justify-center gap-1 min-h-[220px] p-4 bg-slate-900/50 rounded-xl border border-slate-800">
-                </div>
-                <div id="info" class="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800 mt-4">
-                    <p class="text-slate-400">Click "Sort" to begin.</p>
-                </div>
-                <div id="log"
-                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-3 max-h-28 overflow-y-auto font-mono text-xs mt-4">
-                    <p class="text-slate-500">Logs here.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-16 px-6 bg-slate-900/30">
+    <!-- Partition Step by Step -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i
+                    class="fa-solid fa-arrows-left-right text-purple-500 mr-3"></i>Partition بالتفصيل</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">الخطوة الأهم في QuickSort</p>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="rtl-block mb-8 font-arabic">
+                    <p class="text-slate-300">
+                        مثال: ترتيب <code class="bg-slate-800 px-2 py-1 rounded text-sm">[8, 3, 7, 1, 5, 9, 2]</code>
+                        <br>
+                        <span class="text-red-400">Pivot = 2</span> (آخر عنصر)
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Initial -->
+                    <div class="p-4 bg-slate-900/50 rounded-xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-1 bg-slate-700 text-xs rounded">Initial</span>
+                        </div>
+                        <div class="flex gap-2 justify-center">
+                            <div class="arr-item">8</div>
+                            <div class="arr-item">3</div>
+                            <div class="arr-item">7</div>
+                            <div class="arr-item">1</div>
+                            <div class="arr-item">5</div>
+                            <div class="arr-item">9</div>
+                            <div class="arr-item pivot">2</div>
+                        </div>
+                        <p class="text-center text-slate-500 text-xs mt-2 font-arabic">الـ Pivot = 2 (آخر عنصر)</p>
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="p-4 bg-slate-900/50 rounded-xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-1 bg-blue-700 text-xs rounded">Partitioning...</span>
+                        </div>
+                        <div class="flex gap-2 justify-center">
+                            <div class="arr-item left">1</div>
+                            <div class="arr-item">3</div>
+                            <div class="arr-item">7</div>
+                            <div class="arr-item">8</div>
+                            <div class="arr-item">5</div>
+                            <div class="arr-item">9</div>
+                            <div class="arr-item pivot">2</div>
+                        </div>
+                        <p class="text-center text-slate-500 text-xs mt-2 font-arabic">1 أصغر من 2، نحركه للشمال</p>
+                    </div>
+
+                    <!-- Final Partition -->
+                    <div class="p-4 bg-emerald-950/30 rounded-xl border border-emerald-700">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-1 bg-emerald-600 text-xs rounded">After Partition</span>
+                        </div>
+                        <div class="flex gap-2 justify-center items-center">
+                            <div class="text-blue-400 text-xs">←أصغر</div>
+                            <div class="arr-item left">1</div>
+                            <div class="arr-item done">2</div>
+                            <div class="arr-item right">3</div>
+                            <div class="arr-item right">7</div>
+                            <div class="arr-item right">8</div>
+                            <div class="arr-item right">5</div>
+                            <div class="arr-item right">9</div>
+                            <div class="text-purple-400 text-xs">أكبر→</div>
+                        </div>
+                        <p class="text-center text-emerald-400 text-xs mt-2 font-arabic font-bold">🎯 الـ Pivot (2) في
+                            مكانه الصح الآن!</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-yellow-950/30 rounded-xl border border-yellow-700 rtl-block">
+                    <p class="text-yellow-400 font-bold font-arabic mb-2">💡 الفكرة:</p>
+                    <p class="text-sm text-slate-300 font-arabic">
+                        بعد الـ Partition:
+                        <br>
+                        • الـ <span class="text-red-400 font-bold">Pivot في مكانه النهائي</span>
+                        <br>
+                        • كل اللي على شماله <span class="text-blue-400">أصغر منه</span>
+                        <br>
+                        • كل اللي على يمينه <span class="text-purple-400">أكبر منه</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6 bg-slate-900/30">
         <div class="container mx-auto max-w-4xl">
-            <h2 class="text-3xl font-bold text-center mb-8"><i
-                    class="fa-solid fa-code text-pink-500 mr-2"></i>Implementation</h2>
-            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50">
-                <div class="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800"><span
-                        class="w-3 h-3 rounded-full bg-red-500"></span><span
-                        class="w-3 h-3 rounded-full bg-yellow-500"></span><span
-                        class="w-3 h-3 rounded-full bg-green-500"></span><span
-                        class="ml-3 font-mono text-xs text-slate-400">quickSort.js</span></div>
+            <div class="text-center mb-12">
+                <span class="text-red-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">QuickSort Demo</h2>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                    <button id="new-btn"
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-dice mr-1"></i>New</button>
+                    <button id="sort-btn"
+                        class="px-4 py-2 bg-gradient-to-r from-red-500 to-purple-500 text-white font-bold rounded-lg hover:shadow-lg transition"><i
+                            class="fas fa-play mr-1"></i>Sort</button>
+                    <button id="step-btn"
+                        class="px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition"><i
+                            class="fas fa-step-forward mr-1"></i>Step</button>
+                    <button id="reset-btn"
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
+                    <input type="range" id="speed" min="50" max="500" value="200" class="w-24 accent-red-500">
+                </div>
+
+                <div class="flex gap-3 justify-center text-xs mb-4">
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded bg-gradient-to-b from-red-500 to-red-700"></div><span
+                            class="text-slate-400">Pivot</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded bg-gradient-to-b from-yellow-500 to-yellow-700"></div><span
+                            class="text-slate-400">Comparing</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded bg-gradient-to-b from-purple-500 to-purple-700"></div><span
+                            class="text-slate-400">Swapping</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded bg-gradient-to-b from-emerald-500 to-emerald-700"></div><span
+                            class="text-slate-400">Sorted</span>
+                    </div>
+                </div>
+
+                <div id="bars"
+                    class="flex items-end justify-center gap-1 min-h-[220px] p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+                </div>
+
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Click "Sort" to start.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Implementation -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">quickSort.js</span>
+                </div>
                 <div class="grid md:grid-cols-2 divide-x divide-slate-800">
-                    <pre class="p-4 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono text-slate-300">function quickSort(arr, lo=0, hi=arr.length-1) {
-  if (lo < hi) {
-    const p = partition(arr, lo, hi);
-    quickSort(arr, lo, p - 1);
-    quickSort(arr, p + 1, hi);
-  }
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">quickSort</span>(<span class="text-orange-300">arr</span>, <span class="text-orange-300">lo</span> = <span class="text-emerald-400">0</span>, <span class="text-orange-300">hi</span> = arr.length - <span class="text-emerald-400">1</span>) {
+  <span class="text-purple-400">if</span> (lo >= hi) <span class="text-purple-400">return</span>;
+  
+  <span class="text-purple-400">const</span> pivotIdx = <span class="text-blue-400">partition</span>(arr, lo, hi);
+  <span class="text-blue-400">quickSort</span>(arr, lo, pivotIdx - <span class="text-emerald-400">1</span>);
+  <span class="text-blue-400">quickSort</span>(arr, pivotIdx + <span class="text-emerald-400">1</span>, hi);
 }
 
-function partition(arr, lo, hi) {
-  const pivot = arr[hi];
-  let i = lo - 1;
-  for (let j = lo; j < hi; j++) {
-    if (arr[j] < pivot) {
+<span class="text-purple-400">function</span> <span class="text-blue-400">partition</span>(<span class="text-orange-300">arr</span>, <span class="text-orange-300">lo</span>, <span class="text-orange-300">hi</span>) {
+  <span class="text-purple-400">const</span> pivot = arr[hi];
+  <span class="text-purple-400">let</span> i = lo - <span class="text-emerald-400">1</span>;
+  
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> j = lo; j < hi; j++) {
+    <span class="text-purple-400">if</span> (arr[j] < pivot) {
       i++;
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
   }
-  [arr[i+1], arr[hi]] = [arr[hi], arr[i+1]];
-  return i + 1;
+  
+  [arr[i + <span class="text-emerald-400">1</span>], arr[hi]] = [arr[hi], arr[i + <span class="text-emerald-400">1</span>]];
+  <span class="text-purple-400">return</span> i + <span class="text-emerald-400">1</span>;
 }</code></pre>
-                    <div class="p-4 bg-slate-900/50 rtl-block">
-                        <h4 class="font-bold text-white mb-3 font-arabic">شرح الكود 📖</h4>
-                        <div class="space-y-2 font-arabic text-xs">
-                            <div class="p-2 bg-slate-800/50 rounded border-r-2 border-r-pink-500"><span
-                                    class="text-pink-400 font-bold">quickSort:</span> لو فيه عناصر، partition ثم recurse
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto max-h-[350px]">
+                        <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+                        <div class="space-y-3 font-arabic text-xs">
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-red-500">
+                                <span class="text-red-400 font-bold">سطر 2:</span>
+                                Base Case - لو عنصر واحد أو أقل، خلاص
                             </div>
-                            <div class="p-2 bg-slate-800/50 rounded border-r-2 border-r-yellow-500"><span
-                                    class="text-yellow-400 font-bold">partition:</span> الـ pivot = آخر عنصر، بدّل
-                                الأصغر منه</div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">سطر 4:</span>
+                                عمل partition وجيب index الـ pivot
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">سطر 5-6:</span>
+                                كرر للجزء الشمال واليمين
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">partition():</span>
+                                الـ pivot = آخر عنصر، نحرك الأصغر للشمال
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">سطر 19:</span>
+                                في الآخر نحط الـ pivot في مكانه
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -244,27 +458,162 @@ function partition(arr, lo, hi) {
         </div>
     </section>
 
-    <footer class="py-8 text-center text-slate-600 bg-black/40 text-sm">
-        <p>Grokking Algorithms - Week 3</p>
+    <!-- QuickSort vs MergeSort -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-scale-balanced text-yellow-500 mr-3"></i>QuickSort vs MergeSort</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-4"></th>
+                            <th class="py-4 px-4 text-center text-red-400">QuickSort</th>
+                            <th class="py-4 px-4 text-center text-teal-400">MergeSort</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Average Time</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(n log n)</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(n log n)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Worst Time</td>
+                            <td class="py-4 px-4 text-center font-mono text-red-400">O(n²)</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(n log n)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Space</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(log n)</td>
+                            <td class="py-4 px-4 text-center font-mono text-yellow-400">O(n)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">In-place?</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">✓ Yes</td>
+                            <td class="py-4 px-4 text-center text-red-400">✗ No</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Stable?</td>
+                            <td class="py-4 px-4 text-center text-red-400">✗ No</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">✓ Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 3</p>
     </footer>
 
     <script>
         AOS.init({ duration: 800, once: true });
-        const bars = document.getElementById('bars'), info = document.getElementById('info'), logEl = document.getElementById('log');
-        let arr = [], steps = [], step = 0, running = false, orig = [];
 
-        function gen(n = 10) { arr = Array.from({ length: n }, () => Math.floor(Math.random() * 90) + 10); orig = [...arr]; steps = []; step = 0; render() }
-        function render(piv = -1, cmp = -1, swap = [], sorted = []) { const mx = Math.max(...arr); bars.innerHTML = ''; arr.forEach((v, i) => { const b = document.createElement('div'); b.className = 'bar' + (sorted.includes(i) ? ' sorted' : i === piv ? ' pivot' : swap.includes(i) ? ' swapping' : i === cmp ? ' comparing' : ' default'); b.style.height = `${(v / mx) * 180}px`; b.innerHTML = `<span class="val">${v}</span>`; bars.appendChild(b) }) }
-        function genSteps(a) { steps = []; const s = []; function qs(lo, hi) { if (lo >= hi) { if (lo === hi) s.push(lo); return } const piv = getPivot(a, lo, hi);[a[piv], a[hi]] = [a[hi], a[piv]]; steps.push({ arr: [...a], piv: hi, msg: `Pivot=${a[hi]}` }); let i = lo - 1; for (let j = lo; j < hi; j++) { steps.push({ arr: [...a], piv: hi, cmp: j, msg: `Compare ${a[j]} with ${a[hi]}` }); if (a[j] < a[hi]) { i++; if (i !== j) { [a[i], a[j]] = [a[j], a[i]]; steps.push({ arr: [...a], piv: hi, swap: [i, j], msg: `Swap` }) } } } [a[i + 1], a[hi]] = [a[hi], a[i + 1]]; s.push(i + 1); steps.push({ arr: [...a], sorted: [...s], msg: `Pivot placed at ${i + 1}` }); qs(lo, i); qs(i + 2, hi) } qs(0, a.length - 1); steps.push({ arr: [...a], sorted: a.map((_, i) => i), msg: 'Done! ✓' }) }
-        function getPivot(a, lo, hi) { const s = document.getElementById('pivot-strategy').value; return s === 'first' ? lo : s === 'random' ? lo + Math.floor(Math.random() * (hi - lo + 1)) : hi }
-        function show(i) { const st = steps[i]; arr = [...st.arr]; render(st.piv, st.cmp, st.swap || [], st.sorted || []); info.innerHTML = `<p class="text-white">${st.msg}</p>`; log(st.msg, st.sorted ? 'success' : 'info') }
-        async function run() { running = true; while (step < steps.length && running) { show(step); step++; await new Promise(r => setTimeout(r, +document.getElementById('speed').value)) } running = false }
-        function log(m, t = 'info') { const p = document.createElement('p'); p.textContent = m; p.className = t === 'success' ? 'text-emerald-400' : 'text-blue-400'; logEl.prepend(p); while (logEl.children.length > 8) logEl.removeChild(logEl.lastChild) }
+        const barsContainer = document.getElementById('bars');
+        const info = document.getElementById('info');
+        let arr = [], orig = [], steps = [], stepIdx = 0, running = false;
 
-        document.getElementById('random-btn').onclick = () => { running = false; gen(); log('New array', 'info') };
-        document.getElementById('sort-btn').onclick = () => { if (running) return; arr = [...orig]; genSteps([...arr]); step = 0; run() };
-        document.getElementById('step-btn').onclick = () => { running = false; if (!steps.length) genSteps([...orig]); if (step < steps.length) { show(step); step++ } };
-        document.getElementById('reset-btn').onclick = () => { running = false; arr = [...orig]; steps = []; step = 0; render(); info.innerHTML = '<p class="text-slate-400">Reset.</p>'; log('Reset', 'info') };
+        function gen(n = 12) {
+            arr = Array.from({ length: n }, () => Math.floor(Math.random() * 80) + 20);
+            orig = [...arr];
+            steps = [];
+            stepIdx = 0;
+            render();
+        }
+
+        function render(pivot = -1, comparing = -1, swapping = [], sorted = new Set()) {
+            const max = Math.max(...arr);
+            barsContainer.innerHTML = '';
+            arr.forEach((v, i) => {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${(v / max) * 180}px`;
+
+                if (sorted.has(i)) bar.classList.add('sorted');
+                else if (swapping.includes(i)) bar.classList.add('swapping');
+                else if (i === pivot) bar.classList.add('pivot');
+                else if (i === comparing) bar.classList.add('comparing');
+                else bar.classList.add('default');
+
+                bar.innerHTML = `<span class="val">${v}</span>`;
+                barsContainer.appendChild(bar);
+            });
+        }
+
+        function* quickSortGen(a, lo = 0, hi = a.length - 1, sorted = new Set()) {
+            if (lo >= hi) {
+                if (lo === hi) sorted.add(lo);
+                return;
+            }
+
+            const pivot = hi;
+            yield { arr: [...a], pivot, msg: `Pivot: ${a[pivot]} at index ${pivot}`, sorted: new Set(sorted) };
+
+            let i = lo - 1;
+            for (let j = lo; j < hi; j++) {
+                yield { arr: [...a], pivot, comparing: j, msg: `Comparing ${a[j]} with pivot ${a[pivot]}`, sorted: new Set(sorted) };
+                if (a[j] < a[pivot]) {
+                    i++;
+                    if (i !== j) {
+                        [a[i], a[j]] = [a[j], a[i]];
+                        yield { arr: [...a], pivot, swapping: [i, j], msg: `Swapped ${a[j]} and ${a[i]}`, sorted: new Set(sorted) };
+                    }
+                }
+            }
+
+            [a[i + 1], a[hi]] = [a[hi], a[i + 1]];
+            sorted.add(i + 1);
+            yield { arr: [...a], sorted: new Set(sorted), msg: `Pivot ${a[i + 1]} in final position!` };
+
+            yield* quickSortGen(a, lo, i, sorted);
+            yield* quickSortGen(a, i + 2, hi, sorted);
+        }
+
+        let gen_iter = null;
+
+        document.getElementById('sort-btn').onclick = async () => {
+            if (running) return;
+            running = true;
+            arr = [...orig];
+            gen_iter = quickSortGen([...arr]);
+            const speed = +document.getElementById('speed').value;
+
+            while (true) {
+                const { value, done } = gen_iter.next();
+                if (done) break;
+                arr = value.arr;
+                render(value.pivot, value.comparing, value.swapping || [], value.sorted || new Set());
+                info.innerHTML = `<p class="text-red-400 font-arabic">${value.msg}</p>`;
+                await new Promise(r => setTimeout(r, speed));
+            }
+
+            render(-1, -1, [], new Set(arr.map((_, i) => i)));
+            info.innerHTML = '<p class="text-emerald-400 font-arabic font-bold">✓ مترتبة!</p>';
+            running = false;
+        };
+
+        document.getElementById('step-btn').onclick = () => {
+            if (!gen_iter) {
+                arr = [...orig];
+                gen_iter = quickSortGen([...arr]);
+            }
+            const { value, done } = gen_iter.next();
+            if (done) {
+                render(-1, -1, [], new Set(arr.map((_, i) => i)));
+                info.innerHTML = '<p class="text-emerald-400 font-arabic font-bold">✓ مترتبة!</p>';
+                return;
+            }
+            arr = value.arr;
+            render(value.pivot, value.comparing, value.swapping || [], value.sorted || new Set());
+            info.innerHTML = `<p class="text-red-400 font-arabic">${value.msg}</p>`;
+        };
+
+        document.getElementById('new-btn').onclick = () => { running = false; gen_iter = null; gen(); };
+        document.getElementById('reset-btn').onclick = () => { running = false; gen_iter = null; arr = [...orig]; render(); info.innerHTML = '<p class="text-slate-400">Reset.</p>'; };
+
         gen();
     </script>
 </body>

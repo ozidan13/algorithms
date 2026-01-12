@@ -1,747 +1,713 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Traversal Visualization (BFS & DFS)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
-    <!-- Using Cytoscape.js for graph visualization -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+    <title>Graph Traversal | التنقل في الـ Graph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', indigo: '#6366F1' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Specific styles for Graph Traversal */
-        #cy-container {
-            width: 100%;
-            height: 450px;
-            display: block;
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            background-color: var(--background-alt);
-            margin-bottom: 20px;
-            transition: var(--theme-transition);
+        body {
+            background: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
 
-        /* Highlighting styles for traversal */
-         .cy-node-visited {
-             background-color: var(--color-found);
-             border-color: white;
-             color: white;
-             transition: background-color 0.5s ease;
-         }
-        .cy-node-current {
-             background-color: var(--color-high);
-             border-color: white;
-             color: white;
-             shape: star; /* Change shape for current */
-             width: 40px;
-             height: 40px;
-             transition: background-color 0.3s ease, shape 0.3s ease;
-         }
-        .cy-node-in-queue {
-             background-color: var(--color-mid);
-             border-style: dashed;
-             border-color: white;
-             color: white;
-             transition: background-color 0.3s ease, border-style 0.3s ease;
-         }
-         .cy-edge-traversed {
-             line-color: var(--color-found);
-             target-arrow-color: var(--color-found);
-             width: 4;
-             z-index: 1;
-             transition: line-color 0.5s ease, target-arrow-color 0.5s ease, width 0.5s ease;
-         }
-
-        /* Structure for results */
-        .results-container {
-             display: flex;
-             gap: 20px;
-             flex-wrap: wrap;
-             margin-top: 20px;
-         }
-        .result-box {
-             flex: 1;
-             min-width: 250px;
-             padding: 15px;
-             background-color: var(--background-main);
-             border: 1px solid var(--border-color);
-             border-radius: var(--card-radius);
-             transition: var(--theme-transition);
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .result-box h3 {
-            margin-top: 0;
-            color: var(--primary-text);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
-            margin-bottom: 10px;
+
+        .text-gradient {
+            background: linear-gradient(135deg, #6366F1, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-         .result-list {
-             font-family: monospace;
-             font-size: 1.1rem;
-             list-style-type: none;
-             padding-left: 0;
-             max-height: 150px;
-             overflow-y: auto;
-         }
-         .result-list li {
-             margin-bottom: 5px;
-             padding: 3px;
-             border-radius: 3px;
-         }
-         .result-list li.highlight {
-             background-color: var(--color-high);
-             color: white;
-             font-weight: bold;
-         }
 
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
 
-        /* Controls refinement */
-         .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
+        .graph-node {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            font-family: 'Fira Code';
+            border: 3px solid;
+            position: absolute;
+            transition: all 0.4s;
+            cursor: pointer;
         }
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+
+        .graph-node.unvisited {
+            background: #1E293B;
+            border-color: #475569;
+            color: #94a3b8;
         }
-        .control-group label {
-            white-space: nowrap;
+
+        .graph-node.current {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border-color: #FBBF24;
+            color: white;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+            animation: pulse 0.5s;
         }
-         .control-group input[type="text"],
-         .control-group select,
-         .control-group input[type="range"] {
-            margin-right: 10px;
-         }
-        .log {
-            margin-top: 20px;
-            max-height: 150px;
+
+        .graph-node.visited {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: #34D399;
+            color: white;
+        }
+
+        .graph-node.queued {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            border-color: #A78BFA;
+            color: white;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.15)
+            }
+        }
+
+        .queue-item,
+        .stack-item {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-family: 'Fira Code';
+            font-weight: bold;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .queue-item {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+        }
+
+        .stack-item {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
         }
     </style>
 </head>
-<body data-theme="dark">
-    <a href="../index.html#week3" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-    <h1><i class="fas fa-route icon-margin"></i>Graph Traversal Visualization (BFS & DFS)</h1>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week3" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Graph<span class="text-indigo-500">Traversal</span></span>
+            </a>
+        </div>
+    </nav>
 
-    <div class="container">
-        <h2><i class="fas fa-sitemap icon-margin"></i>Interactive Traversal</h2>
-        <p>Visualize Breadth-First Search (BFS) and Depth-First Search (DFS) on a sample graph.</p>
-
-         <!-- Graph Definition (Hidden or could be user input) -->
-         <div id="graph-data" style="display: none;">
-            {
-             "nodes": [ { "data": { "id": "A" } }, { "data": { "id": "B" } }, { "data": { "id": "C" } }, { "data": { "id": "D" } }, { "data": { "id": "E" } }, { "data": { "id": "F" } }, { "data": { "id": "G" } } ],
-             "edges": [
-                { "data": { "id": "AB", "source": "A", "target": "B" } }, { "data": { "id": "AC", "source": "A", "target": "C" } },
-                { "data": { "id": "BD", "source": "B", "target": "D" } }, { "data": { "id": "BE", "source": "B", "target": "E" } },
-                { "data": { "id": "CE", "source": "C", "target": "E" } }, { "data": { "id": "CF", "source": "C", "target": "F" } },
-                { "data": { "id": "EG", "source": "E", "target": "G" } }
-             ]
-            }
-         </div>
-
-        <div class="controls">
-             <div class="control-group">
-                 <label for="start-node">Start Node:</label>
-                 <select id="start-node">
-                     <!-- Options populated by JS -->
-                 </select>
-                 <label for="traversal-type">Traversal Type:</label>
-                 <select id="traversal-type">
-                     <option value="bfs">Breadth-First Search (BFS)</option>
-                     <option value="dfs">Depth-First Search (DFS)</option>
-                 </select>
-             </div>
-             <div class="control-group">
-                <button id="start-traversal-btn"><i class="fas fa-play icon-margin"></i>Start Traversal</button>
-                <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset</button>
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-indigo-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                WEEK 3 • خوارزميات Graphs
             </div>
-             <div class="control-group">
-                <button id="step-btn" disabled><i class="fas fa-step-forward icon-margin"></i>Step Forward</button>
-                <button id="auto-play-btn" disabled><i class="fas fa-fast-forward icon-margin"></i>Auto Play</button>
-                <label for="speed-slider">Speed:</label>
-                <input type="range" id="speed-slider" min="100" max="1500" value="600" step="100">
-                <span id="speed-value">600ms</span>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Graph</span> Traversal</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">BFS & DFS</h2>
+        </div>
+    </header>
+
+    <!-- What is Traversal -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-route text-indigo-500 mr-3"></i>إيه
+                هو Graph Traversal؟</h2>
+
+            <div class="glass-card p-8 rounded-2xl border border-indigo-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-indigo-400 mb-6 font-arabic">🗺️ الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه استكشاف المتاهة</h4>
+                            <p class="text-slate-300">
+                                تخيل إنك في <span class="text-indigo-400 font-bold">متاهة</span> وعايز تزور كل الغرف:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• <span class="text-blue-400 font-bold">BFS:</span> زور كل الغرف القريبة الأول،
+                                    بعدين الأبعد</li>
+                                <li>• <span class="text-purple-400 font-bold">DFS:</span> روح في اتجاه لآخره، بعدين ارجع
+                                    وجرب اتجاه تاني</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">🎯 الهدف</h4>
+                            <p class="text-slate-300">
+                                نزور <span class="text-emerald-400 font-bold">كل node</span> في الـ graph مرة واحدة بس!
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                مهم نتتبع الـ nodes اللي زرناها عشان ما نلفش في حلقة!
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div id="cy-container"></div>
-        <div class="log" id="log"><p>Select a start node and traversal type, then click 'Start Traversal'.</p></div>
+    <!-- BFS Section -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-water text-blue-500 mr-3"></i>BFS</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">Breadth-First Search - البحث بالعرض</p>
 
-         <div class="results-container">
-             <div class="result-box" id="traversal-order-box">
-                  <h3><i class="fas fa-stream icon-margin"></i>Traversal Order</h3>
-                  <ol class="result-list" id="traversal-order-list"></ol>
-             </div>
-             <div class="result-box" id="structure-box">
-                  <!-- Title changes based on BFS/DFS -->
-                  <h3 id="structure-title"><i class="fas fa-clipboard-list icon-margin"></i>Queue / Stack</h3>
-                  <ul class="result-list" id="structure-list"></ul>
-             </div>
-         </div>
-    </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-6 rounded-2xl border border-blue-700/50" data-aos="fade-right">
+                    <div class="rtl-block font-arabic">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">🌊 إزاي BFS بيشتغل؟</h3>
+                        <div class="space-y-4 text-sm">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">1.</span> ابدأ من node معينة، ضيفها في الـ <span
+                                    class="text-blue-400">Queue</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">2.</span> طلّع أول node من الـ Queue
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">3.</span> زورها، وضيف كل جيرانها (neighbors) في
+                                الـ Queue
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">4.</span> كرر لحد ما الـ Queue يفضى
+                            </div>
+                        </div>
 
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>Graph Traversal Explained</h2>
-        <div class="explanation">
-            <p>Graph traversal algorithms systematically visit every node in a graph exactly once. The two most common methods are Breadth-First Search (BFS) and Depth-First Search (DFS).</p>
-            <ul>
-                <li>
-                    <strong>Breadth-First Search (BFS):</strong>
-                    <ul>
-                        <li>Explores the graph level by level. It starts at a source node, visits all its direct neighbors, then visits all neighbors of those neighbors, and so on.</li>
-                        <li>Typically uses a <strong>Queue</strong> (First-In, First-Out) to keep track of nodes to visit next.</li>
-                        <li>Finds the shortest path (in terms of number of edges) between the start node and all other reachable nodes in an unweighted graph.</li>
-                        <li><strong>Algorithm:</strong>
-                            <ol>
-                                <li>Enqueue the start node and mark it as visited.</li>
-                                <li>While the queue is not empty:</li>
-                                <li>Dequeue a node `u`.</li>
-                                <li>For each unvisited neighbor `v` of `u`:</li>
-                                <li>Mark `v` as visited and enqueue `v`.</li>
-                            </ol>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <strong>Depth-First Search (DFS):</strong>
-                    <ul>
-                        <li>Explores as far as possible along each branch before backtracking. It starts at a source node, explores one of its neighbors completely, then explores another neighbor completely, etc.</li>
-                        <li>Typically uses a <strong>Stack</strong> (Last-In, First-Out) - either implicitly via recursion or explicitly with a stack data structure - to keep track of nodes to visit next.</li>
-                        <li>Useful for topological sorting, finding connected components, cycle detection, and solving pathfinding problems (like mazes).</li>
-                        <li><strong>Algorithm (Iterative):</strong>
-                             <ol>
-                                 <li>Push the start node onto the stack and mark it as visited.</li>
-                                 <li>While the stack is not empty:</li>
-                                 <li>Pop a node `u`.</li>
-                                 <li>For each unvisited neighbor `v` of `u`:</li>
-                                 <li>Mark `v` as visited and push `v` onto the stack.</li>
-                             </ol>
-                         </li>
-                     </ul>
-                 </li>
-             </ul>
-         </div>
-         <h3><i class="fas fa-code icon-margin"></i>Conceptual Pseudocode</h3>
-         <pre class="code-block">
-<code>function BFS(graph, startNode) {
-    let queue = [startNode];
-    let visited = new Set([startNode]);
-    let traversalOrder = [];
+                        <div class="mt-6 p-4 bg-blue-950/30 rounded-xl border border-blue-700">
+                            <p class="text-blue-400 font-bold mb-2">📦 بيستخدم Queue (FIFO)</p>
+                            <p class="text-xs text-slate-400">First In, First Out - اللي يدخل الأول يخرج الأول</p>
+                        </div>
+                    </div>
+                </div>
 
-    while (queue.length > 0) {
-        let currentNode = queue.shift(); // Dequeue
-        traversalOrder.push(currentNode);
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4 text-center">BFS Order</h3>
+                    <svg viewBox="0 0 250 200" class="w-full max-w-xs mx-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Edges -->
+                        <line x1="125" y1="30" x2="55" y2="90" stroke="#475569" stroke-width="2" />
+                        <line x1="125" y1="30" x2="195" y2="90" stroke="#475569" stroke-width="2" />
+                        <line x1="55" y1="90" x2="30" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="55" y1="90" x2="90" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="195" y1="90" x2="160" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="195" y1="90" x2="220" y2="160" stroke="#475569" stroke-width="2" />
 
-        for (let neighbor of graph.getNeighbors(currentNode)) {
-            if (!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor); // Enqueue
-            }
-        }
+                        <!-- Level 0 -->
+                        <circle cx="125" cy="30" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="125" y="35" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">1</text>
+
+                        <!-- Level 1 -->
+                        <circle cx="55" cy="90" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="55" y="95" text-anchor="middle" fill="white" font-weight="bold" font-size="12">2</text>
+                        <circle cx="195" cy="90" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="195" y="95" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">3</text>
+
+                        <!-- Level 2 -->
+                        <circle cx="30" cy="160" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="30" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">4</text>
+                        <circle cx="90" cy="160" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="90" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">5</text>
+                        <circle cx="160" cy="160" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="160" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">6</text>
+                        <circle cx="220" cy="160" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="3" />
+                        <text x="220" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">7</text>
+                    </svg>
+                    <p class="text-center text-blue-400 text-xs font-arabic mt-3">بيزور <span class="font-bold">level by
+                            level</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DFS Section -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i
+                    class="fa-solid fa-arrow-down-long text-purple-500 mr-3"></i>DFS</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">Depth-First Search - البحث بالعمق</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-6 rounded-2xl border border-purple-700/50" data-aos="fade-right">
+                    <div class="rtl-block font-arabic">
+                        <h3 class="text-xl font-bold text-purple-400 mb-4">⬇️ إزاي DFS بيشتغل؟</h3>
+                        <div class="space-y-4 text-sm">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">1.</span> ابدأ من node معينة، ضيفها في الـ <span
+                                    class="text-purple-400">Stack</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-pink-500">
+                                <span class="text-pink-400 font-bold">2.</span> طلّع آخر node من الـ Stack (pop)
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">3.</span> زورها، وضيف كل جيرانها في الـ Stack
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">4.</span> كرر لحد ما الـ Stack يفضى
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-purple-950/30 rounded-xl border border-purple-700">
+                            <p class="text-purple-400 font-bold mb-2">📚 بيستخدم Stack (LIFO)</p>
+                            <p class="text-xs text-slate-400">Last In, First Out - اللي يدخل الأخير يخرج الأول</p>
+                            <p class="text-xs text-purple-300 mt-1">أو ممكن نستخدم Recursion!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4 text-center">DFS Order</h3>
+                    <svg viewBox="0 0 250 200" class="w-full max-w-xs mx-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Edges -->
+                        <line x1="125" y1="30" x2="55" y2="90" stroke="#475569" stroke-width="2" />
+                        <line x1="125" y1="30" x2="195" y2="90" stroke="#475569" stroke-width="2" />
+                        <line x1="55" y1="90" x2="30" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="55" y1="90" x2="90" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="195" y1="90" x2="160" y2="160" stroke="#475569" stroke-width="2" />
+                        <line x1="195" y1="90" x2="220" y2="160" stroke="#475569" stroke-width="2" />
+
+                        <!-- DFS Order -->
+                        <circle cx="125" cy="30" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="125" y="35" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">1</text>
+
+                        <circle cx="55" cy="90" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="55" y="95" text-anchor="middle" fill="white" font-weight="bold" font-size="12">2</text>
+
+                        <circle cx="30" cy="160" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="30" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">3</text>
+
+                        <circle cx="90" cy="160" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="90" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">4</text>
+
+                        <circle cx="195" cy="90" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="195" y="95" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">5</text>
+
+                        <circle cx="160" cy="160" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="160" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">6</text>
+
+                        <circle cx="220" cy="160" r="18" fill="#8B5CF6" stroke="#A78BFA" stroke-width="3" />
+                        <text x="220" y="165" text-anchor="middle" fill="white" font-weight="bold"
+                            font-size="12">7</text>
+                    </svg>
+                    <p class="text-center text-purple-400 text-xs font-arabic mt-3">بينزل <span class="font-bold">للعمق
+                            الأول</span>، بعدين يرجع</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-indigo-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">BFS vs DFS Demo</h2>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                    <button id="bfs-btn"
+                        class="px-5 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-lg hover:shadow-lg transition"><i
+                            class="fas fa-water mr-2"></i>BFS</button>
+                    <button id="dfs-btn"
+                        class="px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-lg hover:shadow-lg transition"><i
+                            class="fas fa-arrow-down-long mr-2"></i>DFS</button>
+                    <button id="reset-btn"
+                        class="px-4 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
+                    <input type="range" id="speed" min="200" max="1000" value="600" class="w-24 accent-indigo-500">
+                </div>
+
+                <div class="flex gap-3 justify-center text-xs mb-4">
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-slate-600 border-2 border-slate-400"></div><span
+                            class="text-slate-400">Unvisited</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500"></div><span
+                            class="text-slate-400">Current</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-purple-500"></div><span class="text-slate-400">In
+                            Queue/Stack</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-emerald-500"></div><span
+                            class="text-slate-400">Visited</span>
+                    </div>
+                </div>
+
+                <!-- Graph Visualization -->
+                <div id="graph-viz" class="relative bg-slate-900/50 rounded-xl border border-slate-800 h-[280px]">
+                    <!-- Edges will be SVG -->
+                    <svg id="edges-svg" class="absolute inset-0 w-full h-full pointer-events-none"></svg>
+                    <!-- Nodes will be positioned absolutely -->
+                </div>
+
+                <!-- Queue/Stack Display -->
+                <div class="mt-6 flex gap-4 justify-center">
+                    <div class="flex-1 max-w-xs">
+                        <p class="text-sm text-blue-400 font-bold mb-2 text-center">Queue (BFS)</p>
+                        <div id="queue-display"
+                            class="flex gap-2 justify-center min-h-[40px] p-2 bg-slate-900/50 rounded-lg border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="flex-1 max-w-xs">
+                        <p class="text-sm text-purple-400 font-bold mb-2 text-center">Stack (DFS)</p>
+                        <div id="stack-display"
+                            class="flex gap-2 justify-center min-h-[40px] p-2 bg-slate-900/50 rounded-lg border border-slate-700">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Click "BFS" or "DFS" to start.</p>
+                </div>
+
+                <div id="order" class="mt-4 p-4 bg-slate-900/50 rounded-xl text-center">
+                    <span class="text-slate-500 text-sm">Visit Order: </span>
+                    <span id="order-list" class="font-mono text-emerald-400"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-scale-balanced text-yellow-500 mr-3"></i>BFS vs DFS</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-4 text-right font-arabic">المقارنة</th>
+                            <th class="py-4 px-4 text-center text-blue-400">BFS</th>
+                            <th class="py-4 px-4 text-center text-purple-400">DFS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Data Structure</td>
+                            <td class="py-4 px-4 text-center text-blue-300">Queue</td>
+                            <td class="py-4 px-4 text-center text-purple-300">Stack / Recursion</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Time</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(V + E)</td>
+                            <td class="py-4 px-4 text-center font-mono text-emerald-400">O(V + E)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Space</td>
+                            <td class="py-4 px-4 text-center font-mono text-yellow-400">O(V)</td>
+                            <td class="py-4 px-4 text-center font-mono text-yellow-400">O(V)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Shortest Path?</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">✓ Yes</td>
+                            <td class="py-4 px-4 text-center text-red-400">✗ No</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الأفضل لـ</td>
+                            <td class="py-4 px-4 text-center text-blue-300 text-xs">Shortest path, Level-order</td>
+                            <td class="py-4 px-4 text-center text-purple-300 text-xs">Cycle detection, Topological sort
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- BFS Code -->
+                <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-right">
+                    <div class="flex items-center gap-2 px-4 py-3 bg-blue-900/50 border-b border-blue-800">
+                        <span class="font-mono text-sm text-blue-400">BFS.js</span>
+                    </div>
+                    <pre class="p-4 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">bfs</span>(<span class="text-orange-300">graph</span>, <span class="text-orange-300">start</span>) {
+  <span class="text-purple-400">const</span> visited = <span class="text-purple-400">new</span> Set();
+  <span class="text-purple-400">const</span> queue = [start];
+  visited.add(start);
+  
+  <span class="text-purple-400">while</span> (queue.length > <span class="text-emerald-400">0</span>) {
+    <span class="text-purple-400">const</span> node = queue.<span class="text-blue-400">shift</span>();
+    console.log(node);
+    
+    <span class="text-purple-400">for</span> (<span class="text-purple-400">const</span> neighbor <span class="text-purple-400">of</span> graph[node]) {
+      <span class="text-purple-400">if</span> (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.<span class="text-blue-400">push</span>(neighbor);
+      }
     }
-    return traversalOrder;
-}
+  }
+}</code></pre>
+                </div>
 
-function DFS_Iterative(graph, startNode) {
-    let stack = [startNode];
-    let visited = new Set(); // Visited when popped, or pushed?
-    let traversalOrder = [];
-
-    while (stack.length > 0) {
-        let currentNode = stack.pop(); // Pop
-
-        if (!visited.has(currentNode)) {
-             visited.add(currentNode);
-             traversalOrder.push(currentNode);
-
-             // Push neighbors in reverse order for typical DFS result
-             let neighbors = graph.getNeighbors(currentNode).reverse();
-             for (let neighbor of neighbors) {
-                 if (!visited.has(neighbor)) {
-                     stack.push(neighbor); // Push
-                 }
-             }
-        }
+                <!-- DFS Code -->
+                <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-left">
+                    <div class="flex items-center gap-2 px-4 py-3 bg-purple-900/50 border-b border-purple-800">
+                        <span class="font-mono text-sm text-purple-400">DFS.js</span>
+                    </div>
+                    <pre class="p-4 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">dfs</span>(<span class="text-orange-300">graph</span>, <span class="text-orange-300">start</span>) {
+  <span class="text-purple-400">const</span> visited = <span class="text-purple-400">new</span> Set();
+  <span class="text-purple-400">const</span> stack = [start];
+  
+  <span class="text-purple-400">while</span> (stack.length > <span class="text-emerald-400">0</span>) {
+    <span class="text-purple-400">const</span> node = stack.<span class="text-blue-400">pop</span>();
+    <span class="text-purple-400">if</span> (visited.has(node)) <span class="text-purple-400">continue</span>;
+    
+    visited.add(node);
+    console.log(node);
+    
+    <span class="text-purple-400">for</span> (<span class="text-purple-400">const</span> neighbor <span class="text-purple-400">of</span> graph[node]) {
+      stack.<span class="text-blue-400">push</span>(neighbor);
     }
-    return traversalOrder;
-}
-</code></pre>
-    </div>
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 3</p>
+    </footer>
 
     <script>
-        // Theme persistence
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
+        AOS.init({ duration: 800, once: true });
 
-        // DOM Elements
-        const startNodeSelect = document.getElementById('start-node');
-        const traversalTypeSelect = document.getElementById('traversal-type');
-        const startTraversalBtn = document.getElementById('start-traversal-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const stepBtn = document.getElementById('step-btn');
-        const autoPlayBtn = document.getElementById('auto-play-btn');
-        const speedSlider = document.getElementById('speed-slider');
-        const speedValueSpan = document.getElementById('speed-value');
-        const cyContainer = document.getElementById('cy-container');
-        const logElement = document.getElementById('log');
-        const traversalOrderList = document.getElementById('traversal-order-list');
-        const structureTitle = document.getElementById('structure-title');
-        const structureList = document.getElementById('structure-list');
+        // Graph structure
+        const graph = {
+            'A': ['B', 'C'],
+            'B': ['A', 'D', 'E'],
+            'C': ['A', 'F'],
+            'D': ['B'],
+            'E': ['B', 'F'],
+            'F': ['C', 'E']
+        };
 
-        let cy = null;
-        let graphData = JSON.parse(document.getElementById('graph-data').textContent);
-        let visualizationSteps = [];
-        let currentStepIndex = -1;
-        let autoPlayInterval = null;
-        let isAutoPlaying = false;
-        let animationSpeed = parseInt(speedSlider.value);
+        const nodePositions = {
+            'A': { x: 50, y: 50 },
+            'B': { x: 180, y: 35 },
+            'C': { x: 50, y: 180 },
+            'D': { x: 300, y: 50 },
+            'E': { x: 250, y: 140 },
+            'F': { x: 150, y: 220 }
+        };
 
-        // --- Utility Functions ---
-        function logMessage(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            logElement.prepend(p);
-            while (logElement.children.length > 8) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
+        const graphViz = document.getElementById('graph-viz');
+        const edgesSvg = document.getElementById('edges-svg');
+        const queueDisplay = document.getElementById('queue-display');
+        const stackDisplay = document.getElementById('stack-display');
+        const info = document.getElementById('info');
+        const orderList = document.getElementById('order-list');
+        let running = false;
 
-        function disableControls(traversing = false, autoPlaying = false) {
-            startTraversalBtn.disabled = traversing;
-            startNodeSelect.disabled = traversing;
-            traversalTypeSelect.disabled = traversing;
-            const endReached = currentStepIndex >= visualizationSteps.length - 1;
-            stepBtn.disabled = !traversing || endReached || autoPlaying;
-            autoPlayBtn.disabled = !traversing || endReached;
-            resetBtn.disabled = autoPlaying; // Disable reset only when auto-playing
-        }
-
-        // --- Cytoscape Setup ---
-        function initializeGraph() {
-             cy = cytoscape({
-                 container: cyContainer,
-                 elements: graphData,
-                 style: [
-                     {
-                         selector: 'node',
-                         style: {
-                             'background-color': 'var(--color-default-element)',
-                             'label': 'data(id)',
-                             'color': 'var(--color-element-text)',
-                             'text-valign': 'center',
-                             'text-halign': 'center',
-                             'border-width': 1,
-                             'border-color': 'var(--accent-color)',
-                             'font-size': '14px',
-                             'width': '35px',
-                             'height': '35px'
-                         }
-                     },
-                     {
-                         selector: 'edge',
-                         style: {
-                             'width': 2,
-                             'line-color': 'var(--accent-color)',
-                             'target-arrow-color': 'var(--accent-color)',
-                             'target-arrow-shape': 'none', // Undirected for traversal example
-                             'curve-style': 'bezier'
-                         }
-                     },
-                     // Add traversal highlight styles here initially or dynamically
-                     { selector: '.cy-node-visited', style: { 'background-color': 'var(--color-found)', 'border-color': 'white', 'color': 'white', 'transition-property': 'background-color, border-color', 'transition-duration': '0.5s' } },
-                     { selector: '.cy-node-current', style: { 'background-color': 'var(--color-high)', 'border-color': 'white', 'color': 'white', 'shape': 'star', 'width': '40px', 'height': '40px', 'transition-property': 'background-color, shape, width, height', 'transition-duration': '0.3s' } },
-                     { selector: '.cy-node-in-queue', style: { 'background-color': 'var(--color-mid)', 'border-style': 'dashed', 'border-color': 'white', 'color': 'white', 'transition-property': 'background-color, border-style', 'transition-duration': '0.3s' } },
-                     { selector: '.cy-edge-traversed', style: { 'line-color': 'var(--color-found)', 'target-arrow-color': 'var(--color-found)', 'width': 4, 'z-index': 1, 'transition-property': 'line-color, width', 'transition-duration': '0.5s' } },
-                 ],
-                 layout: {
-                     name: 'cose',
-                     animate: false, // No animation on initial layout
-                     padding: 30,
-                     idealEdgeLength: 100,
-                     nodeOverlap: 20,
-                 }
-             });
-
-              // Populate start node options
-             startNodeSelect.innerHTML = '';
-             cy.nodes().sort((a,b) => a.id().localeCompare(b.id())).forEach(node => {
-                 const option = document.createElement('option');
-                 option.value = node.id();
-                 option.textContent = node.id();
-                 startNodeSelect.appendChild(option);
-             });
-
-             resetVisualizationState();
-             logMessage('Graph loaded. Ready for traversal.', 'info');
-         }
-
-         function resetVisualizationState() {
-            if(cy) {
-                cy.elements().removeClass('cy-node-visited cy-node-current cy-node-in-queue cy-edge-traversed');
-                cy.elements().removeData(); // Clear any traversal data
-            }
-             visualizationSteps = [];
-             currentStepIndex = -1;
-             isAutoPlaying = false;
-             stopAutoPlay();
-             traversalOrderList.innerHTML = '';
-             structureList.innerHTML = '';
-             logElement.innerHTML = '<p>Select a start node and traversal type, then click \'Start Traversal\'.</p>';
-             disableControls(false, false);
-         }
-
-        // --- Traversal Algorithms with Step Recording ---
-        function generateBFSSteps(startNodeId) {
-             visualizationSteps = [];
-             if (!cy || cy.getElementById(startNodeId).empty()) return;
-
-             let queue = [startNodeId];
-             let visited = new Set([startNodeId]);
-             let visitedOrder = [];
-             let structureSnapshots = [[...queue]]; // Store queue state
-
-              visualizationSteps.push({ // Initial state
-                  type: 'start',
-                  currentNode: null,
-                  visited: new Set(),
-                  queueStack: [...queue],
-                  traversedEdges: new Set(),
-                  message: `Starting BFS from node ${startNodeId}. Queue: [${queue.join(',')}]`
-              });
-             cy.getElementById(startNodeId).addClass('cy-node-in-queue');
-
-             while (queue.length > 0) {
-                 let currentNodeId = queue.shift();
-                 visitedOrder.push(currentNodeId);
-
-                  visualizationSteps.push({
-                     type: 'visit',
-                     currentNode: currentNodeId,
-                     visited: new Set(visited), // Store visited state *before* adding current
-                     queueStack: [...queue], // Queue state *after* dequeue
-                     traversedEdges: visualizationSteps[visualizationSteps.length-1]?.traversedEdges || new Set(),
-                     message: `Visiting node ${currentNodeId}. Order: [${visitedOrder.join(',')}] Queue: [${queue.join(',')}]`
-                 });
-                 visited.add(currentNodeId); // Mark as visited *after* processing
-
-                 let neighbors = cy.getElementById(currentNodeId).neighborhood().nodes();
-                 let currentTraversedEdges = new Set(visualizationSteps[visualizationSteps.length-1]?.traversedEdges || new Set());
-
-                 neighbors.sort((a,b) => a.id().localeCompare(b.id())).forEach(neighbor => {
-                    const neighborId = neighbor.id();
-                    const edge = cy.edges(`[source="${currentNodeId}"][target="${neighborId}"], [source="${neighborId}"][target="${currentNodeId}"]`).first();
-
-                     if (!visited.has(neighborId)) {
-                         visited.add(neighborId); // Mark visited immediately for BFS queue logic
-                         queue.push(neighborId);
-                         currentTraversedEdges.add(edge.id());
-
-                          visualizationSteps.push({
-                             type: 'enqueue',
-                             currentNode: currentNodeId,
-                             neighbor: neighborId,
-                             visited: new Set(visited), // Include newly visited neighbor
-                             queueStack: [...queue],
-                             traversedEdges: new Set(currentTraversedEdges),
-                             message: `Enqueueing neighbor ${neighborId}. Queue: [${queue.join(',')}]`
-                         });
-                    } else {
-                        // Optionally add a step showing already visited neighbor
-                         visualizationSteps.push({
-                            type: 'neighbor_visited',
-                            currentNode: currentNodeId,
-                            neighbor: neighborId,
-                            visited: new Set(visited),
-                            queueStack: [...queue],
-                            traversedEdges: new Set(currentTraversedEdges),
-                            message: `Neighbor ${neighborId} already visited.`
-                        });
-                    }
-                 });
-             }
-
-              visualizationSteps.push({ // Final state
-                  type: 'end',
-                  currentNode: null,
-                  visited: new Set(visited),
-                  queueStack: [],
-                  traversedEdges: visualizationSteps[visualizationSteps.length-1]?.traversedEdges || new Set(),
-                  message: `BFS complete. Final order: [${visitedOrder.join(',')}]`
-              });
-         }
-
-         function generateDFSSteps(startNodeId) {
-             visualizationSteps = [];
-             if (!cy || cy.getElementById(startNodeId).empty()) return;
-
-             let stack = [startNodeId];
-             let visited = new Set();
-             let visitedOrder = [];
-
-             visualizationSteps.push({ // Initial state
-                 type: 'start',
-                 currentNode: null,
-                 visited: new Set(),
-                 queueStack: [...stack],
-                 traversedEdges: new Set(),
-                 message: `Starting DFS from node ${startNodeId}. Stack: [${stack.join(',')}]`
-             });
-             cy.getElementById(startNodeId).addClass('cy-node-in-queue'); // Use same class for stack
-
-             while (stack.length > 0) {
-                 let currentNodeId = stack.pop();
-
-                 if (!visited.has(currentNodeId)) {
-                     visited.add(currentNodeId);
-                     visitedOrder.push(currentNodeId);
-
-                      visualizationSteps.push({
-                         type: 'visit',
-                         currentNode: currentNodeId,
-                         visited: new Set(visited),
-                         queueStack: [...stack], // Stack state *after* pop, before pushing neighbors
-                         traversedEdges: visualizationSteps[visualizationSteps.length-1]?.traversedEdges || new Set(),
-                         message: `Visiting node ${currentNodeId}. Order: [${visitedOrder.join(',')}] Stack: [${stack.join(',')}]`
-                     });
-
-                     let neighbors = cy.getElementById(currentNodeId).neighborhood().nodes();
-                     let currentTraversedEdges = new Set(visualizationSteps[visualizationSteps.length - 1]?.traversedEdges || new Set());
-
-                     // Push neighbors in reverse order to visit them alphabetically
-                     neighbors.sort((a, b) => b.id().localeCompare(a.id())).forEach(neighbor => {
-                         const neighborId = neighbor.id();
-                         const edge = cy.edges(`[source="${currentNodeId}"][target="${neighborId}"], [source="${neighborId}"][target="${currentNodeId}"]`).first();
-
-                         if (!visited.has(neighborId)) {
-                             stack.push(neighborId);
-                             currentTraversedEdges.add(edge.id());
-
-                             visualizationSteps.push({
-                                 type: 'push',
-                                 currentNode: currentNodeId,
-                                 neighbor: neighborId,
-                                 visited: new Set(visited),
-                                 queueStack: [...stack],
-                                 traversedEdges: new Set(currentTraversedEdges),
-                                 message: `Pushing unvisited neighbor ${neighborId}. Stack: [${stack.join(',')}]`
-                             });
-                         } else {
-                             visualizationSteps.push({
-                                type: 'neighbor_visited',
-                                currentNode: currentNodeId,
-                                neighbor: neighborId,
-                                visited: new Set(visited),
-                                queueStack: [...stack],
-                                traversedEdges: new Set(currentTraversedEdges),
-                                message: `Neighbor ${neighborId} already visited.`
-                             });
-                         }
-                     });
-                 } else {
-                     // Node already visited (might happen if pushed multiple times before visit)
-                     visualizationSteps.push({
-                         type: 'pop_visited',
-                         currentNode: currentNodeId,
-                         visited: new Set(visited),
-                         queueStack: [...stack],
-                         traversedEdges: visualizationSteps[visualizationSteps.length - 1]?.traversedEdges || new Set(),
-                         message: `Popped ${currentNodeId}, but it was already visited.`
-                     });
-                 }
-             }
-              visualizationSteps.push({ // Final state
-                  type: 'end',
-                  currentNode: null,
-                  visited: new Set(visited),
-                  queueStack: [],
-                  traversedEdges: visualizationSteps[visualizationSteps.length - 1]?.traversedEdges || new Set(),
-                  message: `DFS complete. Final order: [${visitedOrder.join(',')}]`
-              });
-         }
-
-
-        // --- Visualization Update ---
-        function renderStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= visualizationSteps.length) return;
-            const step = visualizationSteps[stepIndex];
-
-            // --- Update Cytoscape Graph --- 
-            cy.elements().removeClass('cy-node-visited cy-node-current cy-node-in-queue cy-edge-traversed');
-
-            // Mark visited nodes
-            step.visited?.forEach(nodeId => cy.getElementById(nodeId).addClass('cy-node-visited'));
-
-             // Mark nodes in queue/stack
-            step.queueStack?.forEach(nodeId => {
-                if(!step.visited?.has(nodeId)) { // Only mark if not already fully visited
-                     cy.getElementById(nodeId).addClass('cy-node-in-queue');
-                }
+        function initGraph() {
+            // Draw edges
+            edgesSvg.innerHTML = '';
+            const edges = [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'F'], ['E', 'F']];
+            edges.forEach(([n1, n2]) => {
+                const p1 = nodePositions[n1], p2 = nodePositions[n2];
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', p1.x + 22);
+                line.setAttribute('y1', p1.y + 22);
+                line.setAttribute('x2', p2.x + 22);
+                line.setAttribute('y2', p2.y + 22);
+                line.setAttribute('stroke', '#475569');
+                line.setAttribute('stroke-width', '2');
+                edgesSvg.appendChild(line);
             });
 
-            // Mark traversed edges
-            step.traversedEdges?.forEach(edgeId => cy.getElementById(edgeId).addClass('cy-edge-traversed'));
-
-             // Mark current node
-            if (step.currentNode) {
-                cy.getElementById(step.currentNode).addClass('cy-node-current');
+            // Draw nodes
+            for (const [name, pos] of Object.entries(nodePositions)) {
+                const node = document.createElement('div');
+                node.className = 'graph-node unvisited';
+                node.id = `node-${name}`;
+                node.textContent = name;
+                node.style.left = `${pos.x}px`;
+                node.style.top = `${pos.y}px`;
+                graphViz.appendChild(node);
             }
-             if (step.type === 'enqueue' || step.type === 'push') {
-                  cy.getElementById(step.neighbor).addClass('cy-node-in-queue');
-             }
-
-            // --- Update Result Lists --- 
-             traversalOrderList.innerHTML = '';
-             let visitedOrder = [];
-             visualizationSteps.slice(0, stepIndex + 1).forEach(s => {
-                 if (s.type === 'visit') {
-                     visitedOrder.push(s.currentNode);
-                 }
-             });
-             visitedOrder.forEach((nodeId, index) => {
-                 const li = document.createElement('li');
-                 li.textContent = `${index + 1}. ${nodeId}`;
-                 if (nodeId === step.currentNode && step.type === 'visit') {
-                     li.classList.add('highlight');
-                 }
-                 traversalOrderList.appendChild(li);
-             });
-
-            const isBFS = traversalTypeSelect.value === 'bfs';
-             structureTitle.innerHTML = `<i class="fas ${isBFS ? 'fa-layer-group' : 'fa-bars'} icon-margin"></i> ${isBFS ? 'Queue' : 'Stack'}`;
-            structureList.innerHTML = '';
-            let structureContent = [...step.queueStack] || []; // Get the queue/stack state for *this* step
-             if (isBFS) structureContent.reverse(); // Show queue front at top
-
-            structureContent.forEach((nodeId, index) => {
-                 const li = document.createElement('li');
-                 li.textContent = nodeId;
-                  // Highlight the element being added/removed if applicable
-                  if ((step.type === 'enqueue' || step.type === 'push') && nodeId === step.neighbor && index === (isBFS ? 0 : structureContent.length - 1)) {
-                      li.classList.add('highlight');
-                  } else if (step.type === 'visit' && nodeId === step.currentNode && !isBFS ) {
-                      // Highlight the top for DFS pop (conceptually, it was just removed)
-                       // This needs refinement - maybe highlight the *previous* step's top?
-                  }
-                 structureList.appendChild(li);
-             });
-              if (!isBFS) structureList.style.flexDirection = 'column-reverse'; // Stack grows upwards visually
-              else structureList.style.flexDirection = 'column';
-
-            // Update Log
-            logMessage(step.message, step.type === 'end' ? 'success' : 'info');
         }
 
-        // --- Control Handlers ---
-        startTraversalBtn.addEventListener('click', () => {
-            const startNodeId = startNodeSelect.value;
-            const traversalType = traversalTypeSelect.value;
-            if (!startNodeId) {
-                logMessage('Please select a start node.', 'warning');
-                return;
-            }
+        function resetGraph() {
+            running = false;
+            document.querySelectorAll('.graph-node').forEach(n => {
+                n.className = 'graph-node unvisited';
+            });
+            queueDisplay.innerHTML = '';
+            stackDisplay.innerHTML = '';
+            orderList.textContent = '';
+            info.innerHTML = '<p class="text-slate-400">Click "BFS" or "DFS" to start.</p>';
+        }
 
-            resetVisualizationState(); // Clear previous run visuals
-            logMessage(`Starting ${traversalType.toUpperCase()} from node ${startNodeId}...`, 'info');
+        function setNodeState(name, state) {
+            const node = document.getElementById(`node-${name}`);
+            node.className = `graph-node ${state}`;
+        }
 
-            if (traversalType === 'bfs') {
-                generateBFSSteps(startNodeId);
-            } else {
-                generateDFSSteps(startNodeId);
-            }
+        function updateQueue(queue) {
+            queueDisplay.innerHTML = queue.map(n => `<div class="queue-item">${n}</div>`).join('');
+        }
 
-            currentStepIndex = 0;
-            renderStep(currentStepIndex);
-            disableControls(true, false); // Traversal started
-        });
+        function updateStack(stack) {
+            stackDisplay.innerHTML = stack.map(n => `<div class="stack-item">${n}</div>`).join('');
+        }
 
-        resetBtn.addEventListener('click', resetVisualizationState);
+        async function runBFS() {
+            if (running) return;
+            running = true;
+            resetGraph();
 
-        stepBtn.addEventListener('click', () => {
-            if (isAutoPlaying) return;
-            if (currentStepIndex < visualizationSteps.length - 1) {
-                currentStepIndex++;
-                renderStep(currentStepIndex);
-                disableControls(true, false);
-            } else {
-                 // Already at end, disable buttons
-                 disableControls(false, false);
-                 stepBtn.disabled = true;
-                 autoPlayBtn.disabled = true;
-            }
-        });
+            const speed = +document.getElementById('speed').value;
+            const visited = new Set();
+            const queue = ['A'];
+            const order = [];
+            visited.add('A');
+            setNodeState('A', 'queued');
+            updateQueue(queue);
 
-        speedSlider.addEventListener('input', (e) => {
-            animationSpeed = parseInt(e.target.value);
-            speedValueSpan.textContent = `${animationSpeed}ms`;
-            if (isAutoPlaying) {
-                stopAutoPlay(false);
-                startAutoPlay();
-            }
-        });
+            await new Promise(r => setTimeout(r, speed));
 
-        function startAutoPlay() {
-            if (isAutoPlaying && autoPlayInterval) return;
-            isAutoPlaying = true;
-            autoPlayBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
-            disableControls(true, true);
+            while (queue.length > 0 && running) {
+                const node = queue.shift();
+                setNodeState(node, 'current');
+                updateQueue(queue);
+                info.innerHTML = `<p class="text-blue-400 font-arabic">Visiting: ${node}</p>`;
+                await new Promise(r => setTimeout(r, speed));
 
-            autoPlayInterval = setInterval(() => {
-                if (currentStepIndex < visualizationSteps.length - 1) {
-                    currentStepIndex++;
-                    renderStep(currentStepIndex);
-                    disableControls(true, true);
-                } else {
-                    stopAutoPlay();
-                    // Keep controls disabled except reset
-                     disableControls(false, false);
-                     stepBtn.disabled = true;
-                     autoPlayBtn.disabled = true;
+                order.push(node);
+                orderList.textContent = order.join(' → ');
+                setNodeState(node, 'visited');
+
+                for (const neighbor of graph[node]) {
+                    if (!visited.has(neighbor)) {
+                        visited.add(neighbor);
+                        queue.push(neighbor);
+                        setNodeState(neighbor, 'queued');
+                        updateQueue(queue);
+                    }
                 }
-            }, animationSpeed);
+                await new Promise(r => setTimeout(r, speed / 2));
+            }
+
+            info.innerHTML = '<p class="text-emerald-400 font-arabic font-bold">✓ BFS Complete!</p>';
+            running = false;
         }
 
-        function stopAutoPlay(resettingState = true) {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = null;
-            if (resettingState) {
-                 isAutoPlaying = false;
+        async function runDFS() {
+            if (running) return;
+            running = true;
+            resetGraph();
+
+            const speed = +document.getElementById('speed').value;
+            const visited = new Set();
+            const stack = ['A'];
+            const order = [];
+
+            setNodeState('A', 'queued');
+            updateStack(stack);
+            await new Promise(r => setTimeout(r, speed));
+
+            while (stack.length > 0 && running) {
+                const node = stack.pop();
+                updateStack(stack);
+
+                if (visited.has(node)) continue;
+
+                visited.add(node);
+                setNodeState(node, 'current');
+                info.innerHTML = `<p class="text-purple-400 font-arabic">Visiting: ${node}</p>`;
+                await new Promise(r => setTimeout(r, speed));
+
+                order.push(node);
+                orderList.textContent = order.join(' → ');
+                setNodeState(node, 'visited');
+
+                for (const neighbor of graph[node].slice().reverse()) {
+                    if (!visited.has(neighbor)) {
+                        stack.push(neighbor);
+                        setNodeState(neighbor, 'queued');
+                        updateStack(stack);
+                    }
+                }
+                await new Promise(r => setTimeout(r, speed / 2));
             }
-            autoPlayBtn.innerHTML = '<i class="fas fa-fast-forward icon-margin"></i>Auto Play';
-             if (resettingState) {
-                const traversalInProgress = currentStepIndex < visualizationSteps.length - 1 && currentStepIndex !== -1;
-                disableControls(traversalInProgress, false);
-                 if (!traversalInProgress && currentStepIndex !== -1) {
-                     stepBtn.disabled = true;
-                     autoPlayBtn.disabled = true;
-                 }
-             }
+
+            info.innerHTML = '<p class="text-emerald-400 font-arabic font-bold">✓ DFS Complete!</p>';
+            running = false;
         }
 
-        autoPlayBtn.addEventListener('click', () => {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                startAutoPlay();
-            }
-        });
+        document.getElementById('bfs-btn').onclick = runBFS;
+        document.getElementById('dfs-btn').onclick = runDFS;
+        document.getElementById('reset-btn').onclick = resetGraph;
 
-
-        // --- Initial Setup ---
-        initializeGraph();
-        speedValueSpan.textContent = `${animationSpeed}ms`;
-        disableControls(false, false);
-
+        initGraph();
     </script>
 </body>
+
 </html>

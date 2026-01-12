@@ -1,183 +1,460 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رحلة مواصلات واقعية - جراف تفاعلي عصري</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #22295a 0%, #171c29 100%);
-            color: #e2e2e2;
-            font-family: 'Cairo', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 0; }
-        .main-container { max-width: 1050px; margin: 0 auto; padding: 30px 10px; }
-        .header, .explanation-box, .result-box {
-            background: linear-gradient(135deg, #26345d 60%, #2d395b 100%);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px #181f3f33;
-            padding: 30px 20px 18px 20px;
-            margin-bottom: 27px;
-            border: 2px solid #324081;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Representation | تمثيل الـ Graph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', sky: '#0EA5E9' },
+            dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+          },
+          fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
         }
-        .header h1 {
-            color: #22c55e;
-            font-size: 2.25rem;
-            margin-bottom: 10px;
-            font-weight: 900;
-            letter-spacing: .8px; }
-        .subtitle {
-            color: #a4f9c6;
-            font-size: 1.17rem;
-            margin-bottom: 8px; 
-            font-weight: 600;
-            font-family: 'Cairo',sans-serif; }
-        .explanation-title {
-            color: #86b4ff; font-size: 1.09rem;
-            margin-bottom: 9px; font-family: 'Cairo',sans-serif; font-weight: bold; }
-        .explanation-box {
-            font-size: 1.12rem; 
-            line-height: 2.15; color: #e4f5fa;
-            border-right: 6px solid #22c55e; 
-            background: linear-gradient(120deg, #23355455 80%, #152036 100%);
-            font-family: 'Cairo',sans-serif;
-        }
-        .highlight {
-            color: #4ade80; font-weight: 900; background: #151e3455; border-radius: 6px; padding: 2px 7px; font-size: 1.08em;}
-        #cy {
-            width: 100%; height: 500px; background: #151a2b; border-radius: 19px; margin-bottom: 22px;
-            box-shadow: 0 6px 20px #23294633; border: 1.5px solid #395baa;
-        }
-        .tool-box {
-            background: #212a4a;
-            border-radius: 12px; padding: 16px;
-            margin-bottom: 17px; display: flex; gap: 14px;
-            align-items: center; flex-wrap: wrap;
-        }
-        .tool-box select, .tool-box button {
-            font-size: 1rem; border-radius: 8px;
-            border: none; padding: 9px 20px;
-            background: #e8ffe3; color: #20332c;
-        }
-        .tool-box button {
-            background: linear-gradient(135deg,#22c55e 70%,#74faa8 100%); color: #183241; font-weight: bold; font-family: 'Cairo',sans-serif;}
-        .tool-box button:hover { box-shadow: 0 2px 13px #22c55e79;}
-        .result-box { font-size: 1.13rem; color: #ffeebb; font-family: 'Cairo',sans-serif; margin-bottom:15px; padding-bottom:3px; }
-        .result-path { color: #67e9a0; margin: 0 2px; font-weight: bold;font-size: 1.14em; }
-        @media (max-width:700px) { #cy { height: 240px; } .main-container { padding: 6px; } }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: #020617;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #0EA5E9, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .rtl-block {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .node {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-family: 'Fira Code';
+      border: 3px solid;
+    }
+
+    .node-a {
+      background: #1D4ED8;
+      border-color: #60A5FA;
+      color: white;
+    }
+
+    .node-b {
+      background: #7C3AED;
+      border-color: #A78BFA;
+      color: white;
+    }
+
+    .node-c {
+      background: #059669;
+      border-color: #34D399;
+      color: white;
+    }
+
+    .node-d {
+      background: #DC2626;
+      border-color: #F87171;
+      color: white;
+    }
+  </style>
 </head>
+
 <body>
-<div class="main-container">
-    <div class="header">
-        <h1>شرح الـ Graph... كيف أوصل للأسرع؟ 🚍</h1>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+    <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="../index.html#week3" class="flex items-center gap-3 hover:opacity-80 transition">
+        <div
+          class="w-8 h-8 rounded bg-gradient-to-br from-sky-500 to-purple-500 flex items-center justify-center text-white">
+          <i class="fas fa-arrow-left text-sm"></i></div>
+        <span class="font-bold text-lg">Graph<span class="text-sky-500">Rep</span></span>
+      </a>
     </div>
-    <div class="explanation-box">
-        <div class="explanation-title">السيناريو: شخص يريد التحرك من بيته إلى الجامعة</div>
-        <span class="highlight">كل Node تعبر عن مكان:</span> Home (المنزل)، Bus1 (ركوب باص)، Metro (ركوب مترو/تبديل مواصلة)، Uni (الجامعة)
-        <br><br>المسارات:
-        <ul dir="ltr" style="margin-top: 9px;direction:ltr; color:#d5eaff; font-weight: 700;">
-            <li>Home → Walk → Bus1 → Metro → Uni</li>
-            <li>Home → Taxi → Uni</li>
-            <li>Home → Walk → Uni</li>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[128px] pointer-events-none">
+    </div>
+    <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-sky-400 mb-6">
+        <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+        WEEK 3 • هياكل البيانات
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Graph</span> Representation</h1>
+      <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">تمثيل الـ Graph في الذاكرة</h2>
+    </div>
+  </header>
+
+  <!-- What is Graph -->
+  <section id="concept" class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-diagram-project text-sky-500 mr-3"></i>إيه
+        هو الـ Graph؟</h2>
+
+      <div class="glass-card p-8 rounded-2xl border border-sky-900/50 mb-12" data-aos="fade-up">
+        <div class="rtl-block">
+          <h3 class="text-2xl font-bold text-sky-400 mb-6 font-arabic">🕸️ الفكرة الأساسية</h3>
+
+          <div class="space-y-6 text-lg leading-loose font-arabic">
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه شبكة الأصدقاء</h4>
+              <p class="text-slate-300">
+                تخيل <span class="text-sky-400 font-bold">Facebook</span>:
+              </p>
+              <ul class="mt-3 space-y-2 text-slate-300">
+                <li>• كل شخص = <span class="text-blue-400 font-bold">Node (عقدة)</span></li>
+                <li>• الصداقة بين شخصين = <span class="text-purple-400 font-bold">Edge (حافة)</span></li>
+                <li>• الشبكة كلها = <span class="text-sky-400 font-bold">Graph!</span></li>
+              </ul>
+            </div>
+
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-purple-400 mb-3">📊 أنواع الـ Graphs</h4>
+              <div class="grid md:grid-cols-2 gap-4 mt-4">
+                <div class="p-4 bg-slate-800/50 rounded-lg">
+                  <h5 class="text-sky-400 font-bold mb-2">Undirected (غير موجه)</h5>
+                  <p class="text-sm text-slate-400">الاتصال في الاتجاهين</p>
+                  <p class="text-xs text-slate-500 mt-1">مثال: صداقة Facebook</p>
+                </div>
+                <div class="p-4 bg-slate-800/50 rounded-lg">
+                  <h5 class="text-purple-400 font-bold mb-2">Directed (موجه)</h5>
+                  <p class="text-sm text-slate-400">الاتصال في اتجاه واحد</p>
+                  <p class="text-xs text-slate-500 mt-1">مثال: متابعة Twitter</p>
+                </div>
+                <div class="p-4 bg-slate-800/50 rounded-lg">
+                  <h5 class="text-emerald-400 font-bold mb-2">Weighted (موزون)</h5>
+                  <p class="text-sm text-slate-400">كل edge ليه تكلفة/وزن</p>
+                  <p class="text-xs text-slate-500 mt-1">مثال: المسافات على الخريطة</p>
+                </div>
+                <div class="p-4 bg-slate-800/50 rounded-lg">
+                  <h5 class="text-yellow-400 font-bold mb-2">Unweighted</h5>
+                  <p class="text-sm text-slate-400">كل الـ edges متساوية</p>
+                  <p class="text-xs text-slate-500 mt-1">مثال: شبكة الأصدقاء</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example Graph -->
+      <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+        <h3 class="text-xl font-bold text-center mb-6">Example Graph</h3>
+        <div class="flex justify-center">
+          <svg viewBox="0 0 300 200" class="w-full max-w-md" xmlns="http://www.w3.org/2000/svg">
+            <!-- Edges -->
+            <line x1="60" y1="60" x2="240" y2="60" stroke="#475569" stroke-width="3" />
+            <line x1="60" y1="60" x2="60" y2="160" stroke="#475569" stroke-width="3" />
+            <line x1="60" y1="60" x2="240" y2="160" stroke="#475569" stroke-width="3" />
+            <line x1="240" y1="60" x2="240" y2="160" stroke="#475569" stroke-width="3" />
+            <line x1="60" y1="160" x2="240" y2="160" stroke="#475569" stroke-width="3" />
+
+            <!-- Nodes -->
+            <circle cx="60" cy="60" r="22" fill="#1D4ED8" stroke="#60A5FA" stroke-width="3" />
+            <text x="60" y="65" text-anchor="middle" fill="white" font-weight="bold" font-size="14">A</text>
+
+            <circle cx="240" cy="60" r="22" fill="#7C3AED" stroke="#A78BFA" stroke-width="3" />
+            <text x="240" y="65" text-anchor="middle" fill="white" font-weight="bold" font-size="14">B</text>
+
+            <circle cx="60" cy="160" r="22" fill="#059669" stroke="#34D399" stroke-width="3" />
+            <text x="60" y="165" text-anchor="middle" fill="white" font-weight="bold" font-size="14">C</text>
+
+            <circle cx="240" cy="160" r="22" fill="#DC2626" stroke="#F87171" stroke-width="3" />
+            <text x="240" y="165" text-anchor="middle" fill="white" font-weight="bold" font-size="14">D</text>
+          </svg>
+        </div>
+        <p class="text-center text-slate-400 text-sm mt-4 font-arabic">
+          Edges: A-B, A-C, A-D, B-D, C-D
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Two Representations -->
+  <section class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-code text-purple-500 mr-3"></i>طرق التمثيل
+      </h2>
+      <p class="text-center text-slate-400 font-arabic mb-12">إزاي نخزن الـ Graph في الكود؟</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Adjacency Matrix -->
+        <div class="glass-card p-6 rounded-2xl border border-blue-700/50" data-aos="fade-right">
+          <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <i class="fas fa-table-cells"></i> Adjacency Matrix
+          </h3>
+
+          <div class="rtl-block font-arabic text-sm mb-4">
+            <p class="text-slate-300">جدول 2D: كل خلية بتقول لو فيه edge ولا لأ</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-center text-sm font-mono">
+              <thead>
+                <tr class="text-slate-500">
+                  <th class="p-2"></th>
+                  <th class="p-2 text-blue-400">A</th>
+                  <th class="p-2 text-purple-400">B</th>
+                  <th class="p-2 text-emerald-400">C</th>
+                  <th class="p-2 text-red-400">D</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <tr>
+                  <td class="p-2 text-blue-400">A</td>
+                  <td class="p-2">0</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                </tr>
+                <tr>
+                  <td class="p-2 text-purple-400">B</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2">0</td>
+                  <td class="p-2">0</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                </tr>
+                <tr>
+                  <td class="p-2 text-emerald-400">C</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2">0</td>
+                  <td class="p-2">0</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                </tr>
+                <tr>
+                  <td class="p-2 text-red-400">D</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2 text-emerald-400">1</td>
+                  <td class="p-2">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 space-y-2 text-xs">
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span
+                class="text-slate-400">Space:</span><span class="text-yellow-400 font-mono">O(V²)</span></div>
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span class="text-slate-400">Check
+                Edge:</span><span class="text-emerald-400 font-mono">O(1)</span></div>
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span class="text-slate-400">Find
+                Neighbors:</span><span class="text-yellow-400 font-mono">O(V)</span></div>
+          </div>
+
+          <div class="mt-4 p-3 bg-blue-950/30 rounded-lg border border-blue-700 rtl-block">
+            <p class="text-blue-400 font-bold font-arabic text-xs">✓ مناسب لو:</p>
+            <p class="text-xs text-slate-400 font-arabic">الـ graph dense (edges كتير)</p>
+          </div>
+        </div>
+
+        <!-- Adjacency List -->
+        <div class="glass-card p-6 rounded-2xl border border-purple-700/50" data-aos="fade-left">
+          <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+            <i class="fas fa-list"></i> Adjacency List
+          </h3>
+
+          <div class="rtl-block font-arabic text-sm mb-4">
+            <p class="text-slate-300">كل node عندها list بالـ neighbors بتوعها</p>
+          </div>
+
+          <div class="space-y-2 font-mono text-sm">
+            <div class="flex items-center gap-2 p-2 bg-slate-900/50 rounded">
+              <div class="node node-a text-xs">A</div>
+              <span class="text-slate-500">→</span>
+              <span class="text-slate-300">[B, C, D]</span>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900/50 rounded">
+              <div class="node node-b text-xs">B</div>
+              <span class="text-slate-500">→</span>
+              <span class="text-slate-300">[A, D]</span>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900/50 rounded">
+              <div class="node node-c text-xs">C</div>
+              <span class="text-slate-500">→</span>
+              <span class="text-slate-300">[A, D]</span>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-slate-900/50 rounded">
+              <div class="node node-d text-xs">D</div>
+              <span class="text-slate-500">→</span>
+              <span class="text-slate-300">[A, B, C]</span>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-2 text-xs">
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span
+                class="text-slate-400">Space:</span><span class="text-emerald-400 font-mono">O(V + E)</span></div>
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span class="text-slate-400">Check
+                Edge:</span><span class="text-yellow-400 font-mono">O(degree)</span></div>
+            <div class="flex justify-between p-2 bg-slate-900/50 rounded"><span class="text-slate-400">Find
+                Neighbors:</span><span class="text-emerald-400 font-mono">O(degree)</span></div>
+          </div>
+
+          <div class="mt-4 p-3 bg-purple-950/30 rounded-lg border border-purple-700 rtl-block">
+            <p class="text-purple-400 font-bold font-arabic text-xs">✓ مناسب لو:</p>
+            <p class="text-xs text-slate-400 font-arabic">الـ graph sparse (edges قليلة)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-4xl">
+      <h2 class="text-4xl font-bold text-center mb-12"><i
+          class="fa-solid fa-scale-balanced text-yellow-500 mr-3"></i>المقارنة</h2>
+
+      <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-900 text-slate-400">
+            <tr>
+              <th class="py-4 px-4 text-right font-arabic">العملية</th>
+              <th class="py-4 px-4 text-center text-blue-400">Matrix</th>
+              <th class="py-4 px-4 text-center text-purple-400">List</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-4 font-arabic rtl-block">Space</td>
+              <td class="py-4 px-4 text-center font-mono text-yellow-400">O(V²)</td>
+              <td class="py-4 px-4 text-center font-mono text-emerald-400">O(V+E)</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-4 font-arabic rtl-block">Check if Edge exists</td>
+              <td class="py-4 px-4 text-center font-mono text-emerald-400">O(1)</td>
+              <td class="py-4 px-4 text-center font-mono text-yellow-400">O(V)</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-4 font-arabic rtl-block">Find all neighbors</td>
+              <td class="py-4 px-4 text-center font-mono text-yellow-400">O(V)</td>
+              <td class="py-4 px-4 text-center font-mono text-emerald-400">O(degree)</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-4 font-arabic rtl-block">Add Edge</td>
+              <td class="py-4 px-4 text-center font-mono text-emerald-400">O(1)</td>
+              <td class="py-4 px-4 text-center font-mono text-emerald-400">O(1)</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-4 font-arabic rtl-block">الأفضل لـ</td>
+              <td class="py-4 px-4 text-center text-blue-300">Dense Graphs</td>
+              <td class="py-4 px-4 text-center text-purple-300">Sparse Graphs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 p-6 bg-yellow-950/30 rounded-xl border border-yellow-700 rtl-block" data-aos="fade-up">
+        <p class="text-yellow-400 font-bold font-arabic mb-3">💡 متى تستخدم إيه؟</p>
+        <ul class="space-y-2 font-arabic text-sm text-slate-300">
+          <li>• <span class="text-blue-400 font-bold">Matrix:</span> لو الـ graph صغير أو محتاج تتحقق من وجود edge كتير
+          </li>
+          <li>• <span class="text-purple-400 font-bold">List:</span> معظم الـ real-world graphs (sparse) - الخيار
+            الافتراضي</li>
         </ul>
-        <b style="color:#ffec7c;">أسرع طريق؟ الأقصر فعلياً؟ النظام يحسبها أوتوماتيكياً أيًا كان ترتيب النقاط أو المسافة!</b><br>
-        <span style="color:#88ffcd;">جرب تختار البداية والنهاية وشوف الشرح التفاعلي بلون الطريق.</span>
+      </div>
     </div>
-    <div class="tool-box">
-        <select id="start-node"></select>
-        <span style="font-size: 1.35rem;font-weight:bold;">→</span>
-        <select id="end-node"></select>
-        <button onclick="findPath()">🔍 احسب الطريق الأسرع</button>
+  </section>
+
+  <!-- Code Implementation -->
+  <section class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+      <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+        <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+          <span class="w-3 h-3 rounded-full bg-red-500"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500"></span>
+          <span class="ml-4 font-mono text-sm text-slate-400">Graph.js (Adjacency List)</span>
+        </div>
+        <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+          <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">class</span> <span class="text-blue-400">Graph</span> {
+  <span class="text-blue-400">constructor</span>() {
+    <span class="text-purple-400">this</span>.adjacencyList = {};
+  }
+
+  <span class="text-blue-400">addVertex</span>(<span class="text-orange-300">vertex</span>) {
+    <span class="text-purple-400">if</span> (!<span class="text-purple-400">this</span>.adjacencyList[vertex]) {
+      <span class="text-purple-400">this</span>.adjacencyList[vertex] = [];
+    }
+  }
+
+  <span class="text-blue-400">addEdge</span>(<span class="text-orange-300">v1</span>, <span class="text-orange-300">v2</span>) {
+    <span class="text-purple-400">this</span>.adjacencyList[v1].push(v2);
+    <span class="text-purple-400">this</span>.adjacencyList[v2].push(v1);
+  }
+
+  <span class="text-blue-400">getNeighbors</span>(<span class="text-orange-300">vertex</span>) {
+    <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.adjacencyList[vertex] || [];
+  }
+
+  <span class="text-blue-400">hasEdge</span>(<span class="text-orange-300">v1</span>, <span class="text-orange-300">v2</span>) {
+    <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.adjacencyList[v1]?.includes(v2);
+  }
+}</code></pre>
+
+          <div class="p-6 bg-slate-900/50 rtl-block">
+            <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+            <div class="space-y-3 font-arabic text-xs">
+              <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                <span class="text-blue-400 font-bold">adjacencyList:</span>
+                Object، كل key = vertex، كل value = array of neighbors
+              </div>
+              <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                <span class="text-emerald-400 font-bold">addVertex():</span>
+                ضيف node جديدة كـ key بـ array فاضي
+              </div>
+              <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                <span class="text-purple-400 font-bold">addEdge():</span>
+                ضيف كل vertex في list التاني (undirected)
+              </div>
+              <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                <span class="text-yellow-400 font-bold">hasEdge():</span>
+                شوف لو v2 موجود في list بتاعة v1
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="cy"></div>
-    <div class="result-box" id="result"></div>
-    
-</div>
-<script>
-let graph = {
-  'Home':   [{node:'Walk',dist:7}, {node:'Taxi',dist:18}],
-  'Walk':   [{node:'Bus1',dist:3}, {node:'Uni',dist:15}],
-  'Bus1':   [{node:'Metro',dist:4}],
-  'Metro':  [{node:'Uni',dist:5}],
-  'Taxi':   [{node:'Uni',dist:7}],
-  'Uni':    []
-};
-const allNodes = Object.keys(graph);
-const cyLayout = {
-  name: 'preset',
-  positions: {
-    'Home': {x:90, y:350},
-    'Walk': {x:230, y:320},
-    'Bus1': {x:390, y:340},
-    'Metro': {x:470, y:170},
-    'Taxi': {x:230, y:180},
-    'Uni': {x:600, y:90}
-  }
-};
-let cy = cytoscape({
-  container: document.getElementById('cy'),
-  elements: [
-    ...allNodes.map(n=>({group:'nodes',data:{id:n,label:n}})),
-    {data:{source:'Home',target:'Walk',label:'7m'}},
-    {data:{source:'Home',target:'Taxi',label:'18m'}},
-    {data:{source:'Walk',target:'Bus1',label:'3m'}},
-    {data:{source:'Walk',target:'Uni',label:'15m'}},
-    {data:{source:'Bus1',target:'Metro',label:'4m'}},
-    {data:{source:'Metro',target:'Uni',label:'5m'}},
-    {data:{source:'Taxi',target:'Uni',label:'7m'}},
-  ],
-  style: [
-    { selector: 'node', style: {'background-color': '#22c55e', 'label': 'data(label)', 'width':55,'height':55,'font-size': '18.5px','color':'#24243d','text-valign':'center','text-halign':'center','font-family':"'Cairo',sans-serif"} },
-    { selector: 'edge', style: {'width':5,'line-color':'#8d9eff','target-arrow-color':'#8d9eff','target-arrow-shape':'triangle','label': 'data(label)','font-size': '15px', 'color':'#ffeebb','curve-style':'bezier'} },
-    { selector: '.highlighted', style: {'background-color': '#ffeebb','line-color': '#4ade80','width':6,'color':'#21897c','font-weight':'bold','text-outline-color':'#fff','text-outline-width':3} }
-  ],
-  layout: cyLayout,
-  userZoomingEnabled: true,
-  userPanningEnabled: true,
-  boxSelectionEnabled: false,
-  autoungrabify: false // يسمح بتحريك الـ nodes بحرية بالماوس
-});
-let startSel = document.getElementById('start-node');
-let endSel = document.getElementById('end-node');
-allNodes.forEach(n => {
-  let opt1=document.createElement('option'); opt1.value=n; opt1.textContent=n; startSel.appendChild(opt1);
-  let opt2=document.createElement('option'); opt2.value=n; opt2.textContent=n; endSel.appendChild(opt2);
-});
-endSel.value = "Uni";
-function findPath(){
-  let start = startSel.value, end = endSel.value;
-  let resultDiv = document.getElementById('result');
-  if(start===end){resultDiv.innerHTML='<span style="color:#fbbf24;">اختار نقطتين مختلفتين!</span>'; return;}
-  let r = dijkstra(graph, start, end);
-  cy.elements().removeClass('highlighted');
-  for(let i=0;i<r.path.length-1;i++){
-    cy.getElementById(r.path[i]).addClass('highlighted');
-    let eid1 = 'edge[source="'+r.path[i]+'"][target="'+r.path[i+1]+'"];';
-    let eid2 = 'edge[source="'+r.path[i+1]+'"][target="'+r.path[i]+'"];';
-    cy.$(eid1).addClass('highlighted');
-    cy.$(eid2).addClass('highlighted');
-  }
-  cy.getElementById(r.path[r.path.length-1]).addClass('highlighted');
-  if(r.distance===Infinity||r.path.length<2){
-      resultDiv.innerHTML='<span style="color:#f87171;">لا يوجد طريق أو المسافة منقوصة!</span>';
-  }else{
-      resultDiv.innerHTML = `<div style='color:#4ade80; font-size:1.09rem;'>أسرع طريق من <b>${start}</b> إلى <b>${end}</b>:</div><div class='result-path'>${r.path.join(' ← ')}</div><div style='color:#fbbf24;padding-top:4px;'>الزمن الكلي: <b>${r.distance} دقيقة</b></div><div style='color:#7dcfff; margin-top:7px;'>كل خطوط الرحلة ملونة - جرب تغير البداية والنهاية!😉</div>`;
-  }
-}
-function dijkstra(graph, start, end) {
-  let dist={}, prev={}, q=new Set(Object.keys(graph));
-  for(let v in graph) dist[v]=Infinity, prev[v]=null; dist[start]=0;
-  while(q.size>0){
-    let curr,min=1e9;q.forEach(n=>{if(dist[n]<min)min=dist[n],curr=n;});
-    if(curr===end||min===Infinity)break;
-    q.delete(curr);
-    for(let n of graph[curr]){let d=dist[curr]+n.dist;if(d<dist[n.node])dist[n.node]=d,prev[n.node]=curr;}
-  }
-  let path=[],c=end; while(c) path.unshift(c),c=prev[c];
-  return {path,distance:dist[end]};
-}
-</script>
+  </section>
+
+  <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+    <p>Grokking Algorithms Course - Week 3</p>
+  </footer>
+
+  <script>AOS.init({ duration: 800, once: true });</script>
 </body>
+
 </html>

@@ -4,55 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hash Table | جداول التجزئة</title>
-    <meta name="description" content="Interactive Hash Table visualization with Arabic explanations.">
-
-    <!-- Fonts -->
+    <title>Hash Table | جدول التجزئة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
-
-    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        neon: {
-                            green: '#10B981',
-                            blue: '#3B82F6',
-                            purple: '#8B5CF6',
-                            orange: '#F59E0B'
-                        },
-                        dark: {
-                            bg: '#020617',
-                            card: '#0F172A',
-                            border: '#1E293B'
-                        }
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', amber: '#F59E0B' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        arabic: ['Cairo', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    }
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
                 }
             }
         }
     </script>
-
     <style>
         body {
-            background-color: #020617;
+            background: #020617;
             color: #E2E8F0;
             overflow-x: hidden;
         }
@@ -64,27 +40,9 @@
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            background: linear-gradient(135deg, #F59E0B, #10B981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #020617;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1E293B;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #F59E0B;
         }
 
         .rtl-block {
@@ -92,384 +50,245 @@
             text-align: right;
         }
 
-        /* Hash Table Styles */
         .bucket {
+            min-height: 50px;
+            background: #0F172A;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            min-height: 50px;
+            transition: all 0.3s;
         }
 
-        .bucket-index {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            color: #64748b;
-            min-width: 30px;
+        .bucket.highlight {
+            border-color: #F59E0B;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
 
-        .bucket-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            flex: 1;
-        }
-
-        .hash-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .bucket-item {
             padding: 6px 12px;
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 6px;
+            font-family: 'Fira Code';
+            font-size: 0.8rem;
             color: white;
-            border-radius: 8px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .hash-item.collision {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-        }
-
-        .hash-item.new {
-            animation: pop-in 0.4s ease;
-        }
-
-        @keyframes pop-in {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            70% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .arrow-chain {
-            color: #64748b;
-        }
-
-        .code-line {
             display: flex;
-            gap: 12px;
-            padding: 4px 0;
-        }
-
-        .line-num {
-            color: #64748b;
-            min-width: 24px;
-            text-align: right;
-            user-select: none;
-        }
-
-        .complexity-badge {
-            display: inline-flex;
             align-items: center;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+            gap: 6px;
+        }
+
+        .bucket-item .key {
             font-weight: bold;
-            font-family: 'Fira Code', monospace;
         }
 
-        .complexity-badge.fast {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
+        .bucket-item .val {
+            color: #BBF7D0;
         }
 
-        .complexity-badge.slow {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
+        .bucket-item.collision {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Nav -->
-    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
         <div class="container mx-auto px-6 h-16 flex items-center justify-between">
             <a href="../index.html#week3" class="flex items-center gap-3 hover:opacity-80 transition">
                 <div
-                    class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-500/20">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </div>
-                <span class="font-bold text-lg tracking-wide">Hash<span class="text-orange-500">Table</span></span>
+                    class="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-emerald-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Hash<span class="text-amber-500">Table</span></span>
             </a>
-            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-                <a href="#concept" class="hover:text-orange-400 transition">المفهوم</a>
-                <a href="#demo" class="hover:text-orange-400 transition">التجربة</a>
-                <a href="#code" class="hover:text-orange-400 transition">الكود</a>
-            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <header class="relative pt-32 pb-20 px-6 overflow-hidden">
         <div
-            class="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[128px] pointer-events-none">
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
-        <div
-            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[128px] pointer-events-none">
-        </div>
-
         <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-orange-400 mb-6">
-                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                WEEK 3 • هياكل البيانات المتقدمة
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-amber-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                WEEK 3 • هياكل بيانات متقدمة
             </div>
-
-            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
-                <span class="text-gradient">Hash</span> Table
-            </h1>
-
-            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
-                جداول التجزئة
-            </h2>
-
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
-                The secret behind O(1) lookups! Maps keys to values using a hash function.
-            </p>
-
-            <!-- Arabic Explanation Box -->
-            <div class="max-w-4xl mx-auto mb-12">
-                <div class="p-6 bg-orange-950/30 border border-orange-900/50 rounded-2xl rtl-block">
-                    <h3 class="text-2xl font-bold text-orange-400 mb-4 font-arabic">🗂️ إيه هو الـ Hash Table؟</h3>
-                    <div class="space-y-4 text-orange-100/90 font-arabic text-lg leading-loose">
-                        <p>
-                            تخيل <span class="text-yellow-400">دولاب فيه أدراج</span> 🗄️ وكل درج عليه رقم.
-                            <br>
-                            لما تيجي تحط حاجة، <span class="text-white">بتحسب رقم الدرج</span> من اسمها (hash function)!
-                        </p>
-
-                        <div class="grid md:grid-cols-3 gap-4 mt-6">
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-700 text-center">
-                                <div class="text-3xl mb-2">🔑</div>
-                                <div class="text-emerald-400 font-bold">Hash Function</div>
-                                <div class="text-xs text-slate-400 mt-1">بتحول المفتاح لرقم (index)</div>
-                            </div>
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700 text-center">
-                                <div class="text-3xl mb-2">📦</div>
-                                <div class="text-blue-400 font-bold">Bucket</div>
-                                <div class="text-xs text-slate-400 mt-1">كل درج بيخزن القيم</div>
-                            </div>
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-red-700 text-center">
-                                <div class="text-3xl mb-2">💥</div>
-                                <div class="text-red-400 font-bold">Collision</div>
-                                <div class="text-xs text-slate-400 mt-1">لما مفتاحين يروحوا نفس الدرج!</div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
-                            <p class="text-emerald-300">
-                                <strong>💡 الميزة:</strong> الوصول لأي عنصر = <span
-                                    class="text-white font-bold">O(1)</span>!
-                                مش محتاج تدور - تحسب الـ hash وتروح على طول للدرج!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero SVG Visualization -->
-            <div class="max-w-4xl mx-auto">
-                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-orange-900/20">
-                    <svg viewBox="0 0 800 320" class="w-full h-auto bg-[#0B1121] rounded-xl"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="keyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8B5CF6" />
-                                <stop offset="100%" style="stop-color:#7C3AED" />
-                            </linearGradient>
-                            <linearGradient id="bucketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#F59E0B" />
-                                <stop offset="100%" style="stop-color:#D97706" />
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Title -->
-                        <text x="400" y="25" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="13"
-                            font-weight="bold">
-                            Hash Function: المفتاح ← الـ Index
-                        </text>
-
-                        <!-- Keys on left -->
-                        <g transform="translate(50, 50)">
-                            <text x="60" y="0" text-anchor="middle" fill="#8B5CF6" font-family="Cairo" font-size="12"
-                                font-weight="bold">Keys</text>
-
-                            <rect x="10" y="15" width="100" height="35" rx="8" fill="url(#keyGrad)" />
-                            <text x="60" y="40" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="12">"apple"</text>
-
-                            <rect x="10" y="60" width="100" height="35" rx="8" fill="url(#keyGrad)" />
-                            <text x="60" y="85" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="12">"banana"</text>
-
-                            <rect x="10" y="105" width="100" height="35" rx="8" fill="url(#keyGrad)" />
-                            <text x="60" y="130" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="12">"cherry"</text>
-
-                            <rect x="10" y="150" width="100" height="35" rx="8" fill="url(#keyGrad)" />
-                            <text x="60" y="175" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="12">"grape"</text>
-                        </g>
-
-                        <!-- Hash Function Box -->
-                        <g transform="translate(200, 95)">
-                            <rect x="0" y="0" width="120" height="70" rx="10" fill="#0F172A" stroke="#F59E0B"
-                                stroke-width="2" />
-                            <text x="60" y="30" text-anchor="middle" fill="#F59E0B" font-family="Cairo" font-size="11"
-                                font-weight="bold">hash(key)</text>
-                            <text x="60" y="50" text-anchor="middle" fill="#64748b" font-family="Cairo"
-                                font-size="9">key.length % 5</text>
-                        </g>
-
-                        <!-- Arrows from keys to hash -->
-                        <path d="M160 82 L200 125" stroke="#8B5CF6" stroke-width="2" fill="none"
-                            marker-end="url(#arrow)" />
-                        <path d="M160 127 L200 130" stroke="#8B5CF6" stroke-width="2" fill="none" />
-                        <path d="M160 172 L200 140" stroke="#8B5CF6" stroke-width="2" fill="none" />
-
-                        <!-- Arrows from hash to buckets -->
-                        <path d="M320 115 L380 75" stroke="#F59E0B" stroke-width="2" fill="none" />
-                        <path d="M320 130 L380 120" stroke="#F59E0B" stroke-width="2" fill="none" />
-                        <path d="M320 145 L380 165" stroke="#F59E0B" stroke-width="2" fill="none" />
-
-                        <!-- Buckets (Array) -->
-                        <g transform="translate(400, 50)">
-                            <text x="150" y="0" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="12"
-                                font-weight="bold">Buckets (Array)</text>
-
-                            <rect x="0" y="15" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
-                            <text x="15" y="40" fill="#64748b" font-family="Fira Code" font-size="10">[0]</text>
-                            <rect x="40" y="22" width="80" height="26" rx="5" fill="url(#bucketGrad)" />
-                            <text x="80" y="41" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="10">apple: 🍎</text>
-
-                            <rect x="0" y="60" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
-                            <text x="15" y="85" fill="#64748b" font-family="Fira Code" font-size="10">[1]</text>
-                            <rect x="40" y="67" width="85" height="26" rx="5" fill="url(#bucketGrad)" />
-                            <text x="82" y="86" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="10">banana: 🍌</text>
-                            <text x="130" y="86" fill="#64748b">→</text>
-                            <rect x="145" y="67" width="80" height="26" rx="5" fill="#EF4444" />
-                            <text x="185" y="86" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="10">cherry: 🍒</text>
-                            <text x="230" y="80" fill="#EF4444" font-family="Cairo" font-size="8">collision!</text>
-
-                            <rect x="0" y="105" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
-                            <text x="15" y="130" fill="#64748b" font-family="Fira Code" font-size="10">[2]</text>
-                            <text x="50" y="130" fill="#475569" font-family="Cairo" font-size="9">empty</text>
-
-                            <rect x="0" y="150" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
-                            <text x="15" y="175" fill="#64748b" font-family="Fira Code" font-size="10">[3]</text>
-                            <text x="50" y="175" fill="#475569" font-family="Cairo" font-size="9">empty</text>
-
-                            <rect x="0" y="195" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
-                            <text x="15" y="220" fill="#64748b" font-family="Fira Code" font-size="10">[4]</text>
-                            <rect x="40" y="202" width="80" height="26" rx="5" fill="url(#bucketGrad)" />
-                            <text x="80" y="221" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="10">grape: 🍇</text>
-                        </g>
-
-                        <!-- Legend -->
-                        <g transform="translate(50, 260)">
-                            <text x="0" y="15" fill="#F59E0B" font-family="Cairo" font-size="10">✅ O(1) عادي</text>
-                            <text x="120" y="15" fill="#EF4444" font-family="Cairo" font-size="10">💥 Collision = linked
-                                list</text>
-                            <text x="300" y="15" fill="#64748b" font-family="Cairo" font-size="10">📊 Load Factor =
-                                items / buckets</text>
-                        </g>
-                    </svg>
-                </div>
-            </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Hash</span> Table</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">جدول التجزئة</h2>
         </div>
     </header>
 
-    <!-- Concept Section -->
+    <!-- What is Hash Table -->
     <section id="concept" class="py-20 px-6 bg-slate-900/30">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-4xl font-bold text-center mb-4">
-                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
-                How Hash Tables Work
-            </h2>
-            <p class="text-center text-slate-400 font-arabic mb-16">إزاي الـ Hash Table بيشتغل</p>
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-hashtag text-amber-500 mr-3"></i>إيه
+                هو الـ Hash Table؟</h2>
 
-            <div class="grid md:grid-cols-2 gap-12 mb-12">
-                <!-- Operations -->
-                <div data-aos="fade-right">
-                    <h3 class="text-2xl font-bold text-orange-400 mb-6 flex items-center gap-3">
-                        <i class="fas fa-cogs"></i>
-                        Operations
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-emerald-500">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-emerald-400">Insert / Set</h4>
-                                <span class="complexity-badge fast">O(1)*</span>
-                            </div>
-                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, store value.</p>
-                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">احسب الـ hash، روح للدرج، خزن
-                                القيمة!</p>
+            <div class="glass-card p-8 rounded-2xl border border-amber-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-amber-400 mb-6 font-arabic">🗂️ الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه دليل التليفون</h4>
+                            <p class="text-slate-300">
+                                تخيل عندك <span class="text-amber-400 font-bold">دليل تليفون</span>:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• بتدور على اسم الشخص <span class="text-cyan-400">(Key)</span></li>
+                                <li>• بتلاقي رقم تليفونه <span class="text-emerald-400">(Value)</span></li>
+                                <li>• مش محتاج تقلب كل الصفحات - بتروح <span class="text-amber-400 font-bold">للحرف
+                                        الأول</span> مباشرة!</li>
+                            </ul>
+                            <p class="mt-3 text-slate-300">
+                                الـ Hash Table نفس الفكرة: بيحول الـ Key لـ <span
+                                    class="text-purple-400 font-bold">index</span> مباشرة!
+                            </p>
                         </div>
-                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-blue-500">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-blue-400">Get / Lookup</h4>
-                                <span class="complexity-badge fast">O(1)*</span>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">⚙️ الـ Hash Function</h4>
+                            <p class="text-slate-300">
+                                الـ <span class="text-purple-400 font-bold">Hash Function</span> هي اللي بتحول الـ Key
+                                لـ index:
+                            </p>
+                            <div class="mt-4 p-4 bg-slate-800/50 rounded-lg font-mono text-sm text-center" dir="ltr">
+                                <span class="text-cyan-400">"apple"</span> → <span class="text-purple-400">hash()</span>
+                                → <span class="text-emerald-400">index 3</span>
+                                <br>
+                                <span class="text-cyan-400">"banana"</span> → <span
+                                    class="text-purple-400">hash()</span> → <span class="text-emerald-400">index
+                                    7</span>
                             </div>
-                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, return value.</p>
-                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">احسب الـ hash، روح للدرج، ارجع
-                                القيمة!</p>
+                            <p class="text-sm text-slate-400 mt-3">
+                                <span class="text-yellow-400">مثال بسيط:</span> hash(key) = مجموع ASCII values % حجم الـ
+                                array
+                            </p>
                         </div>
-                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-red-500">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-red-400">Delete</h4>
-                                <span class="complexity-badge fast">O(1)*</span>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">⚡ السرعة</h4>
+                            <div class="grid md:grid-cols-3 gap-4 mt-4">
+                                <div class="p-3 bg-emerald-950/30 rounded-lg border border-emerald-700 text-center">
+                                    <span class="text-emerald-400 font-bold">Insert</span>
+                                    <p class="text-lg font-mono text-emerald-400">O(1)*</p>
+                                </div>
+                                <div class="p-3 bg-emerald-950/30 rounded-lg border border-emerald-700 text-center">
+                                    <span class="text-emerald-400 font-bold">Search</span>
+                                    <p class="text-lg font-mono text-emerald-400">O(1)*</p>
+                                </div>
+                                <div class="p-3 bg-emerald-950/30 rounded-lg border border-emerald-700 text-center">
+                                    <span class="text-emerald-400 font-bold">Delete</span>
+                                    <p class="text-lg font-mono text-emerald-400">O(1)*</p>
+                                </div>
                             </div>
-                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, remove entry.</p>
-                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">*في حالة وجود collisions كتير،
-                                ممكن يبقى O(n)</p>
+                            <p class="text-xs text-slate-500 mt-3 text-center">* Average case - في حالة عدم وجود
+                                collisions كتير</p>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Collisions -->
-                <div data-aos="fade-left">
-                    <h3 class="text-2xl font-bold text-red-400 mb-6 flex items-center gap-3 font-arabic justify-end">
-                        التعامل مع الـ Collisions
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </h3>
-                    <div class="glass-card p-8 rounded-2xl">
-                        <div class="space-y-6 rtl-block font-arabic">
-                            <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
-                                <h4 class="font-bold text-purple-400 mb-2">🔗 Chaining (سلسلة)</h4>
-                                <p class="text-sm text-slate-300">
-                                    كل bucket بيكون linked list. لو فيه collision، ضيف للسلسلة!
-                                </p>
+    <!-- Collisions -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i
+                    class="fa-solid fa-car-burst text-red-500 mr-3"></i>Collisions</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">التصادمات - المشكلة الكبيرة!</p>
+
+            <div class="glass-card p-8 rounded-2xl mb-8" data-aos="fade-up">
+                <div class="rtl-block mb-8">
+                    <h3 class="text-xl font-bold text-red-400 mb-4 font-arabic">⚠️ إيه هو الـ Collision؟</h3>
+                    <p class="text-slate-300 font-arabic">
+                        لما <span class="text-red-400 font-bold">key مختلفة</span> يجيلها <span
+                            class="text-red-400 font-bold">نفس الـ index</span>!
+                    </p>
+                    <div class="mt-4 p-4 bg-slate-900/50 rounded-lg font-mono text-sm text-center" dir="ltr">
+                        <span class="text-cyan-400">"apple"</span> → hash() → <span class="text-red-400">index
+                            3</span><br>
+                        <span class="text-purple-400">"papel"</span> → hash() → <span class="text-red-400">index
+                            3</span> ← <span class="text-red-400">Collision! 💥</span>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Chaining -->
+                    <div class="p-5 bg-slate-900/50 rounded-xl border border-blue-700">
+                        <h4 class="text-lg font-bold text-blue-400 mb-3 flex items-center gap-2">
+                            <i class="fas fa-link"></i> Chaining (سلسلة)
+                        </h4>
+                        <div class="rtl-block font-arabic text-sm mb-4">
+                            <p class="text-slate-300">كل bucket فيها <span class="text-blue-400">linked list</span> من
+                                العناصر</p>
+                            <p class="text-slate-400 mt-2">لو حصل collision، ضيف العنصر في الـ list</p>
+                        </div>
+                        <div class="space-y-2" dir="ltr">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[0]</span>
+                                <div class="bucket">
+                                    <div class="bucket-item"><span class="key">cat</span>→<span class="val">5</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
-                                <h4 class="font-bold text-blue-400 mb-2">📍 Open Addressing</h4>
-                                <p class="text-sm text-slate-300">
-                                    لو الـ bucket مشغول، دور على الـ bucket الفاضي التالي.
-                                </p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[1]</span>
+                                <div class="bucket"></div>
                             </div>
-                            <div class="p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
-                                <p class="text-yellow-300 text-sm">
-                                    <strong>💡 Pro Tip:</strong>
-                                    حافظ على Load Factor < 0.7 عشان الـ collisions تقل! </p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[2]</span>
+                                <div class="bucket highlight">
+                                    <div class="bucket-item"><span class="key">apple</span>→<span class="val">3</span>
+                                    </div>
+                                    <span class="text-slate-500">→</span>
+                                    <div class="bucket-item collision"><span class="key">papel</span>→<span
+                                            class="val">7</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Open Addressing -->
+                    <div class="p-5 bg-slate-900/50 rounded-xl border border-purple-700">
+                        <h4 class="text-lg font-bold text-purple-400 mb-3 flex items-center gap-2">
+                            <i class="fas fa-arrow-right"></i> Open Addressing (العنونة المفتوحة)
+                        </h4>
+                        <div class="rtl-block font-arabic text-sm mb-4">
+                            <p class="text-slate-300">لو المكان مشغول، <span class="text-purple-400">دور على مكان
+                                    فاضي</span></p>
+                            <p class="text-slate-400 mt-2">Linear Probing: جرب المكان التالي</p>
+                        </div>
+                        <div class="space-y-2" dir="ltr">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[0]</span>
+                                <div class="bucket">
+                                    <div class="bucket-item"><span class="key">cat</span>→<span class="val">5</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[1]</span>
+                                <div class="bucket"></div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[2]</span>
+                                <div class="bucket">
+                                    <div class="bucket-item"><span class="key">apple</span>→<span class="val">3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-500 font-mono text-xs w-8">[3]</span>
+                                <div class="bucket highlight">
+                                    <div class="bucket-item collision"><span class="key">papel</span>→<span
+                                            class="val">7</span></div><span class="text-amber-400 text-xs">←
+                                        moved!</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -478,142 +297,202 @@
         </div>
     </section>
 
-    <!-- Interactive Demo Section -->
-    <section id="demo" class="py-24 px-6">
-        <div class="container mx-auto max-w-5xl">
-            <div class="text-center mb-16">
-                <span class="text-orange-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
-                <h2 class="text-4xl font-bold text-white mt-2">Build a Hash Table</h2>
-                <p class="text-slate-400 mt-2 font-arabic">ابني الـ Hash Table بنفسك!</p>
+    <!-- Load Factor -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-gauge-high text-cyan-500 mr-3"></i>Load Factor</h2>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="rtl-block mb-6">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-4 font-arabic">📊 إيه هو الـ Load Factor؟</h3>
+                    <p class="text-slate-300 font-arabic">
+                        <span class="text-cyan-400 font-bold">Load Factor = عدد العناصر ÷ حجم الـ array</span>
+                    </p>
+                </div>
+
+                <div class="p-4 bg-slate-900/50 rounded-xl mb-6 font-mono text-center">
+                    <span class="text-xl">λ = <span class="text-emerald-400">n</span> / <span
+                            class="text-blue-400">m</span></span>
+                    <p class="text-sm text-slate-500 mt-2">n = عدد العناصر، m = حجم الـ table</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-emerald-950/30 rounded-lg border border-emerald-700 text-center">
+                        <p class="text-2xl font-bold text-emerald-400">λ < 0.5</p>
+                                <p class="text-sm text-slate-400 mt-2 rtl-block font-arabic">ممتاز! 🚀</p>
+                    </div>
+                    <div class="p-4 bg-yellow-950/30 rounded-lg border border-yellow-700 text-center">
+                        <p class="text-2xl font-bold text-yellow-400">0.5 ≤ λ ≤ 0.7</p>
+                        <p class="text-sm text-slate-400 mt-2 rtl-block font-arabic">مقبول ⚠️</p>
+                    </div>
+                    <div class="p-4 bg-red-950/30 rounded-lg border border-red-700 text-center">
+                        <p class="text-2xl font-bold text-red-400">λ > 0.7</p>
+                        <p class="text-sm text-slate-400 mt-2 rtl-block font-arabic">محتاج resize! 🔴</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-amber-950/30 rounded-xl border border-amber-700 rtl-block">
+                    <p class="text-amber-400 font-bold font-arabic mb-2">💡 ليه مهم؟</p>
+                    <p class="text-sm text-slate-300 font-arabic">
+                        كل ما الـ Load Factor زاد، كل ما <span class="text-red-400">الـ collisions زادت</span>!
+                        <br>
+                        عشان كده لما يوصل لـ 0.7، بنعمل <span class="text-cyan-400 font-bold">resize</span> (نضاعف
+                        الحجم).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-amber-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Hash Table Demo</h2>
             </div>
 
-            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
-                <!-- Controls -->
-                <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
-                    <input type="text" id="key-input" placeholder="Key (e.g. name)"
-                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-36 focus:border-orange-500 focus:outline-none">
-                    <input type="text" id="value-input" placeholder="Value"
-                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-36 focus:border-orange-500 focus:outline-none">
-                    <button id="set-btn"
-                        class="px-5 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-orange-500/30 transition flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Set
-                    </button>
-                    <button id="get-btn"
-                        class="px-5 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition flex items-center gap-2">
-                        <i class="fas fa-search"></i> Get
-                    </button>
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                    <input type="text" id="key-input" placeholder="Key"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-28">
+                    <input type="text" id="val-input" placeholder="Value"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-28">
+                    <button id="insert-btn"
+                        class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition"><i
+                            class="fas fa-plus mr-1"></i>Insert</button>
+                    <button id="search-btn"
+                        class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition"><i
+                            class="fas fa-search mr-1"></i>Search</button>
                     <button id="delete-btn"
-                        class="px-5 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition flex items-center gap-2">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                    <button id="clear-btn"
-                        class="px-5 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition">
-                        Clear All
-                    </button>
+                        class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition"><i
+                            class="fas fa-trash mr-1"></i>Delete</button>
+                    <button id="reset-btn"
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
                 </div>
 
-                <!-- Hash Function Display -->
-                <div class="text-center mb-6 p-3 bg-slate-900/50 rounded-lg border border-slate-800">
-                    <span class="text-slate-400">Hash Function: </span>
-                    <code class="text-orange-400 font-mono">hash(key) = sum(charCodes) % 7</code>
+                <div id="load-factor" class="text-center mb-4">
+                    <span class="text-slate-400">Load Factor: </span>
+                    <span id="lf-val" class="font-mono text-emerald-400">0.00</span>
                 </div>
 
-                <!-- Hash Table Visualization -->
-                <div id="hash-table" class="space-y-2 mb-8">
-                    <!-- Buckets will be rendered here -->
-                </div>
+                <div id="table-display" class="space-y-2"></div>
 
-                <!-- Stats -->
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
-                        <div class="text-2xl font-bold text-orange-400" id="items-count">0</div>
-                        <div class="text-xs text-slate-400">Items</div>
-                    </div>
-                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
-                        <div class="text-2xl font-bold text-blue-400" id="buckets-count">7</div>
-                        <div class="text-xs text-slate-400">Buckets</div>
-                    </div>
-                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
-                        <div class="text-2xl font-bold" id="load-factor">0.00</div>
-                        <div class="text-xs text-slate-400">Load Factor</div>
-                    </div>
-                </div>
-
-                <!-- Log -->
-                <div id="log"
-                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
-                    <p class="text-slate-500">Operations will appear here.</p>
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Enter a key and value, then insert.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Code Section -->
-    <section id="code" class="py-24 px-6 bg-black/20">
+    <!-- Code Implementation -->
+    <section class="py-20 px-6 bg-slate-900/30">
         <div class="container mx-auto max-w-5xl">
-            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
-            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
 
-            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
                 <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
                     <span class="w-3 h-3 rounded-full bg-red-500"></span>
                     <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
                     <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                    <span class="ml-4 font-mono text-sm text-slate-400">hashTable.js</span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">HashTable.js</span>
                 </div>
-
                 <div class="grid md:grid-cols-2 divide-x divide-slate-800">
-                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">class</span> <span class="text-blue-400">HashTable</span> {</span>
-<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">constructor</span>(<span class="text-orange-300">size</span> = <span class="text-emerald-400">7</span>) {</span>
-<span class="code-line"><span class="line-num">3</span>    <span class="text-purple-400">this</span>.buckets = <span class="text-purple-400">new</span> <span class="text-blue-400">Array</span>(size);</span>
-<span class="code-line"><span class="line-num">4</span>  }</span>
-<span class="code-line"><span class="line-num">5</span></span>
-<span class="code-line"><span class="line-num">6</span>  <span class="text-gray-500">// Hash function</span></span>
-<span class="code-line"><span class="line-num">7</span>  <span class="text-blue-400">hash</span>(<span class="text-orange-300">key</span>) {</span>
-<span class="code-line"><span class="line-num">8</span>    <span class="text-purple-400">let</span> sum = <span class="text-emerald-400">0</span>;</span>
-<span class="code-line"><span class="line-num">9</span>    <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> char <span class="text-purple-400">of</span> key) {</span>
-<span class="code-line"><span class="line-num">10</span>      sum += char.charCodeAt(<span class="text-emerald-400">0</span>);</span>
-<span class="code-line"><span class="line-num">11</span>    }</span>
-<span class="code-line"><span class="line-num">12</span>    <span class="text-purple-400">return</span> sum % <span class="text-purple-400">this</span>.buckets.length;</span>
-<span class="code-line"><span class="line-num">13</span>  }</span>
-<span class="code-line"><span class="line-num">14</span></span>
-<span class="code-line"><span class="line-num">15</span>  <span class="text-blue-400">set</span>(<span class="text-orange-300">key</span>, <span class="text-orange-300">value</span>) {</span>
-<span class="code-line"><span class="line-num">16</span>    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);</span>
-<span class="code-line"><span class="line-num">17</span>    <span class="text-purple-400">if</span> (!<span class="text-purple-400">this</span>.buckets[idx])</span>
-<span class="code-line"><span class="line-num">18</span>      <span class="text-purple-400">this</span>.buckets[idx] = [];</span>
-<span class="code-line"><span class="line-num">19</span>    <span class="text-purple-400">this</span>.buckets[idx].push([key, value]);</span>
-<span class="code-line"><span class="line-num">20</span>  }</span>
-<span class="code-line"><span class="line-num">21</span></span>
-<span class="code-line"><span class="line-num">22</span>  <span class="text-blue-400">get</span>(<span class="text-orange-300">key</span>) {</span>
-<span class="code-line"><span class="line-num">23</span>    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);</span>
-<span class="code-line"><span class="line-num">24</span>    <span class="text-purple-400">const</span> bucket = <span class="text-purple-400">this</span>.buckets[idx];</span>
-<span class="code-line"><span class="line-num">25</span>    <span class="text-purple-400">if</span> (bucket) {</span>
-<span class="code-line"><span class="line-num">26</span>      <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> [k, v] <span class="text-purple-400">of</span> bucket)</span>
-<span class="code-line"><span class="line-num">27</span>        <span class="text-purple-400">if</span> (k === key) <span class="text-purple-400">return</span> v;</span>
-<span class="code-line"><span class="line-num">28</span>    }</span>
-<span class="code-line"><span class="line-num">29</span>  }</span>
-<span class="code-line"><span class="line-num">30</span>}</span></code></pre>
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">class</span> <span class="text-blue-400">HashTable</span> {
+  <span class="text-blue-400">constructor</span>(<span class="text-orange-300">size</span> = <span class="text-emerald-400">10</span>) {
+    <span class="text-purple-400">this</span>.buckets = <span class="text-purple-400">new</span> Array(size).fill(<span class="text-orange-400">null</span>).map(() => []);
+    <span class="text-purple-400">this</span>.size = size;
+    <span class="text-purple-400">this</span>.count = <span class="text-emerald-400">0</span>;
+  }
 
-                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
-                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
-                        <div class="space-y-4 font-arabic text-sm">
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-orange-500">
-                                <span class="text-orange-400 font-bold">hash (سطر 7-13):</span>
-                                <br>
-                                بتجمع ASCII codes الحروف وتاخد الباقي على عدد الـ buckets
+  <span class="text-slate-500">// Hash Function</span>
+  <span class="text-blue-400">hash</span>(<span class="text-orange-300">key</span>) {
+    <span class="text-purple-400">let</span> hash = <span class="text-emerald-400">0</span>;
+    <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> char <span class="text-purple-400">of</span> String(key)) {
+      hash = (hash + char.charCodeAt(<span class="text-emerald-400">0</span>)) % <span class="text-purple-400">this</span>.size;
+    }
+    <span class="text-purple-400">return</span> hash;
+  }
+
+  <span class="text-slate-500">// Insert O(1)</span>
+  <span class="text-blue-400">set</span>(<span class="text-orange-300">key</span>, <span class="text-orange-300">value</span>) {
+    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);
+    <span class="text-purple-400">const</span> bucket = <span class="text-purple-400">this</span>.buckets[idx];
+    <span class="text-purple-400">const</span> existing = bucket.find(p => p[<span class="text-emerald-400">0</span>] === key);
+    <span class="text-purple-400">if</span> (existing) existing[<span class="text-emerald-400">1</span>] = value;
+    <span class="text-purple-400">else</span> { bucket.push([key, value]); <span class="text-purple-400">this</span>.count++; }
+  }
+
+  <span class="text-slate-500">// Search O(1)</span>
+  <span class="text-blue-400">get</span>(<span class="text-orange-300">key</span>) {
+    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);
+    <span class="text-purple-400">const</span> pair = <span class="text-purple-400">this</span>.buckets[idx].find(p => p[<span class="text-emerald-400">0</span>] === key);
+    <span class="text-purple-400">return</span> pair ? pair[<span class="text-emerald-400">1</span>] : <span class="text-orange-400">undefined</span>;
+  }
+}</code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto max-h-[400px]">
+                        <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+                        <div class="space-y-3 font-arabic text-xs">
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">constructor:</span>
+                                بنعمل array من buckets فاضية
                             </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
-                                <span class="text-emerald-400 font-bold">set (سطر 15-20):</span>
-                                <br>
-                                احسب الـ index، لو الـ bucket فاضي اعمل array، ضيف [key, value]
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">hash():</span>
+                                بنحول الـ key لـ index (مجموع ASCII % size)
                             </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-blue-500">
-                                <span class="text-blue-400 font-bold">get (سطر 22-29):</span>
-                                <br>
-                                روح للـ bucket، دور على الـ key في السلسلة، ارجع القيمة
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">set():</span>
+                                نحسب الـ index، نضيف في الـ bucket (chaining)
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">get():</span>
+                                نحسب الـ index، ندور على الـ key في الـ bucket
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-rocket text-emerald-500 mr-3"></i>استخدامات Hash Table</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-right">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4">Real-World Examples</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start gap-3"><span class="text-2xl">📚</span><span
+                                class="text-slate-300">Dictionary / قاموس</span></li>
+                        <li class="flex items-start gap-3"><span class="text-2xl">📞</span><span
+                                class="text-slate-300">Phone Book / دليل تليفون</span></li>
+                        <li class="flex items-start gap-3"><span class="text-2xl">🔐</span><span
+                                class="text-slate-300">Password Storage / حفظ كلمات السر</span></li>
+                        <li class="flex items-start gap-3"><span class="text-2xl">💾</span><span
+                                class="text-slate-300">Caching / التخزين المؤقت</span></li>
+                        <li class="flex items-start gap-3"><span class="text-2xl">🔗</span><span
+                                class="text-slate-300">URL Shortener / تقصير الروابط</span></li>
+                    </ul>
+                </div>
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4">In Programming</h3>
+                    <ul class="space-y-3 text-sm font-mono">
+                        <li class="flex items-center gap-3"><span class="text-yellow-400">JS:</span><span
+                                class="text-slate-300">Object, Map, Set</span></li>
+                        <li class="flex items-center gap-3"><span class="text-blue-400">Python:</span><span
+                                class="text-slate-300">dict, set</span></li>
+                        <li class="flex items-center gap-3"><span class="text-orange-400">Java:</span><span
+                                class="text-slate-300">HashMap, HashSet</span></li>
+                        <li class="flex items-center gap-3"><span class="text-cyan-400">C++:</span><span
+                                class="text-slate-300">unordered_map, unordered_set</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -621,143 +500,105 @@
 
     <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
         <p>Grokking Algorithms Course - Week 3</p>
-        <p class="font-arabic mt-1">Advanced Monitoring</p>
     </footer>
 
     <script>
-        AOS.init({ duration: 800, once: true, offset: 100 });
+        AOS.init({ duration: 800, once: true });
 
-        const BUCKET_COUNT = 7;
-        let hashTable = new Array(BUCKET_COUNT).fill(null).map(() => []);
-
+        const tableDisplay = document.getElementById('table-display');
         const keyInput = document.getElementById('key-input');
-        const valueInput = document.getElementById('value-input');
-        const setBtn = document.getElementById('set-btn');
-        const getBtn = document.getElementById('get-btn');
-        const deleteBtn = document.getElementById('delete-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const hashTableEl = document.getElementById('hash-table');
-        const itemsCount = document.getElementById('items-count');
-        const loadFactor = document.getElementById('load-factor');
-        const logElement = document.getElementById('log');
+        const valInput = document.getElementById('val-input');
+        const info = document.getElementById('info');
+        const lfVal = document.getElementById('lf-val');
+        const SIZE = 7;
+        let buckets = Array.from({ length: SIZE }, () => []);
 
         function hash(key) {
-            let sum = 0;
-            for (let char of key) sum += char.charCodeAt(0);
-            return sum % BUCKET_COUNT;
+            let h = 0;
+            for (const c of String(key)) h = (h + c.charCodeAt(0)) % SIZE;
+            return h;
         }
 
-        function renderTable(highlightBucket = -1) {
-            hashTableEl.innerHTML = '';
-            hashTable.forEach((bucket, idx) => {
+        function render(highlightIdx = -1) {
+            tableDisplay.innerHTML = '';
+            let count = 0;
+            buckets.forEach((bucket, i) => {
+                count += bucket.length;
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2';
+                row.innerHTML = `<span class="text-slate-500 font-mono text-xs w-8">[${i}]</span>`;
+
                 const bucketEl = document.createElement('div');
-                bucketEl.className = 'bucket' + (idx === highlightBucket ? ' ring-2 ring-orange-500' : '');
-
-                const indexEl = document.createElement('span');
-                indexEl.className = 'bucket-index';
-                indexEl.textContent = `[${idx}]`;
-                bucketEl.appendChild(indexEl);
-
-                const contentEl = document.createElement('div');
-                contentEl.className = 'bucket-content';
+                bucketEl.className = 'bucket flex-1' + (i === highlightIdx ? ' highlight' : '');
 
                 if (bucket.length === 0) {
-                    contentEl.innerHTML = '<span class="text-slate-500 text-sm">empty</span>';
+                    bucketEl.innerHTML = '<span class="text-slate-600 text-xs">empty</span>';
                 } else {
-                    bucket.forEach((item, i) => {
-                        if (i > 0) {
+                    bucket.forEach((pair, j) => {
+                        const item = document.createElement('div');
+                        item.className = 'bucket-item' + (j > 0 ? ' collision' : '');
+                        item.innerHTML = `<span class="key">${pair[0]}</span>→<span class="val">${pair[1]}</span>`;
+                        bucketEl.appendChild(item);
+                        if (j < bucket.length - 1) {
                             const arrow = document.createElement('span');
-                            arrow.className = 'arrow-chain';
+                            arrow.className = 'text-slate-500';
                             arrow.textContent = '→';
-                            contentEl.appendChild(arrow);
+                            bucketEl.appendChild(arrow);
                         }
-                        const itemEl = document.createElement('span');
-                        itemEl.className = 'hash-item' + (i > 0 ? ' collision' : '');
-                        itemEl.textContent = `${item[0]}: ${item[1]}`;
-                        contentEl.appendChild(itemEl);
                     });
                 }
-
-                bucketEl.appendChild(contentEl);
-                hashTableEl.appendChild(bucketEl);
+                row.appendChild(bucketEl);
+                tableDisplay.appendChild(row);
             });
-
-            const totalItems = hashTable.reduce((sum, b) => sum + b.length, 0);
-            itemsCount.textContent = totalItems;
-            const lf = (totalItems / BUCKET_COUNT).toFixed(2);
-            loadFactor.textContent = lf;
-            loadFactor.className = `text-2xl font-bold ${lf > 0.7 ? 'text-red-400' : 'text-emerald-400'}`;
+            lfVal.textContent = (count / SIZE).toFixed(2);
+            lfVal.className = 'font-mono ' + (count / SIZE > 0.7 ? 'text-red-400' : count / SIZE > 0.5 ? 'text-yellow-400' : 'text-emerald-400');
         }
 
-        setBtn.addEventListener('click', () => {
+        document.getElementById('insert-btn').onclick = () => {
             const key = keyInput.value.trim();
-            const value = valueInput.value.trim();
-            if (!key || !value) { log('❌ Enter both key and value!', 'error'); return; }
-
+            const val = valInput.value.trim();
+            if (!key) { info.innerHTML = '<p class="text-red-400">Enter a key!</p>'; return; }
             const idx = hash(key);
-            const existing = hashTable[idx].findIndex(item => item[0] === key);
-            if (existing >= 0) {
-                hashTable[idx][existing][1] = value;
-                log(`📝 Updated "${key}" at bucket[${idx}]`, 'info');
-            } else {
-                const isCollision = hashTable[idx].length > 0;
-                hashTable[idx].push([key, value]);
-                log(`✅ Set "${key}":"${value}" → hash=${idx}${isCollision ? ' (💥 collision!)' : ''}`, 'success');
-            }
-            renderTable(idx);
+            const existing = buckets[idx].find(p => p[0] === key);
+            if (existing) existing[1] = val || existing[1];
+            else buckets[idx].push([key, val || '?']);
+            render(idx);
+            info.innerHTML = `<p class="text-emerald-400 font-arabic">hash("${key}") = ${idx} → تم الإضافة!</p>`;
+            keyInput.value = ''; valInput.value = '';
+        };
+
+        document.getElementById('search-btn').onclick = () => {
+            const key = keyInput.value.trim();
+            if (!key) { info.innerHTML = '<p class="text-red-400">Enter a key!</p>'; return; }
+            const idx = hash(key);
+            const pair = buckets[idx].find(p => p[0] === key);
+            render(idx);
+            if (pair) info.innerHTML = `<p class="text-blue-400 font-arabic">hash("${key}") = ${idx} → لقينا: ${pair[1]}</p>`;
+            else info.innerHTML = `<p class="text-yellow-400 font-arabic">hash("${key}") = ${idx} → مش موجود!</p>`;
+        };
+
+        document.getElementById('delete-btn').onclick = () => {
+            const key = keyInput.value.trim();
+            if (!key) { info.innerHTML = '<p class="text-red-400">Enter a key!</p>'; return; }
+            const idx = hash(key);
+            const i = buckets[idx].findIndex(p => p[0] === key);
+            if (i !== -1) { buckets[idx].splice(i, 1); render(idx); info.innerHTML = `<p class="text-red-400 font-arabic">تم حذف "${key}"</p>`; }
+            else { render(idx); info.innerHTML = `<p class="text-yellow-400 font-arabic">"${key}" مش موجود!</p>`; }
             keyInput.value = '';
-            valueInput.value = '';
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            buckets = Array.from({ length: SIZE }, () => []);
+            render();
+            info.innerHTML = '<p class="text-slate-400">Reset.</p>';
+        };
+
+        // Initial data
+        [['apple', '🍎'], ['banana', '🍌'], ['cat', '🐱']].forEach(([k, v]) => {
+            const idx = hash(k);
+            buckets[idx].push([k, v]);
         });
-
-        getBtn.addEventListener('click', () => {
-            const key = keyInput.value.trim();
-            if (!key) { log('❌ Enter a key to lookup!', 'error'); return; }
-
-            const idx = hash(key);
-            const item = hashTable[idx].find(item => item[0] === key);
-            renderTable(idx);
-            if (item) {
-                log(`🔍 Found "${key}" = "${item[1]}" at bucket[${idx}]`, 'success');
-            } else {
-                log(`❌ "${key}" not found (hash=${idx})`, 'error');
-            }
-        });
-
-        deleteBtn.addEventListener('click', () => {
-            const key = keyInput.value.trim();
-            if (!key) { log('❌ Enter a key to delete!', 'error'); return; }
-
-            const idx = hash(key);
-            const itemIdx = hashTable[idx].findIndex(item => item[0] === key);
-            if (itemIdx >= 0) {
-                hashTable[idx].splice(itemIdx, 1);
-                log(`🗑️ Deleted "${key}" from bucket[${idx}]`, 'success');
-            } else {
-                log(`❌ "${key}" not found`, 'error');
-            }
-            renderTable(idx);
-            keyInput.value = '';
-        });
-
-        clearBtn.addEventListener('click', () => {
-            hashTable = new Array(BUCKET_COUNT).fill(null).map(() => []);
-            renderTable();
-            log('🔄 Hash table cleared', 'info');
-        });
-
-        function log(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.className = {
-                info: 'text-blue-400',
-                success: 'text-emerald-400',
-                error: 'text-red-400'
-            }[type] + ' mb-1';
-            logElement.prepend(p);
-            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
-        }
-
-        renderTable();
+        render();
     </script>
 </body>
 
