@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algorithms & Data Structures | Osama</title>
     <link rel="icon" type="image/svg+xml" href="public/logo.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <meta name="description"
-        content="Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the 'Grokking Algorithms' approach.">
+    <meta name="description" content="Dive into the world of computer science with our interactive learning repository. Master fundamental algorithms and data structures through clear visualizations and practical examples, inspired by the 'Grokking Algorithms' approach.">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -38,29 +36,23 @@
     </script>
     <style>
         /* Reset and Core Styles - Apple Inspired */
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
         html {
-            font-size: 100%;
-            /* Base font size (usually 16px) */
+            font-size: 100%; /* Base font size (usually 16px) */
         }
 
         :root {
             /* Main Colors - Dark Theme as Default */
             --primary-text: #e0e0e0;
             --secondary-text: #a0a0a0;
-            --accent-color: #007bff;
-            /* Default Blue */
-            --accent-color-hover: #0091ff;
-            /* Default Blue Hover */
-            --accent-secondary: #8a7ef8;
-            /* Secondary Accent Blue */
+            --accent-color: #007bff; /* Default Blue */
+            --accent-color-hover: #0091ff; /* Default Blue Hover */
+            --accent-secondary: #8a7ef8; /* Secondary Accent Blue */
             --background-main: #121212;
             --background-alt: #1e1e1e;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -80,15 +72,11 @@
             --topic-item-bg: #1e1e1e;
             --tab-background: #2a2a2a;
             --tab-hover: #333333;
-            --scroll-top-bg: rgba(0, 123, 255, 0.5);
-            /* Default Blue */
-            --scroll-top-hover: rgba(0, 145, 255, 0.7);
-            /* Default Blue Hover */
+            --scroll-top-bg: rgba(0, 123, 255, 0.5); /* Default Blue */
+            --scroll-top-hover: rgba(0, 145, 255, 0.7); /* Default Blue Hover */
             --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
-            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
-            /* Default Blue */
-            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.4);
-            /* Default Blue Hover */
+            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); /* Default Blue */
+            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.4); /* Default Blue Hover */
 
             /* Gradients - Dark Theme */
             --hero-gradient: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
@@ -96,8 +84,7 @@
 
             /* Transitions */
             --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            --transition-duration: 0.3s;
-            /* Consistent duration */
+            --transition-duration: 0.3s; /* Consistent duration */
         }
 
         [data-theme="light"] {
@@ -124,15 +111,11 @@
             --topic-item-bg: #ffffff;
             --tab-background: #f0f0f0;
             --tab-hover: #e0e0e0;
-            --scroll-top-bg: rgba(0, 123, 255, 0.3);
-            /* Default Blue */
-            --scroll-top-hover: rgba(0, 145, 255, 0.5);
-            /* Default Blue Hover */
+            --scroll-top-bg: rgba(0, 123, 255, 0.3); /* Default Blue */
+            --scroll-top-hover: rgba(0, 145, 255, 0.5); /* Default Blue Hover */
             --toggle-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
-            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.2);
-            /* Default Blue */
-            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.3);
-            /* Default Blue Hover */
+            --button-shadow: 0 4px 15px rgba(0, 113, 227, 0.2); /* Default Blue */
+            --button-shadow-hover: 0 8px 25px rgba(0, 113, 227, 0.3); /* Default Blue Hover */
 
             /* Gradients - Light Theme */
             --hero-gradient: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -141,129 +124,54 @@
 
         /* Animation Keyframes (Consolidated & Optimized) */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @keyframes scaleIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.03);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-5px);
-            }
-
-            /* Reduced float height */
-            100% {
-                transform: translateY(0);
-            }
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); } /* Reduced float height */
+            100% { transform: translateY(0); }
         }
 
         @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-8px);
-            }
-
-            /* Reduced bounce height */
-            60% {
-                transform: translateY(-4px);
-            }
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); } /* Reduced bounce height */
+            60% { transform: translateY(-4px); }
         }
 
         @keyframes gradientFlow {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Floating particles animation */
         @keyframes floatingParticles {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
 
         /* Ripple effect animation */
@@ -273,7 +181,6 @@
                 height: 20px;
                 opacity: 0.7;
             }
-
             100% {
                 width: 200vh;
                 height: 200vh;
@@ -283,17 +190,9 @@
 
         /* Gradient text animation */
         @keyframes gradientText {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         body {
@@ -307,8 +206,7 @@
             -moz-osx-font-smoothing: grayscale;
             transition: background-color 0.5s ease, color 0.5s ease;
             scroll-behavior: smooth;
-            animation: gradientFlow 15s ease infinite;
-            /* Kept subtle background flow */
+            animation: gradientFlow 15s ease infinite; /* Kept subtle background flow */
         }
 
         a {
@@ -337,12 +235,7 @@
             width: 100%;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
+        h1, h2, h3, h4, h5, h6 {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
             font-weight: 600;
             color: var(--primary-text);
@@ -351,24 +244,10 @@
             transition: color 0.3s ease;
         }
 
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h3 {
-            font-size: 1.8rem;
-        }
-
-        h4 {
-            font-size: 1.2rem;
-        }
+        h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.5rem; position: relative; display: inline-block; }
+        h3 { font-size: 1.8rem; }
+        h4 { font-size: 1.2rem; }
 
         /* Consistent heading underlines */
         h2::after,
@@ -390,8 +269,7 @@
         .topics h3::after {
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
-            /* Slightly smaller for centered ones */
+            width: 50px; /* Slightly smaller for centered ones */
         }
 
         .features h4::after {
@@ -415,13 +293,10 @@
 
         /* Specific font sizes for header elements */
         header h1 {
-            font-size: 4.5rem;
-            /* Increased size for header h1 */
+            font-size: 4.5rem; /* Increased size for header h1 */
         }
-
         header h3 {
-            font-size: 2.2rem;
-            /* Increased size for header h3 */
+            font-size: 2.2rem; /* Increased size for header h3 */
         }
 
         .container {
@@ -443,8 +318,7 @@
             overflow: hidden;
             transition: background 0.5s ease;
             background-size: 200% 200%;
-            animation: gradientFlow 15s ease infinite;
-            /* Kept subtle background flow */
+            animation: gradientFlow 15s ease infinite; /* Kept subtle background flow */
         }
 
         /* Subtle overlay PLUS original animations */
@@ -455,11 +329,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(0, 123, 255, 0.06) 0%, transparent 70%);
-            /* Using accent color */
+            background: radial-gradient(circle at 20% 30%, rgba(0, 123, 255, 0.06) 0%, transparent 70%); /* Using accent color */
             z-index: 0;
-            animation: pulse 8s ease-in-out infinite alternate;
-            /* Keep subtle pulse */
+            animation: pulse 8s ease-in-out infinite alternate; /* Keep subtle pulse */
         }
 
         /* Floating particles elements */
@@ -475,86 +347,15 @@
             animation: floatingParticles 15s linear infinite;
         }
 
-        .floating-particle:nth-child(1) {
-            bottom: -10px;
-            left: 10%;
-            width: 12px;
-            height: 12px;
-            animation-duration: 25s;
-            animation-delay: 0s;
-        }
-
-        .floating-particle:nth-child(2) {
-            bottom: -10px;
-            left: 20%;
-            width: 18px;
-            height: 18px;
-            animation-duration: 30s;
-            animation-delay: 2s;
-        }
-
-        .floating-particle:nth-child(3) {
-            bottom: -10px;
-            left: 30%;
-            width: 10px;
-            height: 10px;
-            animation-duration: 20s;
-            animation-delay: 5s;
-        }
-
-        .floating-particle:nth-child(4) {
-            bottom: -10px;
-            left: 50%;
-            width: 15px;
-            height: 15px;
-            animation-duration: 28s;
-            animation-delay: 7s;
-        }
-
-        .floating-particle:nth-child(5) {
-            bottom: -10px;
-            left: 70%;
-            width: 9px;
-            height: 9px;
-            animation-duration: 22s;
-            animation-delay: 3s;
-        }
-
-        .floating-particle:nth-child(6) {
-            bottom: -10px;
-            left: 80%;
-            width: 14px;
-            height: 14px;
-            animation-duration: 26s;
-            animation-delay: 1s;
-        }
-
-        .floating-particle:nth-child(7) {
-            bottom: -10px;
-            left: 40%;
-            width: 11px;
-            height: 11px;
-            animation-duration: 24s;
-            animation-delay: 4s;
-        }
-
-        .floating-particle:nth-child(8) {
-            bottom: -10px;
-            left: 60%;
-            width: 16px;
-            height: 16px;
-            animation-duration: 29s;
-            animation-delay: 8s;
-        }
-
-        .floating-particle:nth-child(9) {
-            bottom: -10px;
-            left: 90%;
-            width: 13px;
-            height: 13px;
-            animation-duration: 27s;
-            animation-delay: 6s;
-        }
+        .floating-particle:nth-child(1) { bottom: -10px; left: 10%; width: 12px; height: 12px; animation-duration: 25s; animation-delay: 0s; }
+        .floating-particle:nth-child(2) { bottom: -10px; left: 20%; width: 18px; height: 18px; animation-duration: 30s; animation-delay: 2s; }
+        .floating-particle:nth-child(3) { bottom: -10px; left: 30%; width: 10px; height: 10px; animation-duration: 20s; animation-delay: 5s; }
+        .floating-particle:nth-child(4) { bottom: -10px; left: 50%; width: 15px; height: 15px; animation-duration: 28s; animation-delay: 7s; }
+        .floating-particle:nth-child(5) { bottom: -10px; left: 70%; width: 9px; height: 9px; animation-duration: 22s; animation-delay: 3s; }
+        .floating-particle:nth-child(6) { bottom: -10px; left: 80%; width: 14px; height: 14px; animation-duration: 26s; animation-delay: 1s; }
+        .floating-particle:nth-child(7) { bottom: -10px; left: 40%; width: 11px; height: 11px; animation-duration: 24s; animation-delay: 4s; }
+        .floating-particle:nth-child(8) { bottom: -10px; left: 60%; width: 16px; height: 16px; animation-duration: 29s; animation-delay: 8s; }
+        .floating-particle:nth-child(9) { bottom: -10px; left: 90%; width: 13px; height: 13px; animation-duration: 27s; animation-delay: 6s; }
 
         /* Infinity animation using gradients */
         .infinity-animation {
@@ -587,17 +388,9 @@
             animation: ripple 6s linear infinite;
         }
 
-        .ripple-effect:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .ripple-effect:nth-child(2) {
-            animation-delay: 2s;
-        }
-
-        .ripple-effect:nth-child(3) {
-            animation-delay: 4s;
-        }
+        .ripple-effect:nth-child(1) { animation-delay: 0s; }
+        .ripple-effect:nth-child(2) { animation-delay: 2s; }
+        .ripple-effect:nth-child(3) { animation-delay: 4s; }
 
         /* Modern grid overlay */
         .grid-overlay {
@@ -609,14 +402,11 @@
             background-image:
                 linear-gradient(to right, var(--border-color) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            /* Slightly larger grid */
-            opacity: 0.15;
-            /* Reduced opacity */
+            background-size: 40px 40px; /* Slightly larger grid */
+            opacity: 0.15; /* Reduced opacity */
             z-index: 0;
             color: var(--primary-text);
-            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s;
-            /* Combine animations */
+            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s; /* Combine animations */
         }
 
         header .container {
@@ -631,9 +421,7 @@
             padding: 0 40px;
         }
 
-        header h1,
-        h2,
-        h3 {
+        header h1, h2, h3 {
             margin-bottom: 30px;
             color: var(--primary-text);
             animation: fadeInDown 1.2s ease-out;
@@ -644,8 +432,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-fill-color: transparent;
-            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s;
-            /* Combine animations */
+            animation: fadeInDown 1.2s ease-out, gradientText 6s ease infinite 1.2s; /* Combine animations */
         }
 
         header p {
@@ -671,8 +458,7 @@
             color: var(--secondary-text);
             font-size: 0.9rem;
             opacity: 0.8;
-            animation: fadeInUp 1s ease-out 1.5s backwards, bounce 2s infinite 2s;
-            /* Added delay to bounce */
+            animation: fadeInUp 1s ease-out 1.5s backwards, bounce 2s infinite 2s; /* Added delay to bounce */
             z-index: 2;
         }
 
@@ -682,8 +468,7 @@
 
         .scroll-indicator i {
             font-size: 1.5rem;
-            /* animation: bounce 2s infinite; */
-            /* Animation combined above */
+            /* animation: bounce 2s infinite; */ /* Animation combined above */
         }
 
         /* General Button Styles */
@@ -704,11 +489,10 @@
             position: relative;
             overflow: hidden;
             gap: 10px;
-            margin: 5px;
-            /* Reduced margin */
+            margin: 5px; /* Reduced margin */
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
         }
 
         /* Subtle shimmer effect on hover */
@@ -720,17 +504,14 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s ease;
-            /* Slightly slower shimmer */
+            transition: left 0.6s ease; /* Slightly slower shimmer */
         }
 
         .btn:hover {
             background-color: var(--accent-color-hover);
-            transform: translateY(-3px);
-            /* Keep subtle lift */
+            transform: translateY(-3px); /* Keep subtle lift */
             box-shadow: var(--button-shadow-hover);
-            color: white;
-            /* Ensure text remains white */
+            color: white; /* Ensure text remains white */
         }
 
         .btn:hover::before {
@@ -740,13 +521,11 @@
         .btn i {
             transition: transform 0.3s ease;
             font-size: 0.9em;
-            margin-left: 8px;
-            /* Keep space */
+            margin-left: 8px; /* Keep space */
         }
 
         .btn:hover i {
-            transform: translateX(3px);
-            /* Keep subtle icon move */
+            transform: translateX(3px); /* Keep subtle icon move */
         }
 
         /* Header-specific button styling overrides */
@@ -757,14 +536,12 @@
             /* Remove gradient background for consistency */
             /* background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)); */
             /* background-size: 200% 100%; */
-            /* transition: all 0.4s ease; */
-            /* Use default transition */
+            /* transition: all 0.4s ease; */ /* Use default transition */
         }
 
         header .btn:hover {
             /* background-position: 100% 0; */
-            transform: translateY(-5px);
-            /* Slightly more lift for hero button */
+            transform: translateY(-5px); /* Slightly more lift for hero button */
             box-shadow: var(--button-shadow-hover);
         }
 
@@ -803,8 +580,7 @@
         .week-header h2 {
             font-size: 3rem;
             color: var(--primary-text);
-            margin-bottom: 25px;
-            /* Adjusted for ::after */
+            margin-bottom: 25px; /* Adjusted for ::after */
             position: relative;
             display: inline-block;
         }
@@ -820,12 +596,11 @@
         .topics {
             background-color: var(--topic-background);
             padding: 40px;
-            border-radius: var(--border-radius);
-            /* Use variable */
+            border-radius: var(--border-radius); /* Use variable */
             margin-bottom: 60px;
             transition: background-color var(--transition-duration) ease,
-                transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
+                        transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -838,19 +613,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-            /* Reduced intensity */
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%); /* Reduced intensity */
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
         .topics:hover::before {
-            opacity: 0.5;
+             opacity: 0.5;
         }
 
         .topics h3 {
-            margin-bottom: 30px;
-            /* Adjusted for ::after */
+            margin-bottom: 30px; /* Adjusted for ::after */
             color: var(--primary-text);
             font-size: 2rem;
             text-align: center;
@@ -875,13 +648,12 @@
             border-radius: 30px;
             display: inline-flex;
             align-items: center;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-            /* Simplified shadow */
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Simplified shadow */
             font-weight: 500;
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             position: relative;
             overflow: hidden;
             border: 1px solid transparent;
@@ -892,13 +664,12 @@
 
         /* Visible state for animation */
         .week-container.visible .topics li {
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            opacity: 1;
-            transform: translateX(0);
+             transition: opacity 0.5s ease, transform 0.5s ease;
+             opacity: 1;
+             transform: translateX(0);
         }
 
-        .topics li::before {
-            /* Subtle gradient overlay */
+        .topics li::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -911,11 +682,9 @@
         }
 
         .topics li:hover {
-            transform: translateY(-4px);
-            /* Reduced lift */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            /* animation: float 2s ease-in-out infinite; */
-            /* Removed continuous float */
+            transform: translateY(-4px); /* Reduced lift */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            /* animation: float 2s ease-in-out infinite; */ /* Removed continuous float */
         }
 
         .topics li:hover::before {
@@ -931,12 +700,9 @@
         /* Algorithm Grid and Cards (Optimized) */
         .algo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            /* Slightly adjusted minmax */
-            gap: 35px;
-            /* Slightly reduced gap */
-            /* perspective: 1000px; */
-            /* Removed perspective for simpler hover */
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Slightly adjusted minmax */
+            gap: 35px; /* Slightly reduced gap */
+            /* perspective: 1000px; */ /* Removed perspective for simpler hover */
         }
 
         .algo-card {
@@ -945,16 +711,14 @@
             overflow: hidden;
             box-shadow: var(--card-shadow);
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
             position: relative;
             display: flex;
             flex-direction: column;
             padding-bottom: 0;
-            /* transform-style: preserve-3d; */
-            /* Removed */
-            /* backface-visibility: hidden; */
-            /* Removed */
+            /* transform-style: preserve-3d; */ /* Removed */
+            /* backface-visibility: hidden; */ /* Removed */
             /* Initial state for animation */
             opacity: 0;
             transform: translateY(30px);
@@ -963,16 +727,13 @@
         /* Visible state for animation */
         .week-container.visible .algo-card {
             transition: opacity 0.6s ease, transform 0.6s ease,
-                box-shadow var(--transition-duration) ease,
-                /* Keep hover transition */
-                background-color var(--transition-duration) ease;
-            /* Keep theme transition */
+                        box-shadow var(--transition-duration) ease, /* Keep hover transition */
+                        background-color var(--transition-duration) ease; /* Keep theme transition */
             opacity: 1;
             transform: translateY(0);
         }
 
-        .algo-card::before {
-            /* Subtle gradient overlay */
+        .algo-card::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -987,10 +748,8 @@
         }
 
         .algo-card:hover {
-            transform: translateY(-8px);
-            /* Simpler hover effect */
-            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */
-            /* Removed complex transform */
+            transform: translateY(-8px); /* Simpler hover effect */
+            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */ /* Removed complex transform */
             box-shadow: var(--card-shadow-hover);
         }
 
@@ -1011,8 +770,7 @@
             overflow: hidden;
         }
 
-        .algo-card-header::before {
-            /* Shimmer effect */
+        .algo-card-header::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
@@ -1020,8 +778,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-            transition: left 0.7s ease;
-            /* Slower shimmer */
+            transition: left 0.7s ease; /* Slower shimmer */
         }
 
         .algo-card:hover .algo-card-header::before {
@@ -1046,8 +803,7 @@
             margin: 20px 0;
             font-size: 1rem;
             color: var(--secondary-text);
-            background-color: rgba(255, 255, 255, 0.03);
-            /* Slightly less contrast */
+            background-color: rgba(255, 255, 255, 0.03); /* Slightly less contrast */
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid var(--accent-color);
@@ -1070,8 +826,7 @@
 
         .features h4 {
             font-size: 1.1rem;
-            margin-bottom: 15px;
-            /* Adjusted for ::after */
+            margin-bottom: 15px; /* Adjusted for ::after */
             color: var(--primary-text);
             position: relative;
             display: inline-block;
@@ -1114,35 +869,26 @@
             /* Added CSS to replace Tailwind */
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            /* Replaces space-y-2 */
+            gap: 0.5rem; /* Replaces space-y-2 */
         }
 
         .algo-card-footer .btn {
-            padding: 12px 25px;
-            /* Keep original padding */
-            font-size: 1rem;
-            /* Keep original font size */
+            padding: 12px 25px; /* Keep original padding */
+            font-size: 1rem; /* Keep original font size */
             /* Removed min-width: 140px; and width: auto; */
-            /* Added CSS to replace Tailwind */
-            width: 100%;
-            /* Replaces w-full */
-            height: 3rem;
-            /* Replaces h-12 */
-            display: flex;
-            /* Replaces flex */
-            align-items: center;
-            /* Replaces items-center */
-            justify-content: center;
-            /* Replaces justify-center */
+             /* Added CSS to replace Tailwind */
+            width: 100%;     /* Replaces w-full */
+            height: 3rem;      /* Replaces h-12 */
+            display: flex;     /* Replaces flex */
+            align-items: center; /* Replaces items-center */
+            justify-content: center; /* Replaces justify-center */
             /* Ensure base .btn styles are not overridden unnecessarily */
         }
 
         /* Style for icons within footer buttons */
         .algo-card-footer .btn i {
-            margin-right: 0.5rem;
-            /* Replaces mr-2 */
-            /* Ensure icon styles from general .btn i are considered */
+             margin-right: 0.5rem; /* Replaces mr-2 */
+             /* Ensure icon styles from general .btn i are considered */
         }
 
         /* Footer */
@@ -1166,8 +912,7 @@
             background: linear-gradient(90deg, transparent, var(--border-color), transparent);
         }
 
-        footer::after {
-            /* Subtle overlay */
+        footer::after { /* Subtle overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -1194,8 +939,7 @@
         }
 
         .footer-section h3 {
-            margin-bottom: 25px;
-            /* Adjusted for ::after */
+            margin-bottom: 25px; /* Adjusted for ::after */
             font-size: 1.4rem;
             color: var(--primary-text);
             position: relative;
@@ -1216,8 +960,7 @@
         }
 
         .footer-section a {
-            color: var(--accent-color);
-            /* Use accent color directly */
+            color: var(--accent-color); /* Use accent color directly */
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -1236,8 +979,7 @@
             /* Replaced by .icon-margin */
             font-size: 0.9rem;
             transition: transform 0.3s ease;
-            /* margin-right: 12px; */
-            /* Use .icon-margin */
+            /* margin-right: 12px; */ /* Use .icon-margin */
             width: 20px;
             text-align: center;
         }
@@ -1278,12 +1020,11 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity var(--transition-duration) ease,
-                visibility var(--transition-duration) ease,
-                transform var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
-            box-shadow: var(--button-shadow);
-            /* Use button shadow */
+                        visibility var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            box-shadow: var(--button-shadow); /* Use button shadow */
             z-index: 100;
             transform: translateY(20px) scale(0.9);
         }
@@ -1325,13 +1066,12 @@
             justify-content: center;
             cursor: pointer;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                background-color var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             overflow: hidden;
         }
 
-        .theme-toggle::before {
-            /* Subtle glow effect */
+        .theme-toggle::before { /* Subtle glow effect */
             content: '';
             position: absolute;
             top: 0;
@@ -1362,15 +1102,8 @@
         }
 
         /* Icons based on theme */
-        .theme-toggle i.fa-sun {
-            color: #ffd60a;
-            text-shadow: 0 0 10px rgba(255, 214, 10, 0.5);
-        }
-
-        [data-theme="light"] .theme-toggle i.fa-moon {
-            color: #6e6e73;
-            text-shadow: none;
-        }
+        .theme-toggle i.fa-sun { color: #ffd60a; text-shadow: 0 0 10px rgba(255, 214, 10, 0.5); }
+        [data-theme="light"] .theme-toggle i.fa-moon { color: #6e6e73; text-shadow: none; }
 
         /* Tab Navigation - Cleaned Up */
         .tab-container {
@@ -1392,9 +1125,9 @@
             cursor: pointer;
             border-radius: 30px;
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             font-weight: 500;
             font-size: 1.1rem;
             color: var(--primary-text);
@@ -1403,8 +1136,7 @@
             overflow: hidden;
         }
 
-        .tab-btn::before {
-            /* Shimmer effect */
+        .tab-btn::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
@@ -1418,8 +1150,7 @@
         .tab-btn.active {
             background-color: var(--accent-color);
             color: white;
-            box-shadow: var(--button-shadow);
-            /* Use button shadow */
+            box-shadow: var(--button-shadow); /* Use button shadow */
             transform: translateY(-2px);
         }
 
@@ -1434,116 +1165,51 @@
 
         .tab-content {
             display: none;
-            /* animation: fadeIn 0.5s ease; */
-            /* Let JS handle fade if needed */
+            /* animation: fadeIn 0.5s ease; */ /* Let JS handle fade if needed */
         }
 
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.5s ease;
-            /* Keep fade in for content switch */
+            animation: fadeIn 0.5s ease; /* Keep fade in for content switch */
         }
 
         /* Responsive Design - Adjusted Breakpoints */
         @media (max-width: 1068px) {
             html {
-                font-size: 93.75%;
-                /* 15px */
+                font-size: 93.75%; /* 15px */
             }
-
-            .container {
-                padding: 0 30px;
-            }
-
-            /* Slightly more padding */
+            .container { padding: 0 30px; } /* Slightly more padding */
             /* Removed specific h1, h2 overrides */
-            header {
-                min-height: auto;
-                padding: 120px 0 80px 0;
-            }
-
-            /* Adjust padding */
+            header { min-height: auto; padding: 120px 0 80px 0; } /* Adjust padding */
             /* Removed specific header h1, p overrides */
             /* Removed specific week-header h2 override */
             /* Removed specific topics h3 override */
-            .algo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 30px;
-            }
-
-            .footer-content {
-                justify-content: space-around;
-            }
+            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+            .footer-content { justify-content: space-around; }
         }
 
         @media (max-width: 768px) {
-            html {
-                font-size: 81.25%;
-                /* 13px */
-            }
-
-            .container {
-                padding: 0 20px;
-            }
-
+             html {
+                 font-size: 81.25%; /* 13px */
+             }
+             .container { padding: 0 20px; }
             /* Removed specific h1, h2 overrides */
-            header {
-                padding: 100px 0 60px 0;
-            }
-
+            header { padding: 100px 0 60px 0; }
             /* Removed specific header h1, p overrides */
             /* Removed specific week-header h2 override */
             /* Removed specific topics h3 override */
-            .algo-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            /* Single column, less gap */
-            .topics ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
-            /* Stack topics */
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .footer-section {
-                margin-bottom: 30px;
-                padding: 0 10px;
-            }
-
-            .footer-section h3,
-            .copyright {
-                text-align: center;
-            }
-
-            .theme-toggle {
-                width: 50px;
-                height: 50px;
-            }
-
-            /* Slightly smaller toggle */
-            .scroll-top {
-                width: 45px;
-                height: 45px;
-                bottom: 20px;
-                right: 20px;
-            }
-
-            /* Adjust scroll top */
+            .algo-grid { grid-template-columns: 1fr; gap: 25px; } /* Single column, less gap */
+            .topics ul { flex-direction: column; align-items: center; gap: 10px; } /* Stack topics */
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-section { margin-bottom: 30px; padding: 0 10px; }
+            .footer-section h3, .copyright { text-align: center; }
+            .theme-toggle { width: 50px; height: 50px; } /* Slightly smaller toggle */
+            .scroll-top { width: 45px; height: 45px; bottom: 20px; right: 20px; } /* Adjust scroll top */
         }
 
         /* Add spacing for heading icons */
-        h1 i.icon-margin,
-        h2 i.icon-margin,
-        h3 i.icon-margin {
-            margin-right: 12px;
-            /* Consistent spacing */
+        h1 i.icon-margin, h2 i.icon-margin, h3 i.icon-margin {
+            margin-right: 12px; /* Consistent spacing */
         }
 
         /* Info Section below Header */
@@ -1559,8 +1225,7 @@
         .info-section .container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
-            /* Adjust alignment */
+            justify-content: space-around; /* Adjust alignment */
             /* align-items: center; Removed to allow stretch */
             gap: 30px;
         }
@@ -1570,33 +1235,24 @@
             padding: 25px 30px;
             border-radius: var(--card-radius);
             box-shadow: var(--card-shadow);
-            flex: 1 0 0;
-            /* Ensure equal width distribution */
-            min-width: 300px;
-            /* Ensure blocks don't get too small */
-            max-width: 450px;
-            /* Limit max width */
-            text-align: center;
-            /* Ensure text is centered */
+            flex: 1 0 0; /* Ensure equal width distribution */
+            min-width: 300px; /* Ensure blocks don't get too small */
+            max-width: 450px; /* Limit max width */
+            text-align: center; /* Ensure text is centered */
             transition: background-color var(--theme-transition), box-shadow var(--theme-transition);
             display: flex;
             align-items: center;
-            justify-content: center;
-            /* Center icon and content horizontally */
-            gap: 20px;
-            /* Increased gap */
-            height: 100%;
-            /* Added to ensure block stretches */
+            justify-content: center; /* Center icon and content horizontally */
+            gap: 20px; /* Increased gap */
+            height: 100%; /* Added to ensure block stretches */
             min-height: 170px;
         }
 
         .info-block i {
-            font-size: 2rem;
-            /* Slightly larger icon */
+            font-size: 2rem; /* Slightly larger icon */
             color: var(--accent-color);
             transition: color var(--theme-transition);
-            flex-shrink: 0;
-            /* Prevent icon from shrinking */
+            flex-shrink: 0; /* Prevent icon from shrinking */
         }
 
         .info-block p {
@@ -1607,11 +1263,10 @@
         }
 
         /* Style the div wrapper created by JS for mentorship */
-        .info-block>div {
+        .info-block > div {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            /* Center text and button */
+            align-items: center; /* Center text and button */
             gap: 10px;
             text-align: center;
         }
@@ -1625,31 +1280,22 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-
             .info-block {
-                max-width: none;
-                /* Allow full width on small screens */
+                 max-width: none; /* Allow full width on small screens */
             }
         }
 
         /* WhatsApp Button Style */
         .btn-whatsapp {
-            background-color: #25D366;
-            /* WhatsApp Green */
+            background-color: #25D366; /* WhatsApp Green */
             color: white;
         }
-
         .btn-whatsapp:hover {
-            background-color: #128C7E;
-            /* Darker WhatsApp Green */
-            color: white;
-            /* Ensure text stays white on hover */
-            transform: translateY(-3px);
-            /* Maintain hover lift */
-            box-shadow: var(--button-shadow-hover);
-            /* Maintain hover shadow */
+            background-color: #128C7E; /* Darker WhatsApp Green */
+            color: white; /* Ensure text stays white on hover */
+            transform: translateY(-3px); /* Maintain hover lift */
+            box-shadow: var(--button-shadow-hover); /* Maintain hover shadow */
         }
-
         /* Apply shimmer effect specifically to whatsapp button if needed, or ensure general .btn::before handles it */
         .btn-whatsapp::before {
             content: '';
@@ -1661,7 +1307,6 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.6s ease;
         }
-
         .btn-whatsapp:hover::before {
             left: 100%;
         }
@@ -1675,14 +1320,12 @@
             /* Remove gradient background for consistency */
             /* background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)); */
             /* background-size: 200% 100%; */
-            /* transition: all 0.4s ease; */
-            /* Use default transition */
+            /* transition: all 0.4s ease; */ /* Use default transition */
         }
 
         header .btn:hover {
             /* background-position: 100% 0; */
-            transform: translateY(-5px);
-            /* Slightly more lift for hero button */
+            transform: translateY(-5px); /* Slightly more lift for hero button */
             box-shadow: var(--button-shadow-hover);
         }
 
@@ -1721,8 +1364,7 @@
         .week-header h2 {
             font-size: 3rem;
             color: var(--primary-text);
-            margin-bottom: 25px;
-            /* Adjusted for ::after */
+            margin-bottom: 25px; /* Adjusted for ::after */
             position: relative;
             display: inline-block;
         }
@@ -1738,12 +1380,11 @@
         .topics {
             background-color: var(--topic-background);
             padding: 40px;
-            border-radius: var(--border-radius);
-            /* Use variable */
+            border-radius: var(--border-radius); /* Use variable */
             margin-bottom: 60px;
             transition: background-color var(--transition-duration) ease,
-                transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
+                        transform var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -1756,19 +1397,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-            /* Reduced intensity */
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 50%); /* Reduced intensity */
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
         .topics:hover::before {
-            opacity: 0.5;
+             opacity: 0.5;
         }
 
         .topics h3 {
-            margin-bottom: 30px;
-            /* Adjusted for ::after */
+            margin-bottom: 30px; /* Adjusted for ::after */
             color: var(--primary-text);
             font-size: 2rem;
             text-align: center;
@@ -1793,13 +1432,12 @@
             border-radius: 30px;
             display: inline-flex;
             align-items: center;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-            /* Simplified shadow */
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Simplified shadow */
             font-weight: 500;
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             position: relative;
             overflow: hidden;
             border: 1px solid transparent;
@@ -1810,13 +1448,12 @@
 
         /* Visible state for animation */
         .week-container.visible .topics li {
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            opacity: 1;
-            transform: translateX(0);
+             transition: opacity 0.5s ease, transform 0.5s ease;
+             opacity: 1;
+             transform: translateX(0);
         }
 
-        .topics li::before {
-            /* Subtle gradient overlay */
+        .topics li::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -1829,11 +1466,9 @@
         }
 
         .topics li:hover {
-            transform: translateY(-4px);
-            /* Reduced lift */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            /* animation: float 2s ease-in-out infinite; */
-            /* Removed continuous float */
+            transform: translateY(-4px); /* Reduced lift */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            /* animation: float 2s ease-in-out infinite; */ /* Removed continuous float */
         }
 
         .topics li:hover::before {
@@ -1849,12 +1484,9 @@
         /* Algorithm Grid and Cards (Optimized) */
         .algo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            /* Slightly adjusted minmax */
-            gap: 35px;
-            /* Slightly reduced gap */
-            /* perspective: 1000px; */
-            /* Removed perspective for simpler hover */
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Slightly adjusted minmax */
+            gap: 35px; /* Slightly reduced gap */
+            /* perspective: 1000px; */ /* Removed perspective for simpler hover */
         }
 
         .algo-card {
@@ -1863,16 +1495,14 @@
             overflow: hidden;
             box-shadow: var(--card-shadow);
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease;
             position: relative;
             display: flex;
             flex-direction: column;
             padding-bottom: 0;
-            /* transform-style: preserve-3d; */
-            /* Removed */
-            /* backface-visibility: hidden; */
-            /* Removed */
+            /* transform-style: preserve-3d; */ /* Removed */
+            /* backface-visibility: hidden; */ /* Removed */
             /* Initial state for animation */
             opacity: 0;
             transform: translateY(30px);
@@ -1881,16 +1511,13 @@
         /* Visible state for animation */
         .week-container.visible .algo-card {
             transition: opacity 0.6s ease, transform 0.6s ease,
-                box-shadow var(--transition-duration) ease,
-                /* Keep hover transition */
-                background-color var(--transition-duration) ease;
-            /* Keep theme transition */
+                        box-shadow var(--transition-duration) ease, /* Keep hover transition */
+                        background-color var(--transition-duration) ease; /* Keep theme transition */
             opacity: 1;
             transform: translateY(0);
         }
 
-        .algo-card::before {
-            /* Subtle gradient overlay */
+        .algo-card::before { /* Subtle gradient overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -1905,10 +1532,8 @@
         }
 
         .algo-card:hover {
-            transform: translateY(-8px);
-            /* Simpler hover effect */
-            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */
-            /* Removed complex transform */
+            transform: translateY(-8px); /* Simpler hover effect */
+            /* transform: translateY(-10px) rotateX(2deg) rotateY(2deg); */ /* Removed complex transform */
             box-shadow: var(--card-shadow-hover);
         }
 
@@ -1929,8 +1554,7 @@
             overflow: hidden;
         }
 
-        .algo-card-header::before {
-            /* Shimmer effect */
+        .algo-card-header::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
@@ -1938,8 +1562,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-            transition: left 0.7s ease;
-            /* Slower shimmer */
+            transition: left 0.7s ease; /* Slower shimmer */
         }
 
         .algo-card:hover .algo-card-header::before {
@@ -1964,8 +1587,7 @@
             margin: 20px 0;
             font-size: 1rem;
             color: var(--secondary-text);
-            background-color: rgba(255, 255, 255, 0.03);
-            /* Slightly less contrast */
+            background-color: rgba(255, 255, 255, 0.03); /* Slightly less contrast */
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid var(--accent-color);
@@ -1988,8 +1610,7 @@
 
         .features h4 {
             font-size: 1.1rem;
-            margin-bottom: 15px;
-            /* Adjusted for ::after */
+            margin-bottom: 15px; /* Adjusted for ::after */
             color: var(--primary-text);
             position: relative;
             display: inline-block;
@@ -2032,35 +1653,26 @@
             /* Added CSS to replace Tailwind */
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            /* Replaces space-y-2 */
+            gap: 0.5rem; /* Replaces space-y-2 */
         }
 
         .algo-card-footer .btn {
-            padding: 12px 25px;
-            /* Keep original padding */
-            font-size: 1rem;
-            /* Keep original font size */
+            padding: 12px 25px; /* Keep original padding */
+            font-size: 1rem; /* Keep original font size */
             /* Removed min-width: 140px; and width: auto; */
-            /* Added CSS to replace Tailwind */
-            width: 100%;
-            /* Replaces w-full */
-            height: 3rem;
-            /* Replaces h-12 */
-            display: flex;
-            /* Replaces flex */
-            align-items: center;
-            /* Replaces items-center */
-            justify-content: center;
-            /* Replaces justify-center */
+             /* Added CSS to replace Tailwind */
+            width: 100%;     /* Replaces w-full */
+            height: 3rem;      /* Replaces h-12 */
+            display: flex;     /* Replaces flex */
+            align-items: center; /* Replaces items-center */
+            justify-content: center; /* Replaces justify-center */
             /* Ensure base .btn styles are not overridden unnecessarily */
         }
 
         /* Style for icons within footer buttons */
         .algo-card-footer .btn i {
-            margin-right: 0.5rem;
-            /* Replaces mr-2 */
-            /* Ensure icon styles from general .btn i are considered */
+             margin-right: 0.5rem; /* Replaces mr-2 */
+             /* Ensure icon styles from general .btn i are considered */
         }
 
         /* Footer */
@@ -2084,8 +1696,7 @@
             background: linear-gradient(90deg, transparent, var(--border-color), transparent);
         }
 
-        footer::after {
-            /* Subtle overlay */
+        footer::after { /* Subtle overlay */
             content: '';
             position: absolute;
             top: 0;
@@ -2112,8 +1723,7 @@
         }
 
         .footer-section h3 {
-            margin-bottom: 25px;
-            /* Adjusted for ::after */
+            margin-bottom: 25px; /* Adjusted for ::after */
             font-size: 1.4rem;
             color: var(--primary-text);
             position: relative;
@@ -2134,8 +1744,7 @@
         }
 
         .footer-section a {
-            color: var(--accent-color);
-            /* Use accent color directly */
+            color: var(--accent-color); /* Use accent color directly */
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -2154,8 +1763,7 @@
             /* Replaced by .icon-margin */
             font-size: 0.9rem;
             transition: transform 0.3s ease;
-            /* margin-right: 12px; */
-            /* Use .icon-margin */
+            /* margin-right: 12px; */ /* Use .icon-margin */
             width: 20px;
             text-align: center;
         }
@@ -2196,12 +1804,11 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity var(--transition-duration) ease,
-                visibility var(--transition-duration) ease,
-                transform var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
-            box-shadow: var(--button-shadow);
-            /* Use button shadow */
+                        visibility var(--transition-duration) ease,
+                        transform var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
+            box-shadow: var(--button-shadow); /* Use button shadow */
             z-index: 100;
             transform: translateY(20px) scale(0.9);
         }
@@ -2243,13 +1850,12 @@
             justify-content: center;
             cursor: pointer;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                background-color var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease;
+                        background-color var(--transition-duration) ease,
+                        box-shadow var(--transition-duration) ease;
             overflow: hidden;
         }
 
-        .theme-toggle::before {
-            /* Subtle glow effect */
+        .theme-toggle::before { /* Subtle glow effect */
             content: '';
             position: absolute;
             top: 0;
@@ -2280,15 +1886,8 @@
         }
 
         /* Icons based on theme */
-        .theme-toggle i.fa-sun {
-            color: #ffd60a;
-            text-shadow: 0 0 10px rgba(255, 214, 10, 0.5);
-        }
-
-        [data-theme="light"] .theme-toggle i.fa-moon {
-            color: #6e6e73;
-            text-shadow: none;
-        }
+        .theme-toggle i.fa-sun { color: #ffd60a; text-shadow: 0 0 10px rgba(255, 214, 10, 0.5); }
+        [data-theme="light"] .theme-toggle i.fa-moon { color: #6e6e73; text-shadow: none; }
 
         /* Tab Navigation - Cleaned Up */
         .tab-container {
@@ -2310,9 +1909,9 @@
             cursor: pointer;
             border-radius: 30px;
             transition: transform var(--transition-duration) ease,
-                box-shadow var(--transition-duration) ease,
-                background-color var(--transition-duration) ease,
-                color var(--transition-duration) ease;
+                        box-shadow var(--transition-duration) ease,
+                        background-color var(--transition-duration) ease,
+                        color var(--transition-duration) ease;
             font-weight: 500;
             font-size: 1.1rem;
             color: var(--primary-text);
@@ -2321,8 +1920,7 @@
             overflow: hidden;
         }
 
-        .tab-btn::before {
-            /* Shimmer effect */
+        .tab-btn::before { /* Shimmer effect */
             content: '';
             position: absolute;
             top: 0;
@@ -2336,8 +1934,7 @@
         .tab-btn.active {
             background-color: var(--accent-color);
             color: white;
-            box-shadow: var(--button-shadow);
-            /* Use button shadow */
+            box-shadow: var(--button-shadow); /* Use button shadow */
             transform: translateY(-2px);
         }
 
@@ -2352,116 +1949,51 @@
 
         .tab-content {
             display: none;
-            /* animation: fadeIn 0.5s ease; */
-            /* Let JS handle fade if needed */
+            /* animation: fadeIn 0.5s ease; */ /* Let JS handle fade if needed */
         }
 
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.5s ease;
-            /* Keep fade in for content switch */
+            animation: fadeIn 0.5s ease; /* Keep fade in for content switch */
         }
 
         /* Responsive Design - Adjusted Breakpoints */
         @media (max-width: 1068px) {
             html {
-                font-size: 93.75%;
-                /* 15px */
+                font-size: 93.75%; /* 15px */
             }
-
-            .container {
-                padding: 0 30px;
-            }
-
-            /* Slightly more padding */
+            .container { padding: 0 30px; } /* Slightly more padding */
             /* Removed specific h1, h2 overrides */
-            header {
-                min-height: auto;
-                padding: 120px 0 80px 0;
-            }
-
-            /* Adjust padding */
+            header { min-height: auto; padding: 120px 0 80px 0; } /* Adjust padding */
             /* Removed specific header h1, p overrides */
             /* Removed specific week-header h2 override */
             /* Removed specific topics h3 override */
-            .algo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 30px;
-            }
-
-            .footer-content {
-                justify-content: space-around;
-            }
+            .algo-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+            .footer-content { justify-content: space-around; }
         }
 
         @media (max-width: 768px) {
-            html {
-                font-size: 81.25%;
-                /* 13px */
-            }
-
-            .container {
-                padding: 0 20px;
-            }
-
+             html {
+                 font-size: 81.25%; /* 13px */
+             }
+             .container { padding: 0 20px; }
             /* Removed specific h1, h2 overrides */
-            header {
-                padding: 100px 0 60px 0;
-            }
-
+            header { padding: 100px 0 60px 0; }
             /* Removed specific header h1, p overrides */
             /* Removed specific week-header h2 override */
             /* Removed specific topics h3 override */
-            .algo-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            /* Single column, less gap */
-            .topics ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
-            /* Stack topics */
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .footer-section {
-                margin-bottom: 30px;
-                padding: 0 10px;
-            }
-
-            .footer-section h3,
-            .copyright {
-                text-align: center;
-            }
-
-            .theme-toggle {
-                width: 50px;
-                height: 50px;
-            }
-
-            /* Slightly smaller toggle */
-            .scroll-top {
-                width: 45px;
-                height: 45px;
-                bottom: 20px;
-                right: 20px;
-            }
-
-            /* Adjust scroll top */
+            .algo-grid { grid-template-columns: 1fr; gap: 25px; } /* Single column, less gap */
+            .topics ul { flex-direction: column; align-items: center; gap: 10px; } /* Stack topics */
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-section { margin-bottom: 30px; padding: 0 10px; }
+            .footer-section h3, .copyright { text-align: center; }
+            .theme-toggle { width: 50px; height: 50px; } /* Slightly smaller toggle */
+            .scroll-top { width: 45px; height: 45px; bottom: 20px; right: 20px; } /* Adjust scroll top */
         }
 
         /* Add spacing for heading icons */
-        h1 i.icon-margin,
-        h2 i.icon-margin,
-        h3 i.icon-margin {
-            margin-right: 12px;
-            /* Consistent spacing */
+        h1 i.icon-margin, h2 i.icon-margin, h3 i.icon-margin {
+            margin-right: 12px; /* Consistent spacing */
         }
 
         /* Info Section below Header */
@@ -2477,8 +2009,7 @@
         .info-section .container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
-            /* Adjust alignment */
+            justify-content: space-around; /* Adjust alignment */
             /* align-items: center; Removed to allow stretch */
             gap: 30px;
         }
@@ -2488,33 +2019,24 @@
             padding: 25px 30px;
             border-radius: var(--card-radius);
             box-shadow: var(--card-shadow);
-            flex: 1 0 0;
-            /* Ensure equal width distribution */
-            min-width: 300px;
-            /* Ensure blocks don't get too small */
-            max-width: 450px;
-            /* Limit max width */
-            text-align: center;
-            /* Ensure text is centered */
+            flex: 1 0 0; /* Ensure equal width distribution */
+            min-width: 300px; /* Ensure blocks don't get too small */
+            max-width: 450px; /* Limit max width */
+            text-align: center; /* Ensure text is centered */
             transition: background-color var(--theme-transition), box-shadow var(--theme-transition);
             display: flex;
             align-items: center;
-            justify-content: center;
-            /* Center icon and content horizontally */
-            gap: 20px;
-            /* Increased gap */
-            height: 100%;
-            /* Added to ensure block stretches */
+            justify-content: center; /* Center icon and content horizontally */
+            gap: 20px; /* Increased gap */
+            height: 100%; /* Added to ensure block stretches */
             min-height: 170px;
         }
 
         .info-block i {
-            font-size: 2rem;
-            /* Slightly larger icon */
+            font-size: 2rem; /* Slightly larger icon */
             color: var(--accent-color);
             transition: color var(--theme-transition);
-            flex-shrink: 0;
-            /* Prevent icon from shrinking */
+            flex-shrink: 0; /* Prevent icon from shrinking */
         }
 
         .info-block p {
@@ -2525,11 +2047,10 @@
         }
 
         /* Style the div wrapper created by JS for mentorship */
-        .info-block>div {
+        .info-block > div {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            /* Center text and button */
+            align-items: center; /* Center text and button */
             gap: 10px;
             text-align: center;
         }
@@ -2543,15 +2064,12 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-
             .info-block {
-                max-width: none;
-                /* Allow full width on small screens */
+                 max-width: none; /* Allow full width on small screens */
             }
         }
     </style>
 </head>
-
 <body>
     <!-- Dark Mode Toggle Button -->
     <div class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -2589,17 +2107,16 @@
         <div class="ripple-effect"></div>
 
         <div class="container">
-            <img src="public/logo.svg" alt="Creative Icon"
-                style="width: 10em; height: 10em; vertical-align: -0.15em; margin-right: 0.3em;">
+            <img src="public/logo.svg" alt="Creative Icon" style="width: 10em; height: 10em; vertical-align: -0.15em; margin-right: 0.3em;">
             <h1>Algorithms & Data Structures</h1>
             <h3><i class="fas fa-code icon-margin"></i>Osama Zinhom</h3>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
                 <a href="#weeks" class="btn">Explore the Roadmap <i class="fas fa-arrow-right"></i></a>
-
+                
             </div>
         </div>
 
-
+        
     </header>
 
     <!-- Info Section -->
@@ -2616,14 +2133,13 @@
 
     <main class="container" id="weeks">
         <section id="week1" class="week-container">
-
+            
 
             <div class="algo-grid">
                 <div class="algo-card">
                     <div class="algo-card-header">Binary Search</div>
                     <div class="algo-card-body">
-                        <p>Visualize the efficiency of binary search in sorted datasets. Step through interactive
-                            examples to understand its logarithmic time complexity and practical applications.</p>
+                        <p>Visualize the efficiency of binary search in sorted datasets. Step through interactive examples to understand its logarithmic time complexity and practical applications.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(log n)</div>
                             <div><span>Space Complexity:</span> O(1)</div>
@@ -2639,17 +2155,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week1/binary_search.html" class="btn"><i class="fas fa-search"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Selection Sort</div>
                     <div class="algo-card-body">
-                        <p>Grasp the fundamentals of sorting algorithms with Selection Sort. Observe its step-by-step
-                            process and analyze its quadratic time complexity in action.</p>
+                        <p>Grasp the fundamentals of sorting algorithms with Selection Sort. Observe its step-by-step process and analyze its quadratic time complexity in action.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n²)</div>
                             <div><span>Space Complexity:</span> O(1)</div>
@@ -2664,19 +2177,15 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/selection_sort.html" class="btn"><i class="fas fa-sort-amount-up"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week1/selection_sort.html" class="btn"><i class="fas fa-sort-amount-up"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Recursion in Action</div>
                     <div class="algo-card-body">
-                        <p>Explore the power of recursion through interactive examples. Understand how recursive
-                            functions work and visualize the call stack in action.</p>
+                        <p>Explore the power of recursion through interactive examples. Understand how recursive functions work and visualize the call stack in action.</p>
                         <div class="features">
                             <h4>Key Features</h4>
                             <ul>
@@ -2688,17 +2197,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week1/recursion_examples.html" class="btn"><i class="fas fa-redo"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Big O Complexity</div>
                     <div class="algo-card-body">
-                        <p>Visually compare different time complexities and their growth rates. Gain an intuitive
-                            understanding of Big O notation and its importance in algorithm analysis.</p>
+                        <p>Visually compare different time complexities and their growth rates. Gain an intuitive understanding of Big O notation and its importance in algorithm analysis.</p>
                         <div class="features">
                             <h4>Key Features</h4>
                             <ul>
@@ -2709,11 +2215,8 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week1/big_o_visualization.html" class="btn"><i class="fas fa-tachometer-alt"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week1/big_o_visualization.html" class="btn"><i class="fas fa-tachometer-alt"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
@@ -2724,8 +2227,7 @@
                 <div class="algo-card">
                     <div class="algo-card-header">Array Operations</div>
                     <div class="algo-card-body">
-                        <p>Explore array operations and their performance characteristics. Visualize access, insertion,
-                            and deletion to understand array efficiency and limitations.</p>
+                        <p>Explore array operations and their performance characteristics. Visualize access, insertion, and deletion to understand array efficiency and limitations.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(1) Access, O(n) Insert/Delete</div>
                             <div><span>Space Complexity:</span> O(n)</div>
@@ -2741,17 +2243,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week2/array_operations.html" class="btn"><i class="fas fa-table"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Linked Lists</div>
                     <div class="algo-card-body">
-                        <p>Implement and visualize linked lists, a dynamic data structure. Compare singly and doubly
-                            linked lists and understand their advantages over arrays.</p>
+                        <p>Implement and visualize linked lists, a dynamic data structure. Compare singly and doubly linked lists and understand their advantages over arrays.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(1) Insert/Delete (known), O(n) Search</div>
                             <div><span>Space Complexity:</span> O(n)</div>
@@ -2767,17 +2266,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week2/linked_list.html" class="btn"><i class="fas fa-link"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Divide & Conquer Recursion</div>
                     <div class="algo-card-body">
-                        <p>Master divide and conquer algorithms using recursion. Visualize Merge Sort and understand how
-                            breaking problems down leads to efficient solutions.</p>
+                        <p>Master divide and conquer algorithms using recursion. Visualize Merge Sort and understand how breaking problems down leads to efficient solutions.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n log n) Merge Sort</div>
                             <div><span>Space Complexity:</span> O(n) Merge Sort</div>
@@ -2792,19 +2288,15 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week2/recursive_divide_conquer.html" class="btn"><i class="fas fa-object-ungroup"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week2/recursive_divide_conquer.html" class="btn"><i class="fas fa-object-ungroup"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Memory Visualization</div>
                     <div class="algo-card-body">
-                        <p>Visualize memory allocation for different data structures. Compare contiguous and linked
-                            memory and understand memory fragmentation and usage patterns.</p>
+                        <p>Visualize memory allocation for different data structures. Compare contiguous and linked memory and understand memory fragmentation and usage patterns.</p>
                         <div class="features">
                             <h4>Key Features</h4>
                             <ul>
@@ -2816,23 +2308,20 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week2/memory_visualization.html" class="btn"><i class="fas fa-memory"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="week3" class="week-container">
-
+            
 
             <div class="algo-grid">
                 <div class="algo-card">
                     <div class="algo-card-header">Quicksort Visualization</div>
                     <div class="algo-card-body">
-                        <p>Visualize Quicksort, a highly efficient sorting algorithm. Observe its partitioning process
-                            and analyze its average and worst-case time complexities.</p>
+                        <p>Visualize Quicksort, a highly efficient sorting algorithm. Observe its partitioning process and analyze its average and worst-case time complexities.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n log n) Avg, O(n²) Worst</div>
                             <div><span>Space Complexity:</span> O(log n)</div>
@@ -2848,17 +2337,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week3/quicksort_visualization.html" class="btn"><i class="fas fa-sort"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Hash Tables</div>
                     <div class="algo-card-body">
-                        <p>Implement and visualize Hash Tables and their key operations. Understand hash functions,
-                            collision resolution, and the efficiency of hash-based data retrieval.</p>
+                        <p>Implement and visualize Hash Tables and their key operations. Understand hash functions, collision resolution, and the efficiency of hash-based data retrieval.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(1) Avg, O(n) Worst (Insert/Search/Delete)</div>
                             <div><span>Space Complexity:</span> O(n)</div>
@@ -2874,17 +2360,14 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week3/hash_table.html" class="btn"><i class="fas fa-hashtag"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Graph Representations</div>
                     <div class="algo-card-body">
-                        <p>Compare different graph representations in data structures. Visualize adjacency lists and
-                            matrices and understand their trade-offs in space and time.</p>
+                        <p>Compare different graph representations in data structures. Visualize adjacency lists and matrices and understand their trade-offs in space and time.</p>
                         <div class="features">
                             <h4>Key Features</h4>
                             <ul>
@@ -2895,18 +2378,14 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week3/graph_representation.html" class="btn"><i class="fas fa-project-diagram"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week3/graph_representation.html" class="btn"><i class="fas fa-project-diagram"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
                 <div class="algo-card">
                     <div class="algo-card-header">Graph Traversal (BFS & DFS)</div>
                     <div class="algo-card-body">
-                        <p>Visualize graph traversal algorithms, Breadth-First Search (BFS) and Depth-First Search
-                            (DFS). Step through animations and understand their pathfinding strategies.</p>
+                        <p>Visualize graph traversal algorithms, Breadth-First Search (BFS) and Depth-First Search (DFS). Step through animations and understand their pathfinding strategies.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(V + E) (BFS & DFS)</div>
                             <div><span>Space Complexity:</span> O(V)</div>
@@ -2922,23 +2401,19 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week3/graph_traversal.html" class="btn"><i class="fas fa-route"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
         </section>
-
         <section id="week4" class="week-container">
-
+            
 
             <div class="algo-grid">
                 <div class="algo-card">
                     <div class="algo-card-header">Greedy Algorithms</div>
                     <div class="algo-card-body">
-                        <p>Visualize greedy algorithms and their decision-making processes. Understand how locally
-                            optimal choices can lead to efficient, though not always perfect, solutions.</p>
+                        <p>Visualize greedy algorithms and their decision-making processes. Understand how locally optimal choices can lead to efficient, though not always perfect, solutions.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> Varies (O(n log n) common)</div>
                             <div><span>Space Complexity:</span> O(n)</div>
@@ -2953,19 +2428,15 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/greedy_algorithms.html" class="btn"><i class="fas fa-hand-holding-usd"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week4/greedy_algorithms.html" class="btn"><i class="fas fa-hand-holding-usd"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Dynamic Programming</div>
                     <div class="algo-card-body">
-                        <p>Visualize Dynamic Programming solutions and subproblem structures. Master techniques like
-                            memoization and tabulation for solving complex optimization problems.</p>
+                        <p>Visualize Dynamic Programming solutions and subproblem structures. Master techniques like memoization and tabulation for solving complex optimization problems.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> Varies (O(n²) common)</div>
                             <div><span>Space Complexity:</span> O(n) - O(n²)</div>
@@ -2980,19 +2451,15 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/dynamic_programming.html" class="btn"><i class="fas fa-layer-group"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week4/dynamic_programming.html" class="btn"><i class="fas fa-layer-group"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">Knapsack Problem</div>
                     <div class="algo-card-body">
-                        <p>Solve the classic Knapsack Problem interactively. Explore greedy and dynamic programming
-                            approaches and visualize weight-value trade-offs.</p>
+                        <p>Solve the classic Knapsack Problem interactively. Explore greedy and dynamic programming approaches and visualize weight-value trade-offs.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n*W)</div>
                             <div><span>Space Complexity:</span> O(n*W)</div>
@@ -3007,19 +2474,15 @@
                         </div>
                     </div>
                     <div class="algo-card-footer">
-                        <a href="Week4/knapsack_problem.html" class="btn"><i class="fas fa-shopping-bag"></i>
-                            Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="Week4/knapsack_problem.html" class="btn"><i class="fas fa-shopping-bag"></i> Explore</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
 
                 <div class="algo-card">
                     <div class="algo-card-header">K-Nearest Neighbors (KNN)</div>
                     <div class="algo-card-body">
-                        <p>Implement the K-Nearest Neighbors algorithm for classification tasks. Visualize distance
-                            metrics and parameter tuning in this fundamental machine learning algorithm.</p>
+                        <p>Implement the K-Nearest Neighbors algorithm for classification tasks. Visualize distance metrics and parameter tuning in this fundamental machine learning algorithm.</p>
                         <div class="complexity">
                             <div><span>Time Complexity:</span> O(n*d) Prediction</div>
                             <div><span>Space Complexity:</span> O(n)</div>
@@ -3035,9 +2498,7 @@
                     </div>
                     <div class="algo-card-footer">
                         <a href="Week4/knn_classifier.html" class="btn"><i class="fas fa-users-cog"></i> Explore</a>
-                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                            class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i
-                                class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
+                        <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" class="btn btn-whatsapp pulse-effect" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Get Personalized Mentorship</a>
                     </div>
                 </div>
             </div>
@@ -3049,13 +2510,11 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3><i class="fas fa-code-branch icon-margin"></i>About This Repository</h3>
-                    <p>A project dedicated to making algorithms and data structures accessible and understandable
-                        through interactive visualizations. Inspired by "Grokking Algorithms".</p>
+                    <p>A project dedicated to making algorithms and data structures accessible and understandable through interactive visualizations. Inspired by "Grokking Algorithms".</p>
                     <div class="social-icons" style="margin-top: 20px; display: flex; gap: 20px;">
                         <a href="#" aria-label="GitHub" style="font-size: 1.5rem;"><i class="fab fa-github"></i></a>
                         <a href="#" aria-label="LinkedIn" style="font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
-                        <a href="./test.html" aria-label="Twitter" style="font-size: 1.5rem;"><i
-                                class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Twitter" style="font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
 
@@ -3063,14 +2522,12 @@
                     <h3><i class="fas fa-compass icon-margin"></i>Explore More</h3>
                     <ul>
                         <li>
-                            <a href="https://edu.anarcho-copy.org/Algorithm/grokking-algorithms-illustrated-programmers-curious.pdf"
-                                target="_blank" rel="noopener noreferrer">
+                            <a href="https://edu.anarcho-copy.org/Algorithm/grokking-algorithms-illustrated-programmers-curious.pdf" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-book"></i>Grokking Algorithms Book
                             </a>
                         </li>
                         <li>
-                            <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0"
-                                target="_blank" rel="noopener noreferrer">
+                            <a href="https://api.whatsapp.com/send/?phone=201116771405&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-whatsapp icon-margin"></i>Get a Mentorship
                             </a>
                         </li>
@@ -3119,9 +2576,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 Algorithms Learning | Designed with <i class="fas fa-heart"
-                        style="color: #ff6b6b; margin: 0 3px;"></i> by <a
-                        href="https://www.linkedin.com/in/ozidan/">Osama</a></p>
+                <p>&copy; 2025 Algorithms Learning | Designed with <i class="fas fa-heart" style="color: #ff6b6b; margin: 0 3px;"></i> by <a href="https://www.linkedin.com/in/ozidan/">Osama</a></p>
             </div>
         </div>
     </footer>
@@ -3131,7 +2586,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Dark mode functionality - Simplified
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = themeToggle.querySelector('i');
@@ -3191,9 +2646,9 @@
             // Section animations - Using Intersection Observer with CSS classes
             const sections = document.querySelectorAll('.week-container');
             const observerOptions = {
-                root: null, // relative to document viewport
-                rootMargin: '0px',
-                threshold: 0.1 // Trigger when 10% of the element is visible
+                 root: null, // relative to document viewport
+                 rootMargin: '0px',
+                 threshold: 0.1 // Trigger when 10% of the element is visible
             };
 
             const observerCallback = (entries, observer) => {
@@ -3240,15 +2695,15 @@
 
             // Smooth scroll for anchor links (keep existing logic)
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
+                anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
-                        // Basic offset calculation (adjust if you have a fixed header)
-                        const headerOffset = 80; // Estimate header height
-                        const elementPosition = targetElement.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                         // Basic offset calculation (adjust if you have a fixed header)
+                         const headerOffset = 80; // Estimate header height
+                         const elementPosition = targetElement.getBoundingClientRect().top;
+                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
                         window.scrollTo({
                             top: offsetPosition,
@@ -3315,5 +2770,4 @@
         });
     </script>
 </body>
-
 </html>

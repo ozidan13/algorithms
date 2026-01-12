@@ -1,712 +1,557 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recursion Examples</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/global-algo.css">
+  <title>Recursion | التكرار الذاتي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', indigo: '#6366F1' },
+            dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+          },
+          fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+        }
+      }
+    }
+  </script>
   <style>
-    .visualization {
-      border: 1px solid var(--border-color);
-      border-radius: var(--card-radius);
-      padding: 15px;
-      margin-top: 20px;
-      min-height: 150px;
-      position: relative;
-      background-color: var(--background-alt);
-      transition: var(--theme-transition);
+    body {
+      background: #020617;
+      color: #E2E8F0;
+      overflow-x: hidden;
     }
-    .call-tree {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace;
-      font-size: 0.9rem;
-      line-height: 1.5;
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .call-node {
-      padding: 5px 10px;
-      background-color: var(--secondary-text);
-      color: var(--background-main);
-      border-radius: 6px;
-      margin: 3px 0;
-      transition: all 0.3s ease;
-      white-space: nowrap;
+
+    .text-gradient {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .call-node.active {
-      background-color: var(--color-high);
+
+    .rtl-block {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .call-box {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-family: 'Fira Code';
+      font-size: 0.85rem;
+      margin: 6px 0;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .call-box.active {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
       color: white;
-      transform: scale(1.05);
-      font-weight: bold;
+      border-color: #818CF8;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    .call-node.completed {
-      background-color: var(--color-found);
+
+    .call-box.returned {
+      background: #10B981;
       color: white;
+      border-color: #34D399;
     }
-    .call-node.base {
-        background-color: var(--color-low);
-        color: white;
-    }
-    .call-node.memo {
-        background-color: var(--color-mid);
-        color: white;
-        font-style: italic;
-    }
-    .call-node[style*="margin-left"] {
-        position: relative;
-    }
-    .call-node[style*="margin-left"]:not(:first-child)::before {
-        content: '';
-        position: absolute;
-        left: -10px;
-        top: 50%;
-        width: 10px;
-        height: 1px;
-        background-color: var(--border-color);
+
+    .call-box.waiting {
+      background: #1E293B;
+      color: #94a3b8;
+      border-color: #334155;
     }
   </style>
 </head>
-<body data-theme="dark">
-  <a href="../index.html#week1" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-  <h1><i class="fas fa-redo icon-margin"></i>Recursion Examples</h1>
-  
-  <!-- Introduction -->
-  <div class="container">
-    <h2><i class="fas fa-info-circle icon-margin"></i>What is Recursion?</h2>
-    <div class="explanation">
-      <p>Recursion is a programming technique where a function calls itself to solve a problem. It consists of:</p>
-      <ol>
-        <li><strong>Base case:</strong> The condition that stops the recursion</li>
-        <li><strong>Recursive case:</strong> The function calling itself with a simpler version of the problem</li>
-      </ol>
-      <p>Recursion is particularly useful for problems that can be broken down into smaller, similar subproblems.</p>
+<body>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+    <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="../index.html#week1" class="flex items-center gap-3 hover:opacity-80 transition">
+        <div
+          class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
+          <i class="fas fa-arrow-left text-sm"></i></div>
+        <span class="font-bold text-lg"><span class="text-indigo-500">Recursion</span></span>
+      </a>
     </div>
-  </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[128px] pointer-events-none">
+    </div>
+    <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-indigo-400 mb-6">
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+        WEEK 1 • مفهوم أساسي
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Recursion</span></h1>
+      <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">التكرار الذاتي</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">A function that calls itself to solve smaller instances of the
+        same problem.</p>
+    </div>
+  </header>
+
+  <!-- What is Recursion Section -->
+  <section id="concept" class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-lightbulb text-yellow-500 mr-3"></i>إيه هو
+        الـ Recursion؟</h2>
+
+      <div class="glass-card p-8 rounded-2xl border border-indigo-900/50 mb-12" data-aos="fade-up">
+        <div class="rtl-block">
+          <h3 class="text-2xl font-bold text-indigo-400 mb-6 font-arabic">🔄 الفكرة الأساسية</h3>
+
+          <div class="space-y-6 text-lg leading-loose font-arabic">
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه المرايا</h4>
+              <p class="text-slate-300">
+                تخيل إنك واقف بين مرايتين متقابلتين... هتشوف <span class="text-indigo-400 font-bold">انعكاس جوه انعكاس
+                  جوه انعكاس</span>... لانهاية!
+              </p>
+              <p class="text-slate-300 mt-3">
+                الـ Recursion نفس الفكرة: <span class="text-yellow-400 font-bold">Function بتنادي نفسها</span>، بس لازم
+                يكون فيه <span class="text-red-400 font-bold">نقطة توقف</span>!
+              </p>
+            </div>
+
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-emerald-400 mb-3">⚙️ العناصر الأساسية</h4>
+              <div class="grid md:grid-cols-2 gap-4 mt-4">
+                <div class="p-4 bg-red-950/30 rounded-lg border border-red-700">
+                  <div class="text-2xl mb-2">🛑</div>
+                  <h5 class="text-red-400 font-bold">Base Case (حالة التوقف)</h5>
+                  <p class="text-sm text-slate-400 mt-1">الشرط اللي يخلي الـ function توقف عن نداء نفسها</p>
+                  <p class="text-xs text-red-300 mt-2">⚠️ من غيرها = Stack Overflow!</p>
+                </div>
+                <div class="p-4 bg-indigo-950/30 rounded-lg border border-indigo-700">
+                  <div class="text-2xl mb-2">🔄</div>
+                  <h5 class="text-indigo-400 font-bold">Recursive Case</h5>
+                  <p class="text-sm text-slate-400 mt-1">الـ function بتنادي نفسها بـ input أصغر</p>
+                  <p class="text-xs text-indigo-300 mt-2">لازم نقرب من الـ Base Case!</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-cyan-400 mb-3">📚 الـ Call Stack</h4>
+              <p class="text-slate-300">
+                كل مرة الـ function بتنادي نفسها، الكمبيوتر بيحفظ الحالة الحالية في <span
+                  class="text-cyan-400 font-bold">Call Stack</span> (زي كومة أطباق).
+              </p>
+              <ul class="mt-3 space-y-2 text-slate-300 text-sm">
+                <li>• كل نداء جديد → <span class="text-blue-400">طبق جديد فوق الكومة</span></li>
+                <li>• لما الـ function ترجع → <span class="text-emerald-400">نشيل الطبق من فوق</span></li>
+                <li>• لو الكومة تكبر أوي → <span class="text-red-400">Stack Overflow! 💥</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Example 1: Factorial -->
+  <section class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-hashtag text-indigo-500 mr-3"></i>Example 1:
+        Factorial</h2>
+      <p class="text-center text-slate-400 font-arabic mb-12">مثال: حساب المضروب (Factorial)</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Explanation -->
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-right">
+          <div class="rtl-block">
+            <h3 class="text-xl font-bold text-yellow-400 mb-4 font-arabic">📐 إيه هو الـ Factorial؟</h3>
+            <div class="space-y-4 font-arabic">
+              <p class="text-slate-300">
+                <span class="text-indigo-400 font-mono">n!</span> = ضرب كل الأرقام من 1 لـ n
+              </p>
+              <div class="p-4 bg-slate-900/50 rounded-xl font-mono text-center text-sm">
+                <p><span class="text-yellow-400">5!</span> = 5 × 4 × 3 × 2 × 1 = <span
+                    class="text-emerald-400">120</span></p>
+                <p class="mt-2"><span class="text-yellow-400">3!</span> = 3 × 2 × 1 = <span
+                    class="text-emerald-400">6</span></p>
+                <p class="mt-2"><span class="text-yellow-400">1!</span> = <span class="text-emerald-400">1</span></p>
+                <p class="mt-2"><span class="text-yellow-400">0!</span> = <span class="text-emerald-400">1</span>
+                  (بالتعريف)</p>
+              </div>
+
+              <h4 class="text-lg font-bold text-cyan-400 mt-6">🔄 الـ Recursive Definition</h4>
+              <div class="p-4 bg-slate-900/50 rounded-xl text-sm">
+                <p><span class="text-red-400">Base Case:</span> <code class="bg-slate-800 px-1 rounded">0! = 1</code>
+                </p>
+                <p class="mt-2"><span class="text-indigo-400">Recursive:</span> <code
+                    class="bg-slate-800 px-1 rounded">n! = n × (n-1)!</code></p>
+              </div>
+
+              <p class="text-sm text-slate-400 mt-4">
+                <span class="text-yellow-400">5!</span> = 5 × <span class="text-indigo-400">4!</span>
+                <br>
+                <span class="text-indigo-400">4!</span> = 4 × <span class="text-indigo-400">3!</span>
+                <br>
+                ... وهكذا لحد ما نوصل لـ 0!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+          <h3 class="text-xl font-bold text-indigo-400 mb-4">Try It: Factorial</h3>
+          <div class="flex gap-3 mb-4">
+            <input type="number" id="fact-input" value="5" min="0" max="12"
+              class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-20 text-center">
+            <button id="fact-btn"
+              class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-500 transition">Calculate</button>
+            <button id="fact-step-btn"
+              class="px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition">Step</button>
+          </div>
+          <div id="fact-stack" class="space-y-2 min-h-[200px] bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+            <p class="text-slate-500 text-center">Call Stack will appear here</p>
+          </div>
+          <div id="fact-result" class="mt-4 p-3 bg-slate-900/50 rounded-lg text-center"></div>
+        </div>
+      </div>
+
+      <!-- Code Implementation -->
+      <div class="glass-card rounded-2xl overflow-hidden mt-8" data-aos="fade-up">
+        <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+          <span class="w-3 h-3 rounded-full bg-red-500"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500"></span>
+          <span class="ml-4 font-mono text-sm text-slate-400">factorial.js</span>
+        </div>
+        <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+          <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">factorial</span>(<span class="text-orange-300">n</span>) {
+  <span class="text-slate-500">// Base Case: stop here!</span>
+  <span class="text-purple-400">if</span> (n === <span class="text-emerald-400">0</span>) {
+    <span class="text-purple-400">return</span> <span class="text-emerald-400">1</span>;
+  }
   
-  <!-- Factorial Example -->
-  <div class="container">
-    <h2><i class="fas fa-calculator icon-margin"></i>Factorial Example</h2>
-    <div class="example-container">
-      <p>The factorial of a non-negative integer <strong>n</strong> is the product of all positive integers less than or equal to <strong>n</strong>. For example: 5! = 5 × 4 × 3 × 2 × 1 = 120</p>
-      <div class="code-container">
-        <pre><code>function factorial(n) {
-  if (n === 0 || n === 1) return 1;
-  return n * factorial(n - 1);
+  <span class="text-slate-500">// Recursive Case: n! = n × (n-1)!</span>
+  <span class="text-purple-400">return</span> n * <span class="text-blue-400">factorial</span>(n - <span class="text-emerald-400">1</span>);
 }</code></pre>
+          <div class="p-6 bg-slate-900/50 rtl-block">
+            <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+            <div class="space-y-3 font-arabic text-sm">
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-red-500">
+                <span class="text-red-400 font-bold">سطر 3-4:</span>
+                الـ Base Case - لو n = 0، ارجع 1 واوقف!
+              </div>
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-indigo-500">
+                <span class="text-indigo-400 font-bold">سطر 8:</span>
+                الـ Recursive Case - اضرب n في factorial(n-1)
+              </div>
+              <div class="p-3 bg-yellow-900/20 rounded-lg border border-yellow-700">
+                <span class="text-yellow-400">⏱️ التعقيد:</span> O(n) time, O(n) space (call stack)
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="controls">
-        <label for="factorial-input">Enter a number:</label>
-        <input type="number" id="factorial-input" min="0" max="15" value="5">
-        <button id="factorial-btn"><i class="fas fa-play icon-margin"></i>Calculate Factorial</button>
-        <button id="factorial-step-btn"><i class="fas fa-step-forward icon-margin"></i>Step Through</button>
-      </div>
-      <div class="result" id="factorial-result">Result will appear here.</div>
-      <div class="step-controls">
-        <button id="factorial-prev-btn" disabled><i class="fas fa-backward icon-margin"></i>Previous Step</button>
-        <button id="factorial-next-btn" disabled><i class="fas fa-forward icon-margin"></i>Next Step</button>
-      </div>
-      <div class="visualization" id="factorial-visualization">
-        <div class="call-tree" id="factorial-tree">Call stack visualization will appear here.</div>
-      </div>
-      <div class="log" id="factorial-log"><p>Logs will appear here.</p></div>
     </div>
-  </div>
-  
-  <!-- Fibonacci Example -->
-  <div class="container">
-    <h2><i class="fas fa-project-diagram icon-margin"></i>Fibonacci Sequence Example</h2>
-    <div class="example-container">
-      <p>The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, starting from 0 and 1. For example: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</p>
-      <div class="code-container">
-        <pre><code>function fibonacci(n) {
-  if (n === 0) return 0;
-  if (n === 1) return 1;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+  </section>
+
+  <!-- Example 2: Fibonacci -->
+  <section class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-seedling text-emerald-500 mr-3"></i>Example
+        2: Fibonacci</h2>
+      <p class="text-center text-slate-400 font-arabic mb-12">مثال: متتالية فيبوناتشي</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Explanation -->
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-right">
+          <div class="rtl-block">
+            <h3 class="text-xl font-bold text-emerald-400 mb-4 font-arabic">🌿 إيه هي متتالية Fibonacci؟</h3>
+            <div class="space-y-4 font-arabic">
+              <p class="text-slate-300">
+                كل رقم = مجموع الرقمين اللي قبله
+              </p>
+              <div class="p-4 bg-slate-900/50 rounded-xl font-mono text-center">
+                <span class="text-emerald-400">0, 1, 1, 2, 3, 5, 8, 13, 21, 34...</span>
+              </div>
+
+              <div class="p-4 bg-slate-900/50 rounded-xl text-sm">
+                <p><span class="text-red-400">Base Cases:</span></p>
+                <p class="ml-4"><code class="bg-slate-800 px-1 rounded">fib(0) = 0</code></p>
+                <p class="ml-4"><code class="bg-slate-800 px-1 rounded">fib(1) = 1</code></p>
+                <p class="mt-2"><span class="text-indigo-400">Recursive:</span></p>
+                <p class="ml-4"><code class="bg-slate-800 px-1 rounded">fib(n) = fib(n-1) + fib(n-2)</code></p>
+              </div>
+
+              <div class="p-4 bg-red-950/30 rounded-xl border border-red-900">
+                <p class="text-red-400 font-bold">⚠️ تحذير!</p>
+                <p class="text-sm text-slate-300 mt-1">
+                  الـ naive recursive Fibonacci بطيء جداً: <span class="text-red-400 font-mono">O(2ⁿ)</span>!
+                  <br>
+                  لأن بيحسب نفس القيم كتير.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+          <h3 class="text-xl font-bold text-emerald-400 mb-4">Try It: Fibonacci</h3>
+          <div class="flex gap-3 mb-4">
+            <input type="number" id="fib-input" value="6" min="0" max="15"
+              class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-20 text-center">
+            <button id="fib-btn"
+              class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition">Calculate</button>
+          </div>
+          <div id="fib-tree"
+            class="min-h-[200px] bg-slate-900/50 rounded-xl p-4 border border-slate-800 overflow-x-auto">
+            <p class="text-slate-500 text-center">Recursion tree will appear here</p>
+          </div>
+          <div id="fib-result" class="mt-4 p-3 bg-slate-900/50 rounded-lg text-center"></div>
+        </div>
+      </div>
+
+      <!-- Code -->
+      <div class="glass-card rounded-2xl overflow-hidden mt-8" data-aos="fade-up">
+        <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+          <span class="w-3 h-3 rounded-full bg-red-500"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500"></span>
+          <span class="ml-4 font-mono text-sm text-slate-400">fibonacci.js</span>
+        </div>
+        <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+          <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="text-slate-500">// ⚠️ Naive approach - O(2ⁿ)</span>
+<span class="text-purple-400">function</span> <span class="text-blue-400">fib</span>(<span class="text-orange-300">n</span>) {
+  <span class="text-purple-400">if</span> (n <= <span class="text-emerald-400">1</span>) <span class="text-purple-400">return</span> n;
+  <span class="text-purple-400">return</span> <span class="text-blue-400">fib</span>(n - <span class="text-emerald-400">1</span>) + <span class="text-blue-400">fib</span>(n - <span class="text-emerald-400">2</span>);
+}
+
+<span class="text-slate-500">// ✅ Better: Memoization - O(n)</span>
+<span class="text-purple-400">function</span> <span class="text-blue-400">fibMemo</span>(<span class="text-orange-300">n</span>, memo = {}) {
+  <span class="text-purple-400">if</span> (n <= <span class="text-emerald-400">1</span>) <span class="text-purple-400">return</span> n;
+  <span class="text-purple-400">if</span> (memo[n]) <span class="text-purple-400">return</span> memo[n];
+  memo[n] = <span class="text-blue-400">fibMemo</span>(n-<span class="text-emerald-400">1</span>, memo) + <span class="text-blue-400">fibMemo</span>(n-<span class="text-emerald-400">2</span>, memo);
+  <span class="text-purple-400">return</span> memo[n];
 }</code></pre>
+          <div class="p-6 bg-slate-900/50 rtl-block">
+            <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+            <div class="space-y-3 font-arabic text-sm">
+              <div class="p-3 bg-red-900/20 rounded-lg border border-red-700">
+                <span class="text-red-400 font-bold">Naive (بطيء):</span>
+                بيحسب fib(3) مثلاً مرات كتير!
+              </div>
+              <div class="p-3 bg-emerald-900/20 rounded-lg border border-emerald-700">
+                <span class="text-emerald-400 font-bold">Memoization (سريع):</span>
+                بنحفظ النتايج اللي حسبناها في object
+              </div>
+              <div class="p-3 bg-slate-800/50 rounded-lg">
+                <span class="text-cyan-400">💡 Memoization:</span>
+                تقنية لتخزين نتايج الحسابات المتكررة
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="controls">
-        <label for="fibonacci-input">Enter a position:</label>
-        <input type="number" id="fibonacci-input" min="0" max="10" value="6">
-        <button id="fibonacci-btn"><i class="fas fa-play icon-margin"></i>Calculate Fibonacci</button>
-        <button id="fibonacci-step-btn"><i class="fas fa-step-forward icon-margin"></i>Step Through</button>
-      </div>
-      <div class="result" id="fibonacci-result">Result will appear here.</div>
-      <div class="step-controls">
-        <button id="fibonacci-prev-btn" disabled><i class="fas fa-backward icon-margin"></i>Previous Step</button>
-        <button id="fibonacci-next-btn" disabled><i class="fas fa-forward icon-margin"></i>Next Step</button>
-      </div>
-      <div class="visualization" id="fibonacci-visualization">
-        <div class="call-tree" id="fibonacci-tree">Call stack visualization will appear here.</div>
-      </div>
-      <div class="log" id="fibonacci-log"><p>Logs will appear here.</p></div>
     </div>
-  </div>
+  </section>
+
+  <!-- Example 3: Countdown -->
+  <section class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-4"><i
+          class="fa-solid fa-hourglass-half text-purple-500 mr-3"></i>Example 3: Simple Countdown</h2>
+      <p class="text-center text-slate-400 font-arabic mb-12">مثال بسيط: العد التنازلي</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-right">
+          <pre class="p-4 bg-[#0B1221] rounded-xl overflow-x-auto text-sm"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">countdown</span>(<span class="text-orange-300">n</span>) {
+  <span class="text-slate-500">// Base Case</span>
+  <span class="text-purple-400">if</span> (n <= <span class="text-emerald-400">0</span>) {
+    console.log(<span class="text-amber-300">"Blastoff! 🚀"</span>);
+    <span class="text-purple-400">return</span>;
+  }
   
-  <!-- Recursive Countdown Example -->
-  <div class="container">
-    <h2><i class="fas fa-sort-numeric-down icon-margin"></i>Recursive Countdown Example</h2>
-    <div class="example-container">
-      <p>A simple countdown function that demonstrates recursion by counting down from a given number to 1.</p>
-      <div class="code-container">
-        <pre><code>function countdown(n) {
-  if (n <= 0) return;
+  <span class="text-slate-500">// Recursive Case</span>
   console.log(n);
-  countdown(n - 1);
-}</code></pre>
-      </div>
-      <div class="controls">
-        <label for="countdown-input">Start from:</label>
-        <input type="number" id="countdown-input" min="1" max="15" value="5">
-        <button id="countdown-btn"><i class="fas fa-play icon-margin"></i>Start Countdown</button>
-        <button id="countdown-step-btn"><i class="fas fa-step-forward icon-margin"></i>Step Through</button>
-      </div>
-      <div class="result" id="countdown-result">Countdown sequence will appear here.</div>
-      <div class="step-controls">
-        <button id="countdown-prev-btn" disabled><i class="fas fa-backward icon-margin"></i>Previous Step</button>
-        <button id="countdown-next-btn" disabled><i class="fas fa-forward icon-margin"></i>Next Step</button>
-      </div>
-      <div class="visualization" id="countdown-visualization">
-        <div class="call-tree" id="countdown-tree">Call stack visualization will appear here.</div>
-      </div>
-      <div class="log" id="countdown-log"><p>Logs will appear here.</p></div>
-    </div>
-  </div>
-  
-  <script>
-    // Theme persistence
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
+  <span class="text-blue-400">countdown</span>(n - <span class="text-emerald-400">1</span>);
+}
 
-    // General log function
-    function logMessage(logElement, message, type = 'info') {
-        const p = document.createElement('p');
-        p.textContent = message;
-        p.classList.add(`log-${type}`);
-        logElement.prepend(p);
-        while (logElement.children.length > 20) {
-            logElement.removeChild(logElement.lastChild);
+<span class="text-blue-400">countdown</span>(<span class="text-emerald-400">5</span>);
+<span class="text-slate-500">// Output: 5, 4, 3, 2, 1, Blastoff! 🚀</span></code></pre>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+          <h3 class="text-xl font-bold text-purple-400 mb-4">Try It: Countdown</h3>
+          <div class="flex gap-3 mb-4">
+            <input type="number" id="count-input" value="5" min="1" max="10"
+              class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-20 text-center">
+            <button id="count-btn"
+              class="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition">Start</button>
+          </div>
+          <div id="count-display"
+            class="min-h-[150px] bg-slate-900/50 rounded-xl p-4 border border-slate-800 flex flex-wrap gap-3 justify-center items-center content-start">
+            <p class="text-slate-500">Countdown will appear here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recursion vs Iteration -->
+  <section class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-4xl">
+      <h2 class="text-4xl font-bold text-center mb-12"><i
+          class="fa-solid fa-scale-balanced text-yellow-500 mr-3"></i>Recursion vs Iteration</h2>
+
+      <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-900 text-slate-400">
+            <tr>
+              <th class="py-4 px-6 text-right rtl-block font-arabic">المقارنة</th>
+              <th class="py-4 px-6 text-center text-indigo-400">Recursion</th>
+              <th class="py-4 px-6 text-center text-emerald-400">Iteration (Loop)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-6 rtl-block font-arabic">الكود</td>
+              <td class="py-4 px-6 text-center">أنظف وأقصر عادة</td>
+              <td class="py-4 px-6 text-center">أطول أحياناً</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-6 rtl-block font-arabic">الذاكرة</td>
+              <td class="py-4 px-6 text-center text-orange-400">O(n) - Call Stack</td>
+              <td class="py-4 px-6 text-center text-emerald-400">O(1) - أقل</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-6 rtl-block font-arabic">الأداء</td>
+              <td class="py-4 px-6 text-center text-orange-400">Overhead من النداءات</td>
+              <td class="py-4 px-6 text-center text-emerald-400">أسرع عادة</td>
+            </tr>
+            <tr class="hover:bg-slate-800/30">
+              <td class="py-4 px-6 rtl-block font-arabic">أفضل لـ</td>
+              <td class="py-4 px-6 text-center">Trees, Graphs, Divide & Conquer</td>
+              <td class="py-4 px-6 text-center">Simple loops, Fixed iterations</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+    <p>Grokking Algorithms Course - Week 1</p>
+  </footer>
+
+  <script>
+    AOS.init({ duration: 800, once: true });
+
+    // Factorial Demo
+    const factStack = document.getElementById('fact-stack');
+    const factResult = document.getElementById('fact-result');
+    let factSteps = [], factStep = 0;
+
+    function genFactSteps(n) {
+      factSteps = [];
+      function build(x, depth) {
+        if (x === 0) {
+          factSteps.push({ calls: factSteps.length > 0 ? [...factSteps[factSteps.length - 1].calls] : [], returning: 0, value: 1 });
+          return 1;
         }
+        const calls = factSteps.length > 0 ? [...factSteps[factSteps.length - 1].calls, x] : [x];
+        factSteps.push({ calls: calls, active: x });
+        const result = x * build(x - 1, depth + 1);
+        factSteps.push({ calls: calls.slice(0, -1), returning: x, value: result });
+        return result;
+      }
+      build(n, 0);
     }
 
-    /* ===================== Factorial Example Script ===================== */
-    (function() {
-      const factorialInput = document.getElementById('factorial-input');
-      const factorialBtn = document.getElementById('factorial-btn');
-      const factorialStepBtn = document.getElementById('factorial-step-btn');
-      const factorialResult = document.getElementById('factorial-result');
-      const factorialPrevBtn = document.getElementById('factorial-prev-btn');
-      const factorialNextBtn = document.getElementById('factorial-next-btn');
-      const factorialTree = document.getElementById('factorial-tree');
-      const factorialLog = document.getElementById('factorial-log');
-      
-      let factorialSteps = [];
-      let factorialCurrentStep = -1;
-      
-      factorialBtn.addEventListener('click', () => {
-        const n = parseInt(factorialInput.value);
-        if (isNaN(n) || n < 0 || n > 15) {
-          factorialResult.textContent = 'Please enter a number between 0 and 15.';
+    document.getElementById('fact-btn').onclick = () => {
+      const n = parseInt(document.getElementById('fact-input').value) || 0;
+      genFactSteps(n);
+      factStep = 0;
+      const interval = setInterval(() => {
+        if (factStep >= factSteps.length) { clearInterval(interval); return; }
+        renderFactStack(factSteps[factStep]);
+        factStep++;
+      }, 500);
+    };
+
+    document.getElementById('fact-step-btn').onclick = () => {
+      const n = parseInt(document.getElementById('fact-input').value) || 0;
+      if (factSteps.length === 0) { genFactSteps(n); factStep = 0; }
+      if (factStep < factSteps.length) { renderFactStack(factSteps[factStep]); factStep++; }
+    };
+
+    function renderFactStack(state) {
+      if (!state) return;
+      let html = '';
+      if (state.returning !== undefined) {
+        html = `<div class="call-box returned text-center">factorial(${state.returning}) = ${state.value}</div>`;
+      }
+      for (let i = state.calls.length - 1; i >= 0; i--) {
+        const cls = state.calls[i] === state.active ? 'active' : 'waiting';
+        html += `<div class="call-box ${cls}">factorial(${state.calls[i]})</div>`;
+      }
+      factStack.innerHTML = html || '<p class="text-slate-500 text-center">Stack empty</p>';
+      if (state.returning !== undefined && state.calls.length === 0) {
+        factResult.innerHTML = `<span class="text-emerald-400 font-bold">Result: ${state.value}</span>`;
+      }
+    }
+
+    // Fibonacci Demo
+    document.getElementById('fib-btn').onclick = () => {
+      const n = parseInt(document.getElementById('fib-input').value) || 0;
+      let count = 0;
+      function fib(x) { count++; return x <= 1 ? x : fib(x - 1) + fib(x - 2); }
+      const result = fib(n);
+      document.getElementById('fib-tree').innerHTML = `<p class="text-center text-slate-300">fib(${n}) = <span class="text-emerald-400 font-bold">${result}</span></p><p class="text-center text-slate-500 mt-2">Recursive calls: ${count}</p>`;
+      document.getElementById('fib-result').innerHTML = `<span class="text-emerald-400">Result: ${result}</span>`;
+    };
+
+    // Countdown Demo
+    document.getElementById('count-btn').onclick = () => {
+      const n = parseInt(document.getElementById('count-input').value) || 5;
+      const display = document.getElementById('count-display');
+      display.innerHTML = '';
+      let i = n;
+      const interval = setInterval(() => {
+        if (i <= 0) {
+          const el = document.createElement('div');
+          el.className = 'px-4 py-2 bg-emerald-500 text-white font-bold rounded-lg text-xl';
+          el.textContent = '🚀 Blastoff!';
+          display.appendChild(el);
+          clearInterval(interval);
           return;
         }
-        factorialLog.innerHTML = '';
-        factorialTree.innerHTML = '';
-        logMessage(factorialLog, `Calculating factorial(${n})...`, 'info');
-        const result = factorial(n);
-        factorialResult.textContent = `${n}! = ${result}`;
-        logMessage(factorialLog, `Final result: ${result}`, 'success');
-      });
-      
-      factorialStepBtn.addEventListener('click', () => {
-        const n = parseInt(factorialInput.value);
-        if (isNaN(n) || n < 0 || n > 15) {
-          factorialResult.textContent = 'Please enter a number between 0 and 15.';
-          return;
-        }
-        factorialSteps = [];
-        factorialLog.innerHTML = '<p>Starting step-through...</p>';
-        factorialTree.innerHTML = '';
-        generateFactorialSteps(n);
-        factorialCurrentStep = 0;
-        factorialPrevBtn.disabled = true;
-        factorialNextBtn.disabled = factorialSteps.length <= 1;
-        showFactorialStep();
-      });
-      
-      factorialPrevBtn.addEventListener('click', () => {
-        if (factorialCurrentStep > 0) {
-          factorialCurrentStep--;
-          showFactorialStep();
-        }
-      });
-      
-      factorialNextBtn.addEventListener('click', () => {
-        if (factorialCurrentStep < factorialSteps.length - 1) {
-          factorialCurrentStep++;
-          showFactorialStep();
-        }
-      });
-      
-      function factorial(n) {
-        if (n === 0 || n === 1) return 1;
-        return n * factorial(n - 1);
-      }
-      
-      function generateFactorialSteps(n) {
-        factorialSteps = [];
-        generateFactorialStepsRecursive(n);
-      }
-      
-      function generateFactorialStepsRecursive(n, depth = 0, callId = `f-${Date.now()}-${Math.random()}`) {
-        const currentCallId = `${callId}-${n}`;
-        factorialSteps.push({
-          type: 'call',
-          n: n,
-          depth: depth,
-          callId: currentCallId,
-          message: `Calling factorial(${n})`
-        });
-        let result;
-        if (n === 0 || n === 1) {
-          result = 1;
-          factorialSteps.push({
-            type: 'base',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: result,
-            message: `Base case: factorial(${n}) returns 1`
-          });
-        } else {
-          const subResult = generateFactorialStepsRecursive(n - 1, depth + 1, currentCallId);
-          result = n * subResult;
-          factorialSteps.push({
-            type: 'return',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: result,
-            message: `factorial(${n}) returns ${n} * ${subResult} = ${result}`
-          });
-        }
-        return result;
-      }
-      
-      function showFactorialStep() {
-        if (factorialCurrentStep < 0 || factorialCurrentStep >= factorialSteps.length) return;
-        const step = factorialSteps[factorialCurrentStep];
-        factorialTree.innerHTML = '';
-        const activeNodes = new Set();
-        let tempDepth = -1;
-        let parentCallId = null;
-        for (let i = 0; i <= factorialCurrentStep; i++) {
-            const s = factorialSteps[i];
-            if (s.type === 'call') {
-                activeNodes.add(s.callId);
-            } else if (s.type === 'base' || s.type === 'return') {
-                activeNodes.delete(s.callId);
-            }
-        }
-
-        let currentDepthMap = {};
-        factorialSteps.slice(0, factorialCurrentStep + 1).forEach((s, idx) => {
-            const node = document.createElement('div');
-            node.className = 'call-node';
-            node.style.marginLeft = `${s.depth * 30}px`;
-
-            if (s.type === 'call') {
-                node.textContent = `factorial(${s.n}) calling...`;
-                if (activeNodes.has(s.callId) && idx === factorialCurrentStep) {
-                    node.classList.add('active');
-                }
-            } else if (s.type === 'base') {
-                node.textContent = `factorial(${s.n}) -> ${s.result} (base)`;
-                node.classList.add('base');
-                if (idx === factorialCurrentStep) node.classList.add('active');
-            } else if (s.type === 'return') {
-                node.textContent = `factorial(${s.n}) -> ${s.result}`;
-                node.classList.add('completed');
-                 if (idx === factorialCurrentStep) node.classList.add('active');
-            }
-            factorialTree.appendChild(node);
-        });
-
-        let logType = 'info';
-        if (step.type === 'base') logType = 'success';
-        if (step.type === 'return') logType = 'success';
-        logMessage(factorialLog, `Step ${factorialCurrentStep + 1}: ${step.message}`, logType);
-
-        if (factorialCurrentStep === factorialSteps.length - 1 && (step.type === 'return' || step.type === 'base')) {
-          factorialResult.textContent = `Final result: ${step.result}`;
-        } else {
-            factorialResult.textContent = 'Stepping through...';
-        }
-        factorialPrevBtn.disabled = factorialCurrentStep <= 0;
-        factorialNextBtn.disabled = factorialCurrentStep >= factorialSteps.length - 1;
-      }
-    })();
-    
-    /* ===================== Fibonacci Example Script ===================== */
-    (function() {
-      const fibonacciInput = document.getElementById('fibonacci-input');
-      const fibonacciBtn = document.getElementById('fibonacci-btn');
-      const fibonacciStepBtn = document.getElementById('fibonacci-step-btn');
-      const fibonacciResult = document.getElementById('fibonacci-result');
-      const fibonacciPrevBtn = document.getElementById('fibonacci-prev-btn');
-      const fibonacciNextBtn = document.getElementById('fibonacci-next-btn');
-      const fibonacciTree = document.getElementById('fibonacci-tree');
-      const fibonacciLog = document.getElementById('fibonacci-log');
-      
-      let fibonacciSteps = [];
-      let fibonacciCurrentStep = -1;
-      let fibonacciMemoization = {};
-      
-      fibonacciBtn.addEventListener('click', () => {
-        const n = parseInt(fibonacciInput.value);
-        if (isNaN(n) || n < 0 || n > 10) {
-          fibonacciResult.textContent = 'Please enter a number between 0 and 10.';
-          return;
-        }
-        fibonacciLog.innerHTML = '';
-        fibonacciTree.innerHTML = '';
-        logMessage(fibonacciLog, `Calculating fibonacci(${n})...`, 'info');
-        const result = fibonacci(n);
-        fibonacciResult.textContent = `fibonacci(${n}) = ${result}`;
-        logMessage(fibonacciLog, `Final result: ${result}`, 'success');
-      });
-      
-      fibonacciStepBtn.addEventListener('click', () => {
-        const n = parseInt(fibonacciInput.value);
-        if (isNaN(n) || n < 0 || n > 10) {
-          fibonacciResult.textContent = 'Please enter a number between 0 and 10.';
-          return;
-        }
-        fibonacciSteps = [];
-        fibonacciLog.innerHTML = '<p>Starting step-through...</p>';
-        fibonacciTree.innerHTML = '';
-        fibonacciMemoization = {};
-        generateFibonacciSteps(n);
-        fibonacciCurrentStep = 0;
-        fibonacciPrevBtn.disabled = true;
-        fibonacciNextBtn.disabled = fibonacciSteps.length <= 1;
-        showFibonacciStep();
-      });
-      
-      fibonacciPrevBtn.addEventListener('click', () => {
-        if (fibonacciCurrentStep > 0) {
-          fibonacciCurrentStep--;
-          showFibonacciStep();
-        }
-      });
-      
-      fibonacciNextBtn.addEventListener('click', () => {
-        if (fibonacciCurrentStep < fibonacciSteps.length - 1) {
-          fibonacciCurrentStep++;
-          showFibonacciStep();
-        }
-      });
-      
-      function fibonacci(n) {
-        if (n === 0) return 0;
-        if (n === 1) return 1;
-        return fibonacci(n - 1) + fibonacci(n - 2);
-      }
-      
-      function generateFibonacciSteps(n) {
-        fibonacciSteps = [];
-        fibonacciMemoization = {};
-        generateFibonacciStepsRecursive(n);
-      }
-      
-      function generateFibonacciStepsRecursive(n, depth = 0, callId = `fib-${Date.now()}-${Math.random()}`) {
-        const currentCallId = `${callId}-${n}`;
-        if (fibonacciMemoization[n] !== undefined) {
-          fibonacciSteps.push({
-            type: 'memo',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: fibonacciMemoization[n],
-            message: `Memoized: fibonacci(${n}) = ${fibonacciMemoization[n]}`
-          });
-          return fibonacciMemoization[n];
-        }
-        fibonacciSteps.push({
-          type: 'call',
-          n: n,
-          depth: depth,
-          callId: currentCallId,
-          message: `Calling fibonacci(${n})`
-        });
-        let result;
-        if (n === 0) {
-          result = 0;
-          fibonacciSteps.push({
-            type: 'base',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: result,
-            message: `Base case: fibonacci(0) returns 0`
-          });
-        } else if (n === 1) {
-          result = 1;
-          fibonacciSteps.push({
-            type: 'base',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: result,
-            message: `Base case: fibonacci(1) returns 1`
-          });
-        } else {
-          const subResult1 = generateFibonacciStepsRecursive(n - 1, depth + 1, currentCallId + '- L');
-          const subResult2 = generateFibonacciStepsRecursive(n - 2, depth + 1, currentCallId + '- R');
-          result = subResult1 + subResult2;
-          fibonacciSteps.push({
-            type: 'return',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            result: result,
-            message: `fibonacci(${n}) returns ${subResult1} + ${subResult2} = ${result}`
-          });
-        }
-        fibonacciMemoization[n] = result;
-        return result;
-      }
-      
-      function showFibonacciStep() {
-        if (fibonacciCurrentStep < 0 || fibonacciCurrentStep >= fibonacciSteps.length) return;
-        const step = fibonacciSteps[fibonacciCurrentStep];
-        fibonacciTree.innerHTML = '';
-        const activeNodes = new Set();
-        for (let i = 0; i <= fibonacciCurrentStep; i++) {
-            const s = fibonacciSteps[i];
-            if (s.type === 'call') {
-                activeNodes.add(s.callId);
-            } else if (s.type === 'base' || s.type === 'return' || s.type === 'memo') {
-                activeNodes.delete(s.callId);
-            }
-        }
-
-        fibonacciSteps.slice(0, fibonacciCurrentStep + 1).forEach((s, idx) => {
-            const node = document.createElement('div');
-            node.className = 'call-node';
-            node.style.marginLeft = `${s.depth * 30}px`;
-
-            if (s.type === 'call') {
-                 node.textContent = `fib(${s.n}) calling...`;
-                 if (activeNodes.has(s.callId) && idx === fibonacciCurrentStep) {
-                    node.classList.add('active');
-                 }
-            } else if (s.type === 'base') {
-                node.textContent = `fib(${s.n}) -> ${s.result} (base)`;
-                node.classList.add('base');
-                 if (idx === fibonacciCurrentStep) node.classList.add('active');
-            } else if (s.type === 'return') {
-                node.textContent = `fib(${s.n}) -> ${s.result}`;
-                node.classList.add('completed');
-                 if (idx === fibonacciCurrentStep) node.classList.add('active');
-            } else if (s.type === 'memo') {
-                node.textContent = `fib(${s.n}) -> ${s.result} (memo)`;
-                node.classList.add('memo');
-                 if (idx === fibonacciCurrentStep) node.classList.add('active');
-            }
-            fibonacciTree.appendChild(node);
-        });
-
-        let logType = 'info';
-        if (step.type === 'base') logType = 'success';
-        if (step.type === 'return') logType = 'success';
-        if (step.type === 'memo') logType = 'info';
-        logMessage(fibonacciLog, `Step ${fibonacciCurrentStep + 1}: ${step.message}`, logType);
-
-        if (fibonacciCurrentStep === fibonacciSteps.length - 1 && (step.type === 'return' || step.type === 'base' || step.type === 'memo')) {
-          fibonacciResult.textContent = `Final result: ${step.result}`;
-        } else {
-             fibonacciResult.textContent = 'Stepping through...';
-        }
-        fibonacciPrevBtn.disabled = fibonacciCurrentStep <= 0;
-        fibonacciNextBtn.disabled = fibonacciCurrentStep >= fibonacciSteps.length - 1;
-      }
-    })();
-    
-    /* ===================== Countdown Example Script ===================== */
-    (function() {
-      const countdownInput = document.getElementById('countdown-input');
-      const countdownBtn = document.getElementById('countdown-btn');
-      const countdownStepBtn = document.getElementById('countdown-step-btn');
-      const countdownResult = document.getElementById('countdown-result');
-      const countdownPrevBtn = document.getElementById('countdown-prev-btn');
-      const countdownNextBtn = document.getElementById('countdown-next-btn');
-      const countdownTree = document.getElementById('countdown-tree');
-      const countdownLog = document.getElementById('countdown-log');
-      
-      let countdownSteps = [];
-      let countdownCurrentStep = -1;
-      
-      countdownBtn.addEventListener('click', () => {
-        const n = parseInt(countdownInput.value);
-        if (isNaN(n) || n < 1 || n > 15) {
-          countdownResult.textContent = 'Please enter a number between 1 and 15.';
-          return;
-        }
-        countdownResult.textContent = '';
-        countdownTree.innerHTML = '';
-        countdownLog.innerHTML = '';
-        logMessage(countdownLog, `Starting countdown from ${n}...`, 'info');
-        const numbers = [];
-        for (let i = n; i >= 1; i--) {
-          numbers.push(i);
-          logMessage(countdownLog, `Output: ${i}`, 'info');
-          const node = document.createElement('div');
-          node.className = 'call-node completed';
-          node.textContent = i;
-          node.style.marginLeft = `${(n - i) * 10}px`;
-          countdownTree.appendChild(node);
-        }
-        countdownResult.textContent = `Countdown sequence: ${numbers.join(', ')}`;
-        logMessage(countdownLog, 'Countdown finished.', 'success');
-      });
-      
-      countdownStepBtn.addEventListener('click', () => {
-        const n = parseInt(countdownInput.value);
-        if (isNaN(n) || n < 1 || n > 15) {
-          countdownResult.textContent = 'Please enter a number between 1 and 15.';
-          return;
-        }
-        countdownSteps = [];
-        countdownLog.innerHTML = '<p>Starting step-through...</p>';
-        countdownTree.innerHTML = '';
-        generateCountdownSteps(n);
-        countdownCurrentStep = 0;
-        countdownPrevBtn.disabled = true;
-        countdownNextBtn.disabled = countdownSteps.length <= 1;
-        showCountdownStep();
-      });
-      
-      countdownPrevBtn.addEventListener('click', () => {
-        if (countdownCurrentStep > 0) {
-          countdownCurrentStep--;
-          showCountdownStep();
-        }
-      });
-      
-      countdownNextBtn.addEventListener('click', () => {
-        if (countdownCurrentStep < countdownSteps.length - 1) {
-          countdownCurrentStep++;
-          showCountdownStep();
-        }
-      });
-      
-      function generateCountdownSteps(n) {
-        countdownSteps = [];
-        generateCountdownStepsRecursive(n);
-      }
-      
-      function generateCountdownStepsRecursive(n, depth = 0, callId = `cd-${Date.now()}-${Math.random()}`) {
-         const currentCallId = `${callId}-${n}`;
-        countdownSteps.push({
-          type: 'call',
-          n: n,
-          depth: depth,
-          callId: currentCallId,
-          message: `Calling countdown(${n})`
-        });
-        if (n <= 0) {
-          countdownSteps.push({
-            type: 'base',
-            n: n,
-            depth: depth,
-            callId: currentCallId,
-            message: `Base case: countdown(${n}) reached. Stop.`
-          });
-          return;
-        }
-        countdownSteps.push({
-          type: 'log',
-          n: n,
-          depth: depth,
-          callId: currentCallId,
-          message: `Output: ${n}`
-        });
-        generateCountdownStepsRecursive(n - 1, depth + 1, currentCallId);
-        countdownSteps.push({
-          type: 'return',
-          n: n,
-          depth: depth,
-          callId: currentCallId,
-          message: `Return from countdown(${n})`
-        });
-      }
-      
-      function showCountdownStep() {
-        if (countdownCurrentStep < 0 || countdownCurrentStep >= countdownSteps.length) return;
-        const step = countdownSteps[countdownCurrentStep];
-        countdownTree.innerHTML = '';
-        const loggedNumbers = [];
-
-        const activeNodes = new Set();
-        for (let i = 0; i <= countdownCurrentStep; i++) {
-            const s = countdownSteps[i];
-            if (s.type === 'call') {
-                activeNodes.add(s.callId);
-            } else if (s.type === 'base' || s.type === 'return') {
-                activeNodes.delete(s.callId);
-            }
-        }
-
-        countdownSteps.slice(0, countdownCurrentStep + 1).forEach((s, idx) => {
-            const node = document.createElement('div');
-            node.className = 'call-node';
-            node.style.marginLeft = `${s.depth * 30}px`;
-
-            if (s.type === 'call') {
-                 node.textContent = `countdown(${s.n}) calling...`;
-                 if (activeNodes.has(s.callId) && idx === countdownCurrentStep) {
-                    node.classList.add('active');
-                 }
-            } else if (s.type === 'log') {
-                node.textContent = `Output: ${s.n}`;
-                node.classList.add('completed');
-                if (idx === countdownCurrentStep) node.classList.add('active');
-                loggedNumbers.push(s.n);
-            } else if (s.type === 'base') {
-                node.textContent = `countdown(${s.n}) base case`;
-                node.classList.add('base');
-                 if (idx === countdownCurrentStep) node.classList.add('active');
-            } else if (s.type === 'return') {
-                node.textContent = `countdown(${s.n}) returning`;
-                 if (idx === countdownCurrentStep) node.classList.add('active');
-            }
-            countdownTree.appendChild(node);
-        });
-
-        let logType = 'info';
-        if (step.type === 'log') logType = 'success';
-        if (step.type === 'base') logType = 'info';
-        logMessage(countdownLog, `Step ${countdownCurrentStep + 1}: ${step.message}`, logType);
-
-        if (loggedNumbers.length > 0) {
-          countdownResult.textContent = `Current sequence: ${loggedNumbers.join(', ')}`;
-        } else {
-            countdownResult.textContent = 'Stepping through...';
-        }
-
-        if (countdownCurrentStep === countdownSteps.length - 1) {
-            if (loggedNumbers.length > 0) {
-                countdownResult.textContent = `Final sequence: ${loggedNumbers.join(', ')}`;
-            } else {
-                 countdownResult.textContent = 'Countdown finished.';
-            }
-        }
-
-        countdownPrevBtn.disabled = countdownCurrentStep <= 0;
-        countdownNextBtn.disabled = countdownCurrentStep >= countdownSteps.length - 1;
-      }
-    })();
+        const el = document.createElement('div');
+        el.className = 'w-12 h-12 bg-purple-500 text-white font-bold rounded-lg flex items-center justify-center text-xl';
+        el.textContent = i;
+        display.appendChild(el);
+        i--;
+      }, 600);
+    };
   </script>
 </body>
+
 </html>

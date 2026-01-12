@@ -1,489 +1,648 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big O Notation Visualization</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
-    <style>
-        .chart-container {
-            height: 450px;
-            margin: 25px 0;
-            position: relative;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            transition: var(--theme-transition);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .chart {
-            width: 100%;
-            height: 100%;
-            border-left: 2px solid var(--secondary-text);
-            border-bottom: 2px solid var(--secondary-text);
-            position: relative;
-        }
-        .x-axis, .y-axis {
-            position: absolute;
-            color: var(--secondary-text);
-            font-size: 0.9rem;
-            user-select: none;
-        }
-        .x-axis {
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .y-axis {
-            top: 50%;
-            left: -40px;
-            transform: translateY(-50%) rotate(-90deg);
-        }
-        .complexity-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            pointer-events: none;
-            overflow: visible;
-        }
-        .complexity-line path {
-            stroke-width: 3;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-        }
-        .complexity-line circle {
-             r: 4;
-             filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
-        }
-        .complexity-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 25px 0;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            transition: var(--theme-transition);
-        }
-        .complexity-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-        }
-        .complexity-item:hover {
-            background-color: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
-        }
-        .complexity-item input[type="checkbox"] {
-             appearance: none;
-             width: 18px;
-             height: 18px;
-             border: 2px solid var(--secondary-text);
-             border-radius: 4px;
-             margin-right: 5px;
-             cursor: pointer;
-             position: relative;
-             transition: border-color 0.2s ease, background-color 0.2s ease;
-        }
-        .complexity-item input[type="checkbox"]:checked {
-             border-color: var(--accent-color);
-             background-color: var(--accent-color);
-        }
-        .complexity-item input[type="checkbox"]:checked::before {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            color: white;
-            font-size: 12px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .complexity-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.95rem;
-        }
-        .complexity-table th, .complexity-table td {
-            border: 1px solid var(--border-color);
-            padding: 12px 15px;
-            text-align: left;
-            transition: var(--theme-transition);
-        }
-        .complexity-table th {
-            background-color: var(--background-alt);
-            font-weight: 600;
-            color: var(--primary-text);
-        }
-        .complexity-table tr:nth-child(even) td {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        [data-theme="light"] .complexity-table tr:nth-child(even) td {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-        .complexity-table td:first-child strong {
-            font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace;
-        }
-        .examples {
-            margin-top: 25px;
-            display: grid;
-            gap: 20px;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        }
-        .example-item {
-            padding: 20px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border-left: 4px solid var(--accent-color);
-            transition: var(--theme-transition);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        }
-         .example-item h3 {
-             margin-top: 0;
-             margin-bottom: 10px;
-             font-size: 1.2rem;
-             color: var(--primary-text);
-         }
-         .example-item ul {
-             padding-left: 20px;
-             margin-top: 10px;
-             color: var(--secondary-text);
-         }
-         .example-item li {
-            margin-bottom: 5px;
-         }
-         .example-item code {
-             font-family: 'SF Mono', Monaco, Consolas, 'Courier New', Courier, monospace;
-             background-color: var(--code-background);
-             padding: 2px 5px;
-             border-radius: 4px;
-             font-size: 0.9em;
-         }
-    </style>
-</head>
-<body data-theme="dark">
-    <a href="../index.html#week1" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
-
-    <h1><i class="fas fa-chart-line icon-margin"></i>Big O Notation Visualization</h1>
-    
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>What is Big O Notation?</h2>
-        <div class="explanation">
-            <p>Big O notation is a mathematical notation that describes the limiting behavior of a function when the argument tends towards a particular value or infinity. In computer science, it's used to classify algorithms according to how their run time or space requirements grow as the input size grows.</p>
-            <p>Big O notation characterizes functions according to their growth rates: different functions with the same growth rate may be represented using the same O notation.</p>
-        </div>
-    </div>
-    
-    <div class="container">
-        <h2><i class="fas fa-eye icon-margin"></i>Interactive Visualization</h2>
-        <p>Select which complexity functions to display and adjust the input size (n) to see how the number of operations scale.</p>
-        
-        <div class="complexity-selector">
-            <label class="complexity-item">
-                <input type="checkbox" id="o1-checkbox" checked data-color="#3498db">
-                <span class="color-box" style="background-color: #3498db;"></span>
-                O(1) - Constant
-            </label>
-            <label class="complexity-item">
-                <input type="checkbox" id="ologn-checkbox" checked data-color="#2ecc71">
-                <span class="color-box" style="background-color: #2ecc71;"></span>
-                O(log n) - Logarithmic
-            </label>
-            <label class="complexity-item">
-                <input type="checkbox" id="on-checkbox" checked data-color="#9b59b6">
-                <span class="color-box" style="background-color: #9b59b6;"></span>
-                O(n) - Linear
-            </label>
-            <label class="complexity-item">
-                <input type="checkbox" id="onlogn-checkbox" checked data-color="#f39c12">
-                <span class="color-box" style="background-color: #f39c12;"></span>
-                O(n log n) - Linearithmic
-            </label>
-            <label class="complexity-item">
-                <input type="checkbox" id="on2-checkbox" checked data-color="#e74c3c">
-                <span class="color-box" style="background-color: #e74c3c;"></span>
-                O(n²) - Quadratic
-            </label>
-            <label class="complexity-item">
-                <input type="checkbox" id="o2n-checkbox" data-color="#e67e22">
-                <span class="color-box" style="background-color: #e67e22;"></span>
-                O(2ⁿ) - Exponential
-            </label>
-        </div>
-        
-        <div class="input-range controls">
-            <label for="input-size-slider">Max Input Size (n):</label>
-            <input type="range" id="input-size-slider" min="10" max="100" value="50">
-            <span id="input-size-value">50</span>
-        </div>
-        
-        <div class="chart-container">
-            <div class="chart" id="chart">
-                <div class="x-axis">Input Size (n)</div>
-                <div class="y-axis">Operations (Growth Rate)</div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <button id="update-btn"><i class="fas fa-sync-alt icon-margin"></i>Update Chart</button>
-            <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset View</button>
-        </div>
-    </div>
-    
-    <div class="container">
-        <h2><i class="fas fa-table icon-margin"></i>Common Time Complexities</h2>
-        <table class="complexity-table">
-            <thead>
-                <tr>
-                    <th>Notation</th>
-                    <th>Name</th>
-                    <th>Example Algorithms / Operations</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>O(1)</strong></td>
-                    <td>Constant</td>
-                    <td>Array access (<code>arr[i]</code>), Hash table insertion/lookup (average)</td>
-                    <td>The operation takes the same amount of time regardless of the input size.</td>
-                </tr>
-                <tr>
-                    <td><strong>O(log n)</strong></td>
-                    <td>Logarithmic</td>
-                    <td>Binary search, Balanced BST operations</td>
-                    <td>Time increases very slowly as input size grows. Efficient for large datasets.</td>
-                </tr>
-                <tr>
-                    <td><strong>O(n)</strong></td>
-                    <td>Linear</td>
-                    <td>Linear search, Traversing an array/list</td>
-                    <td>Time increases directly proportional to the input size.</td>
-                </tr>
-                <tr>
-                    <td><strong>O(n log n)</strong></td>
-                    <td>Linearithmic</td>
-                    <td>Merge sort, Heap sort, Quick sort (average)</td>
-                    <td>Efficient sorting algorithms. Scales well.</td>
-                </tr>
-                <tr>
-                    <td><strong>O(n²)</strong></td>
-                    <td>Quadratic</td>
-                    <td>Bubble sort, Selection sort, Nested loops iterating over same data</td>
-                    <td>Time increases significantly with input size. Can become slow quickly.</td>
-                </tr>
-                <tr>
-                    <td><strong>O(2ⁿ)</strong></td>
-                    <td>Exponential</td>
-                    <td>Recursive Fibonacci (naive), Traveling Salesman (brute force)</td>
-                    <td>Time grows extremely fast. Impractical for anything beyond small inputs.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="container">
-        <h2><i class="fas fa-lightbulb icon-margin"></i>Real-World Impact</h2>
-        <div class="examples">
-            <div class="example-item">
-                <h3>Binary Search - O(log n)</h3>
-                <p>Searching a <strong>sorted</strong> list of 1,000,000 items:</p>
-                <ul>
-                    <li>Linear search (<code>O(n)</code>) might need up to <strong>1,000,000</strong> comparisons.</li>
-                    <li>Binary search (<code>O(log n)</code>) needs at most log₂(1,000,000) ≈ <strong>20</strong> comparisons.</li>
-                </ul>
-            </div>
-            <div class="example-item">
-                <h3>Sorting Algorithms</h3>
-                <p>Sorting 10,000 items:</p>
-                <ul>
-                    <li>Selection sort (<code>O(n²)</code>) performs roughly <strong>100,000,000</strong> operations.</li>
-                    <li>Merge sort (<code>O(n log n)</code>) performs roughly <strong>130,000</strong> operations.</li>
-                </ul>
-                <p>Efficient algorithms (like <code>O(n log n)</code>) are crucial for performance on larger datasets.</p>
-            </div>
-             <div class="example-item">
-                <h3>Nested Loops - O(n²)</h3>
-                <p>Finding duplicate items in a list by comparing every pair:</p>
-                <pre><code>for i = 0 to n-1:
-  for j = i+1 to n-1:
-    if list[i] == list[j]:
-      return True // Found duplicate</code></pre>
-                <p>This nested loop structure results in <code>O(n²)</code> complexity.</p>
-            </div>
-        </div>
-    </div>
-
+    <title>Big O Notation | تحليل التعقيد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
-
-        const chart = document.getElementById('chart');
-        const inputSizeSlider = document.getElementById('input-size-slider');
-        const inputSizeValue = document.getElementById('input-size-value');
-        const updateBtn = document.getElementById('update-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        
-        const o1Checkbox = document.getElementById('o1-checkbox');
-        const olognCheckbox = document.getElementById('ologn-checkbox');
-        const onCheckbox = document.getElementById('on-checkbox');
-        const onlognCheckbox = document.getElementById('onlogn-checkbox');
-        const on2Checkbox = document.getElementById('on2-checkbox');
-        const o2nCheckbox = document.getElementById('o2n-checkbox');
-        
-        const checkboxes = [
-            { el: o1Checkbox, func: n => 1, name: 'O(1)' },
-            { el: olognCheckbox, func: n => Math.log2(n) || 0.1, name: 'O(log n)' },
-            { el: onCheckbox, func: n => n, name: 'O(n)' },
-            { el: onlognCheckbox, func: n => n * (Math.log2(n) || 0.1), name: 'O(n log n)' },
-            { el: on2Checkbox, func: n => n * n, name: 'O(n²)' },
-            { el: o2nCheckbox, func: n => Math.pow(2, n), name: 'O(2ⁿ)' },
-        ];
-        
-        let maxInputSize = parseInt(inputSizeSlider.value);
-        let maxOperations = 0;
-        
-        inputSizeSlider.addEventListener('input', () => {
-            maxInputSize = parseInt(inputSizeSlider.value);
-            inputSizeValue.textContent = maxInputSize;
-            updateChart();
-        });
-        
-        updateBtn.addEventListener('click', updateChart);
-        resetBtn.addEventListener('click', resetChart);
-        
-        checkboxes.forEach(cb => {
-            cb.el.addEventListener('change', updateChart);
-            const label = cb.el.closest('.complexity-item');
-            if (label) {
-                label.addEventListener('click', (e) => {
-                    if (e.target !== cb.el) {
-                        cb.el.checked = !cb.el.checked;
-                        updateChart();
-                    }
-                });
-            }
-        });
-        
-        updateChart();
-        
-        function updateChart() {
-            const existingLines = document.querySelectorAll('.complexity-line');
-            existingLines.forEach(line => line.remove());
-            
-            const activeValues = {};
-            maxOperations = 0;
-            
-            checkboxes.forEach(cb => {
-                if (cb.el.checked) {
-                    const values = [];
-                    const isExponential = cb.name === 'O(2ⁿ)';
-                    const limitN = isExponential ? Math.min(15, maxInputSize) : maxInputSize;
-                    
-                    for (let n = 1; n <= maxInputSize; n++) {
-                        if (n > limitN && isExponential) break;
-                        const ops = cb.func(n);
-                        if (ops === Infinity) break;
-                        values.push({ n, ops });
-                        if (ops < 1e9) {
-                            maxOperations = Math.max(maxOperations, ops);
-                        }
-                    }
-                    if (values.length > 0) {
-                        activeValues[cb.name] = { values, color: cb.el.dataset.color };
-                        maxOperations = Math.max(maxOperations, values[values.length - 1].ops);
-                    }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', orange: '#F59E0B', red: '#EF4444' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
                 }
-            });
-            
-            if (maxOperations < 10) {
-                maxOperations = 10;
             }
-            
-            const chartHeight = chart.clientHeight;
-            const scaleFactor = maxOperations > 0 ? (chartHeight * 0.9) / maxOperations : 1;
-            
-            for (const name in activeValues) {
-                drawComplexityLine(activeValues[name].values, activeValues[name].color, scaleFactor);
-            }
-        }
-        
-        function drawComplexityLine(values, color, scaleFactor) {
-            if (values.length === 0) return;
-            
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            line.setAttribute('class', 'complexity-line');
-            line.setAttribute('width', '100%');
-            line.setAttribute('height', '100%');
-            
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            
-            let pathData = '';
-            const chartWidth = chart.clientWidth;
-            const chartHeight = chart.clientHeight;
-            
-            values.forEach((value, index) => {
-                const x = (value.n / maxInputSize) * chartWidth;
-                let y = chartHeight - (value.ops * scaleFactor);
-                y = Math.max(2, Math.min(chartHeight - 2, y));
-                
-                if (index === 0) {
-                    pathData += `M ${x.toFixed(2)} ${y.toFixed(2)}`;
-                } else {
-                    pathData += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
-                }
-            });
-            
-            path.setAttribute('d', pathData);
-            path.setAttribute('stroke', color);
-            
-            line.appendChild(path);
-            chart.appendChild(line);
-            
-            const dotInterval = Math.max(1, Math.floor(values.length / 15));
-            values.forEach((value, index) => {
-                if (index % dotInterval === 0 || index === values.length - 1) {
-                    const x = (value.n / maxInputSize) * chartWidth;
-                    let y = chartHeight - (value.ops * scaleFactor);
-                    y = Math.max(2, Math.min(chartHeight - 2, y));
-                    
-                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    dot.setAttribute('cx', x.toFixed(2));
-                    dot.setAttribute('cy', y.toFixed(2));
-                    dot.setAttribute('fill', color);
-                    
-                    line.appendChild(dot);
-                }
-            });
-        }
-        
-        function resetChart() {
-            checkboxes.forEach(cb => {
-                cb.el.checked = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'].includes(cb.name);
-            });
-            
-            inputSizeSlider.value = 50;
-            maxInputSize = 50;
-            inputSizeValue.textContent = '50';
-            
-            updateChart();
         }
     </script>
+    <style>
+        body {
+            background: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #F59E0B, #EF4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week1" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg">Big <span class="text-orange-500">O</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-orange-400 transition">المفهوم</a>
+                <a href="#types" class="hover:text-orange-400 transition">الأنواع</a>
+                <a href="#chart" class="hover:text-orange-400 transition">الرسم البياني</a>
+                <a href="#examples" class="hover:text-orange-400 transition">أمثلة</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-orange-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                WEEK 1 • تحليل الخوارزميات
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight">
+                <span class="text-gradient">Big O</span> Notation
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">ترميز Big O - تحليل التعقيد</h2>
+
+            <p class="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed mb-8">
+                The mathematical notation used to describe the performance and efficiency of algorithms as input size
+                grows.
+            </p>
+        </div>
+    </header>
+
+    <!-- What is Big O Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-question-circle text-orange-500 mr-3"></i>
+                إيه هو Big O؟
+            </h2>
+            <p class="text-center text-slate-400 mb-12">What is Big O Notation?</p>
+
+            <div class="glass-card p-8 rounded-2xl border border-orange-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-orange-400 mb-6 font-arabic">📊 الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">🤔 السؤال المهم</h4>
+                            <p class="text-slate-300">
+                                لما بتكتب كود، السؤال المهم مش بس <span class="text-cyan-400">"هل الكود بيشتغل؟"</span>
+                                <br>
+                                السؤال الأهم: <span class="text-orange-400 font-bold">"قد إيه الكود سريع؟ وبيستهلك ذاكرة
+                                    إزاي؟"</span>
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">📐 Big O بيقيس إيه؟</h4>
+                            <p class="text-slate-300 mb-3">
+                                Big O Notation هو <span class="text-yellow-400 font-bold">طريقة رياضية</span> لوصف:
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-blue-700">
+                                    <div class="text-2xl mb-2">⏱️</div>
+                                    <h5 class="text-blue-400 font-bold">Time Complexity</h5>
+                                    <p class="text-sm text-slate-400 mt-1">كام عملية (operation) الكود بيعملها؟</p>
+                                </div>
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-purple-700">
+                                    <div class="text-2xl mb-2">💾</div>
+                                    <h5 class="text-purple-400 font-bold">Space Complexity</h5>
+                                    <p class="text-sm text-slate-400 mt-1">قد إيه ذاكرة الكود بيستهلك؟</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-cyan-400 mb-3">🎯 ليه "n"؟</h4>
+                            <p class="text-slate-300">
+                                الحرف <span class="text-yellow-400 font-bold">n</span> بيمثل <span
+                                    class="text-orange-400 font-bold">حجم المدخلات (Input Size)</span>.
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300 text-sm">
+                                <li>• لو بتدور في array ← <span class="text-cyan-400">n = عدد العناصر</span></li>
+                                <li>• لو بتعالج string ← <span class="text-cyan-400">n = طول الـ string</span></li>
+                                <li>• لو بتتعامل مع matrix ← <span class="text-cyan-400">n × m = الأبعاد</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 bg-orange-950/30 rounded-xl border border-orange-900/50">
+                            <h4 class="text-xl font-bold text-orange-400 mb-3">⚡ المهم: الـ Worst Case</h4>
+                            <p class="text-slate-300">
+                                Big O بيركز على <span class="text-red-400 font-bold">أسوأ حالة (Worst Case)</span> -
+                                يعني لو الحظ وحش، الكود هياخد قد إيه؟
+                            </p>
+                            <p class="text-slate-400 text-sm mt-2">
+                                فيه كمان Best Case (أحسن حالة) و Average Case (المتوسط)، بس غالباً بنهتم بالـ Worst.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Types of Complexity Section -->
+    <section id="types" class="py-20 px-6">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-layer-group text-purple-500 mr-3"></i>
+                أنواع التعقيد
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Common Complexity Classes - مرتبة من الأسرع للأبطأ</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- O(1) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-up"
+                    data-aos-delay="0">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-4xl font-mono font-bold text-emerald-400">O(1)</span>
+                        <span class="px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-400 rounded-full">أسرع
+                            ✓</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Constant Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p><span class="text-emerald-400 font-bold">الوقت ثابت</span> - مش مهم حجم الـ input!</p>
+                        <div class="p-3 bg-slate-900/50 rounded-lg text-sm">
+                            <p class="text-yellow-400 mb-1">📖 تشبيه:</p>
+                            <p>زي إنك تفتح كتاب على صفحة معينة - مش مهم الكتاب فيه كام صفحة.</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Example:</span><br>
+                            arr[0] <span class="text-slate-500">// Array access</span><br>
+                            map.get(key) <span class="text-slate-500">// Hash lookup</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(log n) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-cyan-500" data-aos="fade-up"
+                    data-aos-delay="100">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-4xl font-mono font-bold text-cyan-400">O(log n)</span>
+                        <span class="px-3 py-1 text-xs font-bold bg-cyan-500/20 text-cyan-400 rounded-full">سريع
+                            جداً</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Logarithmic Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p>كل ما الـ n <span class="text-cyan-400 font-bold">يتضاعف</span>، الوقت بيزيد <span
+                                class="text-yellow-400">خطوة واحدة بس</span>!</p>
+                        <div class="p-3 bg-slate-900/50 rounded-lg text-sm">
+                            <p class="text-yellow-400 mb-1">📖 تشبيه:</p>
+                            <p>زي البحث في القاموس - بتقسم النص كل مرة.</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm">
+                            <span class="text-slate-500">n = 1,000,000 →</span> <span class="text-cyan-400">~20
+                                خطوة</span>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Example:</span><br>
+                            binarySearch(arr, target)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(n) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-blue-500" data-aos="fade-up"
+                    data-aos-delay="200">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-4xl font-mono font-bold text-blue-400">O(n)</span>
+                        <span class="px-3 py-1 text-xs font-bold bg-blue-500/20 text-blue-400 rounded-full">مقبول</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Linear Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p>الوقت <span class="text-blue-400 font-bold">يزيد بنفس نسبة</span> زيادة الـ input.</p>
+                        <div class="p-3 bg-slate-900/50 rounded-lg text-sm">
+                            <p class="text-yellow-400 mb-1">📖 تشبيه:</p>
+                            <p>زي قراءة كتاب صفحة صفحة - كتاب أكبر = وقت أكتر.</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm">
+                            <span class="text-slate-500">n = 1,000 →</span> <span class="text-blue-400">~1,000
+                                عملية</span>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Example:</span><br>
+                            for (let i of arr) { ... }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(n log n) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-yellow-500" data-aos="fade-up"
+                    data-aos-delay="300">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-mono font-bold text-yellow-400">O(n log n)</span>
+                        <span
+                            class="px-3 py-1 text-xs font-bold bg-yellow-500/20 text-yellow-400 rounded-full">جيد</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Linearithmic Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p>أحسن ما يمكن لـ <span class="text-yellow-400 font-bold">خوارزميات الترتيب</span> المبنية على
+                            المقارنة.</p>
+                        <div class="p-3 bg-slate-900/50 rounded-lg text-sm">
+                            <p class="text-yellow-400 mb-1">📖 تشبيه:</p>
+                            <p>زي ترتيب ورق الكوتشينة بطريقة ذكية.</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Examples:</span><br>
+                            mergeSort(), quickSort()
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(n²) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-orange-500" data-aos="fade-up"
+                    data-aos-delay="400">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-4xl font-mono font-bold text-orange-400">O(n²)</span>
+                        <span
+                            class="px-3 py-1 text-xs font-bold bg-orange-500/20 text-orange-400 rounded-full">بطيء</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Quadratic Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p>الوقت بيزيد <span class="text-orange-400 font-bold">بمربع</span> حجم الـ input!</p>
+                        <div class="p-3 bg-slate-900/50 rounded-lg text-sm">
+                            <p class="text-yellow-400 mb-1">⚠️ تحذير:</p>
+                            <p>n = 1000 → مليون عملية!</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Nested loops:</span><br>
+                            for (i) { for (j) { ... } }
+                        </div>
+                        <p class="text-xs text-slate-500">أمثلة: Bubble Sort, Selection Sort</p>
+                    </div>
+                </div>
+
+                <!-- O(2^n) -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-red-500" data-aos="fade-up"
+                    data-aos-delay="500">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-4xl font-mono font-bold text-red-400">O(2ⁿ)</span>
+                        <span class="px-3 py-1 text-xs font-bold bg-red-500/20 text-red-400 rounded-full">بطيء
+                            جداً!</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Exponential Time</h3>
+                    <div class="rtl-block font-arabic text-slate-300 space-y-3">
+                        <p>الوقت <span class="text-red-400 font-bold">بيتضاعف</span> مع كل إضافة للـ input!</p>
+                        <div class="p-3 bg-red-950/30 rounded-lg text-sm border border-red-900">
+                            <p class="text-red-400 mb-1">⚠️ خطر:</p>
+                            <p>n = 30 → أكتر من مليار عملية!</p>
+                        </div>
+                        <div class="p-3 bg-slate-800/50 rounded-lg text-sm font-mono text-left" dir="ltr">
+                            <span class="text-slate-500">// Example:</span><br>
+                            fibonacci(n) <span class="text-slate-500">// naive</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Chart -->
+    <section id="chart" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-chart-line text-cyan-500 mr-3"></i>
+                الرسم البياني
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Visualize Growth Rates</p>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="mb-6 flex flex-wrap gap-3 justify-center">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-o1" checked class="accent-emerald-500">
+                        <span class="text-emerald-400 font-mono text-sm">O(1)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-logn" checked class="accent-cyan-500">
+                        <span class="text-cyan-400 font-mono text-sm">O(log n)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-n" checked class="accent-blue-500">
+                        <span class="text-blue-400 font-mono text-sm">O(n)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-nlogn" checked class="accent-yellow-500">
+                        <span class="text-yellow-400 font-mono text-sm">O(n log n)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-n2" checked class="accent-orange-500">
+                        <span class="text-orange-400 font-mono text-sm">O(n²)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="show-2n" class="accent-red-500">
+                        <span class="text-red-400 font-mono text-sm">O(2ⁿ)</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-center">
+                    <canvas id="chart-canvas" width="700" height="400"
+                        class="bg-slate-900/50 rounded-xl border border-slate-800"></canvas>
+                </div>
+
+                <div class="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-800 rtl-block">
+                    <p class="font-arabic text-slate-300 text-sm">
+                        <span class="text-yellow-400 font-bold">💡 لاحظ:</span>
+                        كل ما n بيزيد، الفرق بين الخوارزميات السريعة والبطيئة بيبقى <span
+                            class="text-red-400 font-bold">ضخم جداً</span>!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Practical Examples -->
+    <section id="examples" class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-code text-purple-500 mr-3"></i>
+                أمثلة عملية
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Real-World Examples</p>
+
+            <div class="space-y-8">
+                <!-- O(1) Example -->
+                <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                    <div class="flex items-center gap-3 px-6 py-4 bg-emerald-900/30 border-b border-emerald-800">
+                        <span class="text-2xl font-mono font-bold text-emerald-400">O(1)</span>
+                        <span class="text-slate-300">- Array Index Access</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                        <pre class="p-6 bg-[#0B1221] text-sm font-mono overflow-x-auto"><code><span class="text-purple-400">function</span> <span class="text-blue-400">getFirst</span>(<span class="text-orange-300">arr</span>) {
+  <span class="text-purple-400">return</span> arr[<span class="text-emerald-400">0</span>];  <span class="text-slate-500">// Always ONE operation</span>
+}
+
+<span class="text-slate-500">// Whether arr has 10 or 10,000,000 elements</span>
+<span class="text-slate-500">// This takes the SAME time!</span></code></pre>
+                        <div class="p-6 bg-slate-900/50 rtl-block">
+                            <p class="font-arabic text-slate-300">
+                                <span class="text-emerald-400 font-bold">الشرح:</span>
+                                الوصول لعنصر في array بالـ index بياخد نفس الوقت
+                                سواء الـ array فيها 10 عناصر أو 10 مليون!
+                            </p>
+                            <p class="font-arabic text-slate-400 text-sm mt-2">
+                                السبب: الـ array بتخزن العناصر في ذاكرة متتالية،
+                                فالكمبيوتر بيحسب العنوان مباشرة.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(n) Example -->
+                <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                    <div class="flex items-center gap-3 px-6 py-4 bg-blue-900/30 border-b border-blue-800">
+                        <span class="text-2xl font-mono font-bold text-blue-400">O(n)</span>
+                        <span class="text-slate-300">- Linear Search</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                        <pre class="p-6 bg-[#0B1221] text-sm font-mono overflow-x-auto"><code><span class="text-purple-400">function</span> <span class="text-blue-400">findMax</span>(<span class="text-orange-300">arr</span>) {
+  <span class="text-purple-400">let</span> max = arr[<span class="text-emerald-400">0</span>];
+  
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> i = <span class="text-emerald-400">1</span>; i < arr.length; i++) {
+    <span class="text-purple-400">if</span> (arr[i] > max) {
+      max = arr[i];
+    }
+  }
+  
+  <span class="text-purple-400">return</span> max;
+}</code></pre>
+                        <div class="p-6 bg-slate-900/50 rtl-block">
+                            <p class="font-arabic text-slate-300">
+                                <span class="text-blue-400 font-bold">الشرح:</span>
+                                لازم نعدي على <span class="text-yellow-400">كل عنصر</span> عشان نلاقي الأكبر.
+                            </p>
+                            <p class="font-arabic text-slate-400 text-sm mt-2">
+                                لو الـ array فيها n عنصر، هنعمل n مقارنة.
+                                <br>
+                                الوقت بيزيد <span class="text-blue-400">خطياً</span> مع حجم الـ input.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O(n²) Example -->
+                <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                    <div class="flex items-center gap-3 px-6 py-4 bg-orange-900/30 border-b border-orange-800">
+                        <span class="text-2xl font-mono font-bold text-orange-400">O(n²)</span>
+                        <span class="text-slate-300">- Nested Loops</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                        <pre class="p-6 bg-[#0B1221] text-sm font-mono overflow-x-auto"><code><span class="text-purple-400">function</span> <span class="text-blue-400">hasDuplicate</span>(<span class="text-orange-300">arr</span>) {
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> i = <span class="text-emerald-400">0</span>; i < arr.length; i++) {
+    <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> j = i + <span class="text-emerald-400">1</span>; j < arr.length; j++) {
+      <span class="text-purple-400">if</span> (arr[i] === arr[j]) {
+        <span class="text-purple-400">return true</span>;
+      }
+    }
+  }
+  <span class="text-purple-400">return false</span>;
+}</code></pre>
+                        <div class="p-6 bg-slate-900/50 rtl-block">
+                            <p class="font-arabic text-slate-300">
+                                <span class="text-orange-400 font-bold">الشرح:</span>
+                                Loop جوه loop! كل عنصر بيتقارن بكل العناصر التانية.
+                            </p>
+                            <p class="font-arabic text-slate-400 text-sm mt-2">
+                                n = 100 → ~5,000 مقارنة
+                                <br>
+                                n = 1,000 → ~500,000 مقارنة!
+                            </p>
+                            <p class="font-arabic text-yellow-400 text-sm mt-2">
+                                💡 ممكن نحسنها لـ O(n) باستخدام Set أو Hash!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Reference Table -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12">
+                <i class="fa-solid fa-table text-yellow-500 mr-3"></i>
+                Quick Reference
+            </h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-6 text-left">Complexity</th>
+                            <th class="py-4 px-6 text-left">Name</th>
+                            <th class="py-4 px-6 text-right font-arabic">n = 1000</th>
+                            <th class="py-4 px-6 text-left">Examples</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-emerald-400">O(1)</td>
+                            <td class="py-4 px-6">Constant</td>
+                            <td class="py-4 px-6 text-right text-emerald-400">1</td>
+                            <td class="py-4 px-6 text-slate-400">Array access, Hash lookup</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-cyan-400">O(log n)</td>
+                            <td class="py-4 px-6">Logarithmic</td>
+                            <td class="py-4 px-6 text-right text-cyan-400">~10</td>
+                            <td class="py-4 px-6 text-slate-400">Binary Search</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-blue-400">O(n)</td>
+                            <td class="py-4 px-6">Linear</td>
+                            <td class="py-4 px-6 text-right text-blue-400">1,000</td>
+                            <td class="py-4 px-6 text-slate-400">Linear Search, Single loop</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-yellow-400">O(n log n)</td>
+                            <td class="py-4 px-6">Linearithmic</td>
+                            <td class="py-4 px-6 text-right text-yellow-400">~10,000</td>
+                            <td class="py-4 px-6 text-slate-400">Merge Sort, Quick Sort</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-orange-400">O(n²)</td>
+                            <td class="py-4 px-6">Quadratic</td>
+                            <td class="py-4 px-6 text-right text-orange-400">1,000,000</td>
+                            <td class="py-4 px-6 text-slate-400">Bubble Sort, Nested loops</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-mono text-red-400">O(2ⁿ)</td>
+                            <td class="py-4 px-6">Exponential</td>
+                            <td class="py-4 px-6 text-right text-red-400">∞</td>
+                            <td class="py-4 px-6 text-slate-400">Fibonacci (naive), Subsets</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 1</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
+
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 100 });
+
+        // Chart Drawing
+        const canvas = document.getElementById('chart-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const complexities = {
+            'o1': { color: '#10B981', fn: () => 10, label: 'O(1)' },
+            'logn': { color: '#06B6D4', fn: n => Math.log2(n) * 15 + 10, label: 'O(log n)' },
+            'n': { color: '#3B82F6', fn: n => n * 2.5 + 10, label: 'O(n)' },
+            'nlogn': { color: '#F59E0B', fn: n => n * Math.log2(n) * 0.3 + 10, label: 'O(n log n)' },
+            'n2': { color: '#F97316', fn: n => Math.min(n * n * 0.008, 380), label: 'O(n²)' },
+            '2n': { color: '#EF4444', fn: n => Math.min(Math.pow(1.15, n), 380), label: 'O(2ⁿ)' }
+        };
+
+        function drawChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const w = canvas.width, h = canvas.height;
+            const padding = 50;
+            const maxN = 100;
+
+            // Grid
+            ctx.strokeStyle = '#1E293B';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 5; i++) {
+                const y = padding + (h - 2 * padding) * (1 - i / 5);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(w - 20, y);
+                ctx.stroke();
+            }
+
+            // Axes
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, h - padding);
+            ctx.lineTo(w - 20, h - padding);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Inter';
+            ctx.fillText('Operations', 10, 30);
+            ctx.fillText('n (input size)', w - 100, h - 15);
+
+            // Draw each line
+            for (const key in complexities) {
+                const checkbox = document.getElementById('show-' + key);
+                if (!checkbox || !checkbox.checked) continue;
+
+                const c = complexities[key];
+                ctx.strokeStyle = c.color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+
+                for (let n = 1; n <= maxN; n++) {
+                    const x = padding + (n / maxN) * (w - padding - 20);
+                    const y = h - padding - Math.min(c.fn(n), h - 2 * padding);
+                    if (n === 1) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Event listeners for checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', drawChart);
+        });
+
+        drawChart();
+    </script>
 </body>
+
 </html>

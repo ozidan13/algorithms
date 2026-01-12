@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 6: Adapter Design Pattern | Interactive Guide</title>
+    <meta name="description"
+        content="Comprehensive guide to the Adapter Design Pattern (Lecture 6) with Arabic explanations and implementation.">
+
+    <!-- Libraries (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0F172A',
+                            primary: '#3B82F6', // Blue for Adapter
+                            accent: '#F59E0B',
+                            light: '#F8FAFC',
+                            secondary: '#10B981' // Green for contrast
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .arabic-text {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-break {
+                page-break-before: always;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .shadow-lg,
+            .shadow-xl {
+                box-shadow: none !important;
+            }
+
+            .bg-slate-900 {
+                background-color: #fff !important;
+                color: #000 !important;
+            }
+
+            .text-white {
+                color: #000 !important;
+            }
+        }
+
+        /* Code Block Styling */
+        pre {
+            position: relative;
+        }
+
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2.5rem;
+            background: #1e293b;
+            color: #64748b;
+            text-align: right;
+            padding-right: 0.5rem;
+            padding-top: 1rem;
+            user-select: none;
+            font-size: 0.875rem;
+            border-right: 1px solid #334155;
+        }
+
+        .code-content {
+            padding-left: 3rem;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-brand-primary selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 no-print transition-all duration-300"
+        id="navbar">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center text-white font-bold shadow-md">
+                    L6
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-lg tracking-tight text-brand-dark leading-tight">Adapter Pattern</span>
+                    <span class="text-[10px] text-gray-500 font-arabic tracking-wide">نمط المحول</span>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium text-gray-600">
+                <a href="#intent" class="hover:text-brand-primary transition flex items-center gap-1"><i
+                        class="fa-solid fa-bullseye text-xs"></i> Intent</a>
+                <a href="#problem-solution" class="hover:text-brand-primary transition flex items-center gap-1"><i
+                        class="fa-solid fa-triangle-exclamation text-xs"></i> Prob & Sol</a>
+                <a href="#structure" class="hover:text-brand-primary transition flex items-center gap-1"><i
+                        class="fa-solid fa-sitemap text-xs"></i> Structure</a>
+                <a href="#implementation" class="hover:text-brand-primary transition flex items-center gap-1"><i
+                        class="fa-solid fa-code text-xs"></i> Code</a>
+                <a href="#exam-section"
+                    class="px-4 py-2 bg-brand-dark text-white rounded-full hover:bg-slate-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+                    Start Exam
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header
+        class="pt-32 pb-24 px-6 bg-gradient-to-br from-slate-900 via-[#0f172a] to-blue-900 text-white relative overflow-hidden">
+        <!-- Abstract Background Shapes -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none overflow-hidden">
+            <div
+                class="absolute right-[10%] top-[20%] w-72 h-72 bg-brand-primary rounded-full blur-[100px] animate-pulse">
+            </div>
+            <div class="absolute left-[10%] bottom-[10%] w-96 h-96 bg-teal-500 rounded-full blur-[120px] opacity-50">
+            </div>
+        </div>
+
+        <div class="container mx-auto max-w-5xl relative z-10 text-center" data-aos="fade-up" data-aos-duration="1000">
+            <div
+                class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-brand-primary text-xs font-bold tracking-wider mb-6 shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-brand-primary animate-ping"></span>
+                STRUCTURAL DESIGN PATTERN
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-4 tracking-tight leading-tight drop-shadow-2xl">
+                Adapter <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-teal-400">Pattern</span>
+            </h1>
+
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-300 mb-8 font-arabic" dir="rtl">
+                نمط تصميم المحول
+            </h2>
+
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-12 font-light">
+                Allow objects with incompatible interfaces to collaborate.
+                <br>
+                <span class="text-brand-primary/80 font-arabic mt-2 block text-lg">بيسمح للكائنات اللي واجهتها مش
+                    متوافقة إنها تشتغل مع بعض.</span>
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-5">
+                <a href="#implementation"
+                    class="group px-8 py-4 bg-brand-primary hover:bg-blue-600 text-white font-bold rounded-xl transition shadow-[0_0_20px_rgba(59,130,246,0.5)] flex items-center gap-3">
+                    <i class="fa-solid fa-laptop-code group-hover:scale-110 transition-transform"></i>
+                    <span>View Implementation</span>
+                </a>
+                <a href="#structure"
+                    class="px-8 py-4 bg-slate-800/50 hover:bg-slate-800 text-white font-bold rounded-xl transition border border-white/10 backdrop-blur-sm flex items-center gap-3 hover:border-brand-primary/50">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Explore Structure</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section 1: Intent -->
+    <section id="intent" class="py-24 px-6 bg-white relative">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col lg:flex-row gap-16 items-start">
+
+                <!-- English Content -->
+                <div class="flex-1" data-aos="fade-right">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-3 bg-brand-primary/10 rounded-lg text-brand-primary">
+                            <i class="fa-solid fa-crosshairs text-xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-brand-dark">Intent</h2>
+                    </div>
+
+                    <div class="prose prose-lg text-gray-600">
+                        <p class="leading-relaxed mb-6">
+                            <strong>Adapter</strong> is a structural design pattern that allows objects with <span
+                                class="bg-yellow-100 text-yellow-800 px-1 rounded border border-yellow-200 font-semibold">incompatible
+                                interfaces</span> to collaborate.
+                        </p>
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                            <p class="text-sm text-blue-800 italic">
+                                "It acts as a wrapper between two objects. It catches calls for one object and
+                                transforms them to format and interface recognizable by the second object."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arabic Explanation -->
+                <div class="flex-1 bg-slate-50 p-8 rounded-3xl border border-slate-200 relative group hover:border-brand-primary/30 transition-colors duration-300"
+                    data-aos="fade-left">
+                    <div
+                        class="absolute -top-5 right-8 bg-white px-4 py-2 rounded-full shadow-md border border-gray-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Arabic Explanation</span>
+                    </div>
+
+                    <h3 class="font-bold text-2xl mb-6 text-gray-800 font-arabic text-right" dir="rtl">
+                        ايه هو الهدف؟
+                    </h3>
+
+                    <div class="text-right font-arabic text-gray-600 space-y-6 leading-loose text-lg" dir="rtl">
+                        <p>
+                            نمط <span class="text-brand-primary font-bold">المحول (Adapter)</span> هو نمط تصميم هيكلي،
+                            وظيفته الأساسية إنه يخلي الحاجات اللي مش بتركب على بعض، تركب وتشتغل!
+                        </p>
+                        <p>
+                            زي فكرة "الفيشة" بالظبط. لو عندك جهاز بفيشة ثلاثية والكبس في الحيطة ثنائي، بتجيب "محول"
+                            (Adapter) عشان توصلهم ببعض.
+                        </p>
+                        <p class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-gray-700">
+                            💡 <span class="font-bold text-gray-900">في البرمجة:</span> بنستخدمه لما يكون عندنا كلاس
+                            جاهز (أو مكتبة خارجية) الواجهة بتاعته (Interface) مختلفة عن اللي النظام بتاعنا متوقعه.
+                            فبنعمل Adapter يوفق بينهم من غير ما نغير كود أي واحد فيهم.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Problem & Solution -->
+    <section id="problem-solution" class="py-24 px-6 bg-slate-100 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-5 pointer-events-none"
+            style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 32px 32px;"></div>
+
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="grid md:grid-cols-2 gap-12">
+
+                <!-- The Problem -->
+                <div class="bg-white rounded-2xl shadow-lg border border-red-100 overflow-hidden" data-aos="fade-up"
+                    data-aos-delay="100">
+                    <div class="bg-red-50 px-8 py-6 border-b border-red-100 flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-red-800 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> The Problem
+                        </h3>
+                        <span
+                            class="px-3 py-1 bg-white rounded-full text-xs font-bold text-red-400 shadow-sm">Incompatible
+                            Formats</span>
+                    </div>
+
+                    <div class="p-8">
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-800 mb-2">Scenario:</h4>
+                            <p class="text-gray-600 text-sm">Stock market app downloads data in <strong>XML</strong>.
+                                You want to use a 3rd-party analytics library, but it only accepts
+                                <strong>JSON</strong>.</p>
+                        </div>
+
+                        <div class="flex justify-center mb-8 items-center gap-4">
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold mb-2 mx-auto border border-blue-200">
+                                    App</div>
+                                <span class="text-xs font-bold text-gray-500">XML Data</span>
+                            </div>
+                            <i class="fa-solid fa-xmark text-red-500 text-2xl"></i>
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-bold mb-2 mx-auto border border-green-200">
+                                    Library</div>
+                                <span class="text-xs font-bold text-gray-500">Expects JSON</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-50/50 rounded-lg p-4 border border-red-100" dir="rtl">
+                            <p class="font-arabic text-red-800 text-sm leading-relaxed">
+                                <i class="fa-solid fa-circle-exclamation ml-2"></i>
+                                <strong>المشكلة:</strong> التطبيق بتاعنا بيتكلم لغة (XML) والمكتبة اللي عايزين نستخدمها
+                                بتتكلم لغة تانية (JSON). ومينفعش نعدل كود المكتبة لأنها خارجية (3rd-party).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Solution -->
+                <div class="bg-white rounded-2xl shadow-lg border border-green-100 overflow-hidden" data-aos="fade-up"
+                    data-aos-delay="200">
+                    <div class="bg-green-50 px-8 py-6 border-b border-green-100 flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-green-800 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i> The Solution
+                        </h3>
+                        <span class="px-3 py-1 bg-white rounded-full text-xs font-bold text-green-500 shadow-sm">Adapter
+                            Wrapper</span>
+                    </div>
+
+                    <div class="p-8">
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-800 mb-2">Concept:</h4>
+                            <p class="text-gray-600 text-sm">Create an <strong>Adapter</strong> that wraps the object.
+                                It converts XML data to JSON so the library can process it.</p>
+                        </div>
+
+                        <div class="flex justify-center mb-8 items-center gap-2">
+                            <div class="text-center">
+                                <div
+                                    class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-xs mb-1 mx-auto border border-blue-200">
+                                    App</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-gray-300"></i>
+                            <div class="text-center relative">
+                                <div
+                                    class="w-16 h-16 bg-brand-primary text-white rounded-lg flex items-center justify-center font-bold text-xs mb-1 mx-auto shadow-lg z-10 relative">
+                                    Adapter</div>
+                                <div
+                                    class="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 rounded-full">
+                                    XML->JSON</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-gray-300"></i>
+                            <div class="text-center">
+                                <div
+                                    class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-bold text-xs mb-1 mx-auto border border-green-200">
+                                    Library</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50/50 rounded-lg p-4 border border-green-100" dir="rtl">
+                            <p class="font-arabic text-green-800 text-sm leading-relaxed">
+                                <i class="fa-solid fa-check-circle ml-2"></i>
+                                <strong>الحل:</strong> نعمل "محول" (Adapter) في النص. ياخد الـ XML من التطبيق، يحوله لـ
+                                JSON، ويبعته للمكتبة. كده التطبيق والمكتبة شغالين مع بعض من غير ما حد فيهم يغير الكود
+                                بتاعه.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Structure -->
+    <section id="structure" class="py-24 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span
+                    class="text-brand-primary font-bold tracking-widest uppercase text-xs mb-2 block">Architecture</span>
+                <h2 class="text-4xl font-black text-brand-dark mb-4">Pattern Structure</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">The four key participants in the Adapter Pattern.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <!-- Component 1 -->
+                <div
+                    class="flex gap-5 items-start p-6 bg-slate-50 rounded-xl border border-slate-100 hover:border-brand-primary/50 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 bg-brand-primary text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                        1
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-brand-dark mb-2">Target Interface</h3>
+                        <p class="text-sm text-gray-600 mb-3">The interface expected by the client.</p>
+                        <p class="text-sm text-gray-500 font-arabic border-t border-slate-200 pt-2 mt-2 text-right"
+                            dir="rtl">
+                            دي الواجهة اللي العميل (Client) متوقعها وبيعرف يتعامل معاها. (مثلاً: واجهة الـ Printer).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Component 2 -->
+                <div
+                    class="flex gap-5 items-start p-6 bg-slate-50 rounded-xl border border-slate-100 hover:border-purple-400 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 bg-purple-500 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                        2
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-brand-dark mb-2">Adaptee</h3>
+                        <p class="text-sm text-gray-600 mb-3">The existing class with an incompatible interface.</p>
+                        <p class="text-sm text-gray-500 font-arabic border-t border-slate-200 pt-2 mt-2 text-right"
+                            dir="rtl">
+                            ده الكلاس القديم أو الخارجي اللي واجهته مش ماشية مع النظام بتاعنا (مثلاً: LegacyPrinter).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Component 3 -->
+                <div
+                    class="flex gap-5 items-start p-6 bg-slate-50 rounded-xl border border-slate-100 hover:border-orange-400 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 bg-orange-500 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                        3
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-brand-dark mb-2">Adapter</h3>
+                        <p class="text-sm text-gray-600 mb-3">Implements the target interface and uses the adaptee
+                            internally.</p>
+                        <p class="text-sm text-gray-500 font-arabic border-t border-slate-200 pt-2 mt-2 text-right"
+                            dir="rtl">
+                            ده "المحول". كلاس بينفذ الواجهة المطلوبة (Printer) وجواه بيستدعي وظائف الكلاس القديم
+                            (LegacyPrinter) بعد ما يظبطها.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Component 4 -->
+                <div
+                    class="flex gap-5 items-start p-6 bg-slate-50 rounded-xl border border-slate-100 hover:border-green-400 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                        4
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-brand-dark mb-2">Client</h3>
+                        <p class="text-sm text-gray-600 mb-3">Uses the target interface. Unaware of the adapter.</p>
+                        <p class="text-sm text-gray-500 font-arabic border-t border-slate-200 pt-2 mt-2 text-right"
+                            dir="rtl">
+                            ده الكود اللي بيستخدم النظام. بيتعامل مع الواجهة الجديدة ومش شاغل باله بالتفاصيل.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Implementation (Example) -->
+    <section id="implementation" class="py-24 px-6 bg-brand-dark text-white border-t border-slate-800">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span
+                    class="text-brand-primary font-bold tracking-widest uppercase text-xs mb-2 block">Step-by-Step</span>
+                <h2 class="text-4xl font-black text-white mb-4">Code Implementation</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Example: Adapting a Legacy Printer to a modern Printer
+                    interface.</p>
+            </div>
+
+            <!-- Step 1: Target Interface -->
+            <div class="mb-12 bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden" data-aos="fade-up">
+                <div
+                    class="bg-slate-900/80 px-6 py-4 border-b border-slate-700 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-brand-primary text-white text-xs font-bold px-2 py-1 rounded">Step 1</span>
+                        <h3 class="font-mono text-brand-primary font-bold">Target Interface</h3>
+                    </div>
+                    <div class="text-xs text-slate-400 font-arabic" dir="rtl">واجهة الطباعة الجديدة</div>
+                </div>
+                <div class="grid md:grid-cols-3">
+                    <div class="col-span-2 bg-[#1e293b] overflow-x-auto">
+                        <pre><div class="line-numbers">1
+2
+3</div><div class="code-content"><code class="language-java text-sm"><span class="text-purple-400">interface</span> <span class="text-yellow-300">Printer</span> {
+    <span class="text-purple-400">void</span> <span class="text-blue-400">print</span>();
+}</code></div></pre>
+                    </div>
+                    <div class="p-6 text-sm text-slate-300 border-l border-slate-700">
+                        <p class="mb-4">Simple interface with a <code>print()</code> method.</p>
+                        <p class="font-arabic text-slate-400 text-right" dir="rtl">
+                            دي الواجهة اللي النظام بتاعنا متوقعها. فيها دالة اسمها <code
+                                class="text-blue-400">print()</code>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Adaptee -->
+            <div class="mb-12 bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden" data-aos="fade-up">
+                <div
+                    class="bg-slate-900/80 px-6 py-4 border-b border-slate-700 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-brand-primary text-white text-xs font-bold px-2 py-1 rounded">Step 2</span>
+                        <h3 class="font-mono text-purple-400 font-bold">Adaptee (Legacy)</h3>
+                    </div>
+                    <div class="text-xs text-slate-400 font-arabic" dir="rtl">الكلاس القديم (غير متوافق)</div>
+                </div>
+                <div class="grid md:grid-cols-3">
+                    <div class="col-span-2 bg-[#1e293b] overflow-x-auto">
+                        <pre><div class="line-numbers">1
+2
+3
+4
+5</div><div class="code-content"><code class="language-java text-sm"><span class="text-purple-400">class</span> <span class="text-yellow-300">LegacyPrinter</span> {
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">printDocument</span>() {
+        System.out.println(<span class="text-green-400">"Legacy Printer is printing a document."</span>);
+    }
+}</code></div></pre>
+                    </div>
+                    <div class="p-6 text-sm text-slate-300 border-l border-slate-700">
+                        <p class="mb-4">Has <code>printDocument()</code> instead of <code>print()</code>.</p>
+                        <p class="font-arabic text-slate-400 text-right" dir="rtl">
+                            ده الكلاس القديم. لاحظ إن اسم الدالة مختلف: <code
+                                class="text-blue-400">printDocument()</code>. عشان كده مش هينفع يشتغل مع الواجهة الجديدة
+                            مباشرة.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Adapter -->
+            <div class="mb-12 bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden" data-aos="fade-up">
+                <div
+                    class="bg-slate-900/80 px-6 py-4 border-b border-slate-700 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-brand-primary text-white text-xs font-bold px-2 py-1 rounded">Step 3</span>
+                        <h3 class="font-mono text-orange-400 font-bold">The Adapter</h3>
+                    </div>
+                    <div class="text-xs text-slate-400 font-arabic" dir="rtl">كلاس المحول</div>
+                </div>
+                <div class="grid md:grid-cols-3">
+                    <div class="col-span-2 bg-[#1e293b] overflow-x-auto">
+                        <pre><div class="line-numbers">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11</div><div class="code-content"><code class="language-java text-sm"><span class="text-purple-400">class</span> <span class="text-yellow-300">PrinterAdapter</span> <span class="text-purple-400">implements</span> <span class="text-yellow-300">Printer</span> {
+    <span class="text-purple-400">private</span> <span class="text-yellow-300">LegacyPrinter</span> legacyPrinter;
+
+    <span class="text-purple-400">public</span> <span class="text-yellow-300">PrinterAdapter</span>(<span class="text-yellow-300">LegacyPrinter</span> legacyPrinter) {
+        <span class="text-purple-400">this</span>.legacyPrinter = legacyPrinter;
+    }
+
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">print</span>() {
+        legacyPrinter.printDocument(); <span class="text-gray-500">// Translation happens here!</span>
+    }
+}</code></div></pre>
+                    </div>
+                    <div class="p-6 text-sm text-slate-300 border-l border-slate-700">
+                        <p class="mb-4">Implements <code>Printer</code> but delegates to <code>LegacyPrinter</code>.</p>
+                        <p class="font-arabic text-slate-400 text-right" dir="rtl">
+                            ده الحل! الكلاس ده بينفذ واجهة <code class="text-yellow-300">Printer</code> (عشان العميل
+                            يفهمه)، وجواه بياخد كائن من <code class="text-yellow-300">LegacyPrinter</code>. ولما حد
+                            ينادي على <code class="text-blue-400">print()</code>، هو بيقوم منادي على <code
+                                class="text-blue-400">printDocument()</code> بتاعت الكلاس القديم.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Client -->
+            <div class="mb-12 bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden" data-aos="fade-up">
+                <div
+                    class="bg-slate-900/80 px-6 py-4 border-b border-slate-700 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Step 4</span>
+                        <h3 class="font-mono text-green-400 font-bold">Client Code</h3>
+                    </div>
+                    <div class="text-xs text-slate-400 font-arabic" dir="rtl">كود المستخدم</div>
+                </div>
+                <div class="grid md:grid-cols-3">
+                    <div class="col-span-2 bg-[#1e293b] overflow-x-auto">
+                        <pre><div class="line-numbers">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</div><div class="code-content"><code class="language-java text-sm"><span class="text-purple-400">public class</span> <span class="text-yellow-300">Client</span> {
+    <span class="text-purple-400">public static void</span> <span class="text-blue-400">clientCode</span>(<span class="text-yellow-300">Printer</span> printer) {
+        printer.print();
+    }
+
+    <span class="text-purple-400">public static void</span> <span class="text-blue-400">main</span>(String[] args) {
+        <span class="text-yellow-300">PrinterAdapter</span> adapter = <span class="text-purple-400">new</span> <span class="text-yellow-300">PrinterAdapter</span>(<span class="text-purple-400">new</span> <span class="text-yellow-300">LegacyPrinter</span>());
+        clientCode(adapter);
+    }
+}</code></div></pre>
+                    </div>
+                    <div class="p-6 text-sm text-slate-300 border-l border-slate-700">
+                        <p class="mb-4">Works with Adapter transparently.</p>
+                        <p class="font-arabic text-slate-400 text-right" dir="rtl">
+                            العميل بيستخدم الـ Adapter كأنه Printer عادي جداً. مش محتاج يعرف إن فيه LegacyPrinter شغال
+                            ورا الكواليس.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Section 5: Exam (Questions & Answers) -->
+    <section id="exam-section" class="py-24 px-6 bg-white text-brand-dark print-break">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-brand-accent font-bold tracking-widest uppercase text-sm">Self-Assessment</span>
+                <h2 class="text-4xl font-black mb-2 text-brand-dark">Examination</h2>
+                <p class="text-gray-500">Questions based on Lecture 6 Adapter Pattern content.</p>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg inline-block border border-blue-200">
+                    <p class="text-sm text-blue-800">
+                        <i class="fa-solid fa-print mr-2"></i>
+                        This section is printer-friendly. Use Ctrl+P to print only this exam.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Q1: MCQ -->
+            <div class="mb-8 p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <span class="text-xs font-bold text-gray-400 uppercase">Question 1 (Multiple Choice)</span>
+                <h3 class="text-lg font-bold mt-1 mb-4">What is the primary intent of the Adapter Pattern?</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q1" class="accent-brand-primary">
+                        <span>A. To create complex objects step-by-step.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q1" class="accent-brand-primary">
+                        <span>B. To allow objects with incompatible interfaces to collaborate.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q1" class="accent-brand-primary">
+                        <span>C. To restrict a class to a single instance.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q2: Code Question -->
+            <div class="mb-8 p-6 border-2 border-brand-primary/30 rounded-lg shadow-sm bg-blue-50/30">
+                <span class="text-xs font-bold text-brand-primary uppercase">Question 2 (Code - Target Interface)</span>
+                <h3 class="text-lg font-bold mt-1 mb-4">Define the Target Interface <code>Printer</code>.</h3>
+                <p class="mb-3 text-gray-700 text-sm">Write the Java code for the interface <code>Printer</code> with a
+                    single method <code>void print();</code>.</p>
+                <textarea rows="4"
+                    class="w-full p-3 border border-brand-primary/20 rounded font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
+                    placeholder="// Write your code here..."></textarea>
+            </div>
+
+            <!-- Q3: MCQ -->
+            <div class="mb-8 p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <span class="text-xs font-bold text-gray-400 uppercase">Question 3 (Multiple Choice)</span>
+                <h3 class="text-lg font-bold mt-1 mb-4">Which component in the Adapter pattern structure represents the
+                    existing class with an incompatible interface?</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q3" class="accent-brand-primary">
+                        <span>A. Target</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q3" class="accent-brand-primary">
+                        <span>B. Adapter</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q3" class="accent-brand-primary">
+                        <span>C. Adaptee</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q4: Code Question -->
+            <div class="mb-8 p-6 border-2 border-brand-primary/30 rounded-lg shadow-sm bg-blue-50/30">
+                <span class="text-xs font-bold text-brand-primary uppercase">Question 4 (Code - Adapter
+                    Implementation)</span>
+                <h3 class="text-lg font-bold mt-1 mb-4">Implement the <code>PrinterAdapter</code> class.</h3>
+                <p class="mb-3 text-gray-700 text-sm">Write the class that implements <code>Printer</code>, wraps
+                    <code>LegacyPrinter</code>, and translates <code>print()</code> to <code>printDocument()</code>.</p>
+                <textarea rows="10"
+                    class="w-full p-3 border border-brand-primary/20 rounded font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
+                    placeholder="// Write your code here..."></textarea>
+            </div>
+
+            <!-- Q5: True/False -->
+            <div class="mb-8 p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <span class="text-xs font-bold text-gray-400 uppercase">Question 5 (True/False)</span>
+                <h3 class="text-lg font-bold mt-1 mb-4">The Client code needs to be aware of the Adaptee class to work
+                    correctly.</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q5" class="accent-brand-primary">
+                        <span>True</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                        <input type="radio" name="q5" class="accent-brand-primary">
+                        <span>False</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Show/Hide Answer Key Button -->
+            <div class="text-center mt-12">
+                <button onclick="toggleAnswers()"
+                    class="flex items-center gap-2 px-6 py-3 bg-brand-dark text-white rounded-lg hover:bg-slate-800 transition mx-auto shadow-lg">
+                    <i class="fa-solid fa-key"></i> Show/Hide Answer Key
+                </button>
+            </div>
+
+            <!-- Answer Key Content (Hidden by default) -->
+            <div id="answer-key" class="hidden mt-8 bg-green-50 border border-green-200 p-8 rounded-xl shadow-inner">
+                <h3 class="text-xl font-bold text-green-800 mb-6 border-b border-green-200 pb-2">Model Answer Key</h3>
+
+                <div class="space-y-8">
+                    <div>
+                        <p class="font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-green-200 px-2 py-0.5 rounded text-xs text-green-800">Q1</span> B</p>
+                        <p class="text-sm text-gray-600 mt-1">Adapter pattern allows incompatible interfaces to
+                            collaborate.</p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-blue-200 px-2 py-0.5 rounded text-xs text-blue-800">Q2</span> Model Code</p>
+                        <pre class="bg-white p-3 rounded border border-green-200 text-xs font-mono mt-2 text-gray-700">interface Printer {
+    void print();
+}</pre>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-green-200 px-2 py-0.5 rounded text-xs text-green-800">Q3</span> C</p>
+                        <p class="text-sm text-gray-600 mt-1">The Adaptee is the existing class with the incompatible
+                            interface.</p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-blue-200 px-2 py-0.5 rounded text-xs text-blue-800">Q4</span> Model Code</p>
+                        <pre class="bg-white p-3 rounded border border-green-200 text-xs font-mono mt-2 text-gray-700">class PrinterAdapter implements Printer {
+    private LegacyPrinter legacyPrinter;
+
+    public PrinterAdapter(LegacyPrinter legacyPrinter) {
+        this.legacyPrinter = legacyPrinter;
+    }
+
+    @Override
+    public void print() {
+        legacyPrinter.printDocument();
+    }
+}</pre>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-green-200 px-2 py-0.5 rounded text-xs text-green-800">Q5</span> False</p>
+                        <p class="text-sm text-gray-600 mt-1">The Client works with the Target interface and is unaware
+                            of the Adaptee or Adapter implementation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center text-gray-500 text-sm border-t border-gray-200 mt-12 no-print bg-slate-50">
+        <p class="mb-2">Osama Zinhom Saad</p>
+        <p class="font-arabic text-gray-400">بشمهندس اسامة زينهم</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Init Animation Library
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50
+        });
+
+        // Exam Answer Key Toggle
+        function toggleAnswers() {
+            const key = document.getElementById('answer-key');
+            if (key.classList.contains('hidden')) {
+                key.classList.remove('hidden');
+                key.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                key.classList.add('hidden');
+            }
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-sm');
+                nav.classList.replace('bg-white/90', 'bg-white/95');
+            } else {
+                nav.classList.remove('shadow-sm');
+                nav.classList.replace('bg-white/95', 'bg-white/90');
+            }
+        });
+    </script>
+</body>
+
+</html>

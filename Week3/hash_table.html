@@ -1,841 +1,764 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hash Table Voting System - FIXED</title>
+    <title>Hash Table | جداول التجزئة</title>
+    <meta name="description" content="Interactive Hash Table visualization with Arabic explanations.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            orange: '#F59E0B'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
 
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .text-gradient {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
-        .header h1 {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header .subtitle {
-            color: rgba(255,255,255,0.85);
-            font-size: 1.1rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #4ade80;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section h2 {
-            color: #4ade80;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .hash-table-grid {
-            display: grid;
-            gap: 10px;
-        }
-
-        .bucket {
-            display: flex;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
-            height: 55px;
-        }
-
-        .bucket.highlight {
-            border-color: #4ade80;
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.5);
-            transform: scale(1.03);
-        }
-
-        .bucket.highlight-probe {
-            border-color: #fbbf24;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
-        }
-
-        .bucket-index {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: #000;
-            padding: 0 20px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.3rem;
-            min-width: 60px;
-        }
-
-        .bucket-content {
-            padding: 0 20px;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            color: #999;
-            font-style: italic;
-        }
-
-        .bucket-content.has-voter {
-            color: white;
-            font-style: normal;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .voter-name {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            animation: fadeIn 0.5s;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .voter-name.found {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            animation: pulse 0.6s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        .controls-section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .explanation-box {
-            background: rgba(74, 222, 128, 0.1);
-            border-left: 4px solid #4ade80;
-            padding: 20px;
-            border-radius: 10px;
-            line-height: 1.8;
-        }
-
-        .explanation-box h3 {
-            color: #4ade80;
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-        }
-
-        .explanation-box p {
-            color: #d1d5db;
-            margin-bottom: 10px;
-        }
-
-        .comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .comp-card {
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid;
-        }
-
-        .comp-card.array {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: #ef4444;
-        }
-
-        .comp-card.hashtable {
-            background: rgba(74, 222, 128, 0.1);
-            border-color: #4ade80;
-        }
-
-        .comp-card .complexity {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .comp-card.array .complexity {
-            color: #ef4444;
-        }
-
-        .comp-card.hashtable .complexity {
-            color: #4ade80;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        input {
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            font-size: 1.1rem;
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            transition: all 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #4ade80;
-            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .vote-btn {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: #000;
-        }
-
-        .vote-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
-        }
-
-        .reset-btn {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-        }
-
-        .log-section {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .log-message {
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border-left: 4px solid;
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .log-success {
-            background: rgba(74, 222, 128, 0.1);
-            border-left-color: #4ade80;
-            color: #4ade80;
-        }
-
-        .log-error {
-            background: rgba(239, 68, 68, 0.1);
-            border-left-color: #ef4444;
-            color: #ef4444;
-        }
-
-        .log-info {
-            background: rgba(99, 102, 241, 0.1);
-            border-left-color: #6366f1;
-            color: #818cf8;
-        }
-
-        .log-warning {
-            background: rgba(251, 191, 36, 0.1);
-            border-left-color: #fbbf24;
-            color: #fbbf24;
-        }
-
-        .code-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .code-section h2 {
-            color: #4ade80;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .code-explanation {
-            background: rgba(74, 222, 128, 0.1);
-            border-left: 4px solid #4ade80;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            color: #d1d5db;
-            line-height: 1.7;
-        }
-
-        .code-block {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            overflow-x: auto;
-            margin-bottom: 15px;
-        }
-
-        .code-block pre {
-            margin: 0;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #e0e0e0;
-        }
-
-        .keyword { color: #c792ea; }
-        .function { color: #82aaff; }
-        .string { color: #c3e88d; }
-        .comment { color: #676e95; font-style: italic; }
-        .number { color: #f78c6c; }
 
         ::-webkit-scrollbar {
             width: 8px;
-            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
+            background: #020617;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #4ade80;
+            background: #1E293B;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #22c55e;
+            background: #F59E0B;
         }
 
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Hash Table Styles */
+        .bucket {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 50px;
+        }
+
+        .bucket-index {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #64748b;
+            min-width: 30px;
+        }
+
+        .bucket-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .hash-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .hash-item.collision {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .hash-item.new {
+            animation: pop-in 0.4s ease;
+        }
+
+        @keyframes pop-in {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
             }
         }
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
+        .arrow-chain {
+            color: #64748b;
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        .code-line {
+            display: flex;
+            gap: 12px;
+            padding: 4px 0;
+        }
 
-            .comparison {
-                grid-template-columns: 1fr;
-            }
+        .line-num {
+            color: #64748b;
+            min-width: 24px;
+            text-align: right;
+            user-select: none;
+        }
 
-            .button-group {
-                flex-direction: column;
-            }
+        .complexity-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .complexity-badge.fast {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+
+        .complexity-badge.slow {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
         }
     </style>
 </head>
+
 <body>
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🗳️ Hash Table Voting System</h1>
-            <p class="subtitle">Direct O(1) Check - Prevent Duplicate Voting</p>
-        </div>
 
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="total-votes">5</div>
-                <div class="stat-label">Total Votes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="attempts">0</div>
-                <div class="stat-label">Vote Attempts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="rejected">0</div>
-                <div class="stat-label">Rejected (Duplicates)</div>
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week3" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold shadow-lg shadow-orange-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-wide">Hash<span class="text-orange-500">Table</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-orange-400 transition">المفهوم</a>
+                <a href="#demo" class="hover:text-orange-400 transition">التجربة</a>
+                <a href="#code" class="hover:text-orange-400 transition">الكود</a>
             </div>
         </div>
+    </nav>
 
-        <!-- Main Content Grid -->
-        <div class="main-content">
-            <!-- Hash Table Section -->
-            <div class="section">
-                <h2>📊 Hash Table (Size = 10)</h2>
-                <div class="hash-table-grid" id="hash-table"></div>
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-orange-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                WEEK 3 • هياكل البيانات المتقدمة
             </div>
 
-            <!-- Controls Section -->
-            <div class="section">
-                <div class="controls-section">
-                    <div class="explanation-box">
-                        <h3>🎯 Why Hash Table?</h3>
-                        <p><strong>Problem:</strong> Prevent duplicate voting efficiently</p>
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+                <span class="text-gradient">Hash</span> Table
+            </h1>
 
-                        <div class="comparison">
-                            <div class="comp-card array">
-                                <div>❌ Array</div>
-                                <div class="complexity">O(n)</div>
-                                <div style="font-size: 0.85rem;">Check all voters</div>
-                            </div>
-                            <div class="comp-card hashtable">
-                                <div>✅ Hash Table</div>
-                                <div class="complexity">O(1)</div>
-                                <div style="font-size: 0.85rem;">Direct check</div>
-                            </div>
-                        </div>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                جداول التجزئة
+            </h2>
 
-                        <p style="font-size: 0.9rem; margin-top: 15px;">
-                            <strong>How it works:</strong><br>
-                            1️⃣ Name → Hash Function → Index<br>
-                            2️⃣ Search entire table for duplicate<br>
-                            3️⃣ If not found → Store at calculated index<br>
-                            4️⃣ If found → Reject duplicate
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
+                The secret behind O(1) lookups! Maps keys to values using a hash function.
+            </p>
+
+            <!-- Arabic Explanation Box -->
+            <div class="max-w-4xl mx-auto mb-12">
+                <div class="p-6 bg-orange-950/30 border border-orange-900/50 rounded-2xl rtl-block">
+                    <h3 class="text-2xl font-bold text-orange-400 mb-4 font-arabic">🗂️ إيه هو الـ Hash Table؟</h3>
+                    <div class="space-y-4 text-orange-100/90 font-arabic text-lg leading-loose">
+                        <p>
+                            تخيل <span class="text-yellow-400">دولاب فيه أدراج</span> 🗄️ وكل درج عليه رقم.
+                            <br>
+                            لما تيجي تحط حاجة، <span class="text-white">بتحسب رقم الدرج</span> من اسمها (hash function)!
                         </p>
-                    </div>
 
-                    <div class="input-group">
-                        <input 
-                            type="text" 
-                            id="voter-name" 
-                            placeholder="Enter voter name (e.g., John)"
-                        />
-                        <div class="button-group">
-                            <button class="vote-btn" onclick="vote()">
-                                🗳️ Vote
-                            </button>
-                            <button class="reset-btn" onclick="resetSystem()">
-                                🔄 Reset
-                            </button>
+                        <div class="grid md:grid-cols-3 gap-4 mt-6">
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-700 text-center">
+                                <div class="text-3xl mb-2">🔑</div>
+                                <div class="text-emerald-400 font-bold">Hash Function</div>
+                                <div class="text-xs text-slate-400 mt-1">بتحول المفتاح لرقم (index)</div>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700 text-center">
+                                <div class="text-3xl mb-2">📦</div>
+                                <div class="text-blue-400 font-bold">Bucket</div>
+                                <div class="text-xs text-slate-400 mt-1">كل درج بيخزن القيم</div>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-red-700 text-center">
+                                <div class="text-3xl mb-2">💥</div>
+                                <div class="text-red-400 font-bold">Collision</div>
+                                <div class="text-xs text-slate-400 mt-1">لما مفتاحين يروحوا نفس الدرج!</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
+                            <p class="text-emerald-300">
+                                <strong>💡 الميزة:</strong> الوصول لأي عنصر = <span
+                                    class="text-white font-bold">O(1)</span>!
+                                مش محتاج تدور - تحسب الـ hash وتروح على طول للدرج!
+                            </p>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="log-section" id="log"></div>
+            <!-- Hero SVG Visualization -->
+            <div class="max-w-4xl mx-auto">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-orange-900/20">
+                    <svg viewBox="0 0 800 320" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="keyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8B5CF6" />
+                                <stop offset="100%" style="stop-color:#7C3AED" />
+                            </linearGradient>
+                            <linearGradient id="bucketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#F59E0B" />
+                                <stop offset="100%" style="stop-color:#D97706" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Title -->
+                        <text x="400" y="25" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="13"
+                            font-weight="bold">
+                            Hash Function: المفتاح ← الـ Index
+                        </text>
+
+                        <!-- Keys on left -->
+                        <g transform="translate(50, 50)">
+                            <text x="60" y="0" text-anchor="middle" fill="#8B5CF6" font-family="Cairo" font-size="12"
+                                font-weight="bold">Keys</text>
+
+                            <rect x="10" y="15" width="100" height="35" rx="8" fill="url(#keyGrad)" />
+                            <text x="60" y="40" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12">"apple"</text>
+
+                            <rect x="10" y="60" width="100" height="35" rx="8" fill="url(#keyGrad)" />
+                            <text x="60" y="85" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12">"banana"</text>
+
+                            <rect x="10" y="105" width="100" height="35" rx="8" fill="url(#keyGrad)" />
+                            <text x="60" y="130" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12">"cherry"</text>
+
+                            <rect x="10" y="150" width="100" height="35" rx="8" fill="url(#keyGrad)" />
+                            <text x="60" y="175" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12">"grape"</text>
+                        </g>
+
+                        <!-- Hash Function Box -->
+                        <g transform="translate(200, 95)">
+                            <rect x="0" y="0" width="120" height="70" rx="10" fill="#0F172A" stroke="#F59E0B"
+                                stroke-width="2" />
+                            <text x="60" y="30" text-anchor="middle" fill="#F59E0B" font-family="Cairo" font-size="11"
+                                font-weight="bold">hash(key)</text>
+                            <text x="60" y="50" text-anchor="middle" fill="#64748b" font-family="Cairo"
+                                font-size="9">key.length % 5</text>
+                        </g>
+
+                        <!-- Arrows from keys to hash -->
+                        <path d="M160 82 L200 125" stroke="#8B5CF6" stroke-width="2" fill="none"
+                            marker-end="url(#arrow)" />
+                        <path d="M160 127 L200 130" stroke="#8B5CF6" stroke-width="2" fill="none" />
+                        <path d="M160 172 L200 140" stroke="#8B5CF6" stroke-width="2" fill="none" />
+
+                        <!-- Arrows from hash to buckets -->
+                        <path d="M320 115 L380 75" stroke="#F59E0B" stroke-width="2" fill="none" />
+                        <path d="M320 130 L380 120" stroke="#F59E0B" stroke-width="2" fill="none" />
+                        <path d="M320 145 L380 165" stroke="#F59E0B" stroke-width="2" fill="none" />
+
+                        <!-- Buckets (Array) -->
+                        <g transform="translate(400, 50)">
+                            <text x="150" y="0" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="12"
+                                font-weight="bold">Buckets (Array)</text>
+
+                            <rect x="0" y="15" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
+                            <text x="15" y="40" fill="#64748b" font-family="Fira Code" font-size="10">[0]</text>
+                            <rect x="40" y="22" width="80" height="26" rx="5" fill="url(#bucketGrad)" />
+                            <text x="80" y="41" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="10">apple: 🍎</text>
+
+                            <rect x="0" y="60" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
+                            <text x="15" y="85" fill="#64748b" font-family="Fira Code" font-size="10">[1]</text>
+                            <rect x="40" y="67" width="85" height="26" rx="5" fill="url(#bucketGrad)" />
+                            <text x="82" y="86" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="10">banana: 🍌</text>
+                            <text x="130" y="86" fill="#64748b">→</text>
+                            <rect x="145" y="67" width="80" height="26" rx="5" fill="#EF4444" />
+                            <text x="185" y="86" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="10">cherry: 🍒</text>
+                            <text x="230" y="80" fill="#EF4444" font-family="Cairo" font-size="8">collision!</text>
+
+                            <rect x="0" y="105" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
+                            <text x="15" y="130" fill="#64748b" font-family="Fira Code" font-size="10">[2]</text>
+                            <text x="50" y="130" fill="#475569" font-family="Cairo" font-size="9">empty</text>
+
+                            <rect x="0" y="150" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
+                            <text x="15" y="175" fill="#64748b" font-family="Fira Code" font-size="10">[3]</text>
+                            <text x="50" y="175" fill="#475569" font-family="Cairo" font-size="9">empty</text>
+
+                            <rect x="0" y="195" width="300" height="40" rx="6" fill="#0F172A" stroke="#1E293B" />
+                            <text x="15" y="220" fill="#64748b" font-family="Fira Code" font-size="10">[4]</text>
+                            <rect x="40" y="202" width="80" height="26" rx="5" fill="url(#bucketGrad)" />
+                            <text x="80" y="221" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="10">grape: 🍇</text>
+                        </g>
+
+                        <!-- Legend -->
+                        <g transform="translate(50, 260)">
+                            <text x="0" y="15" fill="#F59E0B" font-family="Cairo" font-size="10">✅ O(1) عادي</text>
+                            <text x="120" y="15" fill="#EF4444" font-family="Cairo" font-size="10">💥 Collision = linked
+                                list</text>
+                            <text x="300" y="15" fill="#64748b" font-family="Cairo" font-size="10">📊 Load Factor =
+                                items / buckets</text>
+                        </g>
+                    </svg>
                 </div>
             </div>
         </div>
+    </header>
 
-        <!-- Code Implementation Section -->
-        <div class="code-section">
-            <h2>💻 Hash Table Implementation - CORRECTED</h2>
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
+                How Hash Tables Work
+            </h2>
+            <p class="text-center text-slate-400 font-arabic mb-16">إزاي الـ Hash Table بيشتغل</p>
 
-            <div class="code-explanation">
-                <strong>🔧 THE FIX:</strong> Check if EXACT name exists anywhere in table, not just if slot is occupied
-            </div>
+            <div class="grid md:grid-cols-2 gap-12 mb-12">
+                <!-- Operations -->
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-bold text-orange-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-cogs"></i>
+                        Operations
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-emerald-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-emerald-400">Insert / Set</h4>
+                                <span class="complexity-badge fast">O(1)*</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, store value.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">احسب الـ hash، روح للدرج، خزن
+                                القيمة!</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-blue-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-blue-400">Get / Lookup</h4>
+                                <span class="complexity-badge fast">O(1)*</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, return value.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">احسب الـ hash، روح للدرج، ارجع
+                                القيمة!</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-red-500">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-red-400">Delete</h4>
+                                <span class="complexity-badge fast">O(1)*</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Hash the key, go to bucket, remove entry.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">*في حالة وجود collisions كتير،
+                                ممكن يبقى O(n)</p>
+                        </div>
+                    </div>
+                </div>
 
-            <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Corrected Vote Logic</h3>
-            <div class="code-block">
-                <pre><code><span class="keyword">function</span> <span class="function">vote</span>(name) {
-    <span class="comment">// Step 1: Check if this EXACT name already exists ANYWHERE</span>
-    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < <span class="number">10</span>; i++) {
-        <span class="keyword">if</span> (hashTable[i] === name) {
-            <span class="function">console</span>.log(<span class="string">`❌ "</span>${name}<span class="string">" already voted at index </span>${i}<span class="string">`</span>);
-            <span class="keyword">return</span> <span class="keyword">false</span>;
-        }
-    }
-
-    <span class="comment">// Step 2: Name not found - Calculate index and find empty slot</span>
-    <span class="keyword">let</span> index = <span class="function">hashFunction</span>(name);
-    <span class="keyword">let</span> tries = <span class="number">0</span>;
-
-    <span class="keyword">while</span> (tries < <span class="number">10</span>) {
-        <span class="keyword">if</span> (hashTable[index] === <span class="keyword">null</span>) {
-            <span class="comment">// Empty slot found - Store name</span>
-            hashTable[index] = name;
-            <span class="function">console</span>.log(<span class="string">`✅ "</span>${name}<span class="string">" stored at index </span>${index}<span class="string">`</span>);
-            <span class="keyword">return</span> <span class="keyword">true</span>;
-        }
-        <span class="comment">// Slot occupied - Try next slot (linear probing)</span>
-        index = (index + <span class="number">1</span>) % <span class="number">10</span>;
-        tries++;
-    }
-
-    <span class="function">console</span>.log(<span class="string">"❌ Table full"</span>);
-    <span class="keyword">return</span> <span class="keyword">false</span>;
-}</code></pre>
-            </div>
-
-            <h3 style="color: #4ade80; margin: 20px 0 10px 0;">Example</h3>
-            <div class="code-block">
-                <pre><code><span class="comment">// John votes</span>
-<span class="function">vote</span>(<span class="string">"John"</span>);
-<span class="comment">// Check table: "John" not found</span>
-<span class="comment">// hash("John") = 8 → Empty → Store at 8</span>
-<span class="comment">// ✅ ACCEPTED</span>
-
-<span class="comment">// Syed votes</span>
-<span class="function">vote</span>(<span class="string">"Syed"</span>);
-<span class="comment">// Check table: "Syed" not found</span>
-<span class="comment">// hash("Syed") = 8 → Occupied by "John"</span>
-<span class="comment">// Try index 9 → Empty → Store at 9</span>
-<span class="comment">// ✅ ACCEPTED (No false rejection!)</span>
-
-<span class="comment">// John tries again</span>
-<span class="function">vote</span>(<span class="string">"John"</span>);
-<span class="comment">// Check table: "John" found at index 8</span>
-<span class="comment">// ❌ REJECTED - Already voted!</span></code></pre>
+                <!-- Collisions -->
+                <div data-aos="fade-left">
+                    <h3 class="text-2xl font-bold text-red-400 mb-6 flex items-center gap-3 font-arabic justify-end">
+                        التعامل مع الـ Collisions
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </h3>
+                    <div class="glass-card p-8 rounded-2xl">
+                        <div class="space-y-6 rtl-block font-arabic">
+                            <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                                <h4 class="font-bold text-purple-400 mb-2">🔗 Chaining (سلسلة)</h4>
+                                <p class="text-sm text-slate-300">
+                                    كل bucket بيكون linked list. لو فيه collision، ضيف للسلسلة!
+                                </p>
+                            </div>
+                            <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                                <h4 class="font-bold text-blue-400 mb-2">📍 Open Addressing</h4>
+                                <p class="text-sm text-slate-300">
+                                    لو الـ bucket مشغول، دور على الـ bucket الفاضي التالي.
+                                </p>
+                            </div>
+                            <div class="p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+                                <p class="text-yellow-300 text-sm">
+                                    <strong>💡 Pro Tip:</strong>
+                                    حافظ على Load Factor < 0.7 عشان الـ collisions تقل! </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-24 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-orange-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Build a Hash Table</h2>
+                <p class="text-slate-400 mt-2 font-arabic">ابني الـ Hash Table بنفسك!</p>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
+                    <input type="text" id="key-input" placeholder="Key (e.g. name)"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-36 focus:border-orange-500 focus:outline-none">
+                    <input type="text" id="value-input" placeholder="Value"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-36 focus:border-orange-500 focus:outline-none">
+                    <button id="set-btn"
+                        class="px-5 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-orange-500/30 transition flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Set
+                    </button>
+                    <button id="get-btn"
+                        class="px-5 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition flex items-center gap-2">
+                        <i class="fas fa-search"></i> Get
+                    </button>
+                    <button id="delete-btn"
+                        class="px-5 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition flex items-center gap-2">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button id="clear-btn"
+                        class="px-5 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition">
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Hash Function Display -->
+                <div class="text-center mb-6 p-3 bg-slate-900/50 rounded-lg border border-slate-800">
+                    <span class="text-slate-400">Hash Function: </span>
+                    <code class="text-orange-400 font-mono">hash(key) = sum(charCodes) % 7</code>
+                </div>
+
+                <!-- Hash Table Visualization -->
+                <div id="hash-table" class="space-y-2 mb-8">
+                    <!-- Buckets will be rendered here -->
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
+                        <div class="text-2xl font-bold text-orange-400" id="items-count">0</div>
+                        <div class="text-xs text-slate-400">Items</div>
+                    </div>
+                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-400" id="buckets-count">7</div>
+                        <div class="text-xs text-slate-400">Buckets</div>
+                    </div>
+                    <div class="text-center p-3 bg-slate-900/50 rounded-lg">
+                        <div class="text-2xl font-bold" id="load-factor">0.00</div>
+                        <div class="text-xs text-slate-400">Load Factor</div>
+                    </div>
+                </div>
+
+                <!-- Log -->
+                <div id="log"
+                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
+                    <p class="text-slate-500">Operations will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section id="code" class="py-24 px-6 bg-black/20">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">hashTable.js</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">class</span> <span class="text-blue-400">HashTable</span> {</span>
+<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">constructor</span>(<span class="text-orange-300">size</span> = <span class="text-emerald-400">7</span>) {</span>
+<span class="code-line"><span class="line-num">3</span>    <span class="text-purple-400">this</span>.buckets = <span class="text-purple-400">new</span> <span class="text-blue-400">Array</span>(size);</span>
+<span class="code-line"><span class="line-num">4</span>  }</span>
+<span class="code-line"><span class="line-num">5</span></span>
+<span class="code-line"><span class="line-num">6</span>  <span class="text-gray-500">// Hash function</span></span>
+<span class="code-line"><span class="line-num">7</span>  <span class="text-blue-400">hash</span>(<span class="text-orange-300">key</span>) {</span>
+<span class="code-line"><span class="line-num">8</span>    <span class="text-purple-400">let</span> sum = <span class="text-emerald-400">0</span>;</span>
+<span class="code-line"><span class="line-num">9</span>    <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> char <span class="text-purple-400">of</span> key) {</span>
+<span class="code-line"><span class="line-num">10</span>      sum += char.charCodeAt(<span class="text-emerald-400">0</span>);</span>
+<span class="code-line"><span class="line-num">11</span>    }</span>
+<span class="code-line"><span class="line-num">12</span>    <span class="text-purple-400">return</span> sum % <span class="text-purple-400">this</span>.buckets.length;</span>
+<span class="code-line"><span class="line-num">13</span>  }</span>
+<span class="code-line"><span class="line-num">14</span></span>
+<span class="code-line"><span class="line-num">15</span>  <span class="text-blue-400">set</span>(<span class="text-orange-300">key</span>, <span class="text-orange-300">value</span>) {</span>
+<span class="code-line"><span class="line-num">16</span>    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);</span>
+<span class="code-line"><span class="line-num">17</span>    <span class="text-purple-400">if</span> (!<span class="text-purple-400">this</span>.buckets[idx])</span>
+<span class="code-line"><span class="line-num">18</span>      <span class="text-purple-400">this</span>.buckets[idx] = [];</span>
+<span class="code-line"><span class="line-num">19</span>    <span class="text-purple-400">this</span>.buckets[idx].push([key, value]);</span>
+<span class="code-line"><span class="line-num">20</span>  }</span>
+<span class="code-line"><span class="line-num">21</span></span>
+<span class="code-line"><span class="line-num">22</span>  <span class="text-blue-400">get</span>(<span class="text-orange-300">key</span>) {</span>
+<span class="code-line"><span class="line-num">23</span>    <span class="text-purple-400">const</span> idx = <span class="text-purple-400">this</span>.hash(key);</span>
+<span class="code-line"><span class="line-num">24</span>    <span class="text-purple-400">const</span> bucket = <span class="text-purple-400">this</span>.buckets[idx];</span>
+<span class="code-line"><span class="line-num">25</span>    <span class="text-purple-400">if</span> (bucket) {</span>
+<span class="code-line"><span class="line-num">26</span>      <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> [k, v] <span class="text-purple-400">of</span> bucket)</span>
+<span class="code-line"><span class="line-num">27</span>        <span class="text-purple-400">if</span> (k === key) <span class="text-purple-400">return</span> v;</span>
+<span class="code-line"><span class="line-num">28</span>    }</span>
+<span class="code-line"><span class="line-num">29</span>  }</span>
+<span class="code-line"><span class="line-num">30</span>}</span></code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
+                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
+                        <div class="space-y-4 font-arabic text-sm">
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-orange-500">
+                                <span class="text-orange-400 font-bold">hash (سطر 7-13):</span>
+                                <br>
+                                بتجمع ASCII codes الحروف وتاخد الباقي على عدد الـ buckets
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">set (سطر 15-20):</span>
+                                <br>
+                                احسب الـ index، لو الـ bucket فاضي اعمل array، ضيف [key, value]
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">get (سطر 22-29):</span>
+                                <br>
+                                روح للـ bucket، دور على الـ key في السلسلة، ارجع القيمة
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 3</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
 
     <script>
-        // ==================== GLOBAL VARIABLES ====================
-        const TABLE_SIZE = 10;
-        let hashTable = new Array(TABLE_SIZE).fill(null);
-        let totalVotes = 0;
-        let attempts = 0;
-        let rejected = 0;
+        AOS.init({ duration: 800, once: true, offset: 100 });
 
-        // ==================== HASH FUNCTION ====================
-        function hashFunction(name) {
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = hash + (name.charCodeAt(i) * (i + 1));
-            }
-            return hash % TABLE_SIZE;
+        const BUCKET_COUNT = 7;
+        let hashTable = new Array(BUCKET_COUNT).fill(null).map(() => []);
+
+        const keyInput = document.getElementById('key-input');
+        const valueInput = document.getElementById('value-input');
+        const setBtn = document.getElementById('set-btn');
+        const getBtn = document.getElementById('get-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const hashTableEl = document.getElementById('hash-table');
+        const itemsCount = document.getElementById('items-count');
+        const loadFactor = document.getElementById('load-factor');
+        const logElement = document.getElementById('log');
+
+        function hash(key) {
+            let sum = 0;
+            for (let char of key) sum += char.charCodeAt(0);
+            return sum % BUCKET_COUNT;
         }
 
-        // ==================== INITIALIZE ====================
-        function initializeSampleVoters() {
-            const samples = ['John', 'Alice', 'Bob', 'David', 'Ahmed'];
+        function renderTable(highlightBucket = -1) {
+            hashTableEl.innerHTML = '';
+            hashTable.forEach((bucket, idx) => {
+                const bucketEl = document.createElement('div');
+                bucketEl.className = 'bucket' + (idx === highlightBucket ? ' ring-2 ring-orange-500' : '');
 
-            samples.forEach(name => {
-                // Find empty slot using linear probing
-                let index = hashFunction(name);
-                let tries = 0;
+                const indexEl = document.createElement('span');
+                indexEl.className = 'bucket-index';
+                indexEl.textContent = `[${idx}]`;
+                bucketEl.appendChild(indexEl);
 
-                while (tries < TABLE_SIZE) {
-                    if (hashTable[index] === null) {
-                        hashTable[index] = name;
-                        totalVotes++;
-                        break;
-                    }
-                    index = (index + 1) % TABLE_SIZE;
-                    tries++;
+                const contentEl = document.createElement('div');
+                contentEl.className = 'bucket-content';
+
+                if (bucket.length === 0) {
+                    contentEl.innerHTML = '<span class="text-slate-500 text-sm">empty</span>';
+                } else {
+                    bucket.forEach((item, i) => {
+                        if (i > 0) {
+                            const arrow = document.createElement('span');
+                            arrow.className = 'arrow-chain';
+                            arrow.textContent = '→';
+                            contentEl.appendChild(arrow);
+                        }
+                        const itemEl = document.createElement('span');
+                        itemEl.className = 'hash-item' + (i > 0 ? ' collision' : '');
+                        itemEl.textContent = `${item[0]}: ${item[1]}`;
+                        contentEl.appendChild(itemEl);
+                    });
                 }
+
+                bucketEl.appendChild(contentEl);
+                hashTableEl.appendChild(bucketEl);
             });
 
-            renderHashTable();
-            updateStats();
-            log('✅ System initialized with 5 voters', 'success');
-            log('💡 Try any name - duplicates will be caught!', 'info');
+            const totalItems = hashTable.reduce((sum, b) => sum + b.length, 0);
+            itemsCount.textContent = totalItems;
+            const lf = (totalItems / BUCKET_COUNT).toFixed(2);
+            loadFactor.textContent = lf;
+            loadFactor.className = `text-2xl font-bold ${lf > 0.7 ? 'text-red-400' : 'text-emerald-400'}`;
         }
 
-        // ==================== MAIN VOTE FUNCTION - FIXED ====================
-        async function vote() {
-            const nameInput = document.getElementById('voter-name');
-            const name = nameInput.value.trim();
+        setBtn.addEventListener('click', () => {
+            const key = keyInput.value.trim();
+            const value = valueInput.value.trim();
+            if (!key || !value) { log('❌ Enter both key and value!', 'error'); return; }
 
-            if (!name) {
-                log('⚠️ Please enter a name', 'error');
-                return;
+            const idx = hash(key);
+            const existing = hashTable[idx].findIndex(item => item[0] === key);
+            if (existing >= 0) {
+                hashTable[idx][existing][1] = value;
+                log(`📝 Updated "${key}" at bucket[${idx}]`, 'info');
+            } else {
+                const isCollision = hashTable[idx].length > 0;
+                hashTable[idx].push([key, value]);
+                log(`✅ Set "${key}":"${value}" → hash=${idx}${isCollision ? ' (💥 collision!)' : ''}`, 'success');
             }
+            renderTable(idx);
+            keyInput.value = '';
+            valueInput.value = '';
+        });
 
-            attempts++;
-            updateStats();
+        getBtn.addEventListener('click', () => {
+            const key = keyInput.value.trim();
+            if (!key) { log('❌ Enter a key to lookup!', 'error'); return; }
 
-            log(`
-━━━━━━━━━━━━━━━━━━━━━━━━`, 'info');
-            log(`🆕 Vote attempt: "${name}"`, 'info');
-
-            await sleep(300);
-
-            // STEP 1: Check if EXACT name already exists ANYWHERE in table
-            let foundAt = -1;
-            for (let i = 0; i < TABLE_SIZE; i++) {
-                if (hashTable[i] === name) {
-                    foundAt = i;
-                    break;
-                }
-            }
-
-            if (foundAt !== -1) {
-                // Name found - REJECT
-                rejected++;
-                updateStats();
-                highlightBucket(foundAt);
-                await sleep(300);
-                highlightVoter(foundAt);
-                log(`❌ Vote REJECTED: "${name}" already voted!`, 'error');
-                log(`📍 Found at index ${foundAt}`, 'error');
-                return;
-            }
-
-            // STEP 2: Name not found - Calculate index
-            let index = hashFunction(name);
-            log(`🔍 Hash Function: "${name}" → Index ${index}`, 'info');
-
-            await sleep(500);
-
-            // STEP 3: Find empty slot using linear probing
-            let tries = 0;
-            let startIndex = index;
-
-            while (tries < TABLE_SIZE) {
-                if (tries > 0) {
-                    highlightBucket(index, true);
-                    await sleep(200);
-                } else {
-                    highlightBucket(index);
-                    await sleep(300);
-                }
-
-                if (hashTable[index] === null) {
-                    // Empty slot found - Store name
-                    hashTable[index] = name;
-                    totalVotes++;
-                    renderHashTable();
-                    updateStats();
-
-                    if (tries > 0) {
-                        log(`🔄 Probed ${tries} slot(s) to find empty space`, 'warning');
-                    }
-                    log(`✅ Vote ACCEPTED: "${name}" stored at index ${index}`, 'success');
-                    log(`⚡ Duplicate check completed!`, 'success');
-                    nameInput.value = '';
-                    return;
-                }
-
-                // Slot occupied - Try next
-                if (tries === 0) {
-                    log(`📍 Index ${index} occupied - trying next slot...`, 'warning');
-                }
-                index = (index + 1) % TABLE_SIZE;
-                tries++;
-            }
-
-            // Table full
-            rejected++;
-            updateStats();
-            log(`❌ Vote REJECTED: Table is full!`, 'error');
-        }
-
-        // ==================== RENDER ====================
-        function renderHashTable() {
-            const container = document.getElementById('hash-table');
-            container.innerHTML = '';
-
-            for (let i = 0; i < TABLE_SIZE; i++) {
-                const bucket = document.createElement('div');
-                bucket.className = 'bucket';
-                bucket.id = `bucket-${i}`;
-
-                const indexDiv = document.createElement('div');
-                indexDiv.className = 'bucket-index';
-                indexDiv.textContent = i;
-
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'bucket-content';
-
-                if (hashTable[i] === null) {
-                    contentDiv.textContent = 'Empty';
-                } else {
-                    contentDiv.classList.add('has-voter');
-                    const voterSpan = document.createElement('span');
-                    voterSpan.className = 'voter-name';
-                    voterSpan.id = `voter-${i}`;
-                    voterSpan.textContent = hashTable[i];
-                    contentDiv.appendChild(voterSpan);
-                }
-
-                bucket.appendChild(indexDiv);
-                bucket.appendChild(contentDiv);
-                container.appendChild(bucket);
-            }
-        }
-
-        // ==================== VISUAL EFFECTS ====================
-        function highlightBucket(index, isProbe = false) {
-            const bucket = document.getElementById(`bucket-${index}`);
-            if (bucket) {
-                bucket.classList.add(isProbe ? 'highlight-probe' : 'highlight');
-                setTimeout(() => {
-                    bucket.classList.remove('highlight', 'highlight-probe');
-                }, 1000);
-            }
-        }
-
-        function highlightVoter(index) {
-            const voter = document.getElementById(`voter-${index}`);
-            if (voter) {
-                voter.classList.add('found');
-                setTimeout(() => voter.classList.remove('found'), 1500);
-            }
-        }
-
-        // ==================== UPDATE STATS ====================
-        function updateStats() {
-            document.getElementById('total-votes').textContent = totalVotes;
-            document.getElementById('attempts').textContent = attempts;
-            document.getElementById('rejected').textContent = rejected;
-        }
-
-        // ==================== LOG ====================
-        function log(message, type = 'info') {
-            const logDiv = document.getElementById('log');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `log-message log-${type}`;
-            messageDiv.textContent = message;
-            logDiv.insertBefore(messageDiv, logDiv.firstChild);
-
-            while (logDiv.children.length > 15) {
-                logDiv.removeChild(logDiv.lastChild);
-            }
-        }
-
-        // ==================== HELPERS ====================
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        function resetSystem() {
-            hashTable = new Array(TABLE_SIZE).fill(null);
-            totalVotes = 0;
-            attempts = 0;
-            rejected = 0;
-            document.getElementById('log').innerHTML = '';
-            document.getElementById('voter-name').value = '';
-            initializeSampleVoters();
-        }
-
-        // ==================== ENTER KEY ====================
-        document.getElementById('voter-name').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                vote();
+            const idx = hash(key);
+            const item = hashTable[idx].find(item => item[0] === key);
+            renderTable(idx);
+            if (item) {
+                log(`🔍 Found "${key}" = "${item[1]}" at bucket[${idx}]`, 'success');
+            } else {
+                log(`❌ "${key}" not found (hash=${idx})`, 'error');
             }
         });
 
-        // ==================== INIT ====================
-        window.onload = function() {
-            initializeSampleVoters();
-            log('🎉 Welcome to Hash Table Voting System!', 'success');
-        };
+        deleteBtn.addEventListener('click', () => {
+            const key = keyInput.value.trim();
+            if (!key) { log('❌ Enter a key to delete!', 'error'); return; }
+
+            const idx = hash(key);
+            const itemIdx = hashTable[idx].findIndex(item => item[0] === key);
+            if (itemIdx >= 0) {
+                hashTable[idx].splice(itemIdx, 1);
+                log(`🗑️ Deleted "${key}" from bucket[${idx}]`, 'success');
+            } else {
+                log(`❌ "${key}" not found`, 'error');
+            }
+            renderTable(idx);
+            keyInput.value = '';
+        });
+
+        clearBtn.addEventListener('click', () => {
+            hashTable = new Array(BUCKET_COUNT).fill(null).map(() => []);
+            renderTable();
+            log('🔄 Hash table cleared', 'info');
+        });
+
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.className = {
+                info: 'text-blue-400',
+                success: 'text-emerald-400',
+                error: 'text-red-400'
+            }[type] + ' mb-1';
+            logElement.prepend(p);
+            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
+        }
+
+        renderTable();
     </script>
 </body>
+
 </html>

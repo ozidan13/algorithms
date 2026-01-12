@@ -1,302 +1,697 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binary Search Algorithm</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
-</head>
-<body data-theme="dark">
-    <a href="../index.html#week1" id="back-button" class="btn" style="display: inline-flex; position: absolute; top: 20px; left: 20px; font-size: 0.9rem; padding: 8px 15px;"><i class="fas fa-arrow-left"></i> Back</a>
-
-    <h1><i class="fas fa-search icon-margin"></i>Binary Search Algorithm</h1>
-    
-    <div class="container">
-        <h2>Interactive Demonstration</h2>
-        <p>Binary search is an efficient algorithm for finding an element in a <strong>sorted</strong> array. It works by repeatedly dividing the search interval in half.</p>
-        
-        <div class="controls">
-            <input type="number" id="search-input" placeholder="Number to find">
-            <button id="search-btn"><i class="fas fa-play icon-margin"></i>Search</button>
-            <button id="reset-btn"><i class="fas fa-redo icon-margin"></i>Reset</button>
-            <button id="new-array-btn"><i class="fas fa-random icon-margin"></i>New Array</button>
-        </div>
-        
-        <div class="array-container" id="array-container"></div>
-        
-        <div class="step-controls">
-            <button id="prev-step-btn" disabled><i class="fas fa-backward icon-margin"></i>Previous Step</button>
-            <button id="next-step-btn" disabled><i class="fas fa-forward icon-margin"></i>Next Step</button>
-        </div>
-        
-        <div class="log" id="log"><p>Enter a number and click 'Search' or 'New Array' to begin.</p></div>
-    </div>
-    
-    <div class="container">
-        <h2>How Binary Search Works</h2>
-        <div class="explanation">
-            <p>Binary search follows these steps:</p>
-            <ol>
-                <li>Start with the middle element of the sorted array.</li>
-                <li>If the target value is equal to the middle element, we've found it!</li>
-                <li>If the target value is less than the middle element, search the left half.</li>
-                <li>If the target value is greater than the middle element, search the right half.</li>
-                <li>Repeat steps 1-4 until the element is found or the search space is empty.</li>
-            </ol>
-        </div>
-        
-        <h3>Time and Space Complexity</h3>
-        <div class="complexity">
-            <div class="complexity-item">
-                <h4>Time Complexity</h4>
-                <p><strong>O(log n)</strong> - With each step, we eliminate half of the remaining elements.</p>
-            </div>
-            <div class="complexity-item">
-                <h4>Space Complexity</h4>
-                <p><strong>O(1)</strong> - Iterative approach uses constant extra space.</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="container">
-        <h2>Implementation</h2>
-        <div class="code-container">
-            <pre><code>function binarySearch(arr, target) {
-    let low = 0;
-    let high = arr.length - 1;
-    
-    while (low <= high) {
-        let mid = Math.floor((low + high) / 2);
-        let guess = arr[mid];
-        
-        if (guess === target) {
-            return mid; // Found the item
-        }
-        if (guess > target) {
-            high = mid - 1; // Target is in the left half
-        } else {
-            low = mid + 1; // Target is in the right half
-        }
-    }
-    
-    return -1; // Item not found
-}</code></pre>
-        </div>
-    </div>
-    
+    <title>Binary Search | البحث الثنائي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // DOM elements
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', cyan: '#06B6D4' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: #020617; color: #E2E8F0; overflow-x: hidden; }
+        .glass-card { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .text-gradient { background: linear-gradient(135deg, #06B6D4, #3B82F6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; }
+        .rtl-block { direction: rtl; text-align: right; }
+        .array-el { min-width: 45px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-family: 'Fira Code'; transition: all 0.3s; border: 2px solid transparent; }
+        .array-el.default { background: linear-gradient(135deg, #1E293B, #0F172A); color: #94a3b8; border-color: #334155; }
+        .array-el.in-range { background: linear-gradient(135deg, #1E40AF, #1D4ED8); color: white; border-color: #3B82F6; }
+        .array-el.mid { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border-color: #FBBF24; transform: scale(1.1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+        .array-el.found { background: linear-gradient(135deg, #10B981, #059669); color: white; border-color: #34D399; transform: scale(1.15); box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
+        .array-el.eliminated { background: #0F172A; color: #475569; border-color: #1E293B; opacity: 0.4; }
+        .pointer { position: absolute; top: -30px; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
+        .pointer.low { background: #3B82F6; color: white; }
+        .pointer.high { background: #8B5CF6; color: white; }
+        .pointer.mid { background: #F59E0B; color: white; }
+        .code-line { display: flex; gap: 12px; padding: 6px 0; border-left: 3px solid transparent; padding-left: 12px; margin-left: -12px; }
+        .code-line.active { border-left-color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
+        .line-num { color: #64748b; min-width: 24px; text-align: right; user-select: none; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week1" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg">Binary<span class="text-cyan-500">Search</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-cyan-400 transition">المفهوم</a>
+                <a href="#detailed" class="hover:text-cyan-400 transition">الشرح التفصيلي</a>
+                <a href="#demo" class="hover:text-cyan-400 transition">التجربة</a>
+                <a href="#code" class="hover:text-cyan-400 transition">الكود</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none"></div>
+
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-cyan-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                WEEK 1 • خوارزميات البحث
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight">
+                <span class="text-gradient">Binary</span> Search
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">البحث الثنائي</h2>
+
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8">
+                One of the most efficient search algorithms. Find any element in a sorted array in O(log n) time!
+            </p>
+        </div>
+    </header>
+
+    <!-- Detailed Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-lightbulb text-yellow-500 mr-3"></i>
+                الفكرة الأساسية
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Understanding the Core Concept</p>
+
+            <!-- Main Arabic Explanation -->
+            <div class="glass-card p-8 rounded-2xl border border-cyan-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-6 font-arabic">🔍 إيه هو البحث الثنائي (Binary Search)؟</h3>
+                    
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه القاموس</h4>
+                            <p class="text-slate-300">
+                                تخيل إنك عايز تدور على كلمة في القاموس. هل هتبدأ من أول صفحة وتقلب صفحة صفحة؟ 
+                                <span class="text-red-400">طبعاً لأ!</span> ده هيكون بطيء جداً.
+                            </p>
+                            <p class="text-slate-300 mt-3">
+                                بدل كده، هتفتح القاموس <span class="text-cyan-400 font-bold">من النص</span>، تبص على الكلمة اللي قدامك:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• لو الكلمة اللي بتدور عليها <span class="text-blue-400">قبلها</span> ← تدور في <span class="text-blue-400">النص الأول</span></li>
+                                <li>• لو الكلمة اللي بتدور عليها <span class="text-purple-400">بعدها</span> ← تدور في <span class="text-purple-400">النص التاني</span></li>
+                                <li>• لو الكلمة <span class="text-green-400">هي نفسها</span> ← مبروك! لقيتها! 🎉</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">⚡ ليه ده أسرع؟</h4>
+                            <p class="text-slate-300">
+                                لأنك في <span class="text-yellow-400 font-bold">كل خطوة</span> بتشيل <span class="text-red-400 font-bold">نص العناصر</span> من البحث!
+                            </p>
+                            <div class="mt-4 p-4 bg-slate-800/50 rounded-lg">
+                                <p class="text-cyan-300 font-mono text-sm">
+                                    مثال: لو عندك 1,000,000 عنصر:
+                                </p>
+                                <ul class="mt-2 space-y-1 text-slate-400 text-sm">
+                                    <li>• البحث العادي (Linear): ممكن يحتاج <span class="text-red-400">1,000,000</span> خطوة! 😱</li>
+                                    <li>• البحث الثنائي (Binary): بيحتاج <span class="text-green-400">~20</span> خطوة بس! 🚀</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-red-950/30 rounded-xl border border-red-900/50">
+                            <h4 class="text-xl font-bold text-red-400 mb-3">⚠️ شرط مهم جداً!</h4>
+                            <p class="text-slate-300">
+                                البحث الثنائي <span class="text-red-400 font-bold">بيشتغل بس</span> على المصفوفات <span class="text-yellow-400 font-bold">المُرتبة (Sorted)</span>!
+                            </p>
+                            <p class="text-slate-400 text-sm mt-2">
+                                لو المصفوفة مش مترتبة، لازم ترتبها الأول أو تستخدم Linear Search.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step by Step Breakdown -->
+            <div class="glass-card p-8 rounded-2xl border border-blue-900/50" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-blue-400 mb-6 font-arabic">📝 الخطوات بالتفصيل</h3>
+                    
+                    <div class="space-y-4 font-arabic">
+                        <div class="flex gap-4 items-start p-4 bg-slate-900/50 rounded-xl border-r-4 border-r-cyan-500">
+                            <div class="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold shrink-0">1</div>
+                            <div>
+                                <h4 class="font-bold text-cyan-400 text-lg">حدد نطاق البحث</h4>
+                                <p class="text-slate-300 mt-1">
+                                    حط مؤشر <code class="text-blue-400 bg-slate-800 px-2 py-0.5 rounded">low</code> على أول عنصر (index 0).
+                                    <br>
+                                    وحط مؤشر <code class="text-purple-400 bg-slate-800 px-2 py-0.5 rounded">high</code> على آخر عنصر (index = length - 1).
+                                </p>
+                                <p class="text-slate-500 text-sm mt-2">
+                                    دول بيحددوا "النطاق" اللي بتدور فيه.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start p-4 bg-slate-900/50 rounded-xl border-r-4 border-r-yellow-500">
+                            <div class="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold shrink-0">2</div>
+                            <div>
+                                <h4 class="font-bold text-yellow-400 text-lg">احسب منتصف النطاق</h4>
+                                <p class="text-slate-300 mt-1">
+                                    <code class="text-yellow-400 bg-slate-800 px-2 py-0.5 rounded">mid = (low + high) / 2</code>
+                                    <br>
+                                    ده الـ index بتاع العنصر اللي في النص.
+                                </p>
+                                <p class="text-slate-500 text-sm mt-2">
+                                    بنستخدم <code class="bg-slate-800 px-1 rounded">Math.floor()</code> عشان ناخد رقم صحيح.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start p-4 bg-slate-900/50 rounded-xl border-r-4 border-r-emerald-500">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold shrink-0">3</div>
+                            <div>
+                                <h4 class="font-bold text-emerald-400 text-lg">قارن العنصر الوسط بالهدف</h4>
+                                <p class="text-slate-300 mt-1">
+                                    لو <code class="bg-slate-800 px-1 rounded">arr[mid] == target</code> ← <span class="text-green-400 font-bold">لقيناه! 🎉</span>
+                                    <br>
+                                    لو <code class="bg-slate-800 px-1 rounded">arr[mid] > target</code> ← الهدف في <span class="text-blue-400">النص الشمال</span>، حدث <code class="text-purple-400">high = mid - 1</code>
+                                    <br>
+                                    لو <code class="bg-slate-800 px-1 rounded">arr[mid] < target</code> ← الهدف في <span class="text-purple-400">النص اليمين</span>، حدث <code class="text-blue-400">low = mid + 1</code>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start p-4 bg-slate-900/50 rounded-xl border-r-4 border-r-purple-500">
+                            <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold shrink-0">4</div>
+                            <div>
+                                <h4 class="font-bold text-purple-400 text-lg">كرر لحد ما تلاقي أو النطاق يخلص</h4>
+                                <p class="text-slate-300 mt-1">
+                                    استمر في تكرار الخطوات 2 و 3 طالما <code class="bg-slate-800 px-1 rounded">low <= high</code>.
+                                    <br>
+                                    لو <code class="bg-slate-800 px-1 rounded">low > high</code> ← العنصر <span class="text-red-400">مش موجود</span> في المصفوفة.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Example Section -->
+    <section id="detailed" class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-shoe-prints text-cyan-500 mr-3"></i>
+                مثال خطوة بخطوة
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Step-by-Step Walkthrough</p>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="rtl-block mb-8">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-4 font-arabic">مثال: البحث عن الرقم 23 في المصفوفة</h3>
+                    <div class="p-4 bg-slate-900/50 rounded-xl font-mono text-center text-lg">
+                        <span class="text-slate-400">[</span>
+                        <span class="text-blue-400">2, 5, 8, 12, 16, 23, 38, 56, 72, 91</span>
+                        <span class="text-slate-400">]</span>
+                    </div>
+                </div>
+
+                <!-- Step 1 -->
+                <div class="mb-8 p-6 bg-slate-900/50 rounded-xl border border-slate-700" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">1</span>
+                        <h4 class="text-lg font-bold text-cyan-400">الخطوة الأولى</h4>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex gap-2 justify-center flex-wrap mb-4">
+                                <div class="array-el in-range relative"><span class="pointer low">low=0</span>2</div>
+                                <div class="array-el in-range">5</div>
+                                <div class="array-el in-range">8</div>
+                                <div class="array-el in-range">12</div>
+                                <div class="array-el mid relative"><span class="pointer mid">mid=4</span>16</div>
+                                <div class="array-el in-range">23</div>
+                                <div class="array-el in-range">38</div>
+                                <div class="array-el in-range">56</div>
+                                <div class="array-el in-range">72</div>
+                                <div class="array-el in-range relative"><span class="pointer high">high=9</span>91</div>
+                            </div>
+                        </div>
+                        <div class="rtl-block font-arabic text-slate-300">
+                            <p class="mb-2"><span class="text-blue-400">low = 0</span> (أول عنصر)</p>
+                            <p class="mb-2"><span class="text-purple-400">high = 9</span> (آخر عنصر)</p>
+                            <p class="mb-2"><span class="text-yellow-400">mid = (0 + 9) / 2 = 4</span></p>
+                            <p class="mb-2">العنصر في النص: <span class="text-yellow-400 font-bold">16</span></p>
+                            <p class="mt-3 p-2 bg-slate-800/50 rounded">
+                                16 < 23 ← الهدف في <span class="text-purple-400 font-bold">النص اليمين</span>!
+                                <br>
+                                نحدث: <code class="text-blue-400">low = mid + 1 = 5</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="mb-8 p-6 bg-slate-900/50 rounded-xl border border-slate-700" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">2</span>
+                        <h4 class="text-lg font-bold text-cyan-400">الخطوة الثانية</h4>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex gap-2 justify-center flex-wrap mb-4">
+                                <div class="array-el eliminated">2</div>
+                                <div class="array-el eliminated">5</div>
+                                <div class="array-el eliminated">8</div>
+                                <div class="array-el eliminated">12</div>
+                                <div class="array-el eliminated">16</div>
+                                <div class="array-el in-range relative"><span class="pointer low">low=5</span>23</div>
+                                <div class="array-el in-range">38</div>
+                                <div class="array-el mid relative"><span class="pointer mid">mid=7</span>56</div>
+                                <div class="array-el in-range">72</div>
+                                <div class="array-el in-range relative"><span class="pointer high">high=9</span>91</div>
+                            </div>
+                        </div>
+                        <div class="rtl-block font-arabic text-slate-300">
+                            <p class="mb-2"><span class="text-blue-400">low = 5</span></p>
+                            <p class="mb-2"><span class="text-purple-400">high = 9</span></p>
+                            <p class="mb-2"><span class="text-yellow-400">mid = (5 + 9) / 2 = 7</span></p>
+                            <p class="mb-2">العنصر في النص: <span class="text-yellow-400 font-bold">56</span></p>
+                            <p class="mt-3 p-2 bg-slate-800/50 rounded">
+                                56 > 23 ← الهدف في <span class="text-blue-400 font-bold">النص الشمال</span>!
+                                <br>
+                                نحدث: <code class="text-purple-400">high = mid - 1 = 6</code>
+                            </p>
+                            <p class="text-slate-500 text-sm mt-2">
+                                لاحظ: شيلنا 5 عناصر من البحث! (العناصر الباهتة)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="mb-8 p-6 bg-emerald-950/30 rounded-xl border border-emerald-700" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold">3</span>
+                        <h4 class="text-lg font-bold text-emerald-400">الخطوة الثالثة - لقيناه! 🎉</h4>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex gap-2 justify-center flex-wrap mb-4">
+                                <div class="array-el eliminated">2</div>
+                                <div class="array-el eliminated">5</div>
+                                <div class="array-el eliminated">8</div>
+                                <div class="array-el eliminated">12</div>
+                                <div class="array-el eliminated">16</div>
+                                <div class="array-el found relative"><span class="pointer low">low=5</span>23</div>
+                                <div class="array-el in-range relative"><span class="pointer high">high=6</span>38</div>
+                                <div class="array-el eliminated">56</div>
+                                <div class="array-el eliminated">72</div>
+                                <div class="array-el eliminated">91</div>
+                            </div>
+                        </div>
+                        <div class="rtl-block font-arabic text-slate-300">
+                            <p class="mb-2"><span class="text-blue-400">low = 5</span></p>
+                            <p class="mb-2"><span class="text-purple-400">high = 6</span></p>
+                            <p class="mb-2"><span class="text-yellow-400">mid = (5 + 6) / 2 = 5</span></p>
+                            <p class="mb-2">العنصر في النص: <span class="text-green-400 font-bold">23</span></p>
+                            <p class="mt-3 p-3 bg-emerald-900/30 rounded border border-emerald-700">
+                                <span class="text-emerald-400 font-bold">23 == 23 ← لقيناه!</span>
+                                <br>
+                                الـ index بتاعه: <span class="text-white font-bold">5</span>
+                            </p>
+                            <p class="text-emerald-400 text-sm mt-2 font-bold">
+                                ✅ لقينا العنصر في 3 خطوات بس من أصل 10 عناصر!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complexity Analysis -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-chart-line text-purple-500 mr-3"></i>
+                تحليل التعقيد
+            </h2>
+            <p class="text-center text-slate-400 mb-12">Complexity Analysis</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Time Complexity -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-clock"></i>
+                        Time Complexity
+                    </h3>
+                    <div class="text-center mb-6">
+                        <span class="text-5xl font-mono font-bold text-emerald-400">O(log n)</span>
+                    </div>
+                    <div class="rtl-block font-arabic space-y-4 text-slate-300">
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <h4 class="text-lg font-bold text-yellow-400 mb-2">ليه log n؟</h4>
+                            <p>
+                                لأننا في كل خطوة بنقسم المصفوفة على 2.
+                                <br>
+                                كام مرة نقدر نقسم n على 2 لحد ما نوصل لـ 1؟
+                                <br>
+                                الإجابة: <span class="text-yellow-400 font-bold">log₂(n)</span> مرة!
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <h4 class="text-lg font-bold text-cyan-400 mb-2">أمثلة عملية:</h4>
+                            <table class="w-full text-sm mt-2">
+                                <tr class="border-b border-slate-700">
+                                    <td class="py-2">n = 16</td>
+                                    <td class="py-2 text-emerald-400">log₂(16) = 4 خطوات</td>
+                                </tr>
+                                <tr class="border-b border-slate-700">
+                                    <td class="py-2">n = 1,000</td>
+                                    <td class="py-2 text-emerald-400">~10 خطوات</td>
+                                </tr>
+                                <tr class="border-b border-slate-700">
+                                    <td class="py-2">n = 1,000,000</td>
+                                    <td class="py-2 text-emerald-400">~20 خطوة بس!</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">n = 1 مليار</td>
+                                    <td class="py-2 text-emerald-400">~30 خطوة فقط!</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Space Complexity -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-blue-500" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-memory"></i>
+                        Space Complexity
+                    </h3>
+                    <div class="text-center mb-6">
+                        <span class="text-5xl font-mono font-bold text-blue-400">O(1)</span>
+                    </div>
+                    <div class="rtl-block font-arabic space-y-4 text-slate-300">
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <h4 class="text-lg font-bold text-yellow-400 mb-2">ليه O(1)؟</h4>
+                            <p>
+                                لأننا بنستخدم متغيرات ثابتة بس:
+                            </p>
+                            <ul class="mt-2 space-y-1">
+                                <li>• <code class="text-blue-400 bg-slate-800 px-1 rounded">low</code> - مؤشر البداية</li>
+                                <li>• <code class="text-purple-400 bg-slate-800 px-1 rounded">high</code> - مؤشر النهاية</li>
+                                <li>• <code class="text-yellow-400 bg-slate-800 px-1 rounded">mid</code> - مؤشر النصف</li>
+                            </ul>
+                            <p class="mt-2 text-slate-500 text-sm">
+                                مش محتاجين ذاكرة إضافية تتناسب مع حجم المصفوفة.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+                            <h4 class="text-lg font-bold text-yellow-400 mb-2">⚠️ ملاحظة</h4>
+                            <p class="text-sm">
+                                لو استخدمت الـ Recursive version بدل الـ Iterative، 
+                                الـ Space Complexity هتبقى <span class="text-yellow-400">O(log n)</span> 
+                                بسبب الـ call stack.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-12">
+                <span class="text-cyan-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Try It Yourself!</h2>
+                <p class="text-slate-400 font-arabic">جربها بنفسك!</p>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
+                <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
+                    <input type="number" id="search-input" placeholder="ادخل رقم" class="px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-36 text-center focus:border-cyan-500 focus:outline-none">
+                    <button id="search-btn" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 transition flex items-center gap-2">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button id="step-btn" class="px-5 py-3 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition flex items-center gap-2">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button id="new-arr-btn" class="px-5 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition flex items-center gap-2">
+                        <i class="fas fa-dice"></i> New Array
+                    </button>
+                    <button id="reset-btn" class="px-5 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+
+                <div id="array-container" class="flex flex-wrap gap-2 justify-center p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[80px]"></div>
+
+                <div id="step-info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Enter a number and click "Search" or "Step" to begin.</p>
+                </div>
+
+                <div id="log" class="mt-4 bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-32 overflow-y-auto font-mono text-sm">
+                    <p class="text-slate-500">Logs will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Implementation with Detailed Explanation -->
+    <section id="code" class="py-20 px-6 bg-black/20">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع شرح كل سطر</p>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">binarySearch.js</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm leading-relaxed"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">function</span> <span class="text-blue-400">binarySearch</span>(<span class="text-orange-300">arr</span>, <span class="text-orange-300">target</span>) {</span>
+<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">let</span> low = <span class="text-emerald-400">0</span>;</span>
+<span class="code-line"><span class="line-num">3</span>  <span class="text-purple-400">let</span> high = arr.length - <span class="text-emerald-400">1</span>;</span>
+<span class="code-line"><span class="line-num">4</span></span>
+<span class="code-line"><span class="line-num">5</span>  <span class="text-purple-400">while</span> (low <= high) {</span>
+<span class="code-line"><span class="line-num">6</span>    <span class="text-purple-400">let</span> mid = Math.floor((low + high) / <span class="text-emerald-400">2</span>);</span>
+<span class="code-line"><span class="line-num">7</span>    <span class="text-purple-400">let</span> guess = arr[mid];</span>
+<span class="code-line"><span class="line-num">8</span></span>
+<span class="code-line"><span class="line-num">9</span>    <span class="text-purple-400">if</span> (guess === target) {</span>
+<span class="code-line"><span class="line-num">10</span>      <span class="text-purple-400">return</span> mid;</span>
+<span class="code-line"><span class="line-num">11</span>    }</span>
+<span class="code-line"><span class="line-num">12</span>    <span class="text-purple-400">if</span> (guess > target) {</span>
+<span class="code-line"><span class="line-num">13</span>      high = mid - <span class="text-emerald-400">1</span>;</span>
+<span class="code-line"><span class="line-num">14</span>    } <span class="text-purple-400">else</span> {</span>
+<span class="code-line"><span class="line-num">15</span>      low = mid + <span class="text-emerald-400">1</span>;</span>
+<span class="code-line"><span class="line-num">16</span>    }</span>
+<span class="code-line"><span class="line-num">17</span>  }</span>
+<span class="code-line"><span class="line-num">18</span></span>
+<span class="code-line"><span class="line-num">19</span>  <span class="text-purple-400">return</span> -<span class="text-emerald-400">1</span>;</span>
+<span class="code-line"><span class="line-num">20</span>}</span></code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto max-h-[500px]">
+                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح كل سطر 📖</h4>
+                        <div class="space-y-3 font-arabic text-sm">
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">سطر 1:</span>
+                                تعريف الـ function - بتاخد المصفوفة والقيمة اللي بندور عليها
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">سطر 2-3:</span>
+                                تحديد نطاق البحث - من أول عنصر (0) لآخر عنصر (length - 1)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">سطر 5:</span>
+                                نستمر طالما النطاق صالح (low أصغر من أو يساوي high)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">سطر 6-7:</span>
+                                نحسب النص ونجيب القيمة اللي فيه
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">سطر 9-11:</span>
+                                لقيناه! نرجع الـ index بتاعه
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-orange-500">
+                                <span class="text-orange-400 font-bold">سطر 12-13:</span>
+                                لو القيمة أكبر من الهدف ← ندور في النص الشمال (نقلل high)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-pink-500">
+                                <span class="text-pink-400 font-bold">سطر 14-15:</span>
+                                لو القيمة أصغر من الهدف ← ندور في النص اليمين (نزود low)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-red-500">
+                                <span class="text-red-400 font-bold">سطر 19:</span>
+                                لو خرجنا من الـ loop يعني العنصر مش موجود - نرجع -1
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 1</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
+
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 100 });
+
         const arrayContainer = document.getElementById('array-container');
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
+        const stepBtn = document.getElementById('step-btn');
+        const newArrBtn = document.getElementById('new-arr-btn');
         const resetBtn = document.getElementById('reset-btn');
-        const newArrayBtn = document.getElementById('new-array-btn');
-        const prevStepBtn = document.getElementById('prev-step-btn');
-        const nextStepBtn = document.getElementById('next-step-btn');
+        const stepInfo = document.getElementById('step-info');
         const logElement = document.getElementById('log');
-        
-        // Variables
+
         let array = [];
-        let searchSteps = [];
-        let currentStepIndex = -1;
-        let searchTarget = null;
-        let isStepping = false;
+        let steps = [];
+        let currentStep = 0;
+        let target = null;
 
-        // Theme persistence (basic example)
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
-
-        // Initialize
-        generateArray();
-        
-        // Event listeners
-        searchBtn.addEventListener('click', startSearch);
-        resetBtn.addEventListener('click', resetSearch);
-        newArrayBtn.addEventListener('click', generateArray);
-        prevStepBtn.addEventListener('click', showPreviousStep);
-        nextStepBtn.addEventListener('click', showNextStep);
-        
-        // Functions
         function generateArray() {
-            // Generate a sorted array of random numbers
-            const size = Math.floor(Math.random() * 11) + 10; // 10-20 elements
+            const size = Math.floor(Math.random() * 8) + 8;
             array = [];
-            let current = Math.floor(Math.random() * 10) + 1; // Start slightly higher
-            
+            let val = Math.floor(Math.random() * 5) + 1;
             for (let i = 0; i < size; i++) {
-                current += Math.floor(Math.random() * 5) + 1; // Smaller increments
-                array.push(current);
+                val += Math.floor(Math.random() * 8) + 2;
+                array.push(val);
             }
-            
+            steps = [];
+            currentStep = 0;
+            target = null;
             renderArray();
-            resetSearch();
             log('New sorted array generated.', 'info');
         }
-        
+
         function renderArray(low = -1, high = -1, mid = -1, found = -1) {
             arrayContainer.innerHTML = '';
-            
-            array.forEach((value, index) => {
-                const element = document.createElement('div');
-                element.className = 'array-element';
-                element.textContent = value;
-                
-                if (index === found) {
-                    element.classList.add('found');
-                } else if (index === mid) {
-                    element.classList.add('mid');
-                } else if (index === low) {
-                    element.classList.add('low');
-                } else if (index === high) {
-                    element.classList.add('high');
-                }
-                else if (low !== -1 && high !== -1 && index >= low && index <= high && !element.classList.contains('low') && !element.classList.contains('high') && !element.classList.contains('mid') && !element.classList.contains('found')) {
-                   element.style.opacity = '0.7';
-                }
-                
-                arrayContainer.appendChild(element);
+            array.forEach((val, i) => {
+                const el = document.createElement('div');
+                el.className = 'array-el';
+                el.textContent = val;
+
+                if (i === found) el.classList.add('found');
+                else if (i === mid) el.classList.add('mid');
+                else if (low !== -1 && high !== -1 && i >= low && i <= high) el.classList.add('in-range');
+                else if (low !== -1 || high !== -1) el.classList.add('eliminated');
+                else el.classList.add('default');
+
+                arrayContainer.appendChild(el);
             });
         }
-        
-        function startSearch() {
-            const target = parseInt(searchInput.value);
-            if (isNaN(target)) {
-                log('Please enter a valid number.', 'error');
-                return;
-            }
-            
-            searchTarget = target;
-            isStepping = true;
-            searchSteps = [];
-            currentStepIndex = -1;
-            logElement.innerHTML = '';
-            log(`Starting binary search for ${target}. Array size: ${array.length}`, 'info');
-            
-            let low = 0;
-            let high = array.length - 1;
-            
-            searchSteps.push({
-                low,
-                high,
-                mid: -1,
-                found: -1,
-                message: `Initial search range: [${low}, ${high}]`
-            });
-            
+
+        function generateSteps() {
+            steps = [];
+            let low = 0, high = array.length - 1;
+            steps.push({ low, high, mid: -1, found: -1, msg: `البداية: البحث عن ${target} في نطاق [${low}, ${high}]` });
+
             while (low <= high) {
-                let mid = Math.floor((low + high) / 2);
-                let guess = array[mid];
-                
+                const mid = Math.floor((low + high) / 2);
+                const guess = array[mid];
+
                 if (guess === target) {
-                    searchSteps.push({
-                        low,
-                        high,
-                        mid,
-                        found: mid,
-                        message: `Found ${target} at index ${mid}!`
-                    });
-                    break;
+                    steps.push({ low, high, mid, found: mid, msg: `🎉 لقيناه! ${target} موجود في index ${mid}` });
+                    return;
                 }
-                
-                searchSteps.push({
-                    low,
-                    high,
-                    mid,
-                    found: -1,
-                    message: `Check index ${mid} (value ${guess}). Target ${target} is ${guess > target ? 'lower' : 'higher'}. Adjust range.`
-                });
-                
+
+                steps.push({ low, high, mid, found: -1, msg: `فحص index ${mid}: القيمة ${guess}. ${guess > target ? 'أكبر من' : 'أصغر من'} ${target}` });
+
                 if (guess > target) {
                     high = mid - 1;
-                    searchSteps.push({
-                        low,
-                        high,
-                        mid: -1,
-                        found: -1,
-                        message: `New search range: [${low}, ${high}]`
-                    });
+                    steps.push({ low, high, mid: -1, found: -1, msg: `← ندور في الشمال. النطاق الجديد: [${low}, ${high}]` });
                 } else {
                     low = mid + 1;
-                    searchSteps.push({
-                        low,
-                        high,
-                        mid: -1,
-                        found: -1,
-                        message: `New search range: [${low}, ${high}]`
-                    });
+                    steps.push({ low, high, mid: -1, found: -1, msg: `→ ندور في اليمين. النطاق الجديد: [${low}, ${high}]` });
                 }
             }
-            
-            if (searchSteps[searchSteps.length - 1].found === -1 && low > high) {
-                 searchSteps.push({
-                    low: -1,
-                    high: -1,
-                    mid: -1,
-                    found: -1,
-                    message: `${target} not found in the array.`
-                });
+            steps.push({ low: -1, high: -1, mid: -1, found: -1, msg: `❌ ${target} مش موجود في المصفوفة` });
+        }
+
+        function showStep() {
+            if (currentStep >= steps.length) return;
+            const s = steps[currentStep];
+            renderArray(s.low, s.high, s.mid, s.found);
+            stepInfo.innerHTML = `<p class="text-white font-arabic">${s.msg}</p><p class="text-slate-500 text-sm">Step ${currentStep + 1} / ${steps.length}</p>`;
+            log(s.msg, s.found !== -1 ? 'success' : (s.low === -1 && s.found === -1 ? 'error' : 'info'));
+        }
+
+        searchBtn.onclick = () => {
+            target = parseInt(searchInput.value);
+            if (isNaN(target)) { log('Please enter a valid number!', 'error'); return; }
+            generateSteps();
+            currentStep = 0;
+            // Auto-play all steps
+            const interval = setInterval(() => {
+                if (currentStep >= steps.length) { clearInterval(interval); return; }
+                showStep();
+                currentStep++;
+            }, 600);
+        };
+
+        stepBtn.onclick = () => {
+            if (!target && target !== 0) {
+                target = parseInt(searchInput.value);
+                if (isNaN(target)) { log('Please enter a number!', 'error'); return; }
+                generateSteps();
+                currentStep = 0;
             }
-            
-            currentStepIndex = 0;
-            showCurrentStep();
-            
-            prevStepBtn.disabled = true;
-            nextStepBtn.disabled = searchSteps.length <= 1;
-            
-            searchBtn.disabled = true;
-            newArrayBtn.disabled = true;
-            searchInput.disabled = true;
-        }
-        
-        function showCurrentStep() {
-            if (currentStepIndex < 0 || currentStepIndex >= searchSteps.length) return;
-            
-            const step = searchSteps[currentStepIndex];
-            renderArray(step.low, step.high, step.mid, step.found);
-            log(step.message, step.found !== -1 ? 'success' : (step.low === -1 ? 'error' : 'info'));
-            
-            prevStepBtn.disabled = currentStepIndex <= 0;
-            nextStepBtn.disabled = currentStepIndex >= searchSteps.length - 1;
-        }
-        
-        function showNextStep() {
-            if (currentStepIndex < searchSteps.length - 1) {
-                currentStepIndex++;
-                showCurrentStep();
+            if (currentStep < steps.length) {
+                showStep();
+                currentStep++;
             }
-        }
-        
-        function showPreviousStep() {
-            if (currentStepIndex > 0) {
-                currentStepIndex--;
-                showCurrentStep();
-            }
-        }
-        
-        function resetSearch() {
-            isStepping = false;
-            searchTarget = null;
-            searchSteps = [];
-            currentStepIndex = -1;
-            renderArray();
-            logElement.innerHTML = '<p>Search reset. Generate a new array or enter a number to search.</p>';
-            
-            searchBtn.disabled = false;
-            newArrayBtn.disabled = false;
-            searchInput.disabled = false;
+        };
+
+        newArrBtn.onclick = generateArray;
+        resetBtn.onclick = () => {
+            steps = [];
+            currentStep = 0;
+            target = null;
             searchInput.value = '';
-            prevStepBtn.disabled = true;
-            nextStepBtn.disabled = true;
-        }
-        
-        function log(message, type = 'info') {
+            renderArray();
+            stepInfo.innerHTML = '<p class="text-slate-400">Enter a number and click "Search".</p>';
+            log('Reset.', 'info');
+        };
+
+        function log(msg, type = 'info') {
             const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            
+            p.textContent = msg;
+            p.className = type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-cyan-400';
             logElement.prepend(p);
+            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
         }
+
+        generateArray();
     </script>
 </body>
 </html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 8: Composite Design Pattern | Ultimate Guide</title>
+    <meta name="description"
+        content="In-depth explanation of Composite Design Pattern with Arabic & English, SVGs, and Interactive Code.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-green': '0 0 20px -5px rgba(16, 185, 129, 0.5)',
+                        'neon-blue': '0 0 20px -5px rgba(59, 130, 246, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            /* Slate 950 */
+            color: #E2E8F0;
+            /* Slate 200 */
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 30px -10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Text Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #34D399 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10B981;
+        }
+
+        /* Utilities */
+        .arabic-text {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+
+        pre {
+            background: #0B1221 !important;
+            border: 1px solid #1E293B;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">
+                    8
+                </div>
+                <span class="font-bold text-lg tracking-wide">Composite<span
+                        class="text-emerald-500">Pattern</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-emerald-400 transition">Concept</a>
+                <a href="#structure" class="hover:text-emerald-400 transition">Structure</a>
+                <a href="#code" class="hover:text-emerald-400 transition">Implementation</a>
+                <a href="#exam"
+                    class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition">Start
+                    Exam</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <!-- Background Glows -->
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-emerald-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                STRUCTURAL DESIGN PATTERN
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-1">
+                The <span class="text-gradient">Composite</span> Pattern
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                نمط التصميم المُرَكَّب
+            </h2>
+
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-4">
+                Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat
+                individual objects and compositions of objects uniformly.
+            </p>
+
+            <div class="p-4 bg-emerald-950/30 border border-emerald-900/50 rounded-xl mb-12 max-w-3xl mx-auto">
+                <p class="font-arabic text-xl text-emerald-100/90 leading-loose">
+                    <span class="text-emerald-400 font-bold">ببساطة:</span> بيخليك تتعامل مع "مجموعة عناصر" وكأنها "عنصر
+                    واحد". زي لما تتعامل مع الفولدر (اللي جواه ملفات) زي ما بتتعامل مع الملف بالظبط (نسخ، لصق، حذف).
+                </p>
+            </div>
+
+            <!-- Main SVG Visualization -->
+            <div class="max-w-4xl mx-auto mt-12 mb-20">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-emerald-900/20">
+                    <svg viewBox="0 0 800 400" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"
+                                markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#475569" />
+                            </marker>
+                            <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Tree Visualization -->
+                        <g transform="translate(400, 50)">
+                            <!-- Root -->
+                            <circle cx="0" cy="0" r="30" fill="#10B981" fill-opacity="0.2" stroke="#10B981"
+                                stroke-width="2" />
+                            <text x="0" y="5" text-anchor="middle" fill="#fff" font-family="monospace"
+                                font-size="12">ROOT</text>
+
+                            <!-- Level 1 -->
+                            <line x1="0" y1="30" x2="-150" y2="100" stroke="#475569" stroke-width="1" />
+                            <line x1="0" y1="30" x2="150" y2="100" stroke="#475569" stroke-width="1" />
+
+                            <!-- Node 1 (Composite) -->
+                            <circle cx="-150" cy="100" r="25" fill="#3B82F6" fill-opacity="0.2" stroke="#3B82F6"
+                                stroke-width="2" />
+                            <text x="-150" y="105" text-anchor="middle" fill="#93c5fd" font-family="monospace"
+                                font-size="10">BOX</text>
+
+                            <!-- Node 2 (Leaf) -->
+                            <circle cx="150" cy="100" r="25" fill="#F59E0B" fill-opacity="0.2" stroke="#F59E0B"
+                                stroke-width="2" />
+                            <text x="150" y="105" text-anchor="middle" fill="#fcd34d" font-family="monospace"
+                                font-size="10">PRODUCT</text>
+
+                            <!-- Level 2 -->
+                            <line x1="-150" y1="125" x2="-200" y2="200" stroke="#475569" stroke-width="1" />
+                            <line x1="-150" y1="125" x2="-100" y2="200" stroke="#475569" stroke-width="1" />
+
+                            <circle cx="-200" cy="200" r="20" fill="#F59E0B" fill-opacity="0.2" stroke="#F59E0B"
+                                stroke-width="2" />
+                            <text x="-200" y="205" text-anchor="middle" fill="#fcd34d" font-family="monospace"
+                                font-size="8">ITEM</text>
+
+                            <circle cx="-100" cy="200" r="20" fill="#F59E0B" fill-opacity="0.2" stroke="#F59E0B"
+                                stroke-width="2" />
+                            <text x="-100" y="205" text-anchor="middle" fill="#fcd34d" font-family="monospace"
+                                font-size="8">ITEM</text>
+                        </g>
+
+                        <!-- Labels -->
+                        <text x="50" y="50" fill="#94a3b8" font-family="Cairo" font-size="14"
+                            font-weight="bold">Structure (الهيكل)</text>
+                        <text x="50" y="300" fill="#F59E0B" font-family="Inter" font-size="12">● Leaf (No
+                            children)</text>
+                        <text x="50" y="325" fill="#3B82F6" font-family="Inter" font-size="12">● Composite (Has
+                            children)</text>
+                        <text x="50" y="350" fill="#10B981" font-family="Inter" font-size="12">● Component (Common
+                            Interface)</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-lightbulb text-yellow-500"></i>
+                        The Analogy
+                    </h2>
+                    <div class="space-y-6 text-slate-300 leading-relaxed">
+                        <div class="glass-card p-6 rounded-xl hover:bg-slate-800/50 transition">
+                            <h3 class="text-xl font-bold text-white mb-2">📦 The Gift Box</h3>
+                            <p>Imagine you have a big delivery box. Inside, there might be actual products (like a
+                                Phone), but there might also be <em>smaller boxes</em>.</p>
+                            <p class="mt-2 text-sm text-slate-400">If you want to know the total price, do you unpack
+                                everything manually? No! You ask the big box: "How much?"</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-xl border-r-4 border-r-emerald-500 hover:bg-slate-800/50 transition text-right"
+                            dir="rtl">
+                            <h3 class="text-xl font-bold text-white mb-2 font-arabic">📦 مثال الصندوق</h3>
+                            <p class="font-arabic">تخيل عندك صندوق كبير. جواه ممكن يكون فيه منتجات (زي موبايل) وممكن
+                                يكون فيه صناديق أصغر.</p>
+                            <p class="mt-2 text-sm text-slate-400 font-arabic">لو عايز تعرف السعر الكلي، مش محتاج تفتح
+                                كل حاجة بنفسك. أنت بتسأل الصندوق الكبير: "سرك كام؟" وهو بيسأل اللي جواه ويجمع النتيجة.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative" data-aos="fade-left">
+                    <!-- Recursive Box SVG -->
+                    <svg viewBox="0 0 500 400" class="w-full h-auto drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Big Box -->
+                        <rect x="50" y="50" width="400" height="300" rx="10" fill="none" stroke="#3B82F6"
+                            stroke-width="2" stroke-dasharray="5,5" />
+                        <text x="70" y="80" fill="#3B82F6" font-family="monospace" font-weight="bold">Composite
+                            (Box)</text>
+
+                        <!-- Inner Product 1 -->
+                        <rect x="80" y="120" width="100" height="100" rx="5" fill="#1e293b" stroke="#F59E0B"
+                            stroke-width="2" />
+                        <circle cx="130" cy="160" r="15" fill="#F59E0B" />
+                        <text x="130" y="195" text-anchor="middle" fill="#cbd5e1" font-size="10">Product</text>
+
+                        <!-- Inner Box -->
+                        <rect x="220" y="120" width="200" height="180" rx="5" fill="none" stroke="#60A5FA"
+                            stroke-width="2" stroke-dasharray="3,3" />
+                        <text x="240" y="145" fill="#60A5FA" font-size="10" font-family="monospace">Sub-Box</text>
+
+                        <!-- Inner Inner Product -->
+                        <rect x="250" y="170" width="60" height="60" rx="5" fill="#1e293b" stroke="#F59E0B"
+                            stroke-width="2" />
+                        <circle cx="280" cy="200" r="10" fill="#F59E0B" />
+
+                        <!-- Inner Inner Product 2 -->
+                        <rect x="330" y="170" width="60" height="60" rx="5" fill="#1e293b" stroke="#F59E0B"
+                            stroke-width="2" />
+                        <circle cx="360" cy="200" r="10" fill="#F59E0B" />
+
+                        <!-- Arrows representing getPrice() calls -->
+                        <path d="M70,90 Q70,120 120,120" fill="none" stroke="#10B981" stroke-width="1.5"
+                            marker-end="url(#arrow)" />
+                        <path d="M200,80 Q320,80 320,115" fill="none" stroke="#10B981" stroke-width="1.5"
+                            marker-end="url(#arrow)" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Structure Section -->
+    <section id="structure" class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-emerald-500 font-mono text-sm tracking-wider">ARCHITECTURE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Class Structure</h2>
+            </div>
+
+            <div class="glass-card p-10 rounded-2xl border border-slate-700/50">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Component -->
+                    <div
+                        class="p-6 bg-slate-900/80 rounded-xl border border-emerald-500/30 text-center group hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 mx-auto bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-shapes"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Component</h3>
+                        <p class="text-sm text-slate-400 mb-3">Interface declaring common operations (e.g., <code
+                                class="bg-black/30 px-1 rounded text-emerald-400">getPrice</code>).</p>
+                        <p class="text-xs text-slate-500 font-arabic border-t border-slate-700/50 pt-2">الواجهة الرئيسية
+                            اللي بتوحد التعامل مع الكل.</p>
+                    </div>
+
+                    <!-- Leaf -->
+                    <div
+                        class="p-6 bg-slate-900/80 rounded-xl border border-yellow-500/30 text-center group hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 mx-auto bg-yellow-500/20 text-yellow-400 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Leaf</h3>
+                        <p class="text-sm text-slate-400 mb-3">Basic element (Product). Does the actual work. No
+                            children.</p>
+                        <p class="text-xs text-slate-500 font-arabic border-t border-slate-700/50 pt-2">العنصر البسيط
+                            (الورقة) زي المنتج. ملوش أبناء.</p>
+                    </div>
+
+                    <!-- Composite -->
+                    <div
+                        class="p-6 bg-slate-900/80 rounded-xl border border-blue-500/30 text-center group hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 mx-auto bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Composite</h3>
+                        <p class="text-sm text-slate-400 mb-3">Complex element (Box). Stores sub-components and
+                            delegates tasks.</p>
+                        <p class="text-xs text-slate-500 font-arabic border-t border-slate-700/50 pt-2">العنصر المركب
+                            (الصندوق). شايل جواه عناصر تانية.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section id="code" class="py-24 px-6 bg-black/20">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation Steps</h2>
+
+            <!-- Step 1 -->
+            <div class="grid lg:grid-cols-2 gap-8 mb-16 items-start" data-aos="fade-up">
+                <div class="glass-card p-6 rounded-xl border-l-4 border-l-emerald-500">
+                    <h3 class="text-xl font-bold text-white mb-2 flex justify-between">
+                        <span>1. Create Component Interface</span>
+                        <span class="font-arabic text-emerald-400 text-lg">إنشاء الواجهة الموحدة</span>
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-4">Define methods that apply to both Products and Boxes.</p>
+                    <p class="font-arabic text-slate-400 text-sm text-right leading-relaxed mb-4">
+                        هنعمل Interface اسمه Item فيه الدوال المشتركة زي حساب السعر وعرض المعلومات.
+                    </p>
+                </div>
+                <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span class="ml-2 font-mono">Item.java</span>
+                    </div>
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">public interface</span> <span class="text-yellow-300">Item</span> { 
+    <span class="text-purple-400">double</span> <span class="text-blue-400">getprice</span>();
+    <span class="text-purple-400">void</span> <span class="text-blue-400">showInfo</span>();
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="grid lg:grid-cols-2 gap-8 mb-16 items-start" data-aos="fade-up">
+                <div
+                    class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl order-2 lg:order-1">
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span class="ml-2 font-mono">Product.java</span>
+                    </div>
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">public class</span> <span class="text-yellow-300">Product</span> <span class="text-purple-400">implements</span> <span class="text-yellow-300">Item</span> {
+    <span class="text-purple-400">private double</span> price;
+    <span class="text-purple-400">private</span> String name;
+
+    <span class="text-purple-400">public</span> <span class="text-yellow-300">Product</span>(<span class="text-purple-400">double</span> price, String name) {
+        <span class="text-purple-400">this</span>.price = price;
+        <span class="text-purple-400">this</span>.name = name;
+    }
+
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public double</span> <span class="text-blue-400">getprice</span>() { 
+        <span class="text-purple-400">return</span> price; <span class="text-gray-500">// Just return self price</span>
+    }
+    
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">showInfo</span>() { 
+        System.out.println(name + <span class="text-green-400">" : "</span> + price);
+    }
+}</code></pre>
+                </div>
+                <div class="glass-card p-6 rounded-xl border-l-4 border-l-yellow-500 order-1 lg:order-2">
+                    <h3 class="text-xl font-bold text-white mb-2 flex justify-between">
+                        <span>2. Create Leaf (Product)</span>
+                        <span class="font-arabic text-yellow-400 text-lg">كلاس المنتج</span>
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-4">The leaf executes the behavior directly.</p>
+                    <p class="font-arabic text-slate-400 text-sm text-right leading-relaxed mb-4">
+                        المنتج هو "الورقة" في الشجرة. لما بتسأله عن سعره، بيرد بسعره الخاص فوراً.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="grid lg:grid-cols-2 gap-8 mb-16 items-start" data-aos="fade-up">
+                <div class="glass-card p-6 rounded-xl border-l-4 border-l-blue-500">
+                    <h3 class="text-xl font-bold text-white mb-2 flex justify-between">
+                        <span>3. Create Composite (Box)</span>
+                        <span class="font-arabic text-blue-400 text-lg">كلاس الصندوق</span>
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-4">Contains a list of `Item` (children). Delegates calls to
+                        them.</p>
+                    <p class="font-arabic text-slate-400 text-sm text-right leading-relaxed mb-4">
+                        الصندوق شايل جواه `List` من نوع `Item` (ممكن تكون منتجات أو صناديق تانية).
+                        <br>
+                        لما بتسأله عن السعر، بيلف (Loop) على كل عياله ويجمع أسعارهم.
+                    </p>
+                </div>
+                <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <div
+                        class="flex items-center gap-2 px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span class="ml-2 font-mono">Box.java</span>
+                    </div>
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">public class</span> <span class="text-yellow-300">Box</span> <span class="text-purple-400">implements</span> <span class="text-yellow-300">Item</span> {    
+    List&lt;<span class="text-yellow-300">Item</span>&gt; list = <span class="text-purple-400">new</span> <span class="text-yellow-300">ArrayList</span>&lt;&gt;();
+    <span class="text-purple-400">private</span> String name;
+
+    <span class="text-purple-400">public</span> <span class="text-yellow-300">Box</span>(String name) { <span class="text-purple-400">this</span>.name = name; }
+
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">addProduct</span>(<span class="text-yellow-300">Item</span> p) { <span class="text-purple-400">this</span>.list.add(p); }
+
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public double</span> <span class="text-blue-400">getprice</span>() {
+        <span class="text-purple-400">double</span> sum = 0;
+        <span class="text-purple-400">for</span> (<span class="text-yellow-300">Item</span> item : list) {
+            sum += item.getprice(); <span class="text-gray-500">// Magic happens here!</span>
+        }
+        <span class="text-purple-400">return</span> sum; 
+    }
+}</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pros & Cons -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-3xl font-bold text-center mb-12 text-white">Pros & Cons <span
+                    class="font-arabic text-lg text-slate-500 mx-2">المميزات والعيوب</span></h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Pros -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-thumbs-up"></i> Advantages
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">Simplify Client Code</p>
+                                <p class="text-slate-500 text-sm">Clients treat simple and complex objects uniformly.
+                                </p>
+                                <p class="text-slate-500 text-xs font-arabic mt-1 text-right" dir="rtl">بيسهل كود العميل
+                                    لأنه بيتعامل مع الكل بنفس الطريقة.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">Easy to add new types</p>
+                                <p class="text-slate-500 text-sm">You can introduce new leaf/composite types without
+                                    breaking existing code.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cons -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-red-500">
+                    <h3 class="text-xl font-bold text-red-400 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-thumbs-down"></i> Disadvantages
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">General Interface</p>
+                                <p class="text-slate-500 text-sm">The Component interface might become too general,
+                                    including methods that don't make sense for leaves.</p>
+                                <p class="text-slate-500 text-xs font-arabic mt-1 text-right" dir="rtl">ممكن الواجهة
+                                    تبقى عامة بزيادة، وفيه دوال ملهاش معنى لبعض العناصر.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exam Section -->
+    <section id="exam" class="py-24 px-6 bg-slate-900 border-t border-slate-800">
+        <a href="../QA/index.html">Go to Exam</a>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Advanced Monitoring Course - Design Patterns</p>
+        <p class="font-arabic mt-1">Eng. Osama Zinhom</p>
+    </footer>
+
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 10: Command Design Pattern | Ultimate Guide</title>
+    <meta name="description"
+        content="In-depth explanation of Command Design Pattern with Arabic & English, SVGs, and Home Automation Example.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-green': '0 0 20px -5px rgba(16, 185, 129, 0.5)',
+                        'neon-blue': '0 0 20px -5px rgba(59, 130, 246, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            /* Slate 950 */
+            color: #E2E8F0;
+            /* Slate 200 */
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 30px -10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Text Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #34D399 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10B981;
+        }
+
+        /* Utilities */
+        .arabic-text {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+
+        pre {
+            background: #0B1221 !important;
+            border: 1px solid #1E293B;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">
+                    10
+                </div>
+                <span class="font-bold text-lg tracking-wide">Command<span
+                        class="text-emerald-500">Pattern</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-emerald-400 transition">Concept</a>
+                <a href="#structure" class="hover:text-emerald-400 transition">Structure</a>
+                <a href="#code" class="hover:text-emerald-400 transition">Implementation</a>
+                <a href="#exam"
+                    class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition">Start
+                    Exam</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <!-- Background Glows -->
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-emerald-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                BEHAVIORAL DESIGN PATTERN
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-1">
+                The <span class="text-gradient">Command Pattern</span>
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                نمط الأمر
+            </h2>
+
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-4">
+                A behavioral design pattern that turns a request into a stand-alone object.
+            </p>
+            <p class="text-md text-slate-500 max-w-2xl mx-auto leading-relaxed mb-4">
+                This lets you parameterize methods with requests, delay execution, queue operation, and support undoable
+                operations.
+            </p>
+
+            <div class="p-4 bg-emerald-950/30 border border-emerald-900/50 rounded-xl mb-12 max-w-3xl mx-auto">
+                <p class="font-arabic text-xl text-emerald-100/90 leading-loose">
+                    <span class="text-emerald-400 font-bold">ببساطة:</span> بنحول "الطلب" لكائن (Object) مستقل.
+                    بدل ما الزرار ينفذ الكود علطول، هو بيبعت "أمر" (Command) للي هينفذ (Receiver).
+                    ده بيخلينا نقدر نلغي الأمر (Undo)، نأجله، أو نحطه في طابور.
+                </p>
+            </div>
+
+            <!-- Main SVG Visualization -->
+            <div class="max-w-5xl mx-auto mt-12 mb-20">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-emerald-900/20">
+                    <svg viewBox="0 0 800 300" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"
+                                markerUnits="strokeWidth">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#475569" />
+                            </marker>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Invoker (Remote) -->
+                        <g transform="translate(100, 150)">
+                            <rect x="-40" y="-60" width="80" height="120" rx="10" fill="#1e293b" stroke="#3B82F6"
+                                stroke-width="2" />
+                            <circle cx="0" cy="-30" r="10" fill="#ef4444" />
+                            <circle cx="0" cy="0" r="10" fill="#10B981" />
+                            <text x="0" y="80" text-anchor="middle" fill="#93c5fd" font-weight="bold">Invoker</text>
+                            <text x="0" y="95" text-anchor="middle" fill="#64748b" font-size="10">(Remote)</text>
+                        </g>
+
+                        <!-- Command (Packet) -->
+                        <g transform="translate(400, 150)">
+                            <path d="M-60,-40 L60,-40 L70,0 L60,40 L-60,40 L-50,0 Z" fill="#F59E0B" fill-opacity="0.2"
+                                stroke="#F59E0B" stroke-width="2" />
+                            <text x="0" y="-10" text-anchor="middle" fill="#fff" font-weight="bold">Command
+                                Object</text>
+                            <text x="0" y="20" text-anchor="middle" fill="#FCD34D" font-size="12">execute()</text>
+
+                            <!-- Internal ref -->
+                            <line x1="20" y1="20" x2="160" y2="20" stroke="#FCD34D" stroke-dasharray="4"
+                                marker-end="url(#arrow)" opacity="0.5" />
+                        </g>
+
+                        <!-- Receiver (Light) -->
+                        <g transform="translate(700, 150)">
+                            <circle cx="0" cy="0" r="40" fill="#Fcd34d" fill-opacity="0.1" stroke="#Fcd34d"
+                                stroke-width="2" filter="url(#glow)" />
+                            <path d="M-15,15 L0,-20 L15,15" fill="none" stroke="#Fcd34d" stroke-width="2" />
+                            <line x1="0" y1="-20" x2="0" y2="20" stroke="#Fcd34d" />
+                            <text x="0" y="60" text-anchor="middle" fill="#Fcd34d" font-weight="bold">Receiver</text>
+                            <text x="0" y="75" text-anchor="middle" fill="#64748b" font-size="10">(Light)</text>
+                        </g>
+
+                        <!-- Arrows -->
+                        <line x1="140" y1="150" x2="330" y2="150" stroke="#3B82F6" stroke-width="2"
+                            marker-end="url(#arrow)">
+                            <animate attributeName="stroke-dasharray" from="0,200" to="200,0" dur="2s"
+                                repeatCount="indefinite" />
+                        </line>
+
+                        <line x1="470" y1="150" x2="650" y2="150" stroke="#F59E0B" stroke-width="2"
+                            marker-end="url(#arrow)" />
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right">
+                    <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-lightbulb text-yellow-500"></i>
+                        The Analogy
+                    </h2>
+                    <div class="space-y-6 text-slate-300 leading-relaxed">
+                        <div class="glass-card p-6 rounded-xl hover:bg-slate-800/50 transition">
+                            <h3 class="text-xl font-bold text-white mb-2">🍽️ Restaurant Ordering</h3>
+                            <p>You (Client) order a meal. The Waiter (Invoker) takes the order, writes it on a slip
+                                (Command), and puts it on the wall. The Chef (Receiver) picks it up and cooks it.</p>
+                            <ul class="list-disc ml-4 mt-2 text-slate-400 text-sm space-y-1">
+                                <li><strong>Order Slip:</strong> Contains all details (Steak, Well-done).</li>
+                                <li><strong>Waiter doesn't cook:</strong> Just triggers the process.</li>
+                                <li><strong>Chef executes:</strong> Cooks the meal.</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-xl border-r-4 border-r-emerald-500 hover:bg-slate-800/50 transition text-right"
+                            dir="rtl">
+                            <h3 class="text-xl font-bold text-white mb-2 font-arabic">🍽️ مثال المطعم</h3>
+                            <p class="font-arabic">أنت (العميل) بتطلب أكل. الجرسون (Invoker) بياخد الطلب، يكتبه في ورقة
+                                (Command)، ويعلقه. الطباخ (Receiver) بياخد الورقة وينفذ الطلب (يطبخ).</p>
+                            <ul class="list-disc mr-6 mt-2 text-slate-400 text-sm font-arabic">
+                                <li><strong>ورقة الطلب:</strong> فيها كل التفاصيل (نوع الأكل، التسوية).</li>
+                                <li><strong>الجرسون مش بيطبخ:</strong> هو بس بيوصل الطلب.</li>
+                                <li><strong>الطباخ هو اللي بينفذ:</strong> بيطبخ الأكل فعلياً.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative" data-aos="fade-left">
+                    <!-- Comics / Analogy SVG -->
+                    <svg viewBox="0 0 500 400" class="w-full h-auto drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Panel 1: Customer -->
+                        <g transform="translate(50, 50)">
+                            <rect width="120" height="100" rx="8" fill="#1e293b" stroke="#64748b" />
+                            <circle cx="60" cy="40" r="15" fill="#94a3b8" />
+                            <text x="60" y="90" text-anchor="middle" fill="#fff" font-size="10">Customer</text>
+                            <text x="140" y="40" fill="#fff" font-size="12">"Steak Please"</text>
+                        </g>
+
+                        <!-- Panel 2: Waiter -->
+                        <g transform="translate(200, 150)">
+                            <rect width="120" height="100" rx="8" fill="#1e293b" stroke="#64748b" />
+                            <rect x="50" y="30" width="20" height="30" fill="#fff" /> <!-- Paper -->
+                            <text x="60" y="90" text-anchor="middle" fill="#fff" font-size="10">Waiter (Invoker)</text>
+                        </g>
+
+                        <!-- Panel 3: Chef -->
+                        <g transform="translate(350, 250)">
+                            <rect width="120" height="100" rx="8" fill="#1e293b" stroke="#64748b" />
+                            <path d="M40,30 Q60,10 80,30" stroke="#fff" fill="none" /> <!-- Hat -->
+                            <text x="60" y="90" text-anchor="middle" fill="#fff" font-size="10">Chef (Receiver)</text>
+                        </g>
+
+                        <!-- Connections -->
+                        <path d="M120,100 L190,150" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow)"
+                            stroke-dasharray="5,5" />
+                        <path d="M260,250 L340,300" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow)"
+                            stroke-dasharray="5,5" />
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Structure Section -->
+    <section id="structure" class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-emerald-500 font-mono text-sm tracking-wider">ARCHITECTURE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Class Structure</h2>
+            </div>
+
+            <div class="glass-card p-10 rounded-2xl border border-slate-700/50">
+                <div class="grid lg:grid-cols-4 gap-6">
+                    <!-- Invoker -->
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-blue-500/30 text-center">
+                        <h3 class="text-lg font-bold text-blue-400 mb-2">Invoker</h3>
+                        <p class="text-sm text-slate-400">Triggers the command (e.g., Button, Remote).</p>
+                    </div>
+
+                    <!-- Command Interface -->
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-emerald-500/30 text-center">
+                        <h3 class="text-lg font-bold text-emerald-400 mb-2">Command</h3>
+                        <p class="text-sm text-slate-400">Interface. Declares <code>execute()</code>.</p>
+                    </div>
+
+                    <!-- Concrete Command -->
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-yellow-500/30 text-center">
+                        <h3 class="text-lg font-bold text-yellow-400 mb-2">Concrete Command</h3>
+                        <p class="text-sm text-slate-400">Implements <code>execute()</code>. Calls Receiver logic.</p>
+                    </div>
+
+                    <!-- Receiver -->
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-red-500/30 text-center">
+                        <h3 class="text-lg font-bold text-red-400 mb-2">Receiver</h3>
+                        <p class="text-sm text-slate-400">Does the actual work (e.g., Light, AC).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section id="code" class="py-24 px-6 bg-black/20">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Full Implementation (Home Automation)</h2>
+
+            <!-- Step 1: Command Interface -->
+            <div class="mb-12" data-aos="fade-up">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 text-sm font-mono">Step 1</span>
+                    <h3 class="text-xl font-bold text-white">Command Interface</h3>
+                </div>
+                <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">interface</span> <span class="text-yellow-300">Command</span> {
+    <span class="text-purple-400">void</span> <span class="text-blue-400">execute</span>();
+}</code></pre>
+                    <!-- Arabic Explanation -->
+                    <div class="bg-slate-900/50 border-t border-slate-800 p-4">
+                        <p class="font-arabic text-slate-400 text-sm leading-relaxed" dir="rtl">
+                            <i class="fa-solid fa-code-branch text-emerald-500 ml-2"></i>
+                            دي الواجهة (Interface) اللي كل الأوامر لازم تمشي عليها. دالة <code>execute</code> هي "الزرار
+                            الموحد" اللي أي حد عايز ينفذ أمر هيدوس عليه، من غير ما يعرف تفاصيل الأمر ده إيه.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Receivers -->
+            <div class="mb-12" data-aos="fade-up">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 rounded bg-red-500/20 text-red-400 text-sm font-mono">Step 2</span>
+                    <h3 class="text-xl font-bold text-white">Receivers (Smart Devices)</h3>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Light -->
+                    <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                        <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400 font-mono">
+                            SmartLight.java</div>
+                        <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">class</span> <span class="text-yellow-300">SmartLight</span> {
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">switchOn</span>() {
+        System.out.println(<span class="text-green-400">"Smart Light: ON"</span>);
+    }
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">switchOff</span>() {
+        System.out.println(<span class="text-green-400">"Smart Light: OFF"</span>);
+    }
+}</code></pre>
+                        <!-- Arabic Explanation -->
+                        <div class="bg-slate-900/50 border-t border-slate-800 p-4">
+                            <p class="font-arabic text-slate-400 text-sm leading-relaxed" dir="rtl">
+                                ده "الصنايعي" (Receiver). اللمبة الحقيقية اللي بتعرف تنور وتطفي بجد.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- AC -->
+                    <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                        <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs text-slate-400 font-mono">
+                            AirConditioner.java</div>
+                        <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">class</span> <span class="text-yellow-300">AirConditioner</span> {
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">turnOn</span>() { System.out.println(<span class="text-green-400">"AC: ON"</span>); }
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">turnOff</span>() { System.out.println(<span class="text-green-400">"AC: OFF"</span>); }
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">setTemperature</span>(<span class="text-purple-400">int</span> temp) {
+        System.out.println(<span class="text-green-400">"AC Temp: "</span> + temp);
+    }
+}</code></pre>
+                        <!-- Arabic Explanation -->
+                        <div class="bg-slate-900/50 border-t border-slate-800 p-4">
+                            <p class="font-arabic text-slate-400 text-sm leading-relaxed" dir="rtl">
+                                وده التكييف (Receiver تاني). فيه كود التشغيل وتظبيط الحرارة الفعلي.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Concrete Commands -->
+            <div class="mb-12" data-aos="fade-up">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 rounded bg-yellow-500/20 text-yellow-400 text-sm font-mono">Step 3</span>
+                    <h3 class="text-xl font-bold text-white">Concrete Commands</h3>
+                </div>
+                <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-purple-400">class</span> <span class="text-yellow-300">LightOnCommand</span> <span class="text-purple-400">implements</span> <span class="text-yellow-300">Command</span> {
+    <span class="text-purple-400">private</span> <span class="text-yellow-300">SmartLight</span> light;
+    <span class="text-purple-400">public</span> <span class="text-yellow-300">LightOnCommand</span>(<span class="text-yellow-300">SmartLight</span> light) { <span class="text-purple-400">this</span>.light = light; }
+
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">execute</span>() { light.switchOn(); }
+}
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">SetTemperatureCommand</span> <span class="text-purple-400">implements</span> <span class="text-yellow-300">Command</span> {
+    <span class="text-purple-400">private</span> <span class="text-yellow-300">AirConditioner</span> ac;
+    <span class="text-purple-400">private int</span> temp;
+
+    <span class="text-purple-400">public</span> <span class="text-yellow-300">SetTemperatureCommand</span>(<span class="text-yellow-300">AirConditioner</span> ac, <span class="text-purple-400">int</span> temp) {
+        <span class="text-purple-400">this</span>.ac = ac;
+        <span class="text-purple-400">this</span>.temp = temp;
+    }
+
+    <span class="text-gray-500">@Override</span>
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">execute</span>() { ac.setTemperature(temp); }
+}</code></pre>
+                    <!-- Arabic Explanation -->
+                    <div class="bg-slate-900/50 border-t border-slate-800 p-4">
+                        <p class="font-arabic text-slate-400 text-sm leading-relaxed" dir="rtl">
+                            <i class="fa-solid fa-code-branch text-emerald-500 ml-2"></i>
+                            هنا بنعمل "كبسولة" للأمر. كل أمر (زي تشغيل اللمبة) بنعمله كلاس مخصوص. الكلاس ده بياخد الجهاز
+                            (اللمبة) ويخزنه عنده، ولما حد يقوله <code>execute</code>، هو عارف هيروح ينادي أني دالة في
+                            الجهاز ده.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Invoker & Client -->
+            <div class="mb-12" data-aos="fade-up">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 rounded bg-blue-500/20 text-blue-400 text-sm font-mono">Step 4 & 5</span>
+                    <h3 class="text-xl font-bold text-white">Invoker & Client</h3>
+                </div>
+                <div class="bg-[#0B1221] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+                    <pre class="p-4 m-0 bg-transparent border-0 rounded-none overflow-x-auto"><code class="language-java text-sm font-mono"><span class="text-gray-500">// Invoker</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-300">HomeController</span> {
+    <span class="text-purple-400">private</span> <span class="text-yellow-300">Command</span> command;
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">setCommand</span>(<span class="text-yellow-300">Command</span> cmd) { <span class="text-purple-400">this</span>.command = cmd; }
+    <span class="text-purple-400">public void</span> <span class="text-blue-400">pressButton</span>() { <span class="text-purple-400">if</span>(command!=<span class="text-purple-400">null</span>) command.execute(); }
+}
+
+<span class="text-gray-500">// Client</span>
+<span class="text-purple-400">public class</span> <span class="text-yellow-300">Main</span> {
+    <span class="text-purple-400">public static void</span> <span class="text-blue-400">main</span>(String[] args) {
+        <span class="text-yellow-300">SmartLight</span> light = <span class="text-purple-400">new</span> <span class="text-yellow-300">SmartLight</span>();
+        <span class="text-yellow-300">Command</span> lightOn = <span class="text-purple-400">new</span> <span class="text-yellow-300">LightOnCommand</span>(light);
+        
+        <span class="text-yellow-300">HomeController</span> remote = <span class="text-purple-400">new</span> <span class="text-yellow-300">HomeController</span>();
+        remote.setCommand(lightOn);
+        remote.pressButton(); <span class="text-gray-500">// Output: Smart Light: ON</span>
+    }
+}</code></pre>
+                    <!-- Arabic Explanation -->
+                    <div class="bg-slate-900/50 border-t border-slate-800 p-4">
+                        <p class="font-arabic text-slate-400 text-sm leading-relaxed" dir="rtl">
+                            <i class="fa-solid fa-code-branch text-emerald-500 ml-2"></i>
+                            الـ <code>HomeController</code> ده الريموت كنترول (Invoker). هو ميعرفش بيشغل إيه بالظبط، هو
+                            بس بياخد "أمر" وينفذه. في الـ <code>Main</code>، بنركب المكعبات: بنجيب اللمبة، نغلف أمر
+                            تشغيلها في كائن <code>lightOn</code>، ونديه للريموت. كده فصلنا الريموت عن اللمبة تماماً.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pros & Cons -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-3xl font-bold text-center mb-12 text-white">Pros & Cons <span
+                    class="font-arabic text-lg text-slate-500 mx-2">المميزات والعيوب</span></h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Pros -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-thumbs-up"></i> Advantages
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">Decoupling</p>
+                                <p class="text-slate-500 text-sm">Separates classes that invoke operations (Invoker)
+                                    from classes that perform them (Receiver).</p>
+                                <p class="text-slate-500 text-xs font-arabic mt-1 text-right" dir="rtl">بيفصل تماماً بين
+                                    اللي بيدي الأمر واللي بينفذه.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-emerald-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">Undo Factory</p>
+                                <p class="text-slate-500 text-sm">Easy to add Undo/Redo by storing command history.</p>
+                                <p class="text-slate-500 text-xs font-arabic mt-1 text-right" dir="rtl">سهل تعمل تراجع
+                                    (Undo) لأن الأمر متخزن كاوبجكت.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cons -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-red-500">
+                    <h3 class="text-xl font-bold text-red-400 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-thumbs-down"></i> Disadvantages
+                    </h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-xmark text-red-500 mt-1"></i>
+                            <div>
+                                <p class="text-slate-200 font-semibold">Class Explosion</p>
+                                <p class="text-slate-500 text-sm">You need a separate class for each command (LightOn,
+                                    LightOff, OpenDoor, etc.).</p>
+                                <p class="text-slate-500 text-xs font-arabic mt-1 text-right" dir="rtl">عدد الكلاسات
+                                    بيزيد جداً لأن كل أمر بيحتاج كلاس لوحده.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exam Section -->
+    <section id="exam" class="py-24 px-6 bg-slate-900 border-t border-slate-800">
+        <div class="container mx-auto max-w-4xl text-center" data-aos="fade-up">
+            <h2 class="text-4xl font-bold text-white mb-8">Ready to Test Your Knowledge?</h2>
+            <p class="text-slate-400 mb-12 text-lg">Solve real-world scenarios to master the Command Pattern.</p>
+            <a href="QA/index.html"
+                class="inline-block px-12 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-bold text-xl shadow-lg shadow-emerald-500/20 hover:scale-105 hover:shadow-emerald-500/40 transition duration-300">
+                Start Validating <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Advanced Monitoring Course - Design Patterns</p>
+        <p class="font-arabic mt-1">Eng. Osama Zinhom</p>
+    </footer>
+
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+
+</html>

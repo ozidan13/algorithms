@@ -1,397 +1,605 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selection Sort Algorithm</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/global-algo.css">
-</head>
-<body data-theme="dark">
-  <a href="../index.html#week1" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
-
-  <h1><i class="fas fa-sort-amount-down icon-margin"></i>Selection Sort Algorithm</h1>
-  
-  <div class="container">
-    <h2>Interactive Demonstration</h2>
-    <p>Selection sort repeatedly finds the minimum element from the unsorted part of the array and swaps it with the first unsorted element.</p>
-    
-    <div class="controls">
-      <button id="sort-btn"><i class="fas fa-play icon-margin"></i>Sort</button>
-      <button id="reset-btn"><i class="fas fa-redo icon-margin"></i>Reset</button>
-      <button id="new-array-btn"><i class="fas fa-random icon-margin"></i>New Array</button>
-      <button id="step-btn"><i class="fas fa-step-forward icon-margin"></i>Step Through</button>
-      <button id="pause-btn" disabled><i class="fas fa-pause icon-margin"></i>Pause</button>
-    </div>
-    
-    <div class="speed-control controls">
-      <label for="speed-slider">Speed:</label>
-      <input type="range" id="speed-slider" min="1" max="100" value="50">
-      <span id="speed-value">50%</span>
-    </div>
-    
-    <div class="array-container bar-chart" id="array-container"></div>
-    
-    <div class="log" id="log"><p>Generate a new array or click Sort/Step Through.</p></div>
-  </div>
-  
-  <div class="container">
-    <h2>How Selection Sort Works</h2>
-    <div class="explanation">
-      <p>Steps:</p>
-      <ol>
-        <li>Find the minimum element in the unsorted part.</li>
-        <li>Swap it with the first unsorted element.</li>
-        <li>Mark the first unsorted element as sorted.</li>
-        <li>Repeat until the entire array is sorted.</li>
-      </ol>
-    </div>
-    
-    <h3>Time and Space Complexity</h3>
-    <div class="complexity">
-      <div class="complexity-item">
-        <h4>Time Complexity</h4>
-        <p><strong>O(n²)</strong> - Requires nested loops to iterate through the array.</p>
-      </div>
-      <div class="complexity-item">
-        <h4>Space Complexity</h4>
-        <p><strong>O(1)</strong> - Sorts in-place, requiring minimal extra memory.</p>
-      </div>
-    </div>
-  </div>
-  
-  <div class="container">
-    <h2>Implementation</h2>
-    <div class="code-container">
-      <pre><code>function selectionSort(arr) {
-  const n = arr.length;
-  for (let i = 0; i < n - 1; i++) {
-    let minIndex = i;
-    for (let j = i + 1; j < n; j++) {
-      if (arr[j] < arr[minIndex]) {
-        minIndex = j;
-      }
-    }
-    if (minIndex !== i) {
-      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
-    }
-  }
-  return arr;
-}</code></pre>
-    </div>
-  </div>
-  
+  <title>Selection Sort | ترتيب الاختيار</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // DOM elements
-    const arrayContainer = document.getElementById('array-container');
-    const sortBtn = document.getElementById('sort-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const newArrayBtn = document.getElementById('new-array-btn');
-    const stepBtn = document.getElementById('step-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const speedSlider = document.getElementById('speed-slider');
-    const speedValue = document.getElementById('speed-value');
-    const logElement = document.getElementById('log');
-
-    // Variables for sorting visualization
-    let array = [];
-    let sortingSteps = [];
-    let currentStepIndex = -1;
-    let sortingInProgress = false;
-    let sortingInterval = null;
-    let stepMode = false;
-
-    // Theme persistence
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
-
-    // Initialize with a new array
-    generateArray();
-
-    // Event listeners
-    sortBtn.addEventListener('click', startSort);
-    resetBtn.addEventListener('click', resetSort);
-    newArrayBtn.addEventListener('click', generateArray);
-    stepBtn.addEventListener('click', toggleStepMode);
-    pauseBtn.addEventListener('click', togglePause);
-    speedSlider.addEventListener('input', updateSpeed);
-
-    // Generates a new random array
-    function generateArray() {
-      const size = Math.floor(Math.random() * 11) + 10; // 10-20 elements
-      array = [];
-      for (let i = 0; i < size; i++) {
-        array.push(Math.floor(Math.random() * 100) + 1); // values 1 to 100
-      }
-      renderArray();
-      resetSort();
-      log('New array generated.', 'info');
-    }
-
-    // Renders the array bars using classes from global-algo.css
-    function renderArray(state = {}) {
-      const { current = -1, min = -1, sorted = [], comparing = -1 } = state;
-      arrayContainer.innerHTML = '';
-      const maxValue = array.length > 0 ? Math.max(...array) : 1; // Prevent division by zero
-      const containerHeight = arrayContainer.clientHeight || 250; // Use container height
-
-      array.forEach((value, index) => {
-        const bar = document.createElement('div');
-        bar.className = 'array-bar'; // Use the base class from CSS
-        // Calculate height relative to container height (minus padding/margins)
-        const barHeight = Math.max(5, (value / maxValue) * (containerHeight * 0.8)); // Ensure min height, use 80% of container
-        bar.style.height = `${barHeight}px`;
-        bar.setAttribute('data-value', value);
-
-        // Remove previous state classes
-        bar.classList.remove('sorted', 'min', 'current', 'comparing');
-
-        // Apply new state classes based on the provided state object
-        if (sorted.includes(index)) {
-          bar.classList.add('sorted');
-        } else if (index === min) {
-          bar.classList.add('min');
-        } else if (index === current) {
-          bar.classList.add('current');
-        } else if (index === comparing) {
-          bar.classList.add('comparing');
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', pink: '#EC4899' },
+            dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+          },
+          fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
         }
-        arrayContainer.appendChild(bar);
-      });
-    }
-
-    // Starts the sorting animation
-    function startSort() {
-      if (sortingInProgress) return;
-      sortingInProgress = true;
-      sortBtn.disabled = true;
-      pauseBtn.disabled = false;
-      stepBtn.disabled = true;
-      generateSortingSteps();
-      if (stepMode) {
-        currentStepIndex = 0;
-        showCurrentStep();
-      } else {
-        currentStepIndex = 0;
-        const delay = calculateDelay();
-        // Start the interval
-        sortingInterval = setInterval(runSortStep, delay);
-      }
-    }
-
-    // Runs a single step of the sorting animation
-    function runSortStep() {
-        if (currentStepIndex < sortingSteps.length) {
-            showCurrentStep();
-            currentStepIndex++;
-        } else {
-            clearInterval(sortingInterval);
-            sortingInterval = null; // Clear interval ID
-            sortingInProgress = false;
-            pauseBtn.disabled = true;
-            pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause'; // Reset button text
-            stepBtn.disabled = false; // Re-enable step button
-            sortBtn.disabled = false; // Re-enable sort button
-            log('Sorting completed!', 'success');
-            // Final render with all bars sorted
-            renderArray({ sorted: array.map((_, idx) => idx) });
-        }
-    }
-
-    // Generates the steps for selection sort visualization
-    function generateSortingSteps() {
-      sortingSteps = [];
-      const arrCopy = [...array];
-      const n = arrCopy.length;
-      let sorted = [];
-      
-      for (let i = 0; i < n - 1; i++) {
-        let minIndex = i;
-        sortingSteps.push({
-          array: [...arrCopy],
-          current: i,
-          min: minIndex,
-          sorted: [...sorted],
-          comparing: -1,
-          message: `Starting outer loop at index ${i}. Assume arr[${i}] (${arrCopy[i]}) is minimum.`
-        });
-        for (let j = i + 1; j < n; j++) {
-          sortingSteps.push({
-            array: [...arrCopy],
-            current: i,
-            min: minIndex,
-            sorted: [...sorted],
-            comparing: j,
-            message: `Comparing arr[${j}] (${arrCopy[j]}) with current minimum arr[${minIndex}] (${arrCopy[minIndex]})`
-          });
-          if (arrCopy[j] < arrCopy[minIndex]) {
-            const oldMinIndex = minIndex;
-            minIndex = j;
-            sortingSteps.push({
-              array: [...arrCopy],
-              current: i,
-              min: minIndex,
-              sorted: [...sorted],
-              comparing: -1,
-              message: `New minimum found: arr[${minIndex}] (${arrCopy[minIndex]}). (Was arr[${oldMinIndex}])`
-            });
-          }
-        }
-        if (minIndex !== i) {
-          sortingSteps.push({
-            array: [...arrCopy],
-            current: i,
-            min: minIndex,
-            sorted: [...sorted],
-            comparing: -1,
-            message: `Swapping arr[${i}] (${arrCopy[i]}) with minimum arr[${minIndex}] (${arrCopy[minIndex]})`
-          });
-          [arrCopy[i], arrCopy[minIndex]] = [arrCopy[minIndex], arrCopy[i]];
-        } else {
-          sortingSteps.push({
-            array: [...arrCopy],
-            current: i,
-            min: -1, // No swap needed, indicate no specific minimum index highlighted for swap
-            sorted: [...sorted],
-            comparing: -1,
-            message: `Element arr[${i}] (${arrCopy[i]}) is already in correct position for this pass.`
-          });
-        }
-        sorted.push(i);
-        sortingSteps.push({
-          array: [...arrCopy],
-          current: -1, // No current element in outer loop focus
-          min: -1,
-          sorted: [...sorted],
-          comparing: -1,
-          message: `Index ${i} is now sorted.`
-        });
-      }
-      sorted.push(n - 1);
-      sortingSteps.push({
-        array: [...arrCopy],
-        current: -1,
-        min: -1,
-        sorted: [...sorted],
-        comparing: -1,
-        message: 'Sorting completed!'
-      });
-    }
-
-    // Displays the current step in the sorting process
-    function showCurrentStep() {
-      if (currentStepIndex < 0 || currentStepIndex >= sortingSteps.length) return;
-      const step = sortingSteps[currentStepIndex];
-      array = [...step.array]; // Update the main array
-      renderArray(step); // Pass the whole step object to renderArray
-      log(step.message, 'info'); // Log with type
-    }
-
-    // Toggles between step-through mode and auto-sorting mode
-    function toggleStepMode() {
-      stepMode = !stepMode;
-      stepBtn.disabled = true; // Disable during toggle to prevent issues
-      pauseBtn.disabled = true;
-
-      if (sortingInterval) {
-        clearInterval(sortingInterval);
-        sortingInterval = null;
-      }
-
-      if (stepMode) {
-        stepBtn.innerHTML = '<i class="fas fa-play icon-margin"></i>Auto Sort';
-        // If sorting was in progress, stay at the current step
-        if (sortingInProgress && currentStepIndex >= 0) {
-            showCurrentStep(); // Show the current state
-            stepBtn.disabled = false; // Re-enable step button for manual stepping
-        } else {
-            // If not sorting, just toggle the button text
-            sortingInProgress = false; // Ensure state is correct
-            stepBtn.disabled = false;
-            sortBtn.disabled = false;
-        }
-      } else {
-        stepBtn.innerHTML = '<i class="fas fa-step-forward icon-margin"></i>Step Through';
-        if (sortingInProgress && currentStepIndex >= 0 && currentStepIndex < sortingSteps.length) {
-          // Resume auto sort from current step
-          pauseBtn.disabled = false;
-          pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
-          const delay = calculateDelay();
-          sortingInterval = setInterval(runSortStep, delay);
-        } else {
-             // If not sorting or finished, just toggle button text
-            sortingInProgress = false;
-            stepBtn.disabled = false;
-            sortBtn.disabled = false;
-        }
-      }
-    }
-
-    // Pauses or resumes the auto-sorting animation
-    function togglePause() {
-      if (!sortingInProgress || stepMode) return;
-      if (sortingInterval) {
-        clearInterval(sortingInterval);
-        sortingInterval = null;
-        pauseBtn.innerHTML = '<i class="fas fa-play icon-margin"></i>Resume';
-      } else {
-        const delay = calculateDelay();
-        sortingInterval = setInterval(runSortStep, delay);
-        pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
-      }
-    }
-
-    // Resets the sorting visualization
-    function resetSort() {
-      if (sortingInterval) {
-        clearInterval(sortingInterval);
-        sortingInterval = null;
-      }
-      sortingInProgress = false;
-      sortingSteps = [];
-      currentStepIndex = -1;
-      stepMode = false;
-      stepBtn.innerHTML = '<i class="fas fa-step-forward icon-margin"></i>Step Through';
-      sortBtn.disabled = false;
-      pauseBtn.disabled = true;
-      pauseBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
-      stepBtn.disabled = false;
-      renderArray(); // Render the initial unsorted array
-      logElement.innerHTML = '<p>Generate a new array or click Sort/Step Through.</p>'; // Clear log or add initial message
-    }
-
-    // Calculate delay based on slider
-    function calculateDelay() {
-        const speed = parseInt(speedSlider.value);
-        // Map speed (1-100) to delay (e.g., 1000ms to 10ms)
-        // Use an exponential scale for a more noticeable difference at high speeds
-        const maxDelay = 1000;
-        const minDelay = 10;
-        const delay = maxDelay * Math.pow((minDelay / maxDelay), (speed - 1) / 99);
-        return delay;
-    }
-
-    // Updates animation speed
-    function updateSpeed() {
-      speedValue.textContent = `${speedSlider.value}%`;
-      if (sortingInterval && !stepMode) {
-        clearInterval(sortingInterval);
-        const delay = calculateDelay();
-        sortingInterval = setInterval(runSortStep, delay);
-      }
-    }
-
-    // Logs messages to the log container
-    function log(message, type = 'info') {
-      const p = document.createElement('p');
-      p.textContent = message;
-      p.classList.add(`log-${type}`); // Add class for styling
-      logElement.prepend(p);
-      // Limit log entries
-      while (logElement.children.length > 15) {
-        logElement.removeChild(logElement.lastChild);
       }
     }
   </script>
+  <style>
+    body {
+      background: #020617;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #EC4899, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .rtl-block {
+      direction: rtl;
+      text-align: right;
+    }
+
+    .bar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      border-radius: 6px 6px 0 0;
+      font-weight: bold;
+      font-family: 'Fira Code';
+      transition: all 0.3s;
+      position: relative;
+      min-width: 35px;
+    }
+
+    .bar .val {
+      position: absolute;
+      top: -22px;
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+
+    .bar.default {
+      background: linear-gradient(180deg, #3B82F6, #1D4ED8);
+    }
+
+    .bar.current {
+      background: linear-gradient(180deg, #F59E0B, #D97706);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+    }
+
+    .bar.min {
+      background: linear-gradient(180deg, #EC4899, #BE185D);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+    }
+
+    .bar.sorted {
+      background: linear-gradient(180deg, #10B981, #059669);
+    }
+
+    .bar.swapping {
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-10px)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+    <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="../index.html#week1" class="flex items-center gap-3 hover:opacity-80 transition">
+        <div
+          class="w-8 h-8 rounded bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-white">
+          <i class="fas fa-arrow-left text-sm"></i></div>
+        <span class="font-bold text-lg">Selection<span class="text-pink-500">Sort</span></span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+    <div
+      class="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[128px] pointer-events-none">
+    </div>
+    <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-pink-400 mb-6">
+        <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+        WEEK 1 • خوارزميات الترتيب
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Selection</span> Sort</h1>
+      <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">ترتيب الاختيار</h2>
+    </div>
+  </header>
+
+  <!-- Concept Section -->
+  <section id="concept" class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-lightbulb text-yellow-500 mr-3"></i>الفكرة
+        الأساسية</h2>
+      <p class="text-center text-slate-400 mb-12">Understanding Selection Sort</p>
+
+      <div class="glass-card p-8 rounded-2xl border border-pink-900/50 mb-12" data-aos="fade-up">
+        <div class="rtl-block">
+          <h3 class="text-2xl font-bold text-pink-400 mb-6 font-arabic">🎯 إزاي Selection Sort بيشتغل؟</h3>
+
+          <div class="space-y-6 text-lg leading-loose font-arabic">
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه الورق</h4>
+              <p class="text-slate-300">
+                تخيل عندك ورق كوتشينة مبعثر وعايز ترتبه:
+              </p>
+              <ol class="mt-3 space-y-2 text-slate-300 list-decimal list-inside">
+                <li>بتدور على <span class="text-pink-400 font-bold">أصغر ورقة</span> في كل الورق</li>
+                <li>بتحطها في <span class="text-emerald-400 font-bold">أول مكان</span></li>
+                <li>بتكرر: دور على الأصغر في <span class="text-yellow-400">الباقي</span>، حطه في المكان التاني... وهكذا
+                </li>
+              </ol>
+            </div>
+
+            <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+              <h4 class="text-xl font-bold text-emerald-400 mb-3">📝 الخطوات بالتفصيل</h4>
+              <div class="space-y-4">
+                <div class="flex gap-4 items-start p-3 bg-slate-800/50 rounded-lg">
+                  <span
+                    class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold shrink-0">1</span>
+                  <div>
+                    <span class="text-pink-400 font-bold">ابدأ من أول عنصر (index 0)</span>
+                    <p class="text-sm text-slate-400 mt-1">افترض إنه أصغر عنصر مبدئياً</p>
+                  </div>
+                </div>
+                <div class="flex gap-4 items-start p-3 bg-slate-800/50 rounded-lg">
+                  <span
+                    class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold shrink-0">2</span>
+                  <div>
+                    <span class="text-yellow-400 font-bold">قارن مع كل العناصر الباقية</span>
+                    <p class="text-sm text-slate-400 mt-1">لو لقيت عنصر أصغر، احفظ الـ index بتاعه</p>
+                  </div>
+                </div>
+                <div class="flex gap-4 items-start p-3 bg-slate-800/50 rounded-lg">
+                  <span
+                    class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold shrink-0">3</span>
+                  <div>
+                    <span class="text-emerald-400 font-bold">بدّل (Swap)</span>
+                    <p class="text-sm text-slate-400 mt-1">حط الأصغر في مكانه الصح (أول مكان غير مترتب)</p>
+                  </div>
+                </div>
+                <div class="flex gap-4 items-start p-3 bg-slate-800/50 rounded-lg">
+                  <span
+                    class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold shrink-0">4</span>
+                  <div>
+                    <span class="text-purple-400 font-bold">كرر للعنصر التالي</span>
+                    <p class="text-sm text-slate-400 mt-1">الآن الجزء الأول مترتب، كرر للباقي</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 bg-orange-950/30 rounded-xl border border-orange-900/50">
+              <h4 class="text-xl font-bold text-orange-400 mb-3">⚠️ التعقيد</h4>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="p-3 bg-slate-900/50 rounded-lg">
+                  <span class="text-orange-400 font-mono font-bold">O(n²)</span>
+                  <p class="text-sm text-slate-400 mt-1">Time - بطيء للقوائم الكبيرة</p>
+                  <p class="text-xs text-slate-500 mt-1">لأن فيه loop جوه loop</p>
+                </div>
+                <div class="p-3 bg-slate-900/50 rounded-lg">
+                  <span class="text-emerald-400 font-mono font-bold">O(1)</span>
+                  <p class="text-sm text-slate-400 mt-1">Space - مش محتاج ذاكرة إضافية</p>
+                  <p class="text-xs text-slate-500 mt-1">بنرتب in-place</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Example -->
+  <section class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-shoe-prints text-purple-500 mr-3"></i>مثال
+        خطوة بخطوة</h2>
+
+      <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+        <div class="rtl-block mb-6">
+          <p class="font-arabic text-lg text-slate-300">مثال: ترتيب المصفوفة <code
+              class="text-pink-400 bg-slate-800 px-2 py-1 rounded">[64, 25, 12, 22, 11]</code></p>
+        </div>
+
+        <div class="space-y-8">
+          <!-- Pass 1 -->
+          <div class="p-6 bg-slate-900/50 rounded-xl border border-slate-700">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="px-3 py-1 bg-pink-500 text-white font-bold rounded-lg text-sm">Pass 1</span>
+              <span class="text-slate-400 text-sm rtl-block font-arabic">دور على أصغر عنصر في كل الـ array</span>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center mb-4">
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-yellow-500/20 border-2 border-yellow-500 flex items-center justify-center font-mono font-bold text-yellow-400">
+                  64</div><span class="text-xs text-slate-500">i=0</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  25</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  12</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  22</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-pink-500 flex items-center justify-center font-mono font-bold text-white">
+                  11</div><span class="text-xs text-pink-400">min!</span>
+              </div>
+            </div>
+            <p class="text-center text-slate-400 font-arabic">← Swap 64 مع 11 →</p>
+            <div class="flex flex-wrap gap-3 justify-center mt-4">
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                  11</div><span class="text-xs text-emerald-400">✓</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  25</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  12</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  22</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  64</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pass 2 -->
+          <div class="p-6 bg-slate-900/50 rounded-xl border border-slate-700">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="px-3 py-1 bg-pink-500 text-white font-bold rounded-lg text-sm">Pass 2</span>
+              <span class="text-slate-400 text-sm rtl-block font-arabic">دور على أصغر عنصر من index 1</span>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center mb-4">
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-emerald-500/30 border border-emerald-500 flex items-center justify-center font-mono text-emerald-400">
+                  11</div><span class="text-xs text-emerald-400">Done</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-yellow-500/20 border-2 border-yellow-500 flex items-center justify-center font-mono font-bold text-yellow-400">
+                  25</div><span class="text-xs text-slate-500">i=1</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-pink-500 flex items-center justify-center font-mono font-bold text-white">
+                  12</div><span class="text-xs text-pink-400">min!</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  22</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  64</div>
+              </div>
+            </div>
+            <p class="text-center text-slate-400 font-arabic">← Swap 25 مع 12 →</p>
+            <div class="flex flex-wrap gap-3 justify-center mt-4">
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                  11</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                  12</div><span class="text-xs text-emerald-400">✓</span>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  25</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  22</div>
+              </div>
+              <div class="text-center">
+                <div
+                  class="w-14 h-14 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-mono text-slate-300">
+                  64</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Final Result -->
+          <div class="p-6 bg-emerald-950/30 rounded-xl border border-emerald-700">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="px-3 py-1 bg-emerald-500 text-white font-bold rounded-lg text-sm">Final ✓</span>
+              <span class="text-slate-300 font-arabic">بعد كل الـ passes</span>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center">
+              <div
+                class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                11</div>
+              <div
+                class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                12</div>
+              <div
+                class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                22</div>
+              <div
+                class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                25</div>
+              <div
+                class="w-14 h-14 rounded-lg bg-emerald-500 flex items-center justify-center font-mono font-bold text-white">
+                64</div>
+            </div>
+            <p class="text-center text-emerald-400 font-arabic mt-4 font-bold">🎉 المصفوفة مترتبة!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo -->
+  <section id="demo" class="py-20 px-6 bg-slate-900/30">
+    <div class="container mx-auto max-w-4xl">
+      <div class="text-center mb-12">
+        <span class="text-pink-500 font-mono text-sm">INTERACTIVE</span>
+        <h2 class="text-4xl font-bold text-white mt-2">Try It Yourself!</h2>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+        <div class="flex flex-wrap gap-4 mb-6 justify-center">
+          <button id="new-btn"
+            class="px-5 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+              class="fas fa-dice mr-2"></i>New Array</button>
+          <button id="sort-btn"
+            class="px-5 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-lg hover:shadow-lg transition"><i
+              class="fas fa-play mr-2"></i>Sort</button>
+          <button id="step-btn"
+            class="px-5 py-3 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition"><i
+              class="fas fa-step-forward mr-2"></i>Step</button>
+          <button id="reset-btn"
+            class="px-5 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+              class="fas fa-redo mr-2"></i>Reset</button>
+          <input type="range" id="speed" min="100" max="800" value="400" class="w-24 accent-pink-500">
+        </div>
+
+        <div class="flex gap-2 justify-center text-xs mb-4">
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded bg-yellow-500"></div><span class="text-slate-400">Current (i)</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded bg-pink-500"></div><span class="text-slate-400">Min Found</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded bg-emerald-500"></div><span class="text-slate-400">Sorted</span>
+          </div>
+        </div>
+
+        <div id="bars"
+          class="flex items-end justify-center gap-1 min-h-[220px] p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+        </div>
+
+        <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+          <p class="text-slate-400">Click "Sort" to begin.</p>
+        </div>
+
+        <div id="log"
+          class="mt-4 bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-28 overflow-y-auto font-mono text-xs">
+          <p class="text-slate-500">Logs here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Implementation -->
+  <section id="code" class="py-20 px-6">
+    <div class="container mx-auto max-w-5xl">
+      <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+      <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+        <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+          <span class="w-3 h-3 rounded-full bg-red-500"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500"></span>
+          <span class="ml-4 font-mono text-sm text-slate-400">selectionSort.js</span>
+        </div>
+
+        <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+          <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">selectionSort</span>(<span class="text-orange-300">arr</span>) {
+  <span class="text-purple-400">const</span> n = arr.length;
+  
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> i = <span class="text-emerald-400">0</span>; i < n - <span class="text-emerald-400">1</span>; i++) {
+    <span class="text-slate-500">// Find minimum in unsorted part</span>
+    <span class="text-purple-400">let</span> minIdx = i;
+    
+    <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> j = i + <span class="text-emerald-400">1</span>; j < n; j++) {
+      <span class="text-purple-400">if</span> (arr[j] < arr[minIdx]) {
+        minIdx = j;
+      }
+    }
+    
+    <span class="text-slate-500">// Swap if min is not current</span>
+    <span class="text-purple-400">if</span> (minIdx !== i) {
+      [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+    }
+  }
+  
+  <span class="text-purple-400">return</span> arr;
+}</code></pre>
+
+          <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
+            <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح كل سطر 📖</h4>
+            <div class="space-y-3 font-arabic text-sm">
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-pink-500">
+                <span class="text-pink-400 font-bold">سطر 4:</span>
+                نبدأ من أول عنصر، ونكرر لكل عنصر (ماعدا الأخير)
+              </div>
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                <span class="text-yellow-400 font-bold">سطر 6:</span>
+                نفترض إن العنصر الحالي (i) هو الأصغر
+              </div>
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                <span class="text-blue-400 font-bold">سطر 8-12:</span>
+                ندور في باقي الـ array عن عنصر أصغر
+              </div>
+              <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                <span class="text-emerald-400 font-bold">سطر 15-17:</span>
+                لو لقينا عنصر أصغر، نبدّله مع العنصر الحالي
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+    <p>Grokking Algorithms Course - Week 1</p>
+  </footer>
+
+  <script>
+    AOS.init({ duration: 800, once: true });
+
+    const barsContainer = document.getElementById('bars');
+    const info = document.getElementById('info');
+    const logEl = document.getElementById('log');
+    let arr = [], orig = [], steps = [], step = 0, running = false;
+
+    function gen(n = 10) {
+      arr = Array.from({ length: n }, () => Math.floor(Math.random() * 80) + 20);
+      orig = [...arr];
+      steps = [];
+      step = 0;
+      render();
+    }
+
+    function render(current = -1, minIdx = -1, sorted = 0) {
+      const max = Math.max(...arr);
+      barsContainer.innerHTML = '';
+      arr.forEach((v, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(v / max) * 180}px`;
+
+        if (i < sorted) bar.classList.add('sorted');
+        else if (i === minIdx) bar.classList.add('min');
+        else if (i === current) bar.classList.add('current');
+        else bar.classList.add('default');
+
+        bar.innerHTML = `<span class="val">${v}</span>`;
+        barsContainer.appendChild(bar);
+      });
+    }
+
+    function genSteps() {
+      steps = [];
+      const a = [...orig];
+      const n = a.length;
+
+      for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        steps.push({ arr: [...a], current: i, minIdx: i, sorted: i, msg: `Pass ${i + 1}: Looking for min starting at index ${i}` });
+
+        for (let j = i + 1; j < n; j++) {
+          if (a[j] < a[minIdx]) {
+            minIdx = j;
+            steps.push({ arr: [...a], current: i, minIdx: minIdx, sorted: i, msg: `Found smaller: ${a[j]} at index ${j}` });
+          }
+        }
+
+        if (minIdx !== i) {
+          [a[i], a[minIdx]] = [a[minIdx], a[i]];
+          steps.push({ arr: [...a], current: -1, minIdx: -1, sorted: i + 1, msg: `Swapped ${a[minIdx]} and ${a[i]}` });
+        } else {
+          steps.push({ arr: [...a], current: -1, minIdx: -1, sorted: i + 1, msg: `${a[i]} already in place` });
+        }
+      }
+      steps.push({ arr: [...a], current: -1, minIdx: -1, sorted: n, msg: 'Sorted! ✓' });
+    }
+
+    function showStep() {
+      if (step >= steps.length) return;
+      const s = steps[step];
+      arr = [...s.arr];
+      render(s.current, s.minIdx, s.sorted);
+      info.innerHTML = `<p class="text-white font-arabic">${s.msg}</p>`;
+      log(s.msg, s.sorted === arr.length ? 'success' : 'info');
+    }
+
+    async function runSort() {
+      running = true;
+      while (step < steps.length && running) {
+        showStep();
+        step++;
+        await new Promise(r => setTimeout(r, +document.getElementById('speed').value));
+      }
+      running = false;
+    }
+
+    document.getElementById('new-btn').onclick = () => { running = false; gen(); log('New array', 'info'); };
+    document.getElementById('sort-btn').onclick = () => { if (running) return; arr = [...orig]; genSteps(); step = 0; runSort(); };
+    document.getElementById('step-btn').onclick = () => { running = false; if (!steps.length) { arr = [...orig]; genSteps(); } if (step < steps.length) { showStep(); step++; } };
+    document.getElementById('reset-btn').onclick = () => { running = false; arr = [...orig]; steps = []; step = 0; render(); info.innerHTML = '<p class="text-slate-400">Reset.</p>'; };
+
+    function log(m, t = 'info') {
+      const p = document.createElement('p');
+      p.textContent = m;
+      p.className = t === 'success' ? 'text-emerald-400' : 'text-pink-400';
+      logEl.prepend(p);
+      while (logEl.children.length > 8) logEl.removeChild(logEl.lastChild);
+    }
+
+    gen();
+  </script>
 </body>
+
 </html>

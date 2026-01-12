@@ -1,595 +1,769 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Divide & Conquer Visualization: Merge Sort</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
+    <title>Merge Sort | ترتيب الدمج</title>
+    <meta name="description" content="Interactive Merge Sort visualization demonstrating Divide and Conquer.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            orange: '#F59E0B'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        .visualization-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-            padding: 20px;
-            background-color: var(--background-alt);
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            margin: 25px 0;
-            overflow-x: auto;
-            transition: var(--theme-transition);
-            position: relative;
+        body {
+            background-color: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
 
-        .level {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 15px;
-            width: 100%;
-            min-height: 50px;
-            position: relative;
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .array-segment {
-            display: flex;
-            border: 1px solid var(--border-color);
-            border-radius: var(--element-radius);
-            background-color: var(--background-main);
-            padding: 5px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .text-gradient {
+            background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .array-element {
-            min-width: 35px;
-            height: 35px;
-            background-color: var(--color-default-element);
-            color: var(--color-element-text);
-            border: 1px solid var(--color-default-element);
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
             border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
-            margin: 0 2px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10B981;
+        }
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Array Segment Styles */
+        .array-segment {
+            display: inline-flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
         }
 
         .array-segment.dividing {
-            box-shadow: 0 0 10px var(--color-mid);
-            background-color: rgba(142, 68, 173, 0.1);
+            border-color: #F59E0B;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
         }
+
         .array-segment.merging {
-            box-shadow: 0 0 10px var(--color-low);
-            background-color: rgba(46, 204, 113, 0.1);
+            border-color: #10B981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
-        .array-segment.sorted {
-            border-color: var(--color-found);
-            box-shadow: 0 0 8px var(--color-found);
-            background-color: rgba(52, 152, 219, 0.1);
+
+        .array-element {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            color: white;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            font-family: 'Fira Code', monospace;
+            transition: all 0.3s ease;
         }
 
         .array-element.comparing {
-            background-color: var(--color-high);
-            transform: scale(1.1);
-        }
-        .array-element.moving {
-            background-color: var(--color-mid);
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
             transform: scale(1.1);
         }
 
-        .array-segment::before {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 40px;
-            background-color: var(--secondary-text);
-            z-index: -1;
-            opacity: 0.6;
-        }
-        .level:first-child .array-segment::before {
-            display: none;
+        .array-element.sorted {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
         }
 
-        .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
+        .viz-level {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
             justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
         }
-        .control-group {
+
+        .code-line {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 12px;
+            padding: 4px 0;
         }
-        .control-group label {
-            white-space: nowrap;
-        }
-        .control-group input[type="text"],
-        .control-group input[type="range"] {
-            margin-right: 10px;
-        }
-        .log {
-            margin-top: 20px;
-            max-height: 180px;
+
+        .line-num {
+            color: #64748b;
+            min-width: 24px;
+            text-align: right;
+            user-select: none;
         }
     </style>
 </head>
-<body data-theme="dark">
-    <a href="../index.html#week2" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-    <h1><i class="fas fa-sort-amount-down icon-margin"></i>Divide & Conquer Visualization: Merge Sort</h1>
+<body>
 
-    <div class="container">
-        <h2><i class="fas fa-microchip icon-margin"></i>Interactive Merge Sort</h2>
-        <p>Visualize the Merge Sort algorithm, a classic example of Divide and Conquer.</p>
-
-        <div class="controls">
-            <div class="control-group">
-                <label for="initial-array">Initial Array (comma-separated):</label>
-                <input type="text" id="initial-array" value="8,3,1,7,0,10,2">
-            </div>
-            <div class="control-group">
-                <button id="start-sort-btn"><i class="fas fa-play icon-margin"></i>Start Sort</button>
-                <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset</button>
-            </div>
-            <div class="control-group">
-                <button id="step-btn" disabled><i class="fas fa-step-forward icon-margin"></i>Step Forward</button>
-                <button id="auto-play-btn" disabled><i class="fas fa-fast-forward icon-margin"></i>Auto Play</button>
-                <label for="speed-slider">Speed:</label>
-                <input type="range" id="speed-slider" min="100" max="1000" value="500" step="50">
-                <span id="speed-value">500ms</span>
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week2" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-wide">Merge<span class="text-emerald-500">Sort</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-emerald-400 transition">المفهوم</a>
+                <a href="#demo" class="hover:text-emerald-400 transition">التجربة</a>
+                <a href="#code" class="hover:text-emerald-400 transition">الكود</a>
             </div>
         </div>
+    </nav>
 
-        <div class="visualization-container" id="visualization-container">
-            <!-- Visualization levels will be generated here -->
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
 
-        <div class="log" id="log"><p>Enter an array and click 'Start Sort' to begin.</p></div>
-    </div>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-emerald-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                WEEK 2 • فرّق تسد
+            </div>
 
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>How Merge Sort Works</h2>
-        <div class="explanation">
-            <p>Merge Sort follows the Divide and Conquer paradigm:</p>
-            <ol>
-                <li><strong>Divide:</strong> If the array has more than one element, divide it recursively into two halves (left and right) until each subarray contains only one element (which is inherently sorted).</li>
-                <li><strong>Conquer:</strong> Recursively sort the two subarrays using Merge Sort.</li>
-                <li><strong>Combine:</strong> Merge the two sorted subarrays back into a single sorted array. This merge step involves comparing elements from both subarrays and placing the smaller element into the resulting array, repeating until all elements from both subarrays are merged.</li>
-            </ol>
-            <ul>
-                <li><strong>Time Complexity:</strong> O(n log n) in all cases (worst, average, best). The dividing step takes O(log n) levels of recursion, and the merging step at each level takes O(n) time.</li>
-                <li><strong>Space Complexity:</strong> O(n) because it typically requires an auxiliary array of size n to store the merged results during the combine step.</li>
-            </ul>
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+                <span class="text-gradient">Merge</span> Sort
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                ترتيب الدمج - Divide & Conquer
+            </h2>
+
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
+                A powerful sorting algorithm that uses the Divide and Conquer paradigm to achieve O(n log n) complexity.
+            </p>
+
+            <!-- Arabic Explanation Box -->
+            <div class="max-w-4xl mx-auto mb-12">
+                <div class="p-6 bg-emerald-950/30 border border-emerald-900/50 rounded-2xl rtl-block">
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-4 font-arabic">⚔️ فرّق تسد (Divide & Conquer)</h3>
+                    <div class="space-y-4 text-emerald-100/90 font-arabic text-lg leading-loose">
+                        <p>
+                            فكرة <span class="text-yellow-400">فرّق تسد</span>: لو المشكلة كبيرة،
+                            <span class="text-white">قسمها لمشاكل أصغر</span> وحلهم!
+                        </p>
+
+                        <div class="grid md:grid-cols-3 gap-4 mt-6">
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-yellow-700 text-center">
+                                <div class="text-4xl mb-2">✂️</div>
+                                <div class="text-yellow-400 font-bold">1. اقسم (Divide)</div>
+                                <div class="text-sm text-slate-400 mt-1">قسم القايمة لنصين متساويين</div>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-blue-700 text-center">
+                                <div class="text-4xl mb-2">🔄</div>
+                                <div class="text-blue-400 font-bold">2. احل (Conquer)</div>
+                                <div class="text-sm text-slate-400 mt-1">رتب كل نص لوحده (recursively)</div>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-700 text-center">
+                                <div class="text-4xl mb-2">🔗</div>
+                                <div class="text-emerald-400 font-bold">3. ادمج (Merge)</div>
+                                <div class="text-sm text-slate-400 mt-1">ادمج النصين المرتبين</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-500/30">
+                            <p class="text-blue-300">
+                                <strong>💡 ليه Merge Sort كويس؟</strong>
+                                <br>
+                                • دايماً <span class="text-white">O(n log n)</span> - مش بيتأثر بترتيب البيانات!
+                                <br>
+                                • <span class="text-white">Stable</span> - بيحافظ على ترتيب العناصر المتساوية.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero SVG Visualization -->
+            <div class="max-w-4xl mx-auto">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-emerald-900/20">
+                    <svg viewBox="0 0 800 380" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="divGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#F59E0B" />
+                                <stop offset="100%" style="stop-color:#D97706" />
+                            </linearGradient>
+                            <linearGradient id="mergeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10B981" />
+                                <stop offset="100%" style="stop-color:#059669" />
+                            </linearGradient>
+                            <linearGradient id="elemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6" />
+                                <stop offset="100%" style="stop-color:#1D4ED8" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Title -->
+                        <text x="400" y="25" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="13"
+                            font-weight="bold">
+                            Merge Sort: قسّم ← رتّب ← ادمج
+                        </text>
+
+                        <!-- Level 0: Original array -->
+                        <text x="80" y="60" fill="#F59E0B" font-family="Cairo" font-size="10">الأصل</text>
+                        <g transform="translate(200, 45)">
+                            <rect x="0" y="0" width="400" height="35" rx="8" fill="#0F172A" stroke="#F59E0B"
+                                stroke-width="2" />
+                            <text x="25" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">38</text>
+                            <text x="75" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">27</text>
+                            <text x="125" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">43</text>
+                            <text x="175" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">3</text>
+                            <text x="225" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">9</text>
+                            <text x="275" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">82</text>
+                            <text x="325" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">10</text>
+                            <text x="375" y="24" fill="white" font-family="Fira Code" font-size="14"
+                                font-weight="bold">19</text>
+                        </g>
+
+                        <!-- Dividing arrows -->
+                        <path d="M400 85 L300 110 M400 85 L500 110" stroke="#F59E0B" stroke-width="2" fill="none" />
+                        <text x="400" y="100" text-anchor="middle" fill="#F59E0B" font-size="20">✂️</text>
+
+                        <!-- Level 1: Split into 2 -->
+                        <text x="80" y="130" fill="#F59E0B" font-family="Cairo" font-size="10">قسّم</text>
+                        <g transform="translate(120, 115)">
+                            <rect x="0" y="0" width="180" height="32" rx="6" fill="#0F172A" stroke="#F59E0B"
+                                stroke-dasharray="4" />
+                            <text x="23" y="22" fill="white" font-family="Fira Code" font-size="12">38</text>
+                            <text x="68" y="22" fill="white" font-family="Fira Code" font-size="12">27</text>
+                            <text x="113" y="22" fill="white" font-family="Fira Code" font-size="12">43</text>
+                            <text x="158" y="22" fill="white" font-family="Fira Code" font-size="12">3</text>
+                        </g>
+                        <g transform="translate(500, 115)">
+                            <rect x="0" y="0" width="180" height="32" rx="6" fill="#0F172A" stroke="#F59E0B"
+                                stroke-dasharray="4" />
+                            <text x="23" y="22" fill="white" font-family="Fira Code" font-size="12">9</text>
+                            <text x="68" y="22" fill="white" font-family="Fira Code" font-size="12">82</text>
+                            <text x="113" y="22" fill="white" font-family="Fira Code" font-size="12">10</text>
+                            <text x="158" y="22" fill="white" font-family="Fira Code" font-size="12">19</text>
+                        </g>
+
+                        <!-- Level 2: Split into 4 (smaller) -->
+                        <path d="M210 152 L160 170 M210 152 L260 170 M590 152 L540 170 M590 152 L640 170"
+                            stroke="#F59E0B" stroke-width="1.5" fill="none" />
+                        <g transform="translate(80, 175)" font-family="Fira Code" font-size="10">
+                            <rect x="0" y="0" width="80" height="25" rx="4" fill="#0F172A" stroke="#475569" />
+                            <text x="20" y="17" fill="#94a3b8">38 27</text>
+                        </g>
+                        <g transform="translate(180, 175)" font-family="Fira Code" font-size="10">
+                            <rect x="0" y="0" width="80" height="25" rx="4" fill="#0F172A" stroke="#475569" />
+                            <text x="20" y="17" fill="#94a3b8">43 3</text>
+                        </g>
+                        <g transform="translate(460, 175)" font-family="Fira Code" font-size="10">
+                            <rect x="0" y="0" width="80" height="25" rx="4" fill="#0F172A" stroke="#475569" />
+                            <text x="20" y="17" fill="#94a3b8">9 82</text>
+                        </g>
+                        <g transform="translate(560, 175)" font-family="Fira Code" font-size="10">
+                            <rect x="0" y="0" width="80" height="25" rx="4" fill="#0F172A" stroke="#475569" />
+                            <text x="20" y="17" fill="#94a3b8">10 19</text>
+                        </g>
+
+                        <!-- Merge indicator -->
+                        <text x="400" y="225" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="12"
+                            font-weight="bold">⬇️ ادمج (Merge) ⬇️</text>
+
+                        <!-- Level 3: Merged pairs -->
+                        <text x="80" y="260" fill="#10B981" font-family="Cairo" font-size="10">ادمج</text>
+                        <g transform="translate(80, 245)">
+                            <rect x="0" y="0" width="80" height="28" rx="5" fill="#0F172A" stroke="#10B981" />
+                            <text x="40" y="19" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="11">27 38</text>
+                        </g>
+                        <g transform="translate(180, 245)">
+                            <rect x="0" y="0" width="80" height="28" rx="5" fill="#0F172A" stroke="#10B981" />
+                            <text x="40" y="19" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="11">3 43</text>
+                        </g>
+                        <g transform="translate(460, 245)">
+                            <rect x="0" y="0" width="80" height="28" rx="5" fill="#0F172A" stroke="#10B981" />
+                            <text x="40" y="19" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="11">9 82</text>
+                        </g>
+                        <g transform="translate(560, 245)">
+                            <rect x="0" y="0" width="80" height="28" rx="5" fill="#0F172A" stroke="#10B981" />
+                            <text x="40" y="19" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="11">10 19</text>
+                        </g>
+
+                        <!-- Merge arrows -->
+                        <path d="M160 278 L210 295 M260 278 L210 295 M540 278 L590 295 M640 278 L590 295"
+                            stroke="#10B981" stroke-width="1.5" fill="none" />
+
+                        <!-- Level 4: Merged halves -->
+                        <g transform="translate(120, 300)">
+                            <rect x="0" y="0" width="180" height="30" rx="6" fill="#0F172A" stroke="#10B981"
+                                stroke-width="2" />
+                            <text x="90" y="20" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="12">3 27 38 43</text>
+                        </g>
+                        <g transform="translate(500, 300)">
+                            <rect x="0" y="0" width="180" height="30" rx="6" fill="#0F172A" stroke="#10B981"
+                                stroke-width="2" />
+                            <text x="90" y="20" text-anchor="middle" fill="#34D399" font-family="Fira Code"
+                                font-size="12">9 10 19 82</text>
+                        </g>
+
+                        <!-- Final merge -->
+                        <path d="M300 335 L400 350 M590 335 L400 350" stroke="#10B981" stroke-width="2" fill="none" />
+
+                        <!-- Final sorted array -->
+                        <g transform="translate(200, 350)">
+                            <rect x="0" y="0" width="400" height="30" rx="8" fill="url(#mergeGrad)" />
+                            <text x="200" y="20" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12" font-weight="bold">3 9 10 19 27 38 43 82 ✓</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
         </div>
-        <h3><i class="fas fa-code icon-margin"></i>Example Implementation (Conceptual)</h3>
-        <pre class="code-block">
-<code>function mergeSort(arr) {
-    if (arr.length <= 1) {
-        return arr; // Base case: array is already sorted
-    }
+    </header>
 
-    // Divide
-    const mid = Math.floor(arr.length / 2);
-    const leftHalf = arr.slice(0, mid);
-    const rightHalf = arr.slice(mid);
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
+                How Merge Sort Works
+            </h2>
+            <p class="text-center text-slate-400 font-arabic mb-16">إزاي Merge Sort بيشتغل</p>
 
-    // Conquer (Recursive calls)
-    const sortedLeft = mergeSort(leftHalf);
-    const sortedRight = mergeSort(rightHalf);
+            <div class="grid md:grid-cols-2 gap-12 mb-12">
+                <!-- Steps -->
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-list-ol"></i>
+                        Algorithm Steps
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-yellow-500">
+                            <h4 class="font-bold text-yellow-400 mb-2">1. Divide</h4>
+                            <p class="text-slate-400 text-sm">If array length > 1, split it into two halves.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">لو القايمة فيها أكتر من عنصر،
+                                قسمها لنصين</p>
+                        </div>
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-blue-500">
+                            <h4 class="font-bold text-blue-400 mb-2">2. Conquer (Recursively)</h4>
+                            <p class="text-slate-400 text-sm">Recursively sort both halves.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">رتب كل نص لوحده (نادي نفسك!)
+                            </p>
+                        </div>
+                        <div class="glass-card p-5 rounded-xl border-l-4 border-l-emerald-500">
+                            <h4 class="font-bold text-emerald-400 mb-2">3. Merge</h4>
+                            <p class="text-slate-400 text-sm">Merge the two sorted halves into one sorted array.</p>
+                            <p class="text-slate-500 text-xs font-arabic mt-1 rtl-block">ادمج النصين المرتبين في قايمة
+                                واحدة مرتبة</p>
+                        </div>
+                    </div>
+                </div>
 
-    // Combine (Merge)
-    return merge(sortedLeft, sortedRight);
-}
+                <!-- Complexity -->
+                <div data-aos="fade-left">
+                    <h3 class="text-2xl font-bold text-purple-400 mb-6 flex items-center gap-3 font-arabic justify-end">
+                        التعقيد والأداء
+                        <i class="fas fa-tachometer-alt"></i>
+                    </h3>
+                    <div class="glass-card p-8 rounded-2xl">
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                                <span class="text-slate-300">Time Complexity</span>
+                                <span class="text-2xl font-mono text-emerald-400 font-bold">O(n log n)</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                                <span class="text-slate-300">Space Complexity</span>
+                                <span class="text-2xl font-mono text-yellow-400 font-bold">O(n)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Stable?</span>
+                                <span class="text-emerald-400 font-bold">Yes ✓</span>
+                            </div>
+                        </div>
 
-function merge(left, right) {
-    let result = [];
-    let leftIndex = 0;
-    let rightIndex = 0;
+                        <div class="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-700 rtl-block">
+                            <p class="font-arabic text-sm text-slate-300">
+                                <strong class="text-emerald-400">ليه O(n log n)؟</strong>
+                                <br>
+                                • بنقسم log n مرة (كل مرة للنص)
+                                <br>
+                                • كل مستوى بناخد n عملية للدمج
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Compare elements and add the smaller one to the result
-    while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] < right[rightIndex]) {
-            result.push(left[leftIndex]);
-            leftIndex++;
-        } else {
-            result.push(right[rightIndex]);
-            rightIndex++;
-        }
-    }
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-24 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-emerald-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Watch Merge Sort</h2>
+                <p class="text-slate-400 mt-2 font-arabic">شاهد Merge Sort وهو بيشتغل!</p>
+            </div>
 
-    // Add any remaining elements from left or right subarray
-    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-}
-</code></pre>
-    </div>
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
+                    <div class="flex items-center gap-2">
+                        <label class="text-slate-400 text-sm">Array:</label>
+                        <input type="text" id="input-array" value="38, 27, 43, 3, 9, 82, 10"
+                            class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-56 focus:border-emerald-500 focus:outline-none text-sm">
+                    </div>
+                    <button id="sort-btn"
+                        class="px-5 py-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition flex items-center gap-2">
+                        <i class="fas fa-play"></i> Sort
+                    </button>
+                    <button id="step-btn"
+                        class="px-5 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition flex items-center gap-2">
+                        <i class="fas fa-step-forward"></i> Step
+                    </button>
+                    <button id="reset-btn"
+                        class="px-5 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition flex items-center gap-2">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <!-- Speed Control -->
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <label class="text-slate-400 text-sm">Speed:</label>
+                    <input type="range" id="speed-slider" min="100" max="1000" value="500"
+                        class="w-32 accent-emerald-500">
+                    <span id="speed-value" class="text-emerald-400 font-mono text-sm">500ms</span>
+                </div>
+
+                <!-- Visualization Container -->
+                <div id="visualization"
+                    class="p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[200px] mb-6 overflow-x-auto">
+                    <p class="text-slate-500 text-center">Click "Sort" to begin visualization.</p>
+                </div>
+
+                <!-- Current Step Info -->
+                <div id="step-info" class="text-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 mb-6">
+                    <p class="text-slate-400">Ready to sort.</p>
+                </div>
+
+                <!-- Log -->
+                <div id="log"
+                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
+                    <p class="text-slate-500">Logs will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section id="code" class="py-24 px-6 bg-black/20">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">mergeSort.js</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">function</span> <span class="text-blue-400">mergeSort</span>(<span class="text-orange-300">arr</span>) {</span>
+<span class="code-line"><span class="line-num">2</span>  <span class="text-gray-500">// Base case: قايمة بعنصر واحد</span></span>
+<span class="code-line"><span class="line-num">3</span>  <span class="text-purple-400">if</span> (arr.length <= <span class="text-emerald-400">1</span>) <span class="text-purple-400">return</span> arr;</span>
+<span class="code-line"><span class="line-num">4</span></span>
+<span class="code-line"><span class="line-num">5</span>  <span class="text-gray-500">// Divide: قسم لنصين</span></span>
+<span class="code-line"><span class="line-num">6</span>  <span class="text-purple-400">const</span> mid = Math.floor(arr.length/<span class="text-emerald-400">2</span>);</span>
+<span class="code-line"><span class="line-num">7</span>  <span class="text-purple-400">const</span> left = arr.slice(<span class="text-emerald-400">0</span>, mid);</span>
+<span class="code-line"><span class="line-num">8</span>  <span class="text-purple-400">const</span> right = arr.slice(mid);</span>
+<span class="code-line"><span class="line-num">9</span></span>
+<span class="code-line"><span class="line-num">10</span>  <span class="text-gray-500">// Conquer + Merge</span></span>
+<span class="code-line"><span class="line-num">11</span>  <span class="text-purple-400">return</span> <span class="text-blue-400">merge</span>(</span>
+<span class="code-line"><span class="line-num">12</span>    <span class="text-blue-400">mergeSort</span>(left),</span>
+<span class="code-line"><span class="line-num">13</span>    <span class="text-blue-400">mergeSort</span>(right)</span>
+<span class="code-line"><span class="line-num">14</span>  );</span>
+<span class="code-line"><span class="line-num">15</span>}</span>
+<span class="code-line"><span class="line-num">16</span></span>
+<span class="code-line"><span class="line-num">17</span><span class="text-purple-400">function</span> <span class="text-blue-400">merge</span>(<span class="text-orange-300">left</span>, <span class="text-orange-300">right</span>) {</span>
+<span class="code-line"><span class="line-num">18</span>  <span class="text-purple-400">let</span> result = [];</span>
+<span class="code-line"><span class="line-num">19</span>  <span class="text-purple-400">while</span> (left.length && right.length) {</span>
+<span class="code-line"><span class="line-num">20</span>    result.push(left[<span class="text-emerald-400">0</span>] < right[<span class="text-emerald-400">0</span>]</span>
+<span class="code-line"><span class="line-num">21</span>      ? left.shift() : right.shift());</span>
+<span class="code-line"><span class="line-num">22</span>  }</span>
+<span class="code-line"><span class="line-num">23</span>  <span class="text-purple-400">return</span> [...result, ...left, ...right];</span>
+<span class="code-line"><span class="line-num">24</span>}</span></code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
+                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
+                        <div class="space-y-4 font-arabic text-sm">
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">سطر 3:</span>
+                                Base Case - لو القايمة فيها عنصر واحد بس، ارجعها زي ما هي (مرتبة!)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">سطر 6-8:</span>
+                                Divide - قسم القايمة لنصين: left و right
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">سطر 11-14:</span>
+                                Conquer - نادي mergeSort على كل نص (recursion!)
+                                ثم ادمجهم بـ merge
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">merge (سطر 17-24):</span>
+                                بنقارن أول عنصر من كل قايمة، وناخد الأصغر.
+                                <br>
+                                <span class="text-xs text-slate-500">shift() بتشيل أول عنصر</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 2</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
 
     <script>
-        // Theme persistence
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
+        AOS.init({ duration: 800, once: true, offset: 100 });
 
-        // DOM Elements
-        const initialArrayInput = document.getElementById('initial-array');
-        const startSortBtn = document.getElementById('start-sort-btn');
-        const resetBtn = document.getElementById('reset-btn');
+        const inputArray = document.getElementById('input-array');
+        const sortBtn = document.getElementById('sort-btn');
         const stepBtn = document.getElementById('step-btn');
-        const autoPlayBtn = document.getElementById('auto-play-btn');
+        const resetBtn = document.getElementById('reset-btn');
         const speedSlider = document.getElementById('speed-slider');
-        const speedValueSpan = document.getElementById('speed-value');
-        const visualizationContainer = document.getElementById('visualization-container');
+        const speedValue = document.getElementById('speed-value');
+        const visualization = document.getElementById('visualization');
+        const stepInfo = document.getElementById('step-info');
         const logElement = document.getElementById('log');
 
-        let originalArray = [];
-        let visualizationSteps = [];
-        let currentStepIndex = -1;
-        let autoPlayInterval = null;
-        let isAutoPlaying = false;
-        let animationSpeed = 500;
+        let steps = [];
+        let currentStep = 0;
+        let isRunning = false;
+        let animationTimeout = null;
 
-        // --- Utility Functions ---
-        function logMessage(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            logElement.prepend(p);
-            while (logElement.children.length > 10) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
+        speedSlider.addEventListener('input', () => {
+            speedValue.textContent = `${speedSlider.value}ms`;
+        });
 
-        function disableControls(sorting = false, autoPlaying = false) {
-            startSortBtn.disabled = sorting;
-            initialArrayInput.disabled = sorting;
-            const endReached = currentStepIndex >= visualizationSteps.length - 1;
-            stepBtn.disabled = !sorting || endReached || autoPlaying;
-            autoPlayBtn.disabled = !sorting || endReached;
-            resetBtn.disabled = autoPlaying;
-        }
+        sortBtn.addEventListener('click', () => {
+            if (isRunning) return;
+            const arr = inputArray.value.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+            if (arr.length < 2) { log('❌ Need at least 2 elements', 'error'); return; }
 
-        // --- Visualization Rendering ---
-        function renderStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= visualizationSteps.length) return;
+            steps = [];
+            currentStep = 0;
+            generateSteps(arr, 0, 'initial');
+            isRunning = true;
+            runAnimation();
+        });
 
-            const step = visualizationSteps[stepIndex];
-            visualizationContainer.innerHTML = '';
-
-            const levels = {};
-            visualizationSteps.slice(0, stepIndex + 1).forEach(s => {
-                if (!levels[s.depth]) {
-                    levels[s.depth] = [];
-                }
-                const existingIndex = levels[s.depth].findIndex(item => item.id === s.id);
-                if (existingIndex !== -1) {
-                    levels[s.depth][existingIndex] = s;
-                } else {
-                    levels[s.depth].push(s);
-                }
-            });
-
-            Object.keys(levels).sort((a,b) => a - b).forEach(depth => {
-                const levelElement = document.createElement('div');
-                levelElement.className = 'level';
-                levelElement.dataset.depth = depth;
-
-                levels[depth].forEach(segmentInfo => {
-                    const segmentElement = createSegmentElement(segmentInfo);
-                    levelElement.appendChild(segmentElement);
-                });
-
-                visualizationContainer.appendChild(levelElement);
-            });
-
-            logMessage(step.message, step.type || 'info');
-        }
-
-        function createSegmentElement(segmentInfo) {
-            const segmentElement = document.createElement('div');
-            segmentElement.className = 'array-segment';
-            segmentElement.dataset.id = segmentInfo.id;
-            if (segmentInfo.status) {
-                segmentElement.classList.add(segmentInfo.status);
-            }
-
-            segmentInfo.array.forEach((value, index) => {
-                const element = document.createElement('div');
-                element.className = 'array-element';
-                element.textContent = value;
-
-                if (segmentInfo.status === 'merging' && segmentInfo.comparisonIndices) {
-                    if (segmentInfo.comparisonIndices.includes(index + segmentInfo.range[0])) {
-                        element.classList.add('comparing');
-                    }
-                }
-                if (segmentInfo.status === 'merging' && segmentInfo.movedIndex !== undefined) {
-                    if (index + segmentInfo.range[0] === segmentInfo.movedIndex) {
-                        element.classList.add('moving');
-                    }
-                }
-
-                segmentElement.appendChild(element);
-            });
-            return segmentElement;
-        }
-
-        // --- Merge Sort Logic with Visualization Steps ---
-        function generateMergeSortSteps(arr) {
-            visualizationSteps = [];
-            let segmentIdCounter = 0;
-
-            function mergeSortRecursive(subArray, depth, rangeStart) {
-                const currentId = segmentIdCounter++;
-                const currentRange = [rangeStart, rangeStart + subArray.length -1];
-
-                visualizationSteps.push({
-                    id: currentId,
-                    array: [...subArray],
-                    depth: depth,
-                    status: 'dividing',
-                    range: currentRange,
-                    message: `Divide: [${subArray.join(',')}] at depth ${depth} (Indices ${currentRange[0]}-${currentRange[1]})`,
-                    type: 'info'
-                });
-
-                if (subArray.length <= 1) {
-                    visualizationSteps.push({
-                        id: currentId,
-                        array: [...subArray],
-                        depth: depth,
-                        status: 'sorted',
-                        range: currentRange,
-                        message: `Base case: [${subArray.join(',')}] is sorted.`,
-                        type: 'success'
-                    });
-                    return subArray;
-                }
-
-                const mid = Math.floor(subArray.length / 2);
-                const leftHalf = subArray.slice(0, mid);
-                const rightHalf = subArray.slice(mid);
-
-                const sortedLeft = mergeSortRecursive(leftHalf, depth + 1, rangeStart);
-                const sortedRight = mergeSortRecursive(rightHalf, depth + 1, rangeStart + mid);
-
-                return merge(sortedLeft, sortedRight, depth, currentId, currentRange);
-            }
-
-            function merge(left, right, depth, targetId, targetRange) {
-                visualizationSteps.push({
-                    id: targetId,
-                    array: [],
-                    depth: depth,
-                    status: 'merging',
-                    range: targetRange,
-                    message: `Merge: Left [${left.join(',')}] and Right [${right.join(',')}] into indices ${targetRange[0]}-${targetRange[1]}`, 
-                    type: 'info'
-                });
-
-                let result = [];
-                let leftIndex = 0;
-                let rightIndex = 0;
-                let originalLeftIndex = targetRange[0];
-                let originalRightIndex = targetRange[0] + left.length;
-
-                while (leftIndex < left.length && rightIndex < right.length) {
-                    const comparisonMessage = `Compare Left[${leftIndex}] (${left[leftIndex]}) and Right[${rightIndex}] (${right[rightIndex]})`;
-                    visualizationSteps.push({
-                        id: targetId,
-                        array: [...result],
-                        depth: depth,
-                        status: 'merging',
-                        range: targetRange,
-                        comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
-                        message: comparisonMessage,
-                        type: 'info'
-                    });
-
-                    if (left[leftIndex] < right[rightIndex]) {
-                        const movedVal = left[leftIndex];
-                        const movedOriginalIndex = originalLeftIndex + leftIndex;
-                        result.push(movedVal);
-                        visualizationSteps.push({
-                            id: targetId,
-                            array: [...result],
-                            depth: depth,
-                            status: 'merging',
-                            range: targetRange,
-                            comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
-                            movedIndex: movedOriginalIndex,
-                            message: `Move ${movedVal} from Left to result.`,
-                            type: 'info'
-                        });
-                        leftIndex++;
-                    } else {
-                        const movedVal = right[rightIndex];
-                        const movedOriginalIndex = originalRightIndex + rightIndex;
-                        result.push(movedVal);
-                        visualizationSteps.push({
-                            id: targetId,
-                            array: [...result],
-                            depth: depth,
-                            status: 'merging',
-                            range: targetRange,
-                            comparisonIndices: [originalLeftIndex + leftIndex, originalRightIndex + rightIndex],
-                            movedIndex: movedOriginalIndex,
-                            message: `Move ${movedVal} from Right to result.`,
-                            type: 'info'
-                        });
-                        rightIndex++;
-                    }
-                }
-
-                const remainingLeft = left.slice(leftIndex);
-                const remainingRight = right.slice(rightIndex);
-                if (remainingLeft.length > 0) {
-                    visualizationSteps.push({
-                        id: targetId,
-                        array: [...result, ...remainingLeft],
-                        depth: depth,
-                        status: 'merging',
-                        range: targetRange,
-                        message: `Add remaining from Left: [${remainingLeft.join(',')}]`,
-                        type: 'info'
-                    });
-                }
-                if (remainingRight.length > 0) {
-                    visualizationSteps.push({
-                        id: targetId,
-                        array: [...result, ...remainingLeft, ...remainingRight],
-                        depth: depth,
-                        status: 'merging',
-                        range: targetRange,
-                        message: `Add remaining from Right: [${remainingRight.join(',')}]`,
-                        type: 'info'
-                    });
-                }
-
-                result = result.concat(remainingLeft).concat(remainingRight);
-
-                visualizationSteps.push({
-                    id: targetId,
-                    array: [...result],
-                    depth: depth,
-                    status: 'sorted',
-                    range: targetRange,
-                    message: `Merged into [${result.join(',')}] (Indices ${targetRange[0]}-${targetRange[1]})`, 
-                    type: 'success'
-                });
-
-                return result;
-            }
-
-            const sortedArray = mergeSortRecursive(arr, 0, 0);
-            logMessage(`Sorting complete! Final array: [${sortedArray.join(',')}]`, 'success');
-        }
-
-        // --- Control Handlers ---
-        startSortBtn.addEventListener('click', () => {
-            const inputText = initialArrayInput.value.trim();
-            const potentialArray = inputText.split(',').map(s => s.trim()).filter(s => s !== '');
-
-            if (potentialArray.length === 0) {
-                logMessage('Please enter a non-empty array.', 'warning');
+        stepBtn.addEventListener('click', () => {
+            if (isRunning) {
+                isRunning = false;
+                clearTimeout(animationTimeout);
                 return;
             }
-            if (potentialArray.every(s => !isNaN(Number(s)))) {
-                originalArray = potentialArray.map(Number);
-                logMessage(`Starting Merge Sort for: [${originalArray.join(',')}]`, 'info');
-                isAutoPlaying = false;
-                stopAutoPlay();
-                generateMergeSortSteps([...originalArray]);
-                currentStepIndex = -1;
-                visualizationContainer.innerHTML = '';
-                const initialStep = visualizationSteps.find(step => step.depth === 0 && step.status === 'dividing');
-                if (initialStep) {
-                    visualizationContainer.appendChild(createSegmentElement(initialStep));
-                }
-                disableControls(true, false);
-            } else {
-                logMessage('Invalid input: Please enter comma-separated numbers.', 'error');
+            if (steps.length === 0) {
+                const arr = inputArray.value.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+                if (arr.length < 2) { log('❌ Need at least 2 elements', 'error'); return; }
+                generateSteps(arr, 0, 'initial');
+            }
+            if (currentStep < steps.length) {
+                showStep(currentStep);
+                currentStep++;
             }
         });
 
         resetBtn.addEventListener('click', () => {
-            isAutoPlaying = false;
-            stopAutoPlay();
-            originalArray = [];
-            visualizationSteps = [];
-            currentStepIndex = -1;
-            initialArrayInput.value = '8,3,1,7,0,10,2';
-            visualizationContainer.innerHTML = '';
-            logElement.innerHTML = '<p>Enter an array and click \'Start Sort\' to begin.</p>';
-            disableControls(false, false);
+            isRunning = false;
+            clearTimeout(animationTimeout);
+            steps = [];
+            currentStep = 0;
+            visualization.innerHTML = '<p class="text-slate-500 text-center">Click "Sort" to begin visualization.</p>';
+            stepInfo.innerHTML = '<p class="text-slate-400">Ready to sort.</p>';
+            logElement.innerHTML = '<p class="text-slate-500">Logs cleared.</p>';
         });
 
-        stepBtn.addEventListener('click', () => {
-            if (isAutoPlaying) return;
+        function generateSteps(arr, depth, type, parent = null) {
+            steps.push({ arr: [...arr], depth, type, msg: type === 'initial' ? 'Starting array' : (type === 'divide' ? 'Dividing...' : 'Merging...') });
 
-            if (currentStepIndex < visualizationSteps.length - 1) {
-                currentStepIndex++;
-                renderStep(currentStepIndex);
-                disableControls(true, false);
-            } else {
-                logMessage('Merge Sort steps complete.', 'success');
-                disableControls(false, false);
-                stepBtn.disabled = true;
-                autoPlayBtn.disabled = true;
+            if (arr.length <= 1) {
+                steps.push({ arr: [...arr], depth, type: 'base', msg: 'Base case reached' });
+                return arr;
             }
-        });
 
-        speedSlider.addEventListener('input', (e) => {
-            animationSpeed = parseInt(e.target.value);
-            speedValueSpan.textContent = `${animationSpeed}ms`;
-            if (isAutoPlaying) {
-                stopAutoPlay(false);
-                startAutoPlay();
-            }
-        });
+            const mid = Math.floor(arr.length / 2);
+            const left = arr.slice(0, mid);
+            const right = arr.slice(mid);
 
-        function startAutoPlay() {
-            if (isAutoPlaying && autoPlayInterval) return;
+            steps.push({ arr: [...arr], depth, type: 'divide', left: [...left], right: [...right], msg: `Split into [${left}] and [${right}]` });
 
-            isAutoPlaying = true;
-            autoPlayBtn.innerHTML = '<i class="fas fa-pause icon-margin"></i>Pause';
-            disableControls(true, true);
+            const sortedLeft = generateSteps(left, depth + 1, 'left');
+            const sortedRight = generateSteps(right, depth + 1, 'right');
 
-            autoPlayInterval = setInterval(() => {
-                if (currentStepIndex < visualizationSteps.length - 1) {
-                    currentStepIndex++;
-                    renderStep(currentStepIndex);
-                    disableControls(true, true);
-                } else {
-                    logMessage('Merge Sort steps complete (Auto-Play).', 'success');
-                    stopAutoPlay();
-                    stepBtn.disabled = true;
-                    autoPlayBtn.disabled = true;
-                    resetBtn.disabled = false;
-                }
-            }, animationSpeed);
+            const merged = merge(sortedLeft, sortedRight);
+            steps.push({ arr: [...merged], depth, type: 'merge', msg: `Merged: [${merged}]` });
+
+            return merged;
         }
 
-        function stopAutoPlay(resettingState = true) {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = null;
-            if (resettingState) {
-                isAutoPlaying = false;
+        function merge(left, right) {
+            let result = [];
+            let l = [...left], r = [...right];
+            while (l.length && r.length) {
+                result.push(l[0] < r[0] ? l.shift() : r.shift());
             }
-            autoPlayBtn.innerHTML = '<i class="fas fa-fast-forward icon-margin"></i>Auto Play';
-            if (resettingState) {
-                const sortInProgress = currentStepIndex < visualizationSteps.length - 1 && currentStepIndex !== -1;
-                disableControls(sortInProgress, false);
-                if (!sortInProgress && currentStepIndex !== -1) {
-                    stepBtn.disabled = true;
-                    autoPlayBtn.disabled = true;
-                }
-            }
+            return [...result, ...l, ...r];
         }
 
-        autoPlayBtn.addEventListener('click', () => {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                startAutoPlay();
-            }
-        });
+        function showStep(index) {
+            const step = steps[index];
 
-        // --- Initial State ---
-        speedValueSpan.textContent = `${animationSpeed}ms`;
-        disableControls(false, false);
+            // Update visualization
+            let html = '<div class="flex flex-wrap gap-2 justify-center">';
+            step.arr.forEach(val => {
+                const cls = step.type === 'merge' ? 'sorted' : (step.type === 'divide' ? 'comparing' : '');
+                html += `<div class="array-element ${cls}">${val}</div>`;
+            });
+            html += '</div>';
+
+            if (step.left && step.right) {
+                html += '<div class="flex gap-8 justify-center mt-4">';
+                html += '<div class="array-segment dividing"><span class="text-yellow-400 text-xs mr-2">L:</span>';
+                step.left.forEach(v => html += `<div class="array-element text-sm" style="min-width:30px;height:30px">${v}</div>`);
+                html += '</div>';
+                html += '<div class="array-segment dividing"><span class="text-yellow-400 text-xs mr-2">R:</span>';
+                step.right.forEach(v => html += `<div class="array-element text-sm" style="min-width:30px;height:30px">${v}</div>`);
+                html += '</div></div>';
+            }
+
+            visualization.innerHTML = html;
+
+            // Update step info
+            const typeLabels = {
+                'initial': '📋 البداية',
+                'divide': '✂️ قسّم',
+                'base': '🛑 Base Case',
+                'merge': '🔗 ادمج',
+                'left': '⬅️ الجزء الأيسر',
+                'right': '➡️ الجزء الأيمن'
+            };
+            stepInfo.innerHTML = `
+                <p class="text-white">${step.msg}</p>
+                <p class="text-emerald-400 font-arabic text-sm mt-1">${typeLabels[step.type] || step.type}</p>
+            `;
+
+            log(`Step ${index + 1}: ${step.msg}`, step.type === 'merge' ? 'success' : 'info');
+        }
+
+        function runAnimation() {
+            if (!isRunning || currentStep >= steps.length) {
+                isRunning = false;
+                return;
+            }
+            showStep(currentStep);
+            currentStep++;
+            animationTimeout = setTimeout(runAnimation, parseInt(speedSlider.value));
+        }
+
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.className = {
+                info: 'text-blue-400',
+                success: 'text-emerald-400',
+                error: 'text-red-400'
+            }[type] + ' mb-1';
+            logElement.prepend(p);
+            while (logElement.children.length > 15) logElement.removeChild(logElement.lastChild);
+        }
     </script>
 </body>
+
 </html>

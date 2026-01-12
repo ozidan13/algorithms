@@ -1,496 +1,703 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Visualization: Arrays vs. Linked Lists</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
+    <title>Memory Visualization | تصور الذاكرة</title>
+    <meta name="description" content="Visualize how Arrays vs Linked Lists use memory differently.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            orange: '#F59E0B'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Specific styles for memory blocks */
+        body {
+            background-color: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06B6D4;
+        }
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Memory Grid */
         .memory-grid {
             display: grid;
-            /* Dynamically set columns later */
-            grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); /* Responsive grid */
-            gap: 4px; /* Slightly increased gap */
-            padding: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            background-color: var(--background-alt);
-            min-height: 150px; /* Ensure a decent height */
-            margin: 25px 0;
-            transition: var(--theme-transition);
+            grid-template-columns: repeat(16, 1fr);
+            gap: 3px;
         }
 
         .memory-block {
-            width: 30px; /* Fixed width */
-            height: 30px; /* Fixed height */
-            border: 1px solid var(--secondary-text);
-            background-color: var(--background-main); /* Empty blocks */
-            font-size: 10px;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            font-size: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--secondary-text);
-            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
-            cursor: help; /* Indicate tooltip is available */
+            cursor: help;
         }
 
-        /* Tooltip for memory block info */
-        .memory-block .tooltip {
-            visibility: hidden;
-            width: 120px;
-            background-color: var(--tooltip-bg);
-            color: var(--tooltip-text);
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%; /* Position above the block */
-            left: 50%;
-            margin-left: -60px; /* Center the tooltip */
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8rem;
-        }
-        .memory-block:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
+        .memory-block.free {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px dashed #334155;
         }
 
-        /* States for memory blocks */
-        .memory-block.allocated {
-            background-color: var(--color-default-element); /* Default allocated color */
-            border-color: var(--color-default-element);
-            color: var(--color-element-text);
+        .memory-block.array-block {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            border: 1px solid #60A5FA;
+            color: white;
             font-weight: bold;
         }
-        .memory-block.fragmented {
-            background-color: #7f8c8d; /* Gray for fragmented/unused */
-            border-color: #7f8c8d;
-            opacity: 0.6;
-        }
-        .memory-block.highlight {
-             border: 2px solid white;
-             transform: scale(1.15); /* More pronounced highlight */
-             z-index: 1;
-             box-shadow: 0 0 8px white;
-         }
 
-        /* Specific colors/styles for different structures */
-        .memory-block.array-block {
-            background-color: var(--color-mid); /* Purple for array */
-            border-color: var(--color-mid);
-        }
         .memory-block.list-data {
-            background-color: var(--color-low); /* Green for list data */
-            border-color: var(--color-low);
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            border: 1px solid #A78BFA;
+            color: white;
         }
+
         .memory-block.list-pointer {
-            background-color: var(--color-found); /* Blue for list pointer */
-            border-color: var(--color-found);
-            font-size: 8px; /* Smaller font for pointer indicator */
-            /* Removed arrow pseudo-element for cleaner grid */
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: 1px solid #34D399;
+            color: white;
+            font-size: 6px;
         }
 
-        /* Legend refinement */
-         .legend {
-             display: flex;
-             flex-wrap: wrap;
-             gap: 15px;
-             margin-top: 10px; /* Reduced top margin */
-             margin-bottom: 20px; /* Added bottom margin */
-             font-size: 0.9rem;
-             padding: 10px;
-             background-color: var(--background-alt);
-             border-radius: var(--card-radius);
-             border: 1px solid var(--border-color);
-         }
-         .legend-item {
-             display: flex;
-             align-items: center;
-             gap: 5px;
-         }
-         .legend-item span:first-child {
-             width: 18px;
-             height: 18px;
-             display: inline-block;
-             border: 1px solid var(--border-color);
-             border-radius: 3px; /* Match block style slightly */
-         }
-         .legend .memory-block.allocated { background-color: var(--color-default-element); } /* Show default allocated */
-         .legend .array-block { background-color: var(--color-mid); }
-         .legend .list-data { background-color: var(--color-low); }
-         .legend .list-pointer { background-color: var(--color-found); }
-         .legend .fragmented { background-color: #7f8c8d; opacity: 0.6; }
-         .legend .free { background-color: var(--background-main); border-color: var(--secondary-text); } /* Show free block */
+        .memory-block.fragmented {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
 
-         /* Control group styling */
-         .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
+        .memory-block.highlight {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .control-group label {
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 8px;
+            background: #1E293B;
+            color: white;
+            font-size: 10px;
+            border-radius: 4px;
             white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 100;
         }
-        .control-group input[type="number"] {
-            width: 60px;
+
+        .memory-block:hover .tooltip {
+            opacity: 1;
         }
-         .log {
-             margin-top: 20px;
-             max-height: 150px;
-         }
     </style>
 </head>
-<body data-theme="dark">
-    <a href="../index.html#week2" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-    <h1><i class="fas fa-memory icon-margin"></i>Memory Visualization: Arrays vs. Linked Lists</h1>
+<body>
 
-    <div class="container">
-        <h2><i class="fas fa-binoculars icon-margin"></i>Visual Demonstration</h2>
-        <p>Observe how contiguous (Array) and non-contiguous (Linked List) allocations interact with memory fragmentation.</p>
-
-        <div class="controls">
-            <div class="control-group">
-                 <label for="total-blocks">Memory Size (Blocks):</label>
-                 <input type="number" id="total-blocks" value="60" min="20" max="200" step="10">
-                 <label for="num-elements">Elements to Allocate:</label>
-                 <input type="number" id="num-elements" value="7" min="3" max="20">
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week2" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-wide">Memory<span class="text-cyan-500">Viz</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-cyan-400 transition">المفهوم</a>
+                <a href="#demo" class="hover:text-cyan-400 transition">التجربة</a>
             </div>
-             <div class="control-group">
-                 <button id="visualize-btn"><i class="fas fa-play icon-margin"></i>Allocate</button>
-                 <button id="fragment-btn"><i class="fas fa-random icon-margin"></i>Fragment Memory</button>
-                 <button id="reset-memory-btn"><i class="fas fa-undo icon-margin"></i>Reset Memory</button>
-             </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
 
-        <h3>Array Memory Allocation Attempt</h3>
-        <div class="memory-grid" id="array-memory"></div>
-        <div class="legend">
-            <div class="legend-item"><span class="memory-block free"></span> Free</div>
-            <div class="legend-item"><span class="memory-block array-block"></span> Array Element</div>
-            <div class="legend-item"><span class="memory-block fragmented"></span> Fragmented/Unused</div>
-            <div class="legend-item"><span class="memory-block allocated highlight"></span> Highlighted Block</div>
-        </div>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-cyan-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                WEEK 2 • الذاكرة
+            </div>
 
-        <h3>Linked List Memory Allocation Attempt</h3>
-        <div class="memory-grid" id="list-memory"></div>
-         <div class="legend">
-             <div class="legend-item"><span class="memory-block free"></span> Free</div>
-             <div class="legend-item"><span class="memory-block list-data"></span> List Node Data</div>
-             <div class="legend-item"><span class="memory-block list-pointer"></span> List Node Pointer</div>
-             <div class="legend-item"><span class="memory-block fragmented"></span> Fragmented/Unused</div>
-             <div class="legend-item"><span class="memory-block allocated highlight"></span> Highlighted Block</div>
-        </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+                <span class="text-gradient">Memory</span> Layout
+            </h1>
 
-        <div class="log" id="log"><p>Adjust settings and click 'Allocate' or 'Fragment Memory'.</p></div>
-    </div>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                تصور الذاكرة: Array مقابل Linked List
+            </h2>
 
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>Memory Allocation Explained</h2>
-        <div class="explanation">
-            <ul>
-                <li><strong>Arrays (Contiguous):</strong> Require a single, unbroken block of memory large enough to hold all elements. This allows for fast O(1) access via index calculation (<code>address = start_address + index * element_size</code>). However, finding a large enough contiguous block can be difficult (leading to allocation failure) and resizing requires copying the entire array to a new, larger block.</li>
-                <li><strong>Linked Lists (Non-Contiguous):</strong> Nodes can be stored anywhere in memory. Each node simply needs space for its data and a pointer to the next node's address. This provides flexibility in allocation and resizing, but accessing an element requires traversing the list from the head (O(n)).</li>
-                <li><strong>Fragmentation:</strong> Over time, as memory is allocated and freed, the available free memory can become broken into many small, non-contiguous pieces (external fragmentation). Arrays might fail to allocate even if total free memory is sufficient, while linked lists can often still utilize these smaller fragmented blocks. Internal fragmentation (unused space within an allocated block) can also occur but is less visually demonstrated here.</li>
-            </ul>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
+                See how different data structures occupy computer memory and why it matters for performance.
+            </p>
+
+            <!-- Arabic Explanation Box -->
+            <div class="max-w-4xl mx-auto mb-12">
+                <div class="p-6 bg-cyan-950/30 border border-cyan-900/50 rounded-2xl rtl-block">
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-4 font-arabic">🧠 الذاكرة: Array vs Linked List</h3>
+                    <div class="space-y-4 text-cyan-100/90 font-arabic text-lg leading-loose">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-blue-900/30 p-5 rounded-xl border border-blue-700">
+                                <div class="text-3xl mb-2">📦📦📦</div>
+                                <div class="text-blue-400 font-bold text-xl mb-2">Array = متجاورة</div>
+                                <p class="text-sm text-slate-300">
+                                    كل العناصر <span class="text-white">جنب بعض</span> في الذاكرة.
+                                    <br>
+                                    ده اللي بيخلي الوصول سريع O(1)!
+                                </p>
+                                <div class="mt-3 p-2 bg-slate-900/50 rounded text-xs text-slate-400">
+                                    عنوان العنصر = البداية + (index × الحجم)
+                                </div>
+                            </div>
+                            <div class="bg-purple-900/30 p-5 rounded-xl border border-purple-700">
+                                <div class="text-3xl mb-2">📦...📦...📦</div>
+                                <div class="text-purple-400 font-bold text-xl mb-2">Linked List = متفرقة</div>
+                                <p class="text-sm text-slate-300">
+                                    كل عنصر في <span class="text-white">أي مكان</span> في الذاكرة.
+                                    <br>
+                                    Pointers بتربط بينهم!
+                                </p>
+                                <div class="mt-3 p-2 bg-slate-900/50 rounded text-xs text-slate-400">
+                                    مرونة أكتر، بس الوصول أبطأ O(n)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+                            <p class="text-yellow-300">
+                                <strong>💡 ليه ده مهم؟</strong> لما الذاكرة تتفتت (Fragmentation)،
+                                الـ Array ممكن <span class="text-white">مش يلاقي مكان متصل</span>،
+                                لكن الـ Linked List بيشتغل عادي!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero SVG -->
+            <div class="max-w-4xl mx-auto">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-cyan-900/20">
+                    <svg viewBox="0 0 800 280" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="arrayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6" />
+                                <stop offset="100%" style="stop-color:#1D4ED8" />
+                            </linearGradient>
+                            <linearGradient id="listGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8B5CF6" />
+                                <stop offset="100%" style="stop-color:#7C3AED" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Title -->
+                        <text x="400" y="25" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="12"
+                            font-weight="bold">
+                            مقارنة تخزين 5 عناصر في الذاكرة
+                        </text>
+
+                        <!-- Array Section -->
+                        <text x="200" y="55" text-anchor="middle" fill="#3B82F6" font-family="Cairo" font-size="14"
+                            font-weight="bold">Array (متجاورة)</text>
+
+                        <g transform="translate(50, 70)">
+                            <!-- Memory cells -->
+                            <rect x="0" y="0" width="60" height="40" rx="4" fill="#1E293B" stroke="#334155" />
+                            <rect x="60" y="0" width="60" height="40" rx="4" fill="url(#arrayGrad)" />
+                            <rect x="120" y="0" width="60" height="40" rx="4" fill="url(#arrayGrad)" />
+                            <rect x="180" y="0" width="60" height="40" rx="4" fill="url(#arrayGrad)" />
+                            <rect x="240" y="0" width="60" height="40" rx="4" fill="url(#arrayGrad)" />
+                            <rect x="300" y="0" width="60" height="40" rx="4" fill="url(#arrayGrad)" />
+                            <rect x="360" y="0" width="60" height="40" rx="4" fill="#1E293B" stroke="#334155" />
+
+                            <!-- Values -->
+                            <text x="90" y="26" text-anchor="middle" fill="white" font-family="Fira Code" font-size="12"
+                                font-weight="bold">A</text>
+                            <text x="150" y="26" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12" font-weight="bold">B</text>
+                            <text x="210" y="26" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12" font-weight="bold">C</text>
+                            <text x="270" y="26" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12" font-weight="bold">D</text>
+                            <text x="330" y="26" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="12" font-weight="bold">E</text>
+
+                            <!-- Addresses -->
+                            <text x="30" y="55" text-anchor="middle" fill="#475569" font-family="Fira Code"
+                                font-size="8">free</text>
+                            <text x="90" y="55" text-anchor="middle" fill="#60A5FA" font-family="Fira Code"
+                                font-size="8">0x100</text>
+                            <text x="150" y="55" text-anchor="middle" fill="#60A5FA" font-family="Fira Code"
+                                font-size="8">0x104</text>
+                            <text x="210" y="55" text-anchor="middle" fill="#60A5FA" font-family="Fira Code"
+                                font-size="8">0x108</text>
+                            <text x="270" y="55" text-anchor="middle" fill="#60A5FA" font-family="Fira Code"
+                                font-size="8">0x10C</text>
+                            <text x="330" y="55" text-anchor="middle" fill="#60A5FA" font-family="Fira Code"
+                                font-size="8">0x110</text>
+                            <text x="390" y="55" text-anchor="middle" fill="#475569" font-family="Fira Code"
+                                font-size="8">free</text>
+                        </g>
+
+                        <!-- Linked List Section -->
+                        <text x="200" y="160" text-anchor="middle" fill="#8B5CF6" font-family="Cairo" font-size="14"
+                            font-weight="bold">Linked List (متفرقة)</text>
+
+                        <g transform="translate(50, 175)">
+                            <!-- Scattered memory cells -->
+                            <rect x="20" y="0" width="50" height="35" rx="4" fill="url(#listGrad)" />
+                            <text x="45" y="23" text-anchor="middle" fill="white" font-family="Fira Code" font-size="11"
+                                font-weight="bold">A</text>
+                            <text x="45" y="50" text-anchor="middle" fill="#A78BFA" font-family="Fira Code"
+                                font-size="7">0x7F2</text>
+
+                            <rect x="80" y="0" width="50" height="35" rx="4" fill="#1E293B" stroke="#EF4444"
+                                stroke-dasharray="2" />
+                            <text x="105" y="20" text-anchor="middle" fill="#EF4444" font-family="Cairo"
+                                font-size="8">مشغول</text>
+
+                            <rect x="140" y="0" width="50" height="35" rx="4" fill="url(#listGrad)" />
+                            <text x="165" y="23" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="11" font-weight="bold">C</text>
+                            <text x="165" y="50" text-anchor="middle" fill="#A78BFA" font-family="Fira Code"
+                                font-size="7">0x2A8</text>
+
+                            <rect x="200" y="0" width="50" height="35" rx="4" fill="#1E293B" stroke="#334155" />
+                            <text x="225" y="20" text-anchor="middle" fill="#475569" font-size="8">free</text>
+
+                            <rect x="260" y="0" width="50" height="35" rx="4" fill="url(#listGrad)" />
+                            <text x="285" y="23" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="11" font-weight="bold">B</text>
+                            <text x="285" y="50" text-anchor="middle" fill="#A78BFA" font-family="Fira Code"
+                                font-size="7">0x5C0</text>
+
+                            <rect x="320" y="0" width="50" height="35" rx="4" fill="url(#listGrad)" />
+                            <text x="345" y="23" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="11" font-weight="bold">E</text>
+                            <text x="345" y="50" text-anchor="middle" fill="#A78BFA" font-family="Fira Code"
+                                font-size="7">0x9D4</text>
+
+                            <rect x="380" y="0" width="50" height="35" rx="4" fill="url(#listGrad)" />
+                            <text x="405" y="23" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="11" font-weight="bold">D</text>
+                            <text x="405" y="50" text-anchor="middle" fill="#A78BFA" font-family="Fira Code"
+                                font-size="7">0x3E1</text>
+                        </g>
+
+                        <!-- Key insight -->
+                        <rect x="500" y="70" width="250" height="170" rx="10" fill="#0F172A" stroke="#1E293B" />
+                        <text x="625" y="95" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="11"
+                            font-weight="bold">الفكرة الأساسية 💡</text>
+                        <text x="515" y="125" fill="#3B82F6" font-family="Cairo" font-size="10">Array: محتاج 5 أماكن
+                            متصلة</text>
+                        <text x="515" y="145" fill="#10B981" font-family="Cairo" font-size="9">✓ سريع في الوصول</text>
+                        <text x="515" y="165" fill="#EF4444" font-family="Cairo" font-size="9">✗ بيفشل لو الذاكرة
+                            متفتتة</text>
+
+                        <text x="515" y="195" fill="#8B5CF6" font-family="Cairo" font-size="10">List: بياخد أي مكان
+                            فاضي</text>
+                        <text x="515" y="215" fill="#10B981" font-family="Cairo" font-size="9">✓ مرن مع الـ
+                            fragmentation</text>
+                        <text x="515" y="235" fill="#EF4444" font-family="Cairo" font-size="9">✗ أبطأ في الوصول</text>
+                    </svg>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-memory text-cyan-500 mr-3"></i>
+                Memory Allocation Explained
+            </h2>
+            <p class="text-center text-slate-400 font-arabic mb-16">شرح تخصيص الذاكرة</p>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Contiguous -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-blue-500" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-th"></i>
+                        Contiguous Allocation
+                    </h3>
+                    <div class="space-y-4 text-slate-300">
+                        <p>Arrays require a <strong>continuous block</strong> of memory. All elements are stored side by
+                            side.</p>
+
+                        <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-arabic text-sm leading-relaxed">
+                                <strong class="text-blue-400">المميزات:</strong>
+                                <br>
+                                • الوصول لأي عنصر = عملية واحدة
+                                <br>
+                                • أداء أفضل بسبب الـ cache
+                            </p>
+                        </div>
+
+                        <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-red-900/50">
+                            <p class="font-arabic text-sm leading-relaxed">
+                                <strong class="text-red-400">العيوب:</strong>
+                                <br>
+                                • لو الذاكرة متفتتة، ممكن مش تلاقي مكان!
+                                <br>
+                                • تكبير الحجم = نسخ كل البيانات
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Non-Contiguous -->
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-purple-500" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold text-purple-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-puzzle-piece"></i>
+                        Non-Contiguous Allocation
+                    </h3>
+                    <div class="space-y-4 text-slate-300">
+                        <p>Linked Lists can use <strong>scattered memory</strong>. Pointers connect the pieces together.
+                        </p>
+
+                        <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-arabic text-sm leading-relaxed">
+                                <strong class="text-purple-400">المميزات:</strong>
+                                <br>
+                                • بتشتغل حتى لو الذاكرة متفتتة
+                                <br>
+                                • الإضافة والحذف سريعين
+                            </p>
+                        </div>
+
+                        <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-red-900/50">
+                            <p class="font-arabic text-sm leading-relaxed">
+                                <strong class="text-red-400">العيوب:</strong>
+                                <br>
+                                • أبطأ في الوصول (لازم تعدي الـ pointers)
+                                <br>
+                                • ذاكرة إضافية للـ pointers
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-24 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-cyan-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Memory Simulation</h2>
+                <p class="text-slate-400 mt-2 font-arabic">محاكاة الذاكرة</p>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-4 mb-6 justify-center">
+                    <div class="flex items-center gap-2">
+                        <label class="text-slate-400 text-sm">Size:</label>
+                        <input type="number" id="alloc-size" min="1" max="16" value="5"
+                            class="w-16 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-cyan-500 focus:outline-none">
+                    </div>
+                    <button id="alloc-array-btn"
+                        class="px-5 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition flex items-center gap-2">
+                        <i class="fas fa-th"></i> Allocate Array
+                    </button>
+                    <button id="alloc-list-btn"
+                        class="px-5 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition flex items-center gap-2">
+                        <i class="fas fa-link"></i> Allocate List
+                    </button>
+                    <button id="fragment-btn"
+                        class="px-5 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition flex items-center gap-2">
+                        <i class="fas fa-random"></i> Fragment Memory
+                    </button>
+                    <button id="reset-btn"
+                        class="px-5 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition flex items-center gap-2">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+
+                <!-- Memory Grids -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h4 class="text-lg font-bold text-blue-400 mb-3 text-center">Array Memory</h4>
+                        <div id="array-memory"
+                            class="memory-grid p-4 bg-slate-900/50 rounded-xl border border-slate-800"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-purple-400 mb-3 text-center">Linked List Memory</h4>
+                        <div id="list-memory"
+                            class="memory-grid p-4 bg-slate-900/50 rounded-xl border border-slate-800"></div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="flex flex-wrap gap-6 justify-center mb-6 text-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded bg-slate-700 border border-dashed border-slate-500"></div>
+                        <span class="text-slate-400">Free</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded bg-gradient-to-br from-blue-500 to-blue-700"></div>
+                        <span class="text-slate-400">Array Element</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded bg-gradient-to-br from-purple-500 to-purple-700"></div>
+                        <span class="text-slate-400">List Data</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded bg-gradient-to-br from-emerald-500 to-emerald-700"></div>
+                        <span class="text-slate-400">List Pointer</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-5 h-5 rounded bg-red-500/30 border border-red-500"></div>
+                        <span class="text-slate-400">Fragmented</span>
+                    </div>
+                </div>
+
+                <!-- Log -->
+                <div id="log"
+                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
+                    <p class="text-slate-500">Click buttons to simulate memory allocation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 2</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
 
     <script>
-        // Theme persistence
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
+        AOS.init({ duration: 800, once: true, offset: 100 });
 
-        // DOM Elements
-        const totalBlocksInput = document.getElementById('total-blocks');
-        const numElementsInput = document.getElementById('num-elements');
-        const visualizeBtn = document.getElementById('visualize-btn');
+        const TOTAL_BLOCKS = 64; // 4 rows × 16 cols
+        const arrayMemory = document.getElementById('array-memory');
+        const listMemory = document.getElementById('list-memory');
+        const allocSizeInput = document.getElementById('alloc-size');
+        const allocArrayBtn = document.getElementById('alloc-array-btn');
+        const allocListBtn = document.getElementById('alloc-list-btn');
         const fragmentBtn = document.getElementById('fragment-btn');
-        const resetMemoryBtn = document.getElementById('reset-memory-btn');
-        const arrayMemoryContainer = document.getElementById('array-memory');
-        const listMemoryContainer = document.getElementById('list-memory');
+        const resetBtn = document.getElementById('reset-btn');
         const logElement = document.getElementById('log');
 
-        let totalMemoryBlocks = parseInt(totalBlocksInput.value);
-        let memoryState = Array(totalMemoryBlocks).fill(false); // false = free, true = allocated, 'fragmented' = marked free but unusable by array
-        const animationDelay = 100; // ms for highlighting during search
+        let arrayState = new Array(TOTAL_BLOCKS).fill('free');
+        let listState = new Array(TOTAL_BLOCKS).fill('free');
 
-        // --- Utility Functions ---
-        function logMessage(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            logElement.prepend(p);
-            while (logElement.children.length > 8) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
-
-         function disableControls(disabled = true) {
-            visualizeBtn.disabled = disabled;
-            fragmentBtn.disabled = disabled;
-            resetMemoryBtn.disabled = disabled;
-            totalBlocksInput.disabled = disabled;
-            numElementsInput.disabled = disabled;
-         }
-
-        // --- Visualization Logic ---
-        function renderMemory(container, allocationMap, highlightIndices = []) {
+        function renderMemory(container, state) {
             container.innerHTML = '';
-            // Set grid columns based on total blocks for better layout
-            let cols = Math.ceil(Math.sqrt(totalMemoryBlocks) * 1.5); // Heuristic for layout
-            if (totalMemoryBlocks <= 30) cols = 10;
-            else if (totalMemoryBlocks <= 60) cols = 15;
-            else cols = 20;
-            container.style.gridTemplateColumns = `repeat(${cols}, minmax(30px, 1fr))`;
-
-            for (let i = 0; i < totalMemoryBlocks; i++) {
+            state.forEach((blockState, i) => {
                 const block = document.createElement('div');
-                block.className = 'memory-block';
-                const allocation = allocationMap[i];
+                block.className = 'memory-block ' + blockState;
 
-                 let tooltipText = `Block ${i}: Free`;
-
-                if (allocation) {
-                    block.classList.add('allocated');
-                    block.classList.add(allocation.typeClass);
-                    block.textContent = allocation.label || '';
-                    if (allocation.typeClass === 'list-pointer') {
-                         tooltipText = `Block ${i}: Pointer (for Node ${allocation.pointsToDataAt})`;
-                    } else if (allocation.typeClass === 'list-data') {
-                        tooltipText = `Block ${i}: Data (Node ${allocation.nodeId})`;
-                    } else if (allocation.typeClass === 'array-block') {
-                         tooltipText = `Block ${i}: Array Element ${allocation.label}`;
-                    }
-                } else if (memoryState[i] === 'fragmented') {
-                    block.classList.add('fragmented');
-                    tooltipText = `Block ${i}: Fragmented Free Space`;
+                if (blockState === 'array-block') {
+                    block.innerHTML = `<span>${i}</span><span class="tooltip">Array[${i}]</span>`;
+                } else if (blockState === 'list-data') {
+                    block.innerHTML = `<span>D</span><span class="tooltip">Data Node</span>`;
+                } else if (blockState === 'list-pointer') {
+                    block.innerHTML = `<span>→</span><span class="tooltip">Pointer</span>`;
+                } else if (blockState === 'fragmented') {
+                    block.innerHTML = `<span class="tooltip">Fragmented</span>`;
                 }
-
-                if (highlightIndices.includes(i)) {
-                    block.classList.add('highlight');
-                }
-
-                 // Add tooltip span
-                 const tooltipSpan = document.createElement('span');
-                 tooltipSpan.className = 'tooltip';
-                 tooltipSpan.textContent = tooltipText;
-                 block.appendChild(tooltipSpan);
 
                 container.appendChild(block);
-            }
+            });
         }
 
-        // Async function to allow visualization of search
-        async function findContiguousBlock(size, container) {
-             logMessage(`Searching for ${size} contiguous free blocks for Array...`, 'info');
-            disableControls();
-            let consecutiveFree = 0;
-            let startIndex = -1;
-            let currentHighlight = [];
-
-            for (let i = 0; i < totalMemoryBlocks; i++) {
-                 currentHighlight = []; // Clear previous highlight
-                 // Highlight the block being checked
-                 renderMemory(container, {}, [i]);
-                 await new Promise(resolve => setTimeout(resolve, animationDelay));
-
-                if (memoryState[i] === false) { // Check if genuinely free
-                    if (consecutiveFree === 0) {
-                        startIndex = i;
+        function findContiguousSpace(state, size) {
+            for (let i = 0; i <= state.length - size; i++) {
+                let found = true;
+                for (let j = 0; j < size; j++) {
+                    if (state[i + j] !== 'free') {
+                        found = false;
+                        break;
                     }
-                    consecutiveFree++;
-                     currentHighlight = Array.from({ length: consecutiveFree }, (_, k) => startIndex + k);
-                      // Highlight the contiguous block found so far
-                     renderMemory(container, {}, currentHighlight);
-                     await new Promise(resolve => setTimeout(resolve, animationDelay));
+                }
+                if (found) return i;
+            }
+            return -1;
+        }
 
-                    if (consecutiveFree === size) {
-                        logMessage(`Found block starting at index ${startIndex}.`, 'success');
-                        disableControls(false);
-                        return startIndex;
-                    }
-                } else {
-                    if (consecutiveFree > 0) {
-                         logMessage(`Block starting at ${startIndex} too small (${consecutiveFree} < ${size}).`, 'warning');
-                         // Briefly show the failed block was checked
-                          renderMemory(container, {}, [...currentHighlight, i]);
-                          await new Promise(resolve => setTimeout(resolve, animationDelay * 2));
-                    }
-                    consecutiveFree = 0;
-                    startIndex = -1;
+        function findFreeBlocks(state, count) {
+            const indices = [];
+            for (let i = 0; i < state.length && indices.length < count; i++) {
+                if (state[i] === 'free') {
+                    indices.push(i);
                 }
             }
-             logMessage(`Could not find ${size} contiguous free blocks.`, 'error');
-            disableControls(false);
-             renderMemory(container, {}); // Clear highlights
-            return -1; // Not found
+            return indices.length === count ? indices : null;
         }
 
-        // Async function to allow visualization of random allocation
-        async function allocateRandomBlocks(count, container, nodeTypeClassPrefix) {
-             logMessage(`Searching for ${count} free blocks for Linked List...`, 'info');
-             disableControls();
-            const allocatedIndices = [];
-             const allocationMap = {}; // Track allocations for rendering
-             let checkedIndex = 0;
-
-            while (allocatedIndices.length < count && checkedIndex < totalMemoryBlocks) {
-                 const randIndex = Math.floor(Math.random() * totalMemoryBlocks);
-
-                 // Highlight block being checked
-                  renderMemory(container, allocationMap, [randIndex]);
-                  await new Promise(resolve => setTimeout(resolve, animationDelay / 2));
-
-                  // Check if free and not already picked in this allocation attempt
-                 if (memoryState[randIndex] === false && !allocatedIndices.includes(randIndex)) {
-                     allocatedIndices.push(randIndex);
-                      // Temporarily mark allocation for rendering
-                      const isDataBlock = (allocatedIndices.length % 2 !== 0);
-                      allocationMap[randIndex] = {
-                          typeClass: isDataBlock ? `${nodeTypeClassPrefix}-data` : `${nodeTypeClassPrefix}-pointer`,
-                          label: isDataBlock ? `D${Math.floor(allocatedIndices.length / 2)}` : `P${Math.floor(allocatedIndices.length / 2)}`
-                      };
-                      logMessage(`Allocated block ${randIndex}. Need ${count - allocatedIndices.length} more.`, 'info');
-                       renderMemory(container, allocationMap, [randIndex]); // Show allocation
-                       await new Promise(resolve => setTimeout(resolve, animationDelay));
-                 }
-                 checkedIndex++; // Prevent infinite loops if not enough space
-                   if (checkedIndex > totalMemoryBlocks * 3) { // Heuristic limit
-                        logMessage('Checked many blocks, likely not enough free space.', 'error');
-                        break;
-                   }
-             }
-
-            if (allocatedIndices.length === count) {
-                 logMessage(`Successfully allocated ${count} random blocks.`, 'success');
-                 disableControls(false);
-                 allocatedIndices.sort((a, b) => a - b);
-                 return { indices: allocatedIndices, map: allocationMap }; // Return map for final render
-             } else {
-                 logMessage(`Could not allocate ${count} random blocks (${allocatedIndices.length} found).`, 'error');
-                 disableControls(false);
-                  renderMemory(container, {}); // Clear highlights/partial allocations
-                 return null;
-             }
-         }
-
-        async function visualizeAllocation() {
-            const numElements = parseInt(numElementsInput.value);
-            if (isNaN(numElements) || numElements < 3 || numElements > 20) {
-                logMessage('Please enter a number of elements between 3 and 20.', 'error');
+        allocArrayBtn.addEventListener('click', () => {
+            const size = parseInt(allocSizeInput.value);
+            if (isNaN(size) || size < 1 || size > 16) {
+                log('❌ Size must be 1-16', 'error');
                 return;
             }
 
-            logMessage(`Attempting to allocate memory for ${numElements} elements...`, 'info');
-            arrayMemoryContainer.innerHTML = ''; // Clear previous
-            listMemoryContainer.innerHTML = ''; // Clear previous
+            const start = findContiguousSpace(arrayState, size);
+            if (start === -1) {
+                log(`❌ Array FAILED! لازم ${size} مكان متصل ومفيش! (Fragmentation problem)`, 'error');
+                return;
+            }
 
-            // --- Array Allocation Attempt ---
-            const arrayStartIndex = await findContiguousBlock(numElements, arrayMemoryContainer);
-            const arrayAllocationMap = {};
-            if (arrayStartIndex !== -1) {
-                for (let i = 0; i < numElements; i++) {
-                    const index = arrayStartIndex + i;
-                    arrayAllocationMap[index] = { typeClass: 'array-block', label: `[${i}]` };
+            for (let i = start; i < start + size; i++) {
+                arrayState[i] = 'array-block';
+            }
+            renderMemory(arrayMemory, arrayState);
+            log(`✅ Array allocated: ${size} contiguous blocks at ${start}`, 'success');
+        });
+
+        allocListBtn.addEventListener('click', () => {
+            const size = parseInt(allocSizeInput.value);
+            if (isNaN(size) || size < 1 || size > 16) {
+                log('❌ Size must be 1-16', 'error');
+                return;
+            }
+
+            // Each node needs 2 blocks: data + pointer
+            const neededBlocks = size * 2;
+            const freeBlocks = findFreeBlocks(listState, neededBlocks);
+
+            if (!freeBlocks) {
+                log(`❌ Not enough free space for ${size} nodes (need ${neededBlocks} blocks)`, 'error');
+                return;
+            }
+
+            for (let i = 0; i < size; i++) {
+                listState[freeBlocks[i * 2]] = 'list-data';
+                listState[freeBlocks[i * 2 + 1]] = 'list-pointer';
+            }
+            renderMemory(listMemory, listState);
+            log(`✅ Linked List allocated: ${size} nodes (scattered OK!)`, 'success');
+        });
+
+        fragmentBtn.addEventListener('click', () => {
+            // Add random fragmentation
+            for (let i = 0; i < TOTAL_BLOCKS; i++) {
+                if (arrayState[i] === 'free' && Math.random() < 0.3) {
+                    arrayState[i] = 'fragmented';
                 }
-                 renderMemory(arrayMemoryContainer, arrayAllocationMap, Object.keys(arrayAllocationMap).map(Number)); // Highlight allocated block
-                  await new Promise(resolve => setTimeout(resolve, 500)); // Pause to show result
-                 renderMemory(arrayMemoryContainer, arrayAllocationMap); // Render final state without highlight
-            } else {
-                // Already logged error in findContiguousBlock
-                 renderMemory(arrayMemoryContainer, {}); // Ensure it's clear
+                if (listState[i] === 'free' && Math.random() < 0.3) {
+                    listState[i] = 'fragmented';
+                }
             }
+            renderMemory(arrayMemory, arrayState);
+            renderMemory(listMemory, listState);
+            log('⚡ Memory fragmented! الذاكرة اتفتتت - جرب الـ allocation دلوقتي', 'info');
+        });
 
-            // --- Linked List Allocation Attempt ---
-            const blocksNeeded = numElements * 2;
-            const listAllocationResult = await allocateRandomBlocks(blocksNeeded, listMemoryContainer, 'list');
+        resetBtn.addEventListener('click', () => {
+            arrayState = new Array(TOTAL_BLOCKS).fill('free');
+            listState = new Array(TOTAL_BLOCKS).fill('free');
+            renderMemory(arrayMemory, arrayState);
+            renderMemory(listMemory, listState);
+            log('🔄 Memory reset', 'info');
+        });
 
-            if (listAllocationResult) {
-                 const listAllocationMap = {};
-                 for (let i = 0; i < numElements; i++) {
-                     const dataIndex = listAllocationResult.indices[i * 2];
-                     const pointerIndex = listAllocationResult.indices[i * 2 + 1];
-
-                     listAllocationMap[dataIndex] = { typeClass: 'list-data', label: `D${i}`, nodeId: i };
-                     listAllocationMap[pointerIndex] = { typeClass: 'list-pointer', label: `P${i}`, pointsToDataAt: (i < numElements - 1) ? listAllocationResult.indices[(i + 1) * 2] : 'NULL' };
-                 }
-                 renderMemory(listMemoryContainer, listAllocationMap, listAllocationResult.indices); // Highlight allocated blocks
-                 await new Promise(resolve => setTimeout(resolve, 500)); // Pause to show result
-                  renderMemory(listMemoryContainer, listAllocationMap); // Render final state without highlight
-            } else {
-                 // Error logged in allocateRandomBlocks
-                 renderMemory(listMemoryContainer, {}); // Ensure it's clear
-            }
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.className = {
+                info: 'text-cyan-400',
+                success: 'text-emerald-400',
+                error: 'text-red-400'
+            }[type] + ' mb-1';
+            logElement.prepend(p);
+            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
         }
 
-        function simulateFragmentation() {
-            logMessage('Simulating memory fragmentation...', 'info');
-            disableControls();
-            // Reset memory state but mark some blocks as 'fragmented'
-            const fragmentationPercentage = 0.4; // 40% fragmented
-            const numFragmented = Math.floor(totalMemoryBlocks * fragmentationPercentage);
-
-             memoryState = Array(totalMemoryBlocks).fill(false);
-             const indicesToFragment = [];
-             while (indicesToFragment.length < numFragmented) {
-                 const randIndex = Math.floor(Math.random() * totalMemoryBlocks);
-                 if (!indicesToFragment.includes(randIndex)) {
-                     indicesToFragment.push(randIndex);
-                 }
-             }
-
-             indicesToFragment.forEach(index => {
-                 memoryState[index] = 'fragmented';
-             });
-
-             logMessage(`${numFragmented} blocks marked as fragmented (grey). Array allocation cannot use them. Try allocating again.`, 'warning');
-            // Render the fragmented state immediately
-             renderMemory(arrayMemoryContainer, {});
-             renderMemory(listMemoryContainer, {});
-             disableControls(false);
-        }
-
-        function resetMemory() {
-             totalMemoryBlocks = parseInt(totalBlocksInput.value);
-             if (isNaN(totalMemoryBlocks) || totalMemoryBlocks < 20 || totalMemoryBlocks > 200) {
-                 logMessage('Invalid memory size. Using default 60.', 'warning');
-                 totalMemoryBlocks = 60;
-                 totalBlocksInput.value = 60;
-             }
-             logMessage('Memory reset to all free blocks.', 'info');
-             memoryState = Array(totalMemoryBlocks).fill(false);
-             renderMemory(arrayMemoryContainer, {});
-             renderMemory(listMemoryContainer, {});
-             logElement.innerHTML = '<p>Adjust settings and click \'Allocate\' or \'Fragment Memory\'.</p>';
-        }
-
-        // --- Event Listeners ---
-        visualizeBtn.addEventListener('click', visualizeAllocation);
-        fragmentBtn.addEventListener('click', simulateFragmentation);
-        resetMemoryBtn.addEventListener('click', resetMemory);
-         totalBlocksInput.addEventListener('change', resetMemory); // Reset memory if size changes
-
-        // --- Initial Render ---
-        resetMemory(); // Initialize memory on load
-
+        // Initialize
+        renderMemory(arrayMemory, arrayState);
+        renderMemory(listMemory, listState);
     </script>
 </body>
+
 </html>

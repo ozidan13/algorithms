@@ -1,711 +1,780 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linked List Visualization</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/global-algo.css">
+    <title>Linked List | القوائم المتصلة</title>
+    <meta name="description" content="Interactive Linked List visualization with Arabic explanations.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            green: '#10B981',
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            orange: '#F59E0B'
+                        },
+                        dark: {
+                            bg: '#020617',
+                            card: '#0F172A',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Refined styles for Linked List */
-        .list-container {
-            display: flex;
-            align-items: center;
-            min-height: 80px;
-            padding: 20px;
-            background-color: var(--background-alt);
-            border: 1px solid var(--border-color);
-            border-radius: var(--card-radius);
-            margin-bottom: 20px;
-            gap: 45px; /* Increased gap to accommodate pointers */
-            position: relative;
-            overflow-x: auto; /* Allow horizontal scrolling if list is long */
-            transition: var(--theme-transition);
+        body {
+            background-color: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
 
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 0 30px -10px rgba(139, 92, 246, 0.2);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8B5CF6;
+        }
+
+        /* RTL Arabic Support */
+        .rtl-text {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* Node Styles */
         .node {
-            width: 55px; /* Slightly wider node */
-            height: 55px;
-            background-color: var(--color-default-element);
-            color: var(--color-element-text);
-            border: 2px solid var(--color-default-element);
-            border-radius: var(--element-radius);
             display: flex;
-            flex-direction: column; /* Stack value and pointer indicator */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-width: 70px;
+            height: 60px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            color: white;
+            border-radius: 12px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-family: 'Fira Code', monospace;
             position: relative;
-            transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
-            flex-shrink: 0; /* Prevent nodes from shrinking */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        .node-value {
-            margin-bottom: 3px; /* Space between value and pointer section */
+        .node .value {
+            font-size: 1.1rem;
         }
 
-        .node-pointer-section {
-            font-size: 0.7rem;
-            width: 80%;
-            height: 15px;
-            background: rgba(0, 0, 0, 0.1);
-            border-top: 1px solid var(--secondary-text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--secondary-text);
+        .node .pointer-section {
+            font-size: 0.6rem;
+            background: rgba(0, 0, 0, 0.2);
+            width: 100%;
+            text-align: center;
+            padding: 2px 0;
+            border-radius: 0 0 12px 12px;
+            position: absolute;
+            bottom: 0;
         }
 
         .node.head-node {
-            background-color: var(--color-head);
-            border-color: var(--color-head);
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
         .node.null-node {
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        .node.highlight {
+            transform: scale(1.15);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .pointer-arrow {
             width: 40px;
-            height: 40px;
-            background-color: var(--background-main);
-            color: var(--secondary-text);
-            border: 2px dashed var(--secondary-text);
-            font-size: 0.9rem;
-            align-self: center; /* Center NULL vertically */
-        }
-
-        .pointer {
-            position: absolute;
-            top: 50%;
-            left: 100%; /* Start from the right edge of the node */
-            width: 40px; /* Length of the pointer line */
             height: 2px;
-            background-color: var(--accent-color);
-            transform: translateY(-50%);
-            z-index: 1;
+            background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+            position: relative;
+            flex-shrink: 0;
         }
 
-        .pointer::after {
+        .pointer-arrow::after {
             content: '';
             position: absolute;
             right: 0;
             top: -4px;
             width: 0;
             height: 0;
-            border-top: 6px solid transparent;
-            border-bottom: 6px solid transparent;
-            border-left: 8px solid var(--accent-color);
+            border-left: 8px solid #A78BFA;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
         }
 
-        /* Highlighting and Animation */
-        .node.highlight-traverse {
-            background-color: var(--color-mid);
-            border-color: var(--color-mid);
-            transform: scale(1.1);
-        }
-        .node.highlight-found {
-            background-color: var(--color-found); /* Use found color */
-            border-color: var(--color-found);
-            transform: scale(1.1);
-        }
-        .node.highlight-action {
-            background-color: var(--color-low); /* Use low color for insert/delete actions */
-            border-color: var(--color-low);
-            transform: scale(1.1);
-        }
-        .node.removing {
-            opacity: 0;
-            transform: scale(0.5) translateY(-20px);
-        }
-         .node.adding {
-             opacity: 0;
-             transform: scale(0.5) translateY(20px);
-         }
-
-        /* Control group styling from array ops */
-         .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: var(--background-alt);
-            border-radius: var(--card-radius);
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-        }
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .control-group label {
-            white-space: nowrap;
-        }
-        .control-group input[type="number"] {
-            width: 60px;
-        }
         .complexity-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 9999px;
             font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background-color: var(--secondary-text);
-            color: var(--background-main);
-            margin-left: 5px;
-            vertical-align: middle;
-            cursor: default;
-            opacity: 0.8;
-        }
-        .log {
-            margin-top: 20px;
-            max-height: 150px;
+            font-weight: bold;
+            font-family: 'Fira Code', monospace;
         }
 
+        .complexity-badge.fast {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+
+        .complexity-badge.slow {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .complexity-badge.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+        }
+
+        .code-line {
+            display: flex;
+            gap: 12px;
+            padding: 4px 0;
+        }
+
+        .line-num {
+            color: #64748b;
+            min-width: 24px;
+            text-align: right;
+            user-select: none;
+        }
     </style>
 </head>
-<body data-theme="dark">
-    <a href="../index.html#week2" id="back-button" class="btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-    <h1><i class="fas fa-link icon-margin"></i>Linked List Visualization</h1>
+<body>
 
-    <div class="container">
-        <h2><i class="fas fa-project-diagram icon-margin"></i>Interactive Demonstration</h2>
-        <p>Visualize common Singly Linked List operations.</p>
-
-        <div class="controls">
-            <div class="control-group">
-                <button id="add-head-btn"><i class="fas fa-plus icon-margin"></i>Add Head</button>
-                <label for="add-head-value">Value:</label>
-                <input type="number" id="add-head-value" value="10">
-                <span class="complexity-badge" title="Add to Head">O(1)</span>
-            </div>
-            <div class="control-group">
-                <button id="add-tail-btn"><i class="fas fa-plus icon-margin"></i>Add Tail</button>
-                <label for="add-tail-value">Value:</label>
-                <input type="number" id="add-tail-value" value="50">
-                <span class="complexity-badge" title="Add to Tail (requires traversal)">O(n)</span>
-            </div>
-             <div class="control-group">
-                <button id="reset-btn"><i class="fas fa-undo icon-margin"></i>Reset List</button>
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week2" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-lg tracking-wide">Linked<span class="text-purple-500">List</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#concept" class="hover:text-purple-400 transition">المفهوم</a>
+                <a href="#demo" class="hover:text-purple-400 transition">التجربة</a>
+                <a href="#code" class="hover:text-purple-400 transition">الكود</a>
             </div>
         </div>
+    </nav>
 
-        <div class="list-container" id="list-container">
-            <div class="node head-node">Head</div>
-            <div class="pointer"></div>
-            <div class="node null-node">NULL</div>
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
 
-        <div class="controls">
-            <div class="control-group">
-                <button id="insert-after-btn"><i class="fas fa-sign-in-alt icon-margin"></i>Insert After</button>
-                <label for="insert-after-value">Target:</label>
-                <input type="number" id="insert-after-value" value="10">
-                <label for="insert-new-value">New:</label>
-                <input type="number" id="insert-new-value" value="25">
-                <span class="complexity-badge" title="Insert After (requires search)">O(n)</span>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-purple-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                WEEK 2 • هياكل البيانات
             </div>
-            <div class="control-group">
-                <button id="delete-btn"><i class="fas fa-trash-alt icon-margin"></i>Delete</button>
-                <label for="delete-value">Value:</label>
-                <input type="number" id="delete-value" value="10">
-                <span class="complexity-badge" title="Delete (requires search)">O(n)</span>
+
+            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+                <span class="text-gradient">Linked</span> List
+            </h1>
+
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
+                القوائم المتصلة
+            </h2>
+
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
+                A linear data structure where elements are connected using pointers, allowing dynamic memory allocation.
+            </p>
+
+            <!-- Arabic Explanation Box -->
+            <div class="max-w-4xl mx-auto mb-12">
+                <div class="p-6 bg-purple-950/30 border border-purple-900/50 rounded-2xl rtl-block">
+                    <h3 class="text-2xl font-bold text-purple-400 mb-4 font-arabic">🔗 إيه هي القائمة المتصلة؟</h3>
+                    <div class="space-y-4 text-purple-100/90 font-arabic text-lg leading-loose">
+                        <p>
+                            تخيل <span class="text-yellow-400">عربيات القطر</span> 🚂 - كل عربية فيها بضاعة (Data)
+                            وسلسلة متوصلة بالعربية اللي بعدها (Pointer).
+                        </p>
+
+                        <div class="grid md:grid-cols-2 gap-4 mt-6">
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-700">
+                                <div class="text-2xl mb-2">✅</div>
+                                <div class="text-emerald-400 font-bold">المميزات</div>
+                                <ul class="text-sm text-slate-400 mt-2 space-y-1">
+                                    <li>• الإضافة والحذف سريعين جداً O(1)</li>
+                                    <li>• الحجم قابل للتغيير بسهولة</li>
+                                    <li>• مش محتاج مساحة متجاورة في الذاكرة</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-red-700">
+                                <div class="text-2xl mb-2">❌</div>
+                                <div class="text-red-400 font-bold">العيوب</div>
+                                <ul class="text-sm text-slate-400 mt-2 space-y-1">
+                                    <li>• الوصول لعنصر معين بطيء O(n)</li>
+                                    <li>• بتستهلك ذاكرة إضافية للـ pointers</li>
+                                    <li>• مفيش index زي الـ Array</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="control-group">
-                <button id="search-btn"><i class="fas fa-search icon-margin"></i>Search</button>
-                <label for="search-value">Value:</label>
-                <input type="number" id="search-value" value="50">
-                <span class="complexity-badge" title="Search (requires traversal)">O(n)</span>
+
+            <!-- Hero SVG Visualization -->
+            <div class="max-w-4xl mx-auto">
+                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-purple-900/20">
+                    <svg viewBox="0 0 800 220" class="w-full h-auto bg-[#0B1121] rounded-xl"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="headGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10B981" />
+                                <stop offset="100%" style="stop-color:#059669" />
+                            </linearGradient>
+                            <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8B5CF6" />
+                                <stop offset="100%" style="stop-color:#7C3AED" />
+                            </linearGradient>
+                            <linearGradient id="nullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#475569" />
+                                <stop offset="100%" style="stop-color:#334155" />
+                            </linearGradient>
+                            <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#A78BFA" />
+                            </marker>
+                        </defs>
+
+                        <!-- Title -->
+                        <text x="400" y="30" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="14"
+                            font-weight="bold">
+                            كل Node فيها: قيمة (Data) + مؤشر (Pointer) للـ Node التالية
+                        </text>
+
+                        <!-- Linked List Nodes -->
+                        <g transform="translate(60, 70)">
+                            <!-- Head Node -->
+                            <rect x="0" y="0" width="80" height="70" rx="10" fill="url(#headGrad)" />
+                            <text x="40" y="30" text-anchor="middle" fill="white" font-family="Fira Code" font-size="16"
+                                font-weight="bold">42</text>
+                            <rect x="5" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
+                            <text x="40" y="59" text-anchor="middle" fill="#a7f3d0" font-family="Fira Code"
+                                font-size="9">next →</text>
+                            <text x="40" y="95" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="10"
+                                font-weight="bold">HEAD</text>
+
+                            <!-- Arrow 1 -->
+                            <line x1="80" y1="35" x2="120" y2="35" stroke="#A78BFA" stroke-width="2"
+                                marker-end="url(#arrowPurple)" />
+
+                            <!-- Node 2 -->
+                            <rect x="130" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
+                            <text x="170" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="16" font-weight="bold">17</text>
+                            <rect x="135" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
+                            <text x="170" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
+                                font-size="9">next →</text>
+
+                            <!-- Arrow 2 -->
+                            <line x1="210" y1="35" x2="250" y2="35" stroke="#A78BFA" stroke-width="2"
+                                marker-end="url(#arrowPurple)" />
+
+                            <!-- Node 3 -->
+                            <rect x="260" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
+                            <text x="300" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="16" font-weight="bold">83</text>
+                            <rect x="265" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
+                            <text x="300" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
+                                font-size="9">next →</text>
+
+                            <!-- Arrow 3 -->
+                            <line x1="340" y1="35" x2="380" y2="35" stroke="#A78BFA" stroke-width="2"
+                                marker-end="url(#arrowPurple)" />
+
+                            <!-- Node 4 -->
+                            <rect x="390" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
+                            <text x="430" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
+                                font-size="16" font-weight="bold">5</text>
+                            <rect x="395" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
+                            <text x="430" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
+                                font-size="9">next →</text>
+
+                            <!-- Arrow 4 -->
+                            <line x1="470" y1="35" x2="510" y2="35" stroke="#A78BFA" stroke-width="2"
+                                marker-end="url(#arrowPurple)" />
+
+                            <!-- NULL Node -->
+                            <rect x="520" y="10" width="70" height="50" rx="10" fill="url(#nullGrad)" opacity="0.7" />
+                            <text x="555" y="42" text-anchor="middle" fill="#94a3b8" font-family="Fira Code"
+                                font-size="13">NULL</text>
+                            <text x="555" y="80" text-anchor="middle" fill="#64748b" font-family="Cairo"
+                                font-size="10">نهاية القائمة</text>
+                        </g>
+
+                        <!-- Memory Address Indicators (scattered) -->
+                        <g fill="#475569" font-family="Fira Code" font-size="9">
+                            <text x="100" y="185">0x7A2</text>
+                            <text x="230" y="185">0x4F8</text>
+                            <text x="360" y="185">0x1B0</text>
+                            <text x="490" y="185">0x9D4</text>
+                        </g>
+                        <text x="400" y="205" text-anchor="middle" fill="#64748b" font-family="Cairo" font-size="10">
+                            العناصر مش متجاورة في الذاكرة! 🧩
+                        </text>
+                    </svg>
+                </div>
             </div>
         </div>
+    </header>
 
-        <div class="log" id="log"><p>Add nodes or perform operations on the linked list.</p></div>
-    </div>
+    <!-- Concept Section -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center mb-4">
+                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
+                Array vs Linked List
+            </h2>
+            <p class="text-center text-slate-400 font-arabic mb-16">المقارنة بين المصفوفة والقائمة المتصلة</p>
 
-    <div class="container">
-        <h2><i class="fas fa-info-circle icon-margin"></i>How Linked Lists Work</h2>
-        <div class="explanation">
-            <p>A singly linked list is a linear data structure where elements are not stored at contiguous memory locations. Instead, elements are linked using pointers.</p>
-            <ul>
-                <li><strong>Node:</strong> Each element in a linked list is a node. A node typically contains two components:
-                    <ul>
-                        <li><strong>Data:</strong> The actual value stored in the node.</li>
-                        <li><strong>Next Pointer:</strong> A reference (or pointer) to the next node in the sequence. The last node's pointer points to NULL.</li>
-                    </ul>
-                </li>
-                <li><strong>Head:</strong> A pointer that references the very first node in the linked list. If the list is empty, the head points to NULL.</li>
-                <li><strong>Traversal:</strong> Accessing elements involves starting from the head and following the `next` pointers sequentially until the desired node or the end of the list is reached. This results in O(n) time complexity for access, search, insertion (at arbitrary position), and deletion (at arbitrary position).</li>
-                <li><strong>Advantages:</strong> Dynamic size (easy to grow/shrink), efficient insertions/deletions at the beginning (O(1)).</li>
-                <li><strong>Disadvantages:</strong> Slow access/search (O(n)), requires extra memory for pointers.</li>
-            </ul>
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50 mb-12" data-aos="fade-up">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-slate-900/80 border-b border-slate-700">
+                                <th class="px-6 py-4 text-left text-slate-300 font-bold">Operation</th>
+                                <th class="px-6 py-4 text-center text-blue-400 font-bold">Array</th>
+                                <th class="px-6 py-4 text-center text-purple-400 font-bold">Linked List</th>
+                                <th class="px-6 py-4 text-right text-slate-300 font-bold font-arabic">الشرح</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-800">
+                                <td class="px-6 py-4 text-slate-300">Access</td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)</span></td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
+                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">Array = فوري | List =
+                                    لازم تعدي على كل node</td>
+                            </tr>
+                            <tr class="border-b border-slate-800">
+                                <td class="px-6 py-4 text-slate-300">Insert (middle)</td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)*</span></td>
+                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">*لو عندك pointer
+                                    للمكان</td>
+                            </tr>
+                            <tr class="border-b border-slate-800">
+                                <td class="px-6 py-4 text-slate-300">Delete (middle)</td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
+                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)*</span></td>
+                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">*لو عندك pointer
+                                    للمكان</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-slate-300">Memory</td>
+                                <td class="px-6 py-4 text-center text-blue-400">Contiguous</td>
+                                <td class="px-6 py-4 text-center text-purple-400">Scattered</td>
+                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">Array = متجاورة | List
+                                    = متفرقة</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Operations Cards -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-up">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-plus-circle text-emerald-400"></i>
+                        Insert at Head
+                    </h3>
+                    <div class="complexity-badge fast mb-4">O(1)</div>
+                    <p class="text-slate-400 mb-4">Create new node, point to old head, update head pointer.</p>
+                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <p class="font-arabic text-sm text-slate-300">
+                            <strong class="text-emerald-400">سريع!</strong> بتعمل node جديدة وتخليها تشاور على الأول،
+                            وتحدث الـ head.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-yellow-500" data-aos="fade-up"
+                    data-aos-delay="100">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-search text-yellow-400"></i>
+                        Search
+                    </h3>
+                    <div class="complexity-badge slow mb-4">O(n)</div>
+                    <p class="text-slate-400 mb-4">Must traverse from head until found.</p>
+                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <p class="font-arabic text-sm text-slate-300">
+                            <strong class="text-yellow-400">بطيء!</strong> لازم تعدي من أول node لحد ما تلاقي اللي بتدور
+                            عليه.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-red-500" data-aos="fade-up"
+                    data-aos-delay="200">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-trash text-red-400"></i>
+                        Delete
+                    </h3>
+                    <div class="complexity-badge fast mb-4">O(1)*</div>
+                    <p class="text-slate-400 mb-4">Just update the previous node's pointer!</p>
+                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <p class="font-arabic text-sm text-slate-300">
+                            <strong class="text-emerald-400">سريع!*</strong> بتغير pointer اللي قبله يشاور على اللي
+                            بعده.
+                            <span class="text-xs text-slate-500">*لو عندك pointer للـ node</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h3><i class="fas fa-code icon-margin"></i>Example Implementation (Conceptual)</h3>
-        <pre class="code-block">
-<code>class Node {
-    constructor(data) {
-        this.data = data;
-        this.next = null;
-    }
-}
+    </section>
 
-class LinkedList {
-    constructor() {
-        this.head = null;
-    }
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-24 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <div class="text-center mb-16">
+                <span class="text-purple-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Build Your Linked List</h2>
+                <p class="text-slate-400 mt-2 font-arabic">ابني القائمة المتصلة بنفسك!</p>
+            </div>
 
-    // Add to head - O(1)
-    addHead(data) {
-        const newNode = new Node(data);
-        newNode.next = this.head;
-        this.head = newNode;
-    }
+            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
+                <!-- Controls -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
+                        <h4 class="font-bold text-emerald-400 mb-3">Add Node</h4>
+                        <div class="flex gap-2">
+                            <input type="number" id="add-value" placeholder="value"
+                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-emerald-500 focus:outline-none">
+                            <button id="add-head-btn"
+                                class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition text-sm">
+                                Add Head
+                            </button>
+                            <button id="add-tail-btn"
+                                class="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition text-sm">
+                                Add Tail
+                            </button>
+                        </div>
+                    </div>
 
-    // Add to tail - O(n)
-    addTail(data) {
-        const newNode = new Node(data);
-        if (!this.head) {
-            this.head = newNode;
-            return;
-        }
-        let current = this.head;
-        while (current.next) {
-            current = current.next;
-        }
-        current.next = newNode;
-    }
+                    <div class="p-4 bg-red-900/20 rounded-xl border border-red-500/30">
+                        <h4 class="font-bold text-red-400 mb-3">Remove / Search</h4>
+                        <div class="flex gap-2">
+                            <input type="number" id="target-value" placeholder="value"
+                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-red-500 focus:outline-none">
+                            <button id="remove-btn"
+                                class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition text-sm">
+                                Remove
+                            </button>
+                            <button id="search-btn"
+                                class="px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition text-sm">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-    // Delete node by value - O(n)
-    delete(data) {
-        if (!this.head) return false;
+                <!-- List Container -->
+                <div id="list-container"
+                    class="flex flex-wrap items-center gap-2 justify-center p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[120px] mb-6 overflow-x-auto">
+                    <div class="node head-node">Head</div>
+                    <div class="pointer-arrow"></div>
+                    <div class="node null-node">NULL</div>
+                </div>
 
-        if (this.head.data === data) {
-            this.head = this.head.next;
-            return true;
-        }
+                <!-- Reset -->
+                <div class="flex justify-center mb-6">
+                    <button id="reset-btn"
+                        class="px-6 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg border border-slate-700 hover:bg-slate-700 transition flex items-center gap-2">
+                        <i class="fas fa-redo"></i> Reset List
+                    </button>
+                </div>
 
-        let current = this.head;
-        while (current.next && current.next.data !== data) {
-            current = current.next;
-        }
+                <!-- Log -->
+                <div id="log"
+                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
+                    <p class="text-slate-500">Add nodes to the list to get started.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        if (current.next) { // Found the node before the one to delete
-            current.next = current.next.next;
-            return true;
-        }
-        return false; // Not found
-    }
+    <!-- Code Section -->
+    <section id="code" class="py-24 px-6 bg-black/20">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
 
-    // Search for value - O(n)
-    search(data) {
-        let current = this.head;
-        while (current) {
-            if (current.data === data) {
-                return current; // Return the node if found
-            }
-            current = current.next;
-        }
-        return null; // Not found
-    }
-}
-</code></pre>
-    </div>
+            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">linkedList.js</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">class</span> <span class="text-blue-400">Node</span> {</span>
+<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">constructor</span>(<span class="text-orange-300">data</span>) {</span>
+<span class="code-line"><span class="line-num">3</span>    <span class="text-purple-400">this</span>.data = data;</span>
+<span class="code-line"><span class="line-num">4</span>    <span class="text-purple-400">this</span>.next = <span class="text-purple-400">null</span>;</span>
+<span class="code-line"><span class="line-num">5</span>  }</span>
+<span class="code-line"><span class="line-num">6</span>}</span>
+<span class="code-line"><span class="line-num">7</span></span>
+<span class="code-line"><span class="line-num">8</span><span class="text-purple-400">class</span> <span class="text-blue-400">LinkedList</span> {</span>
+<span class="code-line"><span class="line-num">9</span>  <span class="text-purple-400">constructor</span>() {</span>
+<span class="code-line"><span class="line-num">10</span>    <span class="text-purple-400">this</span>.head = <span class="text-purple-400">null</span>;</span>
+<span class="code-line"><span class="line-num">11</span>  }</span>
+<span class="code-line"><span class="line-num">12</span></span>
+<span class="code-line"><span class="line-num">13</span>  <span class="text-gray-500">// O(1) - أضف في الأول</span></span>
+<span class="code-line"><span class="line-num">14</span>  <span class="text-blue-400">addHead</span>(<span class="text-orange-300">data</span>) {</span>
+<span class="code-line"><span class="line-num">15</span>    <span class="text-purple-400">const</span> node = <span class="text-purple-400">new</span> <span class="text-blue-400">Node</span>(data);</span>
+<span class="code-line"><span class="line-num">16</span>    node.next = <span class="text-purple-400">this</span>.head;</span>
+<span class="code-line"><span class="line-num">17</span>    <span class="text-purple-400">this</span>.head = node;</span>
+<span class="code-line"><span class="line-num">18</span>  }</span>
+<span class="code-line"><span class="line-num">19</span></span>
+<span class="code-line"><span class="line-num">20</span>  <span class="text-gray-500">// O(n) - دور</span></span>
+<span class="code-line"><span class="line-num">21</span>  <span class="text-blue-400">search</span>(<span class="text-orange-300">data</span>) {</span>
+<span class="code-line"><span class="line-num">22</span>    <span class="text-purple-400">let</span> curr = <span class="text-purple-400">this</span>.head;</span>
+<span class="code-line"><span class="line-num">23</span>    <span class="text-purple-400">while</span> (curr) {</span>
+<span class="code-line"><span class="line-num">24</span>      <span class="text-purple-400">if</span> (curr.data === data)</span>
+<span class="code-line"><span class="line-num">25</span>        <span class="text-purple-400">return</span> curr;</span>
+<span class="code-line"><span class="line-num">26</span>      curr = curr.next;</span>
+<span class="code-line"><span class="line-num">27</span>    }</span>
+<span class="code-line"><span class="line-num">28</span>    <span class="text-purple-400">return</span> <span class="text-purple-400">null</span>;</span>
+<span class="code-line"><span class="line-num">29</span>  }</span>
+<span class="code-line"><span class="line-num">30</span>}</span></code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
+                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
+                        <div class="space-y-4 font-arabic text-sm">
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">Node (سطر 1-6):</span>
+                                <br>
+                                كل node فيها: data (القيمة) و next (pointer للـ node التالية)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">addHead (سطر 14-18):</span>
+                                <br>
+                                اعمل node جديدة، خليها تشاور على الـ head الحالي، وحدث الـ head!
+                                <br>
+                                <span class="text-xs text-slate-500">O(1) - سريع جداً! 🚀</span>
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">search (سطر 21-29):</span>
+                                <br>
+                                ابدأ من الـ head وعدي على كل node لحد ما تلاقي القيمة
+                                <br>
+                                <span class="text-xs text-slate-500">O(n) - في أسوأ الحالات تعدي على كلهم 😓</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 2</p>
+        <p class="font-arabic mt-1">Advanced Monitoring</p>
+    </footer>
 
     <script>
-        // Theme persistence
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.setAttribute('data-theme', savedTheme);
+        AOS.init({ duration: 800, once: true, offset: 100 });
 
-        // DOM Elements
         const listContainer = document.getElementById('list-container');
-        const logElement = document.getElementById('log');
+        const addValueInput = document.getElementById('add-value');
         const addHeadBtn = document.getElementById('add-head-btn');
-        const addHeadValueInput = document.getElementById('add-head-value');
         const addTailBtn = document.getElementById('add-tail-btn');
-        const addTailValueInput = document.getElementById('add-tail-value');
-        const resetBtn = document.getElementById('reset-btn');
-        const insertAfterBtn = document.getElementById('insert-after-btn');
-        const insertAfterValueInput = document.getElementById('insert-after-value');
-        const insertNewValueInput = document.getElementById('insert-new-value');
-        const deleteBtn = document.getElementById('delete-btn');
-        const deleteValueInput = document.getElementById('delete-value');
+        const targetValueInput = document.getElementById('target-value');
+        const removeBtn = document.getElementById('remove-btn');
         const searchBtn = document.getElementById('search-btn');
-        const searchValueInput = document.getElementById('search-value');
+        const resetBtn = document.getElementById('reset-btn');
+        const logElement = document.getElementById('log');
 
-        // --- Linked List Implementation ---
-        class Node {
-            constructor(data) {
-                this.data = data;
-                this.next = null;
-                this.element = null; // Reference to the DOM element
-            }
-        }
+        let list = [];
 
-        class LinkedList {
-            constructor() {
-                this.head = null;
-            }
-
-            // Add node to head
-            addHead(data) {
-                const newNode = new Node(data);
-                newNode.next = this.head;
-                this.head = newNode;
-                return newNode;
-            }
-
-            // Add node to tail
-            addTail(data) {
-                const newNode = new Node(data);
-                if (!this.head) {
-                    this.head = newNode;
-                    return newNode;
-                }
-                let current = this.head;
-                while (current.next) {
-                    current = current.next;
-                }
-                current.next = newNode;
-                return newNode;
-            }
-
-            // Find node by value (returns the node itself)
-            findNode(data) {
-                let current = this.head;
-                while (current) {
-                    if (current.data === data) {
-                        return current;
-                    }
-                    current = current.next;
-                }
-                return null;
-            }
-
-             // Find the node *before* the one with the given data
-             findPreviousNode(data) {
-                 if (!this.head || this.head.data === data) {
-                     return null; // No previous node for head or if list is empty
-                 }
-                 let current = this.head;
-                 while (current.next) {
-                     if (current.next.data === data) {
-                         return current; // Found the node before the target
-                     }
-                     current = current.next;
-                 }
-                 return null; // Target node not found (or it's the head)
-             }
-
-            // Insert node after a specific value
-            insertAfter(targetData, newData) {
-                const targetNode = this.findNode(targetData);
-                if (!targetNode) {
-                    return null; // Target not found
-                }
-                const newNode = new Node(newData);
-                newNode.next = targetNode.next;
-                targetNode.next = newNode;
-                return newNode;
-            }
-
-            // Delete node by value
-            delete(data) {
-                if (!this.head) {
-                    return false;
-                }
-                if (this.head.data === data) {
-                    const deletedNode = this.head;
-                    this.head = this.head.next;
-                    return deletedNode; // Return the deleted node
-                }
-                let current = this.head;
-                while (current.next && current.next.data !== data) {
-                    current = current.next;
-                }
-                if (current.next) {
-                     const deletedNode = current.next;
-                    current.next = current.next.next;
-                     return deletedNode;
-                }
-                return null; // Not found
-            }
-
-             *[Symbol.iterator]() {
-                 let current = this.head;
-                 while (current) {
-                     yield current;
-                     current = current.next;
-                 }
-             }
-        }
-
-        let linkedList = new LinkedList();
-        const animationDelay = 450; // ms
-
-        // --- Utility Functions ---
-        function logMessage(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.classList.add(`log-${type}`);
-            logElement.prepend(p);
-            while (logElement.children.length > 8) {
-                logElement.removeChild(logElement.lastChild);
-            }
-        }
-
-        function isValidNumberInput(inputElement) {
-             const value = inputElement.value;
-             if (value === '' || isNaN(Number(value))) {
-                 logMessage(`Invalid input: '${inputElement.id}' requires a number.`, 'error');
-                 inputElement.focus();
-                 return false;
-             }
-             return true;
-         }
-
-         function disableControls(disabled = true) {
-            const buttons = document.querySelectorAll('.controls button');
-            const inputs = document.querySelectorAll('.controls input');
-            buttons.forEach(btn => btn.disabled = disabled);
-            inputs.forEach(input => input.disabled = disabled);
-         }
-
-        // --- Visualization Logic ---
-        function renderList() {
-            listContainer.innerHTML = ''; // Clear previous render
-
-            // Add Head indicator
-            const headIndicator = document.createElement('div');
-            headIndicator.className = 'node head-node';
-            headIndicator.textContent = 'Head';
-            listContainer.appendChild(headIndicator);
-
-            let previousNodeElement = headIndicator;
-            let current = linkedList.head;
-
-            // Add nodes and pointers
-            while (current) {
-                 // Add pointer from previous
-                const pointer = document.createElement('div');
-                pointer.className = 'pointer';
-                previousNodeElement.appendChild(pointer);
-
-                const nodeElement = document.createElement('div');
-                nodeElement.className = 'node';
-                nodeElement.innerHTML = `<span class="node-value">${current.data}</span><span class="node-pointer-section">next</span>`;
-                current.element = nodeElement; // Link data node to DOM element
-                listContainer.appendChild(nodeElement);
-
-                previousNodeElement = nodeElement;
-                current = current.next;
-            }
-
-            // Add final pointer to NULL
-             const finalPointer = document.createElement('div');
-             finalPointer.className = 'pointer';
-             previousNodeElement.appendChild(finalPointer);
-
-            // Add NULL node
-            const nullNode = document.createElement('div');
-            nullNode.className = 'node null-node';
-            nullNode.textContent = 'NULL';
-            listContainer.appendChild(nullNode);
-        }
-
-        // Function to highlight a node with smooth transition
-        async function highlightNode(node, className = 'highlight-traverse', duration = animationDelay) {
-            if (node && node.element) {
-                node.element.classList.add(className);
-                await new Promise(resolve => setTimeout(resolve, duration));
-                node.element.classList.remove(className);
-            }
-        }
-
-         // Function to animate adding a node
-        async function animateAddNode(newNode) {
-            if (newNode && newNode.element) {
-                 newNode.element.classList.add('adding');
-                 newNode.element.style.opacity = '0'; // Start hidden
-                 await new Promise(resolve => setTimeout(resolve, 50)); // Allow render
-                 newNode.element.style.opacity = '1';
-                 newNode.element.style.transform = 'scale(1) translateY(0)';
-                 await highlightNode(newNode, 'highlight-action');
-            }
-         }
-
-          // Function to animate deleting a node
-          async function animateDeleteNode(nodeToDelete) {
-             if (nodeToDelete && nodeToDelete.element) {
-                 await highlightNode(nodeToDelete, 'highlight-action', animationDelay / 2);
-                 nodeToDelete.element.classList.add('removing');
-                 await new Promise(resolve => setTimeout(resolve, animationDelay));
-             }
-          }
-
-        // --- Traversal Animation ---
-         async function* traverseList(targetData = null, stopCondition = (node, data) => node.data === data) {
-             let current = linkedList.head;
-             let index = 0;
-             logMessage(`Starting traversal from Head...`, 'info');
-             await highlightNode({ element: listContainer.querySelector('.head-node') }, 'highlight-traverse', animationDelay / 2);
-
-             while (current) {
-                 logMessage(`Visiting node ${index} (Value: ${current.data})`, 'info');
-                 await highlightNode(current, 'highlight-traverse');
-
-                 if (targetData !== null && stopCondition(current, targetData)) {
-                     logMessage(`Condition met at node ${index}.`, 'success');
-                     yield { node: current, found: true, index: index };
-                     return;
-                 }
-
-                 if (!current.next) {
-                    await highlightNode({ element: listContainer.querySelector('.null-node') }, 'highlight-traverse', animationDelay / 2);
-                 }
-
-                 yield { node: current, found: false, index: index }; // Yield current node even if not target
-                 current = current.next;
-                 index++;
-             }
-
-             logMessage(`Traversal finished. Condition not met.`, targetData !== null ? 'warning' : 'info');
-             yield { node: null, found: false, index: -1 }; // Indicate end of traversal
-         }
-
-        // --- Event Handlers ---
-        addHeadBtn.addEventListener('click', async () => {
-            if (!isValidNumberInput(addHeadValueInput)) return;
-            const value = parseInt(addHeadValueInput.value);
-            disableControls();
-            logMessage(`Adding ${value} to head... (O(1))`, 'info');
-
-            const newNode = linkedList.addHead(value);
-            renderList(); // Render first to get the element reference
-            await animateAddNode(newNode);
-
-            logMessage(`Added ${value} to head.`, 'success');
-            addHeadValueInput.value = Math.floor(Math.random() * 90) + 10; // Suggest next value
-            disableControls(false);
+        addHeadBtn.addEventListener('click', () => {
+            const value = parseInt(addValueInput.value);
+            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
+            list.unshift(value);
+            renderList();
+            log(`➕ Added ${value} at HEAD (O(1) - فوري!)`, 'success');
+            addValueInput.value = '';
         });
 
-        addTailBtn.addEventListener('click', async () => {
-             if (!isValidNumberInput(addTailValueInput)) return;
-            const value = parseInt(addTailValueInput.value);
-            disableControls();
-            logMessage(`Adding ${value} to tail... Traversing list (O(n))`, 'info');
+        addTailBtn.addEventListener('click', () => {
+            const value = parseInt(addValueInput.value);
+            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
+            list.push(value);
+            renderList();
+            log(`➕ Added ${value} at TAIL (O(n) - لازم نعدي للآخر)`, 'success');
+            addValueInput.value = '';
+        });
 
-             let lastNode = null;
-             for await (const step of traverseList()) {
-                 lastNode = step.node;
-             }
+        removeBtn.addEventListener('click', () => {
+            const value = parseInt(targetValueInput.value);
+            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
+            const index = list.indexOf(value);
+            if (index === -1) { log(`❌ ${value} not found!`, 'error'); return; }
+            list.splice(index, 1);
+            renderList();
+            log(`🗑️ Removed ${value} (O(n) - لازم نلاقيه الأول)`, 'success');
+            targetValueInput.value = '';
+        });
 
-            const newNode = linkedList.addTail(value);
-             renderList(); // Render first to get the element reference
-             await animateAddNode(newNode);
-
-            logMessage(`Added ${value} to tail.`, 'success');
-            addTailValueInput.value = Math.floor(Math.random() * 90) + 10;
-             disableControls(false);
+        searchBtn.addEventListener('click', () => {
+            const value = parseInt(targetValueInput.value);
+            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
+            const index = list.indexOf(value);
+            if (index === -1) {
+                log(`🔍 ${value} NOT found (searched ${list.length} nodes)`, 'error');
+            } else {
+                renderList(index);
+                log(`🔍 Found ${value} at position ${index} (checked ${index + 1} nodes)`, 'success');
+            }
         });
 
         resetBtn.addEventListener('click', () => {
-            linkedList = new LinkedList();
-            logMessage('Linked list reset.', 'warning');
+            list = [];
             renderList();
+            log('🔄 List reset', 'info');
         });
 
-        insertAfterBtn.addEventListener('click', async () => {
-            if (!isValidNumberInput(insertAfterValueInput) || !isValidNumberInput(insertNewValueInput)) return;
-            const targetValue = parseInt(insertAfterValueInput.value);
-            const newValue = parseInt(insertNewValueInput.value);
-            disableControls();
-            logMessage(`Searching for node with value ${targetValue} to insert ${newValue} after...`, 'info');
+        function renderList(highlightIndex = -1) {
+            listContainer.innerHTML = '';
 
-            let targetNode = null;
-            for await (const step of traverseList(targetValue)) {
-                if (step.found) {
-                    targetNode = step.node;
-                    await highlightNode(targetNode, 'highlight-found');
-                    break;
-                }
-            }
+            // Head indicator
+            const headNode = document.createElement('div');
+            headNode.className = 'node head-node';
+            headNode.innerHTML = '<span class="value">Head</span>';
+            listContainer.appendChild(headNode);
 
-            if (targetNode) {
-                logMessage(`Found node ${targetValue}. Inserting ${newValue}...`, 'info');
-                const newNode = linkedList.insertAfter(targetValue, newValue);
-                 renderList(); // Render first to get the element reference
-                 await animateAddNode(newNode);
-                logMessage(`Inserted ${newValue} after ${targetValue}.`, 'success');
+            if (list.length === 0) {
+                const arrow = document.createElement('div');
+                arrow.className = 'pointer-arrow';
+                listContainer.appendChild(arrow);
+
+                const nullNode = document.createElement('div');
+                nullNode.className = 'node null-node';
+                nullNode.textContent = 'NULL';
+                listContainer.appendChild(nullNode);
             } else {
-                logMessage(`Node with value ${targetValue} not found. Cannot insert.`, 'error');
+                list.forEach((value, index) => {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'pointer-arrow';
+                    listContainer.appendChild(arrow);
+
+                    const node = document.createElement('div');
+                    node.className = 'node';
+                    if (index === highlightIndex) node.classList.add('highlight');
+                    node.innerHTML = `<span class="value">${value}</span><span class="pointer-section">next →</span>`;
+                    listContainer.appendChild(node);
+                });
+
+                const arrow = document.createElement('div');
+                arrow.className = 'pointer-arrow';
+                listContainer.appendChild(arrow);
+
+                const nullNode = document.createElement('div');
+                nullNode.className = 'node null-node';
+                nullNode.textContent = 'NULL';
+                listContainer.appendChild(nullNode);
             }
-            disableControls(false);
-        });
+        }
 
-        deleteBtn.addEventListener('click', async () => {
-             if (!isValidNumberInput(deleteValueInput)) return;
-            const valueToDelete = parseInt(deleteValueInput.value);
-            disableControls();
-            logMessage(`Searching for node with value ${valueToDelete} to delete...`, 'info');
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.className = {
+                info: 'text-blue-400',
+                success: 'text-emerald-400',
+                error: 'text-red-400'
+            }[type] + ' mb-1';
+            logElement.prepend(p);
+            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
+        }
 
-             let nodeToDelete = null;
-             let previousNode = null;
-
-             // Handle head deletion case separately
-             if (linkedList.head && linkedList.head.data === valueToDelete) {
-                 nodeToDelete = linkedList.head;
-                 logMessage(`Found node ${valueToDelete} at the head.`, 'info');
-                 await highlightNode(nodeToDelete, 'highlight-found', animationDelay/2);
-             } else {
-                 // Traverse to find the node *before* the target
-                 for await (const step of traverseList(valueToDelete, (node, data) => node.next && node.next.data === data)) {
-                     if (step.found) {
-                         previousNode = step.node; // This is the node *before* the one to delete
-                         nodeToDelete = previousNode.next;
-                         logMessage(`Found node ${valueToDelete} after node ${previousNode.data}.`, 'info');
-                         await highlightNode(nodeToDelete, 'highlight-found', animationDelay/2);
-                         break;
-                     }
-                 }
-             }
-
-            if (nodeToDelete) {
-                 logMessage(`Deleting node ${valueToDelete}...`, 'info');
-                 await animateDeleteNode(nodeToDelete); // Animate deletion
-                 linkedList.delete(valueToDelete); // Perform actual deletion
-                 renderList(); // Re-render the list
-                 logMessage(`Deleted node with value ${valueToDelete}.`, 'success');
-            } else {
-                logMessage(`Node with value ${valueToDelete} not found. Cannot delete.`, 'error');
-                 renderList(); // Re-render to clear any highlights
-            }
-            disableControls(false);
-        });
-
-        searchBtn.addEventListener('click', async () => {
-             if (!isValidNumberInput(searchValueInput)) return;
-            const valueToSearch = parseInt(searchValueInput.value);
-            disableControls();
-            logMessage(`Searching for node with value ${valueToSearch}...`, 'info');
-
-            let foundNode = null;
-            for await (const step of traverseList(valueToSearch)) {
-                if (step.found) {
-                    foundNode = step.node;
-                    await highlightNode(foundNode, 'highlight-found', animationDelay * 1.5); // Longer highlight
-                    break;
-                }
-            }
-
-            if (foundNode) {
-                logMessage(`Node with value ${valueToSearch} found at index ${await (async () => { let i = 0; for await (const s of traverseList(valueToSearch)) { if(s.found) return s.index; i++; } return -1; })()}.`, 'success');
-            } else {
-                logMessage(`Node with value ${valueToSearch} not found.`, 'error');
-            }
-            disableControls(false);
-        });
-
-        // --- Initial Render ---
         renderList();
-
     </script>
 </body>
-</html>
+
 </html>
