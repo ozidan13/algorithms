@@ -1,490 +1,543 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Nearest Neighbors Classifier</title>
+    <title>K-Nearest Neighbors | أقرب K جيران</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', teal: '#14B8A6' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
-        h1, h2, h3 {
-            color: #2c3e50;
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
+
+        .text-gradient {
+            background: linear-gradient(135deg, #14B8A6, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .visualization {
-            flex: 1;
-            min-width: 600px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
         }
-        .controls {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        canvas {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-        }
-        .btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        input[type="range"], select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .data-point {
-            display: inline-block;
-            width: 15px;
-            height: 15px;
+
+        .point {
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            margin-right: 5px;
+            position: absolute;
+            transition: all 0.3s;
         }
-        .class-a {
-            background-color: #e74c3c;
+
+        .point.class-a {
+            background: #3B82F6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
         }
-        .class-b {
-            background-color: #3498db;
+
+        .point.class-b {
+            background: #F43F5E;
+            box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
         }
-        .class-c {
-            background-color: #2ecc71;
+
+        .point.unknown {
+            background: #F59E0B;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+            border: 2px solid white;
         }
-        .legend {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+
+        .point.neighbor {
+            animation: pulse-ring 0.5s;
         }
-        .legend-item {
-            display: flex;
-            align-items: center;
-        }
-        .metrics {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        .code-block {
-            background-color: #f8f9fa;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 20px 0;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4)
+            }
+
+            100% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0)
+            }
         }
     </style>
 </head>
+
 <body>
-    <h1>K-Nearest Neighbors Classifier</h1>
-    
-    <p>K-Nearest Neighbors (KNN) is a simple, versatile, and non-parametric supervised learning algorithm used for classification and regression. This visualization demonstrates how KNN classifies data points based on the majority class of their k nearest neighbors.</p>
-    
-    <div class="container">
-        <div class="visualization">
-            <h2>Visualization</h2>
-            <div class="legend">
-                <div class="legend-item"><span class="data-point class-a"></span> Class A</div>
-                <div class="legend-item"><span class="data-point class-b"></span> Class B</div>
-                <div class="legend-item"><span class="data-point class-c"></span> Class C</div>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week4" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">K-<span class="text-teal-500">NN</span></span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[128px] pointer-events-none">
+        </div>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-teal-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+                WEEK 4 • Machine Learning
             </div>
-            <canvas id="knnCanvas" width="600" height="400"></canvas>
-            <div class="btn-group">
-                <button id="addPointA" class="btn">Add Class A Point</button>
-                <button id="addPointB" class="btn">Add Class B Point</button>
-                <button id="addPointC" class="btn">Add Class C Point</button>
-                <button id="clearCanvas" class="btn">Clear Canvas</button>
-            </div>
-            <div class="metrics" id="metrics">
-                <h3>Classification Metrics</h3>
-                <p>Click on the canvas to classify a new point.</p>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">K-Nearest</span> Neighbors</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">أقرب K جيران</h2>
+        </div>
+    </header>
+
+    <!-- What is KNN -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-users text-teal-500 mr-3"></i>إيه هو
+                KNN؟</h2>
+
+            <div class="glass-card p-8 rounded-2xl border border-teal-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-teal-400 mb-6 font-arabic">🏘️ الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه الجيران</h4>
+                            <p class="text-slate-300">
+                                تخيل إنك <span class="text-teal-400 font-bold">واقف في منطقة جديدة</span> ومش عارف ده حي
+                                راقي ولا شعبي:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• بص على <span class="text-teal-400 font-bold">أقرب K بيت</span> حواليك</li>
+                                <li>• لو أغلبهم <span class="text-blue-400">راقية</span> → الحي ده غالباً راقي</li>
+                                <li>• لو أغلبهم <span class="text-rose-400">شعبية</span> → الحي ده غالباً شعبي</li>
+                            </ul>
+                            <p class="mt-3 text-teal-400 font-bold">
+                                "قولي مين جيرانك، أقولك إنت مين!" 😄
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">🎯 الخطوات</h4>
+                            <div class="space-y-3 mt-4">
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-teal-400 text-xl font-bold">1</span>
+                                    <span>احسب <span class="text-yellow-400">المسافة</span> من النقطة الجديدة لكل النقط
+                                        الموجودة</span>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-teal-400 text-xl font-bold">2</span>
+                                    <span>رتب المسافات واختار <span class="text-teal-400 font-bold">أقرب K</span>
+                                        نقط</span>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-teal-400 text-xl font-bold">3</span>
+                                    <span>شوف أغلبية الـ K دول <span class="text-emerald-400 font-bold">يصوتوا لأي
+                                            class</span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-yellow-950/30 rounded-xl border border-yellow-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📐 المسافة (Euclidean Distance)</h4>
+                            <div class="text-center p-4 bg-slate-900/50 rounded-lg font-mono" dir="ltr">
+                                <span class="text-xl">d = √[(x₂-x₁)² + (y₂-y₁)²]</span>
+                            </div>
+                            <p class="text-sm text-slate-400 mt-3">
+                                زي ما بتحسب المسافة على الخريطة!
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <div class="controls">
-            <h2>Algorithm Controls</h2>
-            <div class="form-group">
-                <label for="kValue">K Value: <span id="kValueDisplay">5</span></label>
-                <input type="range" id="kValue" min="1" max="15" value="5">
+    </section>
+
+    <!-- K Value -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-hashtag text-blue-500 mr-3"></i>اختيار
+                K</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">قيمة K مهمة جداً!</p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl border border-red-700/50" data-aos="fade-up">
+                    <div class="text-center">
+                        <span class="text-4xl font-mono font-bold text-red-400">K = 1</span>
+                        <p class="text-sm text-slate-400 font-arabic mt-4 rtl-block">صغير جداً</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-red-950/30 rounded-lg">
+                        <p class="text-xs text-slate-300 font-arabic rtl-block">
+                            ⚠️ حساس جداً للـ noise والـ outliers
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-emerald-700/50" data-aos="fade-up"
+                    data-aos-delay="100">
+                    <div class="text-center">
+                        <span class="text-4xl font-mono font-bold text-emerald-400">K = 5-7</span>
+                        <p class="text-sm text-slate-400 font-arabic mt-4 rtl-block">متوازن ✓</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-emerald-950/30 rounded-lg">
+                        <p class="text-xs text-slate-300 font-arabic rtl-block">
+                            ✓ عادة اختيار كويس للبداية
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-yellow-700/50" data-aos="fade-up"
+                    data-aos-delay="200">
+                    <div class="text-center">
+                        <span class="text-4xl font-mono font-bold text-yellow-400">K = n</span>
+                        <p class="text-sm text-slate-400 font-arabic mt-4 rtl-block">كبير جداً</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-yellow-950/30 rounded-lg">
+                        <p class="text-xs text-slate-300 font-arabic rtl-block">
+                            ⚠️ هيختار الـ class الأكثر عموماً (underfitting)
+                        </p>
+                    </div>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="distanceMetric">Distance Metric:</label>
-                <select id="distanceMetric">
-                    <option value="euclidean">Euclidean Distance</option>
-                    <option value="manhattan">Manhattan Distance</option>
-                    <option value="chebyshev">Chebyshev Distance</option>
-                </select>
+
+            <div class="mt-8 p-6 bg-slate-800/50 rounded-xl rtl-block" data-aos="fade-up">
+                <p class="text-teal-400 font-bold font-arabic mb-2">💡 نصيحة:</p>
+                <ul class="space-y-2 font-arabic text-sm text-slate-300">
+                    <li>• دايماً اختار <span class="text-yellow-400 font-bold">K فردي</span> عشان تتجنب التعادل في
+                        التصويت</li>
+                    <li>• جرب قيم مختلفة وشوف أيها أحسن (Cross-validation)</li>
+                </ul>
             </div>
-            
-            <div class="form-group">
-                <label for="weightingScheme">Weighting Scheme:</label>
-                <select id="weightingScheme">
-                    <option value="uniform">Uniform (No Weighting)</option>
-                    <option value="distance">Distance-Based Weighting</option>
-                </select>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-teal-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">KNN Demo</h2>
             </div>
-            
-            <div class="form-group">
-                <button id="generateRandomData" class="btn">Generate Random Dataset</button>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center items-center">
+                    <label class="text-slate-400">K =</label>
+                    <input type="range" id="k-slider" min="1" max="7" value="3" class="w-32 accent-teal-500">
+                    <span id="k-val" class="font-mono text-teal-400 font-bold w-6">3</span>
+                    <button id="classify-btn"
+                        class="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 text-white font-bold rounded-lg hover:shadow-lg transition"><i
+                            class="fas fa-magic mr-1"></i>Classify</button>
+                    <button id="reset-btn"
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
+                </div>
+
+                <div class="flex gap-4 justify-center text-xs mb-4">
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-blue-500"></div><span class="text-slate-400">Class A</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-rose-500"></div><span class="text-slate-400">Class B</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-4 h-4 rounded-full bg-amber-500 border-2 border-white"></div><span
+                            class="text-slate-400">Unknown</span>
+                    </div>
+                </div>
+
+                <div id="plot"
+                    class="relative bg-slate-900/50 rounded-xl border border-slate-800 h-[300px] cursor-crosshair">
+                    <p class="absolute inset-0 flex items-center justify-center text-slate-600 text-sm">Click to place
+                        unknown point</p>
+                </div>
+
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Click on the plot to place a point, then classify it.</p>
+                </div>
             </div>
-            
-            <h3>Algorithm Explanation</h3>
-            <p>KNN works by:</p>
-            <ol>
-                <li>Calculating the distance between the query point and all training points</li>
-                <li>Selecting the K-nearest data points</li>
-                <li>Assigning the class by majority vote of the K neighbors</li>
-            </ol>
-            
-            <h3>Time & Space Complexity</h3>
-            <p><strong>Time Complexity:</strong> O(n×d) for prediction where n is the dataset size and d is the number of dimensions</p>
-            <p><strong>Space Complexity:</strong> O(n) to store all training data points</p>
-            
-            <div class="code-block">
-                <pre><code>function predict(queryPoint, trainingData, k) {
-    // Calculate distances
-    const distances = trainingData.map(point => {
-        return {
-            distance: calculateDistance(queryPoint, point),
-            class: point.class
-        };
-    });
-    
-    // Sort by distance
-    distances.sort((a, b) => a.distance - b.distance);
-    
-    // Take k nearest neighbors
-    const kNearest = distances.slice(0, k);
-    
-    // Count class frequencies
-    const classCounts = {};
-    kNearest.forEach(neighbor => {
-        classCounts[neighbor.class] = 
-            (classCounts[neighbor.class] || 0) + 1;
-    });
-    
-    // Return the class with highest frequency
-    return Object.keys(classCounts).reduce((a, b) => 
-        classCounts[a] > classCounts[b] ? a : b);
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-rocket text-purple-500 mr-3"></i>استخدامات KNN</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-right">
+                    <h3 class="text-xl font-bold text-teal-400 mb-4"><i
+                            class="fas fa-wand-magic-sparkles mr-2"></i>Classification</h3>
+                    <ul class="space-y-3 text-sm font-arabic rtl-block">
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">📧</span>تصنيف
+                            الإيميلات (spam أو مش spam)</li>
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">🖼️</span>التعرف على
+                            الصور</li>
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">🏥</span>تشخيص
+                            الأمراض</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4"><i class="fas fa-chart-line mr-2"></i>Regression
+                    </h3>
+                    <ul class="space-y-3 text-sm font-arabic rtl-block">
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">🏠</span>تقدير سعر
+                            البيت</li>
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">🎬</span>توقع تقييم
+                            فيلم</li>
+                        <li class="flex items-center gap-2 flex-row-reverse"><span class="text-2xl">📊</span>التنبؤ
+                            بالمبيعات</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pros and Cons -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-scale-balanced text-yellow-500 mr-3"></i>مميزات وعيوب</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-right">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4"><i class="fas fa-check-circle mr-2"></i>مميزات
+                    </h3>
+                    <ul class="space-y-3 font-arabic rtl-block text-sm">
+                        <li class="p-3 bg-emerald-950/30 rounded-lg">✓ بسيط ومفهوم</li>
+                        <li class="p-3 bg-emerald-950/30 rounded-lg">✓ No training needed (lazy learner)</li>
+                        <li class="p-3 bg-emerald-950/30 rounded-lg">✓ بيشتغل كويس مع data صغير</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-red-500" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-red-400 mb-4"><i class="fas fa-times-circle mr-2"></i>عيوب</h3>
+                    <ul class="space-y-3 font-arabic rtl-block text-sm">
+                        <li class="p-3 bg-red-950/30 rounded-lg">✗ بطيء مع data كتير (O(n) للتصنيف)</li>
+                        <li class="p-3 bg-red-950/30 rounded-lg">✗ حساس للـ features scale</li>
+                        <li class="p-3 bg-red-950/30 rounded-lg">✗ Curse of dimensionality</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">knn.js</span>
+                </div>
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">knn</span>(<span class="text-orange-300">data</span>, <span class="text-orange-300">query</span>, <span class="text-orange-300">k</span>) {
+  <span class="text-slate-500">// 1. Calculate distances</span>
+  <span class="text-purple-400">const</span> distances = data.map(point => ({
+    label: point.label,
+    dist: Math.sqrt(
+      (point.x - query.x) ** <span class="text-emerald-400">2</span> +
+      (point.y - query.y) ** <span class="text-emerald-400">2</span>
+    )
+  }));
+  
+  <span class="text-slate-500">// 2. Sort by distance</span>
+  distances.sort((a, b) => a.dist - b.dist);
+  
+  <span class="text-slate-500">// 3. Get K nearest</span>
+  <span class="text-purple-400">const</span> kNearest = distances.slice(<span class="text-emerald-400">0</span>, k);
+  
+  <span class="text-slate-500">// 4. Vote!</span>
+  <span class="text-purple-400">const</span> votes = {};
+  kNearest.forEach(n => {
+    votes[n.label] = (votes[n.label] || <span class="text-emerald-400">0</span>) + <span class="text-emerald-400">1</span>;
+  });
+  
+  <span class="text-slate-500">// Return majority vote</span>
+  <span class="text-purple-400">return</span> Object.entries(votes)
+    .sort((a, b) => b[<span class="text-emerald-400">1</span>] - a[<span class="text-emerald-400">1</span>])[<span class="text-emerald-400">0</span>][<span class="text-emerald-400">0</span>];
 }</code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block">
+                        <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+                        <div class="space-y-3 font-arabic text-xs">
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">سطر 3-8:</span>
+                                احسب المسافة لكل نقطة
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">سطر 11:</span>
+                                رتب حسب المسافة (الأقرب الأول)
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-teal-500">
+                                <span class="text-teal-400 font-bold">سطر 14:</span>
+                                خد أول K نقط
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">سطر 17-20:</span>
+                                عدّ أصوات كل class
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">سطر 23-24:</span>
+                                رجّع الـ class اللي كسب التصويت
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 4</p>
+    </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.getElementById('knnCanvas');
-            const ctx = canvas.getContext('2d');
-            const kValueSlider = document.getElementById('kValue');
-            const kValueDisplay = document.getElementById('kValueDisplay');
-            const distanceMetricSelect = document.getElementById('distanceMetric');
-            const weightingSchemeSelect = document.getElementById('weightingScheme');
-            const metricsDiv = document.getElementById('metrics');
-            
-            // Initialize data points
-            let dataPoints = [];
-            let currentClassification = null;
-            
-            // Colors for classes
-            const colors = {
-                'A': '#e74c3c',
-                'B': '#3498db',
-                'C': '#2ecc71'
-            };
-            
-            // Update k value display
-            kValueSlider.addEventListener('input', function() {
-                kValueDisplay.textContent = this.value;
-                if (currentClassification) {
-                    classifyPoint(currentClassification.x, currentClassification.y);
-                }
+        AOS.init({ duration: 800, once: true });
+
+        const plot = document.getElementById('plot');
+        const info = document.getElementById('info');
+        const kSlider = document.getElementById('k-slider');
+        const kVal = document.getElementById('k-val');
+
+        // Sample data
+        const data = [
+            // Class A (blue) - cluster in upper-left
+            { x: 50, y: 60, label: 'A' },
+            { x: 80, y: 40, label: 'A' },
+            { x: 70, y: 80, label: 'A' },
+            { x: 100, y: 50, label: 'A' },
+            { x: 60, y: 100, label: 'A' },
+            { x: 90, y: 90, label: 'A' },
+            // Class B (red) - cluster in lower-right
+            { x: 200, y: 180, label: 'B' },
+            { x: 230, y: 200, label: 'B' },
+            { x: 250, y: 170, label: 'B' },
+            { x: 220, y: 220, label: 'B' },
+            { x: 180, y: 200, label: 'B' },
+            { x: 260, y: 240, label: 'B' },
+        ];
+
+        let unknownPoint = null;
+
+        function initPlot() {
+            plot.innerHTML = '';
+            data.forEach(p => {
+                const dot = document.createElement('div');
+                dot.className = `point class-${p.label.toLowerCase()}`;
+                dot.style.left = `${p.x}px`;
+                dot.style.top = `${p.y}px`;
+                dot.id = `point-${p.x}-${p.y}`;
+                plot.appendChild(dot);
             });
-            
-            // Distance metric change
-            distanceMetricSelect.addEventListener('change', function() {
-                if (currentClassification) {
-                    classifyPoint(currentClassification.x, currentClassification.y);
-                }
-            });
-            
-            // Weighting scheme change
-            weightingSchemeSelect.addEventListener('change', function() {
-                if (currentClassification) {
-                    classifyPoint(currentClassification.x, currentClassification.y);
-                }
-            });
-            
-            // Add point buttons
-            document.getElementById('addPointA').addEventListener('click', function() {
-                addRandomPoint('A', 5);
-            });
-            
-            document.getElementById('addPointB').addEventListener('click', function() {
-                addRandomPoint('B', 5);
-            });
-            
-            document.getElementById('addPointC').addEventListener('click', function() {
-                addRandomPoint('C', 5);
-            });
-            
-            // Generate random dataset
-            document.getElementById('generateRandomData').addEventListener('click', function() {
-                clearCanvas();
-                addRandomPoint('A', 15);
-                addRandomPoint('B', 15);
-                addRandomPoint('C', 15);
-            });
-            
-            // Clear canvas
-            document.getElementById('clearCanvas').addEventListener('click', clearCanvas);
-            
-            // Canvas click event for classification
-            canvas.addEventListener('click', function(event) {
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                classifyPoint(x, y);
-            });
-            
-            // Function to add random points
-            function addRandomPoint(className, count = 1) {
-                for (let i = 0; i < count; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    dataPoints.push({ x, y, class: className });
-                }
-                drawDataPoints();
-            }
-            
-            // Function to clear canvas
-            function clearCanvas() {
-                dataPoints = [];
-                currentClassification = null;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                metricsDiv.innerHTML = '<h3>Classification Metrics</h3><p>Click on the canvas to classify a new point.</p>';
-            }
-            
-            // Function to draw data points
-            function drawDataPoints() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw background classification regions if we have enough points
-                if (dataPoints.length > 5) {
-                    drawClassificationRegions();
-                }
-                
-                // Draw all data points
-                dataPoints.forEach(point => {
-                    ctx.beginPath();
-                    ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
-                    ctx.fillStyle = colors[point.class];
-                    ctx.fill();
-                    ctx.strokeStyle = '#333';
-                    ctx.stroke();
-                });
-                
-                // Draw current classification point if exists
-                if (currentClassification) {
-                    ctx.beginPath();
-                    ctx.arc(currentClassification.x, currentClassification.y, 8, 0, Math.PI * 2);
-                    ctx.fillStyle = colors[currentClassification.predictedClass] + '80'; // Semi-transparent
-                    ctx.fill();
-                    ctx.strokeStyle = '#333';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.lineWidth = 1;
-                    
-                    // Draw lines to k nearest neighbors
-                    currentClassification.neighbors.forEach(neighbor => {
-                        ctx.beginPath();
-                        ctx.moveTo(currentClassification.x, currentClassification.y);
-                        ctx.lineTo(neighbor.x, neighbor.y);
-                        ctx.strokeStyle = '#33333380'; // Semi-transparent
-                        ctx.stroke();
-                    });
-                }
-            }
-            
-            // Function to draw classification regions (simplified for performance)
-            function drawClassificationRegions() {
-                const gridSize = 20; // Lower for more detailed visualization, higher for better performance
-                const k = parseInt(kValueSlider.value);
-                
-                for (let x = 0; x < canvas.width; x += gridSize) {
-                    for (let y = 0; y < canvas.height; y += gridSize) {
-                        const predictedClass = knnClassify({ x, y }, k);
-                        ctx.fillStyle = colors[predictedClass] + '20'; // Very transparent
-                        ctx.fillRect(x, y, gridSize, gridSize);
-                    }
-                }
-            }
-            
-            // Function to classify a point
-            function classifyPoint(x, y) {
-                if (dataPoints.length === 0) {
-                    metricsDiv.innerHTML = '<h3>Classification Metrics</h3><p>Add some data points first!</p>';
-                    return;
-                }
-                
-                const k = parseInt(kValueSlider.value);
-                const point = { x, y };
-                const predictedClass = knnClassify(point, k);
-                
-                // Get k nearest neighbors for visualization
-                const neighbors = getKNearestNeighbors(point, k);
-                
-                currentClassification = {
-                    x, y, 
-                    predictedClass,
-                    neighbors: neighbors.map(n => dataPoints[n.index])
-                };
-                
-                drawDataPoints();
-                updateMetrics(point, predictedClass, neighbors);
-            }
-            
-            // Function to get k nearest neighbors
-            function getKNearestNeighbors(point, k) {
-                const distances = dataPoints.map((dataPoint, index) => {
-                    return {
-                        index,
-                        distance: calculateDistance(point, dataPoint)
-                    };
-                });
-                
-                distances.sort((a, b) => a.distance - b.distance);
-                return distances.slice(0, k);
-            }
-            
-            // Function to classify using KNN
-            function knnClassify(point, k) {
-                if (dataPoints.length === 0) return null;
-                
-                const neighbors = getKNearestNeighbors(point, k);
-                const weightingScheme = weightingSchemeSelect.value;
-                
-                // Count class frequencies with optional weighting
-                const classCounts = {};
-                neighbors.forEach(neighbor => {
-                    const dataPoint = dataPoints[neighbor.index];
-                    const weight = weightingScheme === 'distance' ? 
-                        1 / (neighbor.distance + 0.0001) : 1; // Avoid division by zero
-                    
-                    classCounts[dataPoint.class] = (classCounts[dataPoint.class] || 0) + weight;
-                });
-                
-                // Find class with highest count
-                let maxCount = 0;
-                let maxClass = null;
-                
-                for (const className in classCounts) {
-                    if (classCounts[className] > maxCount) {
-                        maxCount = classCounts[className];
-                        maxClass = className;
-                    }
-                }
-                
-                return maxClass;
-            }
-            
-            // Function to calculate distance between two points
-            function calculateDistance(pointA, pointB) {
-                const distanceMetric = distanceMetricSelect.value;
-                
-                switch (distanceMetric) {
-                    case 'manhattan':
-                        return Math.abs(pointA.x - pointB.x) + Math.abs(pointA.y - pointB.y);
-                        
-                    case 'chebyshev':
-                        return Math.max(Math.abs(pointA.x - pointB.x), Math.abs(pointA.y - pointB.y));
-                        
-                    case 'euclidean':
-                    default:
-                        return Math.sqrt(
-                            Math.pow(pointA.x - pointB.x, 2) + 
-                            Math.pow(pointA.y - pointB.y, 2)
-                        );
-                }
-            }
-            
-            // Function to update metrics display
-            function updateMetrics(point, predictedClass, neighbors) {
-                const k = parseInt(kValueSlider.value);
-                const distanceMetric = distanceMetricSelect.value;
-                const weightingScheme = weightingSchemeSelect.value;
-                
-                let metricsHTML = `
-                    <h3>Classification Metrics</h3>
-                    <p><strong>Query Point:</strong> (${Math.round(point.x)}, ${Math.round(point.y)})</p>
-                    <p><strong>Predicted Class:</strong> <span style="color: ${colors[predictedClass]}">Class ${predictedClass}</span></p>
-                    <p><strong>K Value:</strong> ${k}</p>
-                    <p><strong>Distance Metric:</strong> ${distanceMetric}</p>
-                    <p><strong>Weighting:</strong> ${weightingScheme}</p>
-                    <p><strong>Nearest Neighbors:</strong></p>
-                    <ul>
-                `;
-                
-                neighbors.forEach((neighbor, i) => {
-                    const dataPoint = dataPoints[neighbor.index];
-                    metricsHTML += `
-                        <li>Neighbor ${i+1}: Class ${dataPoint.class} - Distance: ${neighbor.distance.toFixed(2)}</li>
-                    `;
-                });
-                
-                metricsHTML += '</ul>';
-                metricsDiv.innerHTML = metricsHTML;
-            }
-            
-            // Initialize with some random data
-            addRandomPoint('A', 10);
-            addRandomPoint('B', 10);
-            addRandomPoint('C', 10);
+        }
+
+        plot.addEventListener('click', (e) => {
+            const rect = plot.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Remove old unknown
+            const old = plot.querySelector('.unknown');
+            if (old) old.remove();
+
+            // Add new unknown
+            unknownPoint = { x, y };
+            const dot = document.createElement('div');
+            dot.className = 'point unknown';
+            dot.style.left = `${x}px`;
+            dot.style.top = `${y}px`;
+            plot.appendChild(dot);
+
+            info.innerHTML = '<p class="text-amber-400 font-arabic">نقطة جديدة! اضغط Classify</p>';
         });
+
+        kSlider.addEventListener('input', () => {
+            kVal.textContent = kSlider.value;
+        });
+
+        document.getElementById('classify-btn').onclick = () => {
+            if (!unknownPoint) {
+                info.innerHTML = '<p class="text-red-400">ضع نقطة أولاً!</p>';
+                return;
+            }
+
+            const k = parseInt(kSlider.value);
+
+            // Calculate distances
+            const distances = data.map(p => ({
+                ...p,
+                dist: Math.sqrt((p.x - unknownPoint.x) ** 2 + (p.y - unknownPoint.y) ** 2)
+            })).sort((a, b) => a.dist - b.dist);
+
+            // Get K nearest
+            const kNearest = distances.slice(0, k);
+
+            // Highlight neighbors
+            document.querySelectorAll('.point').forEach(el => el.classList.remove('neighbor'));
+            kNearest.forEach(n => {
+                const el = document.getElementById(`point-${n.x}-${n.y}`);
+                if (el) el.classList.add('neighbor');
+            });
+
+            // Vote
+            const votes = { A: 0, B: 0 };
+            kNearest.forEach(n => votes[n.label]++);
+            const result = votes.A > votes.B ? 'A' : 'B';
+
+            // Update unknown point color
+            const unknown = plot.querySelector('.unknown');
+            unknown.className = `point class-${result.toLowerCase()}`;
+            unknown.style.border = '2px solid white';
+
+            info.innerHTML = `<p class="text-emerald-400 font-arabic font-bold">
+                ✓ Class ${result}! 
+                (A: ${votes.A} صوت${votes.A > 1 ? '' : ''}, B: ${votes.B} صوت${votes.B > 1 ? '' : ''})
+            </p>`;
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            unknownPoint = null;
+            initPlot();
+            info.innerHTML = '<p class="text-slate-400">Click on the plot to place a point.</p>';
+        };
+
+        initPlot();
     </script>
-    <script src="../notifications/notification.js"></script>
 </body>
+
 </html>

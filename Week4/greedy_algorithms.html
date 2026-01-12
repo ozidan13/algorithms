@@ -1,1773 +1,456 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greedy Algorithms Visualization</title>
+    <title>Greedy Algorithms | الخوارزميات الجشعة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', lime: '#84CC16' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
+                    },
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --background-color: #f4f7f9;
-            --container-bg: #ffffff;
-            --text-color: #333;
-            --light-text-color: #555;
-            --border-color: #e0e0e0;
-            --code-bg: #f8f9fa;
-            --highlight-bg: #e8f4f8;
-            --success-color: #2ecc71;
-            --warning-color: #f39c12;
-            --error-color: #e74c3c;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: var(--background-color);
-        }
-        h1, h2, h3 {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-top: 1.5em;
-            margin-bottom: 0.8em;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 1.5em;
-            font-size: 2.5em;
-        }
-        h2 {
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.3em;
-            font-size: 1.8em;
-        }
-        h3 {
-            font-size: 1.4em;
-        }
-        p {
-            margin-bottom: 1em;
-            color: var(--light-text-color);
-        }
-        ul, ol {
-            margin-bottom: 1em;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 0.5em;
-        }
-        .container {
-            background-color: var(--container-bg);
-            border-radius: 10px;
-            padding: 25px 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-        .controls {
-            margin: 25px 0;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            font-size: 0.95em;
-            font-weight: 500;
-        }
-        button:hover {
-            background-color: #2980b9;
-            transform: translateY(-1px);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            transform: translateY(0);
-        }
-        select, input[type="number"] {
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95em;
-            min-width: 150px;
-        }
-        input[type="number"] {
-            width: 100px;
+            background: #020617;
+            color: #E2E8F0;
+            overflow-x: hidden;
         }
 
-        .visualization-container {
-            margin: 25px 0;
-            min-height: 350px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            position: relative;
-            background-color: #fdfdfd;
-            overflow: hidden; /* Ensure contents stay within border */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .item {
-            display: inline-flex;
+
+        .text-gradient {
+            background: linear-gradient(135deg, #84CC16, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .rtl-block {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .coin {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            margin: 5px;
+            font-weight: bold;
+            font-family: 'Fira Code';
+            font-size: 0.9rem;
+            border: 3px solid;
+            transition: all 0.3s;
+        }
+
+        .coin.selected {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            transform: scale(1.1);
+        }
+
+        .activity-bar {
+            height: 30px;
             border-radius: 4px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .item-label {
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            background-color: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
             color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            white-space: nowrap;
-        }
-        .selected {
-            border: 2px solid var(--error-color);
-            transform: scale(1.05);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .step-display {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: var(--highlight-bg);
-            border: 1px solid #cde9f2;
-            border-radius: 6px;
-            min-height: 60px;
-            font-size: 0.95em;
-        }
-        .step-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .code-block {
-            background-color: var(--code-bg);
-            padding: 15px 20px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            margin: 20px 0;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-        pre {
-            margin: 0;
-        }
-        .complexity {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            margin: 25px 0;
-        }
-        .complexity-item {
-            flex: 1;
-            min-width: 220px;
-            padding: 15px;
-            background-color: var(--code-bg);
-            border-radius: 6px;
-            border-left: 5px solid var(--primary-color);
-        }
-        .complexity-item h4 {
-            margin-top: 0;
-            margin-bottom: 0.5em;
-            color: var(--secondary-color);
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 25px;
-        }
-        .tab {
-            padding: 12px 25px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            border-bottom: none;
-            margin-bottom: -2px;
-            color: var(--light-text-color);
-            font-weight: 500;
-            transition: color 0.3s ease, border-color 0.3s ease;
-        }
-        .tab:hover {
-            color: var(--primary-color);
-        }
-        .tab.active {
-            border: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--container-bg);
-            border-radius: 8px 8px 0 0;
-            background-color: var(--container-bg);
-            color: var(--primary-color);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .example-container {
-            margin: 25px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border-left: 5px solid var(--primary-color);
-        }
-        .comparison-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin: 25px 0;
-        }
-        .comparison-item {
-            flex: 1;
-            min-width: 300px;
-            background-color: var(--code-bg);
-            padding: 20px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-        .comparison-item h3 {
-            margin-top: 0;
-            color: var(--secondary-color);
-            font-size: 1.2em;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5em;
-        }
-        .activity-log {
-            margin-top: 25px;
-            padding: 15px;
-            background-color: var(--code-bg);
-            border-radius: 6px;
-            border-left: 5px solid var(--primary-color);
-            max-height: 250px;
-            overflow-y: auto;
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-        .activity-log p {
-            margin: 8px 0;
-            color: var(--light-text-color);
-            border-bottom: 1px dashed #eee;
-            padding-bottom: 5px;
-        }
-        .activity-log p:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
+            transition: all 0.3s;
         }
     </style>
 </head>
+
 <body>
-    <h1>Greedy Algorithms Visualization</h1>
-    
-    <div class="container">
-        <h2>Introduction to Greedy Algorithms</h2>
-        <p>
-            Greedy algorithms make locally optimal choices at each step with the hope of finding a global optimum.
-            They are simple and efficient but don't always yield the best solution for all problems.
-        </p>
-        <p>
-            Greedy algorithms are ideal for problems where:
-        </p>
-        <ul>
-            <li>Local optimal choices lead to a global optimal solution</li>
-            <li>The problem has the "greedy-choice property" (a locally optimal choice is part of a globally optimal solution)</li>
-            <li>The problem has "optimal substructure" (an optimal solution contains optimal solutions to subproblems)</li>
-        </ul>
-    </div>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html#week4" class="flex items-center gap-3 hover:opacity-80 transition">
+                <div
+                    class="w-8 h-8 rounded bg-gradient-to-br from-lime-500 to-emerald-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Greedy<span class="text-lime-500">Algo</span></span>
+            </a>
+        </div>
+    </nav>
 
-    <div class="container">
-        <div class="tabs">
-            <div class="tab active" data-tab="activity-selection">Activity Selection</div>
-            <div class="tab" data-tab="coin-change">Coin Change</div>
-            <div class="tab" data-tab="fractional-knapsack">Fractional Knapsack</div>
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-lime-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
-        
-        <div id="activity-selection" class="tab-content active">
-            <h2>Activity Selection Problem</h2>
-            <p>
-                Given a set of activities with start and finish times, select the maximum number of activities
-                that can be performed by a single person, assuming that a person can only work on a single activity at a time.
-            </p>
-            
-            <div class="controls">
-                <button id="generateActivitiesBtn">Generate Random Activities</button>
-                <button id="solveActivitiesBtn">Solve Greedily</button>
-                <button id="stepActivitiesBtn">Step Through</button>
-                <button id="resetActivitiesBtn">Reset</button>
+        <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-lime-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></span>
+                WEEK 4 • تقنيات متقدمة
             </div>
-            
-            <div class="visualization-container" id="activityVisualization">
-                <!-- Activities will be visualized here -->
-            </div>
-            
-            <div class="step-display" id="activityStepDisplay">
-                <p>Generate random activities and click "Solve Greedily" to see the algorithm in action.</p>
-            </div>
-            
-            <div class="activity-log" id="activityLog"></div>
-            
-            <h3>Algorithm Explanation</h3>
-            <div class="example-container">
-                <p>The greedy approach for activity selection:</p>
-                <ol>
-                    <li>Sort all activities by finish time</li>
-                    <li>Select the first activity (earliest finish time)</li>
-                    <li>For remaining activities, select the next compatible activity (start time ≥ finish time of last selected activity)</li>
-                </ol>
-                
-                <div class="code-block">
-                    <pre>
-function activitySelection(activities):
-    // Sort activities by finish time
-    sort activities by finish time
-    
-    // Select first activity
-    select first activity
-    lastFinishTime = finish time of first activity
-    
-    // Consider remaining activities
-    for each activity in remaining activities:
-        if start time of activity ≥ lastFinishTime:
-            select this activity
-            lastFinishTime = finish time of this activity
-    
-    return selected activities</pre>
-                </div>
-            </div>
-            
-            <div class="complexity">
-                <div class="complexity-item">
-                    <h4>Time Complexity</h4>
-                    <p><strong>O(n log n)</strong> - Dominated by the sorting step</p>
-                </div>
-                <div class="complexity-item">
-                    <h4>Space Complexity</h4>
-                    <p><strong>O(n)</strong> - To store the activities</p>
-                </div>
-            </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Greedy</span> Algorithms</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">الخوارزميات الجشعة</h2>
         </div>
-        
-        <div id="coin-change" class="tab-content">
-            <h2>Coin Change Problem</h2>
-            <p>
-                Given a set of coin denominations and a target amount, find the minimum number of coins needed to make up that amount.
-                The greedy approach works optimally for some coin systems (like US coins) but not for all possible coin systems.
-            </p>
-            
-            <div class="controls">
-                <select id="coinSystemSelect">
-                    <option value="us">US Coins (1, 5, 10, 25)</option>
-                    <option value="euro">Euro Coins (1, 2, 5, 10, 20, 50, 100, 200)</option>
-                    <option value="custom">Custom System</option>
-                </select>
-                <input type="number" id="amountInput" min="1" value="63" placeholder="Amount">
-                <button id="solveCoinChangeBtn">Solve Greedily</button>
-                <button id="stepCoinChangeBtn">Step Through</button>
-                <button id="resetCoinChangeBtn">Reset</button>
-            </div>
-            
-            <div class="visualization-container" id="coinChangeVisualization">
-                <!-- Coin change visualization will appear here -->
-            </div>
-            
-            <div class="step-display" id="coinChangeStepDisplay">
-                <p>Select a coin system and amount, then click "Solve Greedily" to see the algorithm in action.</p>
-            </div>
-            
-            <div class="activity-log" id="coinChangeLog"></div>
-            
-            <h3>Algorithm Explanation</h3>
-            <div class="example-container">
-                <p>The greedy approach for coin change:</p>
-                <ol>
-                    <li>Sort coins in descending order</li>
-                    <li>Start with the largest coin and use as many as possible</li>
-                    <li>Move to the next largest coin and repeat until the amount is reached</li>
-                </ol>
-                
-                <div class="code-block">
-                    <pre>
-function coinChange(coins, amount):
-    // Sort coins in descending order
-    sort coins in descending order
-    
-    result = []
-    remaining = amount
-    
-    for each coin in coins:
-        // Use as many of this coin as possible
-        while remaining >= coin:
-            add coin to result
-            remaining = remaining - coin
-    
-    return result</pre>
-                </div>
-            </div>
-            
-            <div class="complexity">
-                <div class="complexity-item">
-                    <h4>Time Complexity</h4>
-                    <p><strong>O(amount)</strong> - In the worst case, we might need to use all 1-value coins</p>
-                </div>
-                <div class="complexity-item">
-                    <h4>Space Complexity</h4>
-                    <p><strong>O(amount)</strong> - To store the coins used</p>
-                </div>
-            </div>
-            
-            <div class="comparison-container">
-                <div class="comparison-item">
-                    <h3>When Greedy Works</h3>
-                    <p>The greedy approach works optimally for canonical coin systems where each coin is at least twice the value of the next smaller coin.</p>
-                    <p>Example: US coins (1, 5, 10, 25)</p>
-                </div>
-                <div class="comparison-item">
-                    <h3>When Greedy Fails</h3>
-                    <p>For some coin systems, the greedy approach doesn't yield the optimal solution.</p>
-                    <p>Example: With coins [1, 3, 4] and amount 6, greedy gives [4, 1, 1] (3 coins) but optimal is [3, 3] (2 coins)</p>
-                </div>
-            </div>
-        </div>
-        
-        <div id="fractional-knapsack" class="tab-content">
-            <h2>Fractional Knapsack Problem</h2>
-            <p>
-                Given a set of items with weights and values, and a knapsack with a maximum capacity,
-                determine the maximum value that can be obtained by taking fractions of items if needed.
-            </p>
-            
-            <div class="controls">
-                <button id="generateItemsBtn">Generate Random Items</button>
-                <input type="number" id="capacityInput" min="1" value="50" placeholder="Knapsack Capacity">
-                <button id="solveKnapsackBtn">Solve Greedily</button>
-                <button id="stepKnapsackBtn">Step Through</button>
-                <button id="resetKnapsackBtn">Reset</button>
-            </div>
-            
-            <div class="visualization-container" id="knapsackVisualization">
-                <!-- Knapsack visualization will appear here -->
-            </div>
-            
-            <div class="step-display" id="knapsackStepDisplay">
-                <p>Generate random items and set a knapsack capacity, then click "Solve Greedily" to see the algorithm in action.</p>
-            </div>
-            
-            <div class="activity-log" id="knapsackLog"></div>
-            
-            <h3>Algorithm Explanation</h3>
-            <div class="example-container">
-                <p>The greedy approach for fractional knapsack:</p>
-                <ol>
-                    <li>Take items with highest value-to-weight ratio first</li>
-                    <li>If an item can be fully included, take it all</li>
-                    <li>If an item can only be partially included, take the fraction that fits</li>
-                </ol>
-                
-                <div class="code-block">
-                    <pre>
-function fractionalKnapsack(items, capacity):
-    // Calculate value-to-weight ratio for each item
-    for each item in items:
-        item.ratio = item.value / item.weight
-    
-    // Sort items by value-to-weight ratio in descending order
-    sort items by ratio in descending order
-    
-    totalValue = 0
-    remainingCapacity = capacity
-    
-    for each item in items:
-        if remainingCapacity >= item.weight:
-            // Take the whole item
-            take item completely
-            totalValue += item.value
-            remainingCapacity -= item.weight
-        else:
-            // Take a fraction of the item
-            fraction = remainingCapacity / item.weight
-            totalValue += item.value * fraction
-            remainingCapacity = 0
-            break
-    
-    return totalValue</pre>
-                </div>
-            </div>
-            
-            <div class="complexity">
-                <div class="complexity-item">
-                    <h4>Time Complexity</h4>
-                    <p><strong>O(n log n)</strong> - Dominated by the sorting step</p>
-                </div>
-                <div class="complexity-item">
-                    <h4>Space Complexity</h4>
-                    <p><strong>O(n)</strong> - To store the items</p>
-                </div>
-            </div>
-            
-            <div class="comparison-container">
-                <div class="comparison-item">
-                    <h3>Fractional vs. 0/1 Knapsack</h3>
-                    <p>In the fractional knapsack problem, we can take fractions of items, making it solvable with a greedy approach.</p>
-                    <p>In contrast, the 0/1 knapsack problem (where we must take items whole or not at all) requires dynamic programming for an optimal solution.</p>
-                </div>
-                <div class="comparison-item">
-                    <h3>Real-world Applications</h3>
-                    <p>Fractional knapsack models resource allocation problems where resources are divisible:</p>
-                    <ul>
-                        <li>Budget allocation across projects</li>
-                        <li>Cargo loading with divisible goods</li>
-                        <li>Investment portfolio optimization</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="container">
-        <h2>When to Use Greedy Algorithms</h2>
-        <p>
-            Greedy algorithms are most effective when:
-        </p>
-        <ul>
-            <li><strong>Greedy choice property:</strong> A globally optimal solution can be reached by making locally optimal choices</li>
-            <li><strong>Optimal substructure:</strong> An optimal solution to the problem contains optimal solutions to subproblems</li>
-            <li><strong>No future consequences:</strong> Current decisions don't negatively impact future decisions</li>
-        </ul>
-        
-        <h3>Common Greedy Algorithm Applications</h3>
-        <ul>
-            <li>Minimum spanning tree (Kruskal's and Prim's algorithms)</li>
-            <li>Dijkstra's shortest path algorithm</li>
-            <li>Huffman coding for data compression</li>
-            <li>Interval scheduling and activity selection</li>
-            <li>Job sequencing with deadlines</li>
-        </ul>
-    </div>
+    </header>
 
-    <script>
-        // Common utility functions
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        
-        function setActiveTab(tabId) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Deactivate all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Activate the selected tab and its content
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-        }
-        
-        // Set up tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                setActiveTab(tabId);
-            });
-        });
-        
-        // Activity Selection Implementation
-        const activityVisualization = document.getElementById('activityVisualization');
-        const activityStepDisplay = document.getElementById('activityStepDisplay');
-        const activityLog = document.getElementById('activityLog');
-        
-        let activities = [];
-        let selectedActivities = [];
-        let activitySteps = [];
-        let currentActivityStep = 0;
-        
-        document.getElementById('generateActivitiesBtn').addEventListener('click', generateActivities);
-        document.getElementById('solveActivitiesBtn').addEventListener('click', solveActivities);
-        document.getElementById('stepActivitiesBtn').addEventListener('click', setupActivitySteps);
-        document.getElementById('resetActivitiesBtn').addEventListener('click', resetActivities);
-        
-        function generateActivities() {
-            resetActivities();
-            
-            // Generate 8-12 random activities
-            const numActivities = getRandomInt(8, 12);
-            activities = [];
-            
-            for (let i = 0; i < numActivities; i++) {
-                const start = getRandomInt(0, 20);
-                const duration = getRandomInt(1, 8);
-                activities.push({
-                    id: i + 1,
-                    start: start,
-                    finish: start + duration
-                });
-            }
-            
-            visualizeActivities();
-            activityStepDisplay.innerHTML = `<p>Generated ${numActivities} random activities. Click "Solve Greedily" to find the maximum number of activities that can be performed.</p>`;
-            logActivity('Generated random activities');
-        }
-        
-        function visualizeActivities() {
-            activityVisualization.innerHTML = '';
-            
-            // Create a timeline from 0 to max finish time
-            const maxFinish = Math.max(...activities.map(a => a.finish));
-            const timelineContainer = document.createElement('div');
-            timelineContainer.style.position = 'relative';
-            timelineContainer.style.height = '30px';
-            timelineContainer.style.marginBottom = '20px';
-            timelineContainer.style.borderBottom = '2px solid #333';
-            
-            // Add time markers
-            for (let i = 0; i <= maxFinish; i += 2) {
-                const marker = document.createElement('div');
-                marker.style.position = 'absolute';
-                marker.style.left = `${(i / maxFinish) * 100}%`;
-                marker.style.bottom = '0';
-                marker.style.transform = 'translateX(-50%)';
-                marker.innerHTML = `<div style="border-left: 1px solid #999; height: 10px;"></div><div style="font-size: 12px;">${i}</div>`;
-                timelineContainer.appendChild(marker);
-            }
-            
-            activityVisualization.appendChild(timelineContainer);
-            
-            // Create activity bars
-            activities.forEach((activity, index) => {
-                const activityBar = document.createElement('div');
-                activityBar.className = 'item';
-                activityBar.id = `activity-${activity.id}`;
-                activityBar.style.width = `${((activity.finish - activity.start) / maxFinish) * 100}%`;
-                activityBar.style.marginLeft = `${(activity.start / maxFinish) * 100}%`;
-                activityBar.style.height = '30px';
-                activityBar.style.backgroundColor = selectedActivities.includes(activity) ? '#2ecc71' : '#3498db';
-                activityBar.style.marginBottom = '10px';
-                activityBar.style.position = 'relative';
-                
-                const label = document.createElement('div');
-                label.className = 'item-label';
-                label.textContent = `A${activity.id} (${activity.start}-${activity.finish})`;
-                activityBar.appendChild(label);
-                
-                activityVisualization.appendChild(activityBar);
-            });
-        }
-        
-        function solveActivities() {
-            if (activities.length === 0) {
-                activityStepDisplay.innerHTML = '<p>Please generate activities first.</p>';
-                return;
-            }
-            
-            // Sort activities by finish time
-            activities.sort((a, b) => a.finish - b.finish);
-            
-            // Select activities greedily
-            selectedActivities = [];
-            let lastFinishTime = -1;
-            
-            for (const activity of activities) {
-                if (activity.start >= lastFinishTime) {
-                    selectedActivities.push(activity);
-                    lastFinishTime = activity.finish;
-                }
-            }
-            
-            visualizeActivities();
-            
-            activityStepDisplay.innerHTML = `<p>Selected ${selectedActivities.length} activities (shown in green) using the greedy approach.</p>`;
-            logActivity(`Selected ${selectedActivities.length} activities using the greedy approach`);
-        }
-        
-        function setupActivitySteps() {
-            if (activities.length === 0) {
-                activityStepDisplay.innerHTML = '<p>Please generate activities first.</p>';
-                return;
-            }
-            
-            // Sort activities by finish time
-            activities.sort((a, b) => a.finish - b.finish);
-            
-            // Create steps for visualization
-            activitySteps = [];
-            selectedActivities = [];
-            let lastFinishTime = -1;
-            
-            // Step 1: Sort by finish time
-            activitySteps.push({
-                description: 'Sort all activities by finish time',
-                selected: [...selectedActivities],
-                highlight: null
-            });
-            
-            // Step 2: Select first activity
-            const firstActivity = activities[0];
-            selectedActivities.push(firstActivity);
-            lastFinishTime = firstActivity.finish;
-            
-            activitySteps.push({
-                description: `Select first activity A${firstActivity.id} (${firstActivity.start}-${firstActivity.finish})`,
-                selected: [...selectedActivities],
-                highlight: firstActivity.id
-            });
-            
-            // Steps 3+: Consider remaining activities
-            for (let i = 1; i < activities.length; i++) {
-                const activity = activities[i];
-                const isCompatible = activity.start >= lastFinishTime;
-                
-                if (isCompatible) {
-                    selectedActivities.push(activity);
-                    lastFinishTime = activity.finish;
-                    
-                    activitySteps.push({
-                        description: `Select activity A${activity.id} (${activity.start}-${activity.finish}) as it's compatible with the last selected activity`,
-                        selected: [...selectedActivities],
-                        highlight: activity.id
-                    });
-                } else {
-                    activitySteps.push({
-                        description: `Skip activity A${activity.id} (${activity.start}-${activity.finish}) as it overlaps with the last selected activity`,
-                        selected: [...selectedActivities],
-                        highlight: activity.id,
-                        skip: true
-                    });
-                }
-            }
-            
-            // Final step
-            activitySteps.push({
-                description: `Finished! Selected ${selectedActivities.length} activities using the greedy approach.`,
-                selected: [...selectedActivities],
-                highlight: null
-            });
-            
-            currentActivityStep = 0;
-            showActivityStep(currentActivityStep);
-            
-            document.getElementById('stepActivitiesBtn').disabled = true;
-            logActivity('Started step-by-step visualization');
-        }
-        
-        function showActivityStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= activitySteps.length) return;
-            
-            const step = activitySteps[stepIndex];
-            activityStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${activitySteps.length}: ${step.description}</p>`;
-            
-            // Reset all activities to blue
-            activities.forEach(activity => {
-                const element = document.getElementById(`activity-${activity.id}`);
-                if (element) {
-                    element.style.backgroundColor = '#3498db';
-                    element.style.transform = 'scale(1)';
-                    element.style.border = 'none';
-                }
-            });
-            
-            // Highlight selected activities in green
-            step.selected.forEach(activity => {
-                const element = document.getElementById(`activity-${activity.id}`);
-                if (element) {
-                    element.style.backgroundColor = '#2ecc71';
-                }
-            });
-            
-            // Highlight current activity being considered
-            if (step.highlight) {
-                const element = document.getElementById(`activity-${step.highlight}`);
-                if (element) {
-                    if (step.skip) {
-                        element.style.backgroundColor = '#e74c3c';
-                    } else if (!step.selected.some(a => a.id === step.highlight)) {
-                        element.style.backgroundColor = '#f39c12';
-                    }
-                    element.style.transform = 'scale(1.05)';
-                    element.style.border = '2px solid #333';
-                }
-            }
-            
-            // Enable/disable navigation buttons
-            document.getElementById('prev-step-btn').disabled = stepIndex === 0;
-            document.getElementById('next-step-btn').disabled = stepIndex === activitySteps.length - 1;
-        }
-        
-        function resetActivities() {
-            activities = [];
-            selectedActivities = [];
-            activitySteps = [];
-            currentActivityStep = 0;
-            
-            activityVisualization.innerHTML = '<p>Click "Generate Random Activities" to start.</p>';
-            activityStepDisplay.innerHTML = '<p>Generate random activities and click "Solve Greedily" to see the algorithm in action.</p>';
-            activityLog.innerHTML = '';
-        }
-        
-        function logActivity(message) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            activityLog.prepend(logEntry);
-        }
-        
-        // Coin Change Implementation
-        const coinChangeVisualization = document.getElementById('coinChangeVisualization');
-        const coinChangeStepDisplay = document.getElementById('coinChangeStepDisplay');
-        const coinChangeLog = document.getElementById('coinChangeLog');
-        
-        let coins = [];
-        let amount = 0;
-        let coinChangeSteps = [];
-        let currentCoinStep = 0;
-        
-        document.getElementById('solveCoinChangeBtn').addEventListener('click', solveCoinChange);
-        document.getElementById('stepCoinChangeBtn').addEventListener('click', setupCoinChangeSteps);
-        document.getElementById('resetCoinChangeBtn').addEventListener('click', resetCoinChange);
-        document.getElementById('coinSystemSelect').addEventListener('change', updateCoinSystem);
-        
-        function updateCoinSystem() {
-            const system = document.getElementById('coinSystemSelect').value;
-            
-            switch(system) {
-                case 'us':
-                    coins = [1, 5, 10, 25];
-                    break;
-                case 'euro':
-                    coins = [1, 2, 5, 10, 20, 50, 100, 200];
-                    break;
-                case 'custom':
-                    // Prompt for custom coin system
-                    const customInput = prompt('Enter coin denominations separated by commas (e.g., 1,3,4,5):', '1,3,4,5');
-                    if (customInput) {
-                        coins = customInput.split(',').map(c => parseInt(c.trim())).filter(c => !isNaN(c) && c > 0);
-                    } else {
-                        coins = [1, 3, 4, 5];
-                    }
-                    break;
-            }
-            
-            resetCoinChange();
-            coinChangeStepDisplay.innerHTML = `<p>Selected coin system: [${coins.join(', ')}]. Enter an amount and click "Solve Greedily".</p>`;
-            logCoinChange(`Updated coin system to [${coins.join(', ')}]`);
-        }
-        
-        function solveCoinChange() {
-            amount = parseInt(document.getElementById('amountInput').value);
-            
-            if (isNaN(amount) || amount <= 0) {
-                coinChangeStepDisplay.innerHTML = '<p>Please enter a valid positive amount.</p>';
-                return;
-            }
-            
-            if (coins.length === 0) {
-                updateCoinSystem();
-            }
-            
-            // Sort coins in descending order
-            coins.sort((a, b) => b - a);
-            
-            // Solve using greedy approach
-            const result = [];
-            let remaining = amount;
-            
-            for (const coin of coins) {
-                while (remaining >= coin) {
-                    result.push(coin);
-                    remaining -= coin;
-                }
-            }
-            
-            visualizeCoinChange(result);
-            
-            coinChangeStepDisplay.innerHTML = `<p>Greedy solution for amount ${amount}: Use ${result.length} coins [${result.join(', ')}]</p>`;
-            logCoinChange(`Found greedy solution for amount ${amount} using ${result.length} coins`);
-        }
-        
-        function visualizeCoinChange(result) {
-            coinChangeVisualization.innerHTML = '';
-            
-            // Group coins by denomination
-            const coinCounts = {};
-            for (const coin of result) {
-                coinCounts[coin] = (coinCounts[coin] || 0) + 1;
-            }
-            
-            // Create coin stacks
-            const coinStacksContainer = document.createElement('div');
-            coinStacksContainer.style.display = 'flex';
-            coinStacksContainer.style.flexWrap = 'wrap';
-            coinStacksContainer.style.gap = '20px';
-            coinStacksContainer.style.justifyContent = 'center';
-            
-            for (const coin in coinCounts) {
-                const count = coinCounts[coin];
-                
-                const coinStack = document.createElement('div');
-                coinStack.style.textAlign = 'center';
-                
-                // Create coin visualizations
-                for (let i = 0; i < count; i++) {
-                    const coinElement = document.createElement('div');
-                    coinElement.className = 'item';
-                    coinElement.style.width = '40px';
-                    coinElement.style.height = '40px';
-                    coinElement.style.borderRadius = '50%';
-                    coinElement.style.backgroundColor = getCoinColor(parseInt(coin));
-                    coinElement.style.margin = '5px auto';
-                    coinElement.style.display = 'flex';
-                    coinElement.style.alignItems = 'center';
-                    coinElement.style.justifyContent = 'center';
-                    coinElement.style.fontWeight = 'bold';
-                    coinElement.style.color = 'white';
-                    coinElement.textContent = coin;
-                    
-                    coinStack.appendChild(coinElement);
-                }
-                
-                const label = document.createElement('div');
-                label.textContent = `${count} × ${coin}`;
-                label.style.marginTop = '5px';
-                coinStack.appendChild(label);
-                
-                coinStacksContainer.appendChild(coinStack);
-            }
-            
-            coinChangeVisualization.appendChild(coinStacksContainer);
-            
-            // Add total summary
-            const summary = document.createElement('div');
-            summary.style.marginTop = '20px';
-            summary.style.textAlign = 'center';
-            summary.innerHTML = `<strong>Total:</strong> ${result.length} coins = ${amount}`;
-            coinChangeVisualization.appendChild(summary);
-        }
-        
-        function getCoinColor(value) {
-            // Different colors for different coin values
-            const colors = {
-                1: '#a5a5a5',    // Silver/gray for 1
-                2: '#a5a5a5',    // Silver/gray for 2
-                3: '#cd7f32',    // Bronze for 3
-                4: '#cd7f32',    // Bronze for 4
-                5: '#cd7f32',    // Bronze for 5
-                10: '#cd7f32',   // Bronze for 10
-                20: '#ffd700',   // Gold for 20
-                25: '#ffd700',   // Gold for 25
-                50: '#ffd700',   // Gold for 50
-                100: '#ffd700',  // Gold for 100
-                200: '#ffd700'   // Gold for 200
-            };
-            
-            return colors[value] || '#3498db';
-        }
-        
-        function setupCoinChangeSteps() {
-            amount = parseInt(document.getElementById('amountInput').value);
-            
-            if (isNaN(amount) || amount <= 0) {
-                coinChangeStepDisplay.innerHTML = '<p>Please enter a valid positive amount.</p>';
-                return;
-            }
-            
-            if (coins.length === 0) {
-                updateCoinSystem();
-            }
-            
-            // Sort coins in descending order
-            coins.sort((a, b) => b - a);
-            
-            // Create steps for visualization
-            coinChangeSteps = [];
-            let remaining = amount;
-            const result = [];
-            
-            // Step 1: Sort coins
-            coinChangeSteps.push({
-                description: `Sort coins in descending order: [${coins.join(', ')}]`,
-                result: [...result],
-                remaining: remaining,
-                highlight: null
-            });
-            
-            // Steps 2+: Use coins greedily
-            for (const coin of coins) {
-                let usedThisCoin = false;
-                
-                while (remaining >= coin) {
-                    result.push(coin);
-                    remaining -= coin;
-                    usedThisCoin = true;
-                    
-                    coinChangeSteps.push({
-                        description: `Use a ${coin} coin. Remaining amount: ${remaining}`,
-                        result: [...result],
-                        remaining: remaining,
-                        highlight: coin
-                    });
-                }
-                
-                if (!usedThisCoin) {
-                    coinChangeSteps.push({
-                        description: `Cannot use a ${coin} coin as it's larger than the remaining amount ${remaining}`,
-                        result: [...result],
-                        remaining: remaining,
-                        highlight: coin,
-                        skip: true
-                    });
-                }
-            }
-            
-            // Final step
-            coinChangeSteps.push({
-                description: `Finished! Used ${result.length} coins to make amount ${amount}`,
-                result: [...result],
-                remaining: 0,
-                highlight: null
-            });
-            
-            currentCoinStep = 0;
-            showCoinChangeStep(currentCoinStep);
-            
-            document.getElementById('stepCoinChangeBtn').disabled = true;
-            logCoinChange('Started step-by-step visualization for coin change');
-        }
-        
-        function showCoinChangeStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= coinChangeSteps.length) return;
-            
-            const step = coinChangeSteps[stepIndex];
-            coinChangeStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${coinChangeSteps.length}: ${step.description}</p>`;
-            
-            visualizeCoinChangeStep(step);
-        }
-        
-        function visualizeCoinChangeStep(step) {
-            coinChangeVisualization.innerHTML = '';
-            
-            // Group coins by denomination
-            const coinCounts = {};
-            for (const coin of step.result) {
-                coinCounts[coin] = (coinCounts[coin] || 0) + 1;
-            }
-            
-            // Create coin stacks
-            const coinStacksContainer = document.createElement('div');
-            coinStacksContainer.style.display = 'flex';
-            coinStacksContainer.style.flexWrap = 'wrap';
-            coinStacksContainer.style.gap = '20px';
-            coinStacksContainer.style.justifyContent = 'center';
-            
-            for (const coin in coinCounts) {
-                const count = coinCounts[coin];
-                
-                const coinStack = document.createElement('div');
-                coinStack.style.textAlign = 'center';
-                
-                // Create coin visualizations
-                for (let i = 0; i < count; i++) {
-                    const coinElement = document.createElement('div');
-                    coinElement.className = 'item';
-                    coinElement.style.width = '40px';
-                    coinElement.style.height = '40px';
-                    coinElement.style.borderRadius = '50%';
-                    coinElement.style.backgroundColor = getCoinColor(parseInt(coin));
-                    coinElement.style.margin = '5px auto';
-                    coinElement.style.display = 'flex';
-                    coinElement.style.alignItems = 'center';
-                    coinElement.style.justifyContent = 'center';
-                    coinElement.style.fontWeight = 'bold';
-                    coinElement.style.color = 'white';
-                    coinElement.textContent = coin;
-                    
-                    // Highlight the most recently added coin
-                    if (parseInt(coin) === step.highlight && i === count - 1) {
-                        coinElement.style.border = '2px solid #e74c3c';
-                        coinElement.style.transform = 'scale(1.1)';
-                    }
-                    
-                    coinStack.appendChild(coinElement);
-                }
-                
-                const label = document.createElement('div');
-                label.textContent = `${count} × ${coin}`;
-                label.style.marginTop = '5px';
-                coinStack.appendChild(label);
-                
-                coinStacksContainer.appendChild(coinStack);
-            }
-            
-            coinChangeVisualization.appendChild(coinStacksContainer);
-            
-            // Show remaining amount
-            const remainingDisplay = document.createElement('div');
-            remainingDisplay.style.marginTop = '20px';
-            remainingDisplay.style.textAlign = 'center';
-            remainingDisplay.innerHTML = `<strong>Remaining amount:</strong> ${step.remaining}`;
-            coinChangeVisualization.appendChild(remainingDisplay);
-            
-            // Show current coin being considered if it's being skipped
-            if (step.skip && step.highlight) {
-                const skippedCoin = document.createElement('div');
-                skippedCoin.style.marginTop = '20px';
-                skippedCoin.style.textAlign = 'center';
-                
-                const coinElement = document.createElement('div');
-                coinElement.className = 'item';
-                coinElement.style.width = '40px';
-                coinElement.style.height = '40px';
-                coinElement.style.borderRadius = '50%';
-                coinElement.style.backgroundColor = getCoinColor(step.highlight);
-                coinElement.style.margin = '5px auto';
-                coinElement.style.display = 'flex';
-                coinElement.style.alignItems = 'center';
-                coinElement.style.justifyContent = 'center';
-                coinElement.style.fontWeight = 'bold';
-                coinElement.style.color = 'white';
-                coinElement.style.border = '2px solid #e74c3c';
-                coinElement.style.opacity = '0.5';
-                coinElement.textContent = step.highlight;
-                
-                skippedCoin.appendChild(coinElement);
-                skippedCoin.innerHTML += '<p>Cannot use this coin</p>';
-                
-                coinChangeVisualization.appendChild(skippedCoin);
-            }
-            
-            // Add total summary
-            const summary = document.createElement('div');
-            summary.style.marginTop = '20px';
-            summary.style.textAlign = 'center';
-            summary.innerHTML = `<strong>Current total:</strong> ${step.result.length} coins = ${amount - step.remaining}`;
-            coinChangeVisualization.appendChild(summary);
-        }
-        
-        function resetCoinChange() {
-            coinChangeVisualization.innerHTML = '<p>Select a coin system and amount, then click "Solve Greedily" to see the algorithm in action.</p>';
-            coinChangeStepDisplay.innerHTML = '<p>Select a coin system and amount, then click "Solve Greedily" to see the algorithm in action.</p>';
-            coinChangeLog.innerHTML = '';
-            coinChangeSteps = [];
-            currentCoinStep = 0;
-        }
-        
-        function logCoinChange(message) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            coinChangeLog.prepend(logEntry);
-        }
-        
-        // Fractional Knapsack Implementation
-        const knapsackVisualization = document.getElementById('knapsackVisualization');
-        const knapsackStepDisplay = document.getElementById('knapsackStepDisplay');
-        const knapsackLog = document.getElementById('knapsackLog');
-        
-        let items = [];
-        let capacity = 0;
-        let knapsackSteps = [];
-        let currentKnapsackStep = 0;
-        
-        document.getElementById('generateItemsBtn').addEventListener('click', generateItems);
-        document.getElementById('solveKnapsackBtn').addEventListener('click', solveKnapsack);
-        document.getElementById('stepKnapsackBtn').addEventListener('click', setupKnapsackSteps);
-        document.getElementById('resetKnapsackBtn').addEventListener('click', resetKnapsack);
-        
-        function generateItems() {
-            resetKnapsack();
-            
-            // Generate 5-8 random items
-            const numItems = getRandomInt(5, 8);
-            items = [];
-            
-            for (let i = 0; i < numItems; i++) {
-                const weight = getRandomInt(5, 25);
-                const value = getRandomInt(10, 100);
-                items.push({
-                    id: i + 1,
-                    weight: weight,
-                    value: value,
-                    ratio: value / weight
-                });
-            }
-            
-            capacity = parseInt(document.getElementById('capacityInput').value) || 50;
-            
-            visualizeItems();
-            knapsackStepDisplay.innerHTML = `<p>Generated ${numItems} random items. Click "Solve Greedily" to find the maximum value that can be obtained.</p>`;
-            logKnapsack('Generated random items');
-        }
-        
-        function visualizeItems() {
-            knapsackVisualization.innerHTML = '';
-            
-            // Create item table
-            const table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            table.style.marginBottom = '20px';
-            
-            // Create header row
-            const headerRow = document.createElement('tr');
-            ['Item', 'Weight', 'Value', 'Value/Weight Ratio', 'Amount Used'].forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                th.style.padding = '8px';
-                th.style.borderBottom = '2px solid #ddd';
-                th.style.textAlign = 'left';
-                headerRow.appendChild(th);
-            });
-            table.appendChild(headerRow);
-            
-            // Create item rows
-            items.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.id = `item-row-${item.id}`;
-                
-                // Item ID
-                const idCell = document.createElement('td');
-                idCell.textContent = `Item ${item.id}`;
-                idCell.style.padding = '8px';
-                idCell.style.borderBottom = '1px solid #ddd';
-                row.appendChild(idCell);
-                
-                // Weight
-                const weightCell = document.createElement('td');
-                weightCell.textContent = item.weight;
-                weightCell.style.padding = '8px';
-                weightCell.style.borderBottom = '1px solid #ddd';
-                row.appendChild(weightCell);
-                
-                // Value
-                const valueCell = document.createElement('td');
-                valueCell.textContent = item.value;
-                valueCell.style.padding = '8px';
-                valueCell.style.borderBottom = '1px solid #ddd';
-                row.appendChild(valueCell);
-                
-                // Ratio
-                const ratioCell = document.createElement('td');
-                ratioCell.textContent = item.ratio.toFixed(2);
-                ratioCell.style.padding = '8px';
-                ratioCell.style.borderBottom = '1px solid #ddd';
-                row.appendChild(ratioCell);
-                
-                // Amount used (initially empty)
-                const amountCell = document.createElement('td');
-                amountCell.id = `item-amount-${item.id}`;
-                amountCell.textContent = item.fraction ? `${(item.fraction * 100).toFixed(0)}%` : '0%';
-                amountCell.style.padding = '8px';
-                amountCell.style.borderBottom = '1px solid #ddd';
-                row.appendChild(amountCell);
-                
-                table.appendChild(row);
-            });
-            
-            knapsackVisualization.appendChild(table);
-            
-            // Create knapsack visualization
-            const knapsackContainer = document.createElement('div');
-            knapsackContainer.style.marginTop = '20px';
-            knapsackContainer.style.position = 'relative';
-            
-            const knapsackTitle = document.createElement('h3');
-            knapsackTitle.textContent = `Knapsack (Capacity: ${capacity})`;
-            knapsackContainer.appendChild(knapsackTitle);
-            
-            const knapsackBox = document.createElement('div');
-            knapsackBox.style.width = '100%';
-            knapsackBox.style.height = '100px';
-            knapsackBox.style.border = '2px solid #333';
-            knapsackBox.style.borderRadius = '5px';
-            knapsackBox.style.position = 'relative';
-            knapsackBox.style.overflow = 'hidden';
-            knapsackBox.id = 'knapsack-box';
-            
-            // Add capacity indicator
-            const capacityIndicator = document.createElement('div');
-            capacityIndicator.style.position = 'absolute';
-            capacityIndicator.style.top = '0';
-            capacityIndicator.style.right = '10px';
-            capacityIndicator.style.padding = '5px';
-            capacityIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            capacityIndicator.style.borderRadius = '0 0 5px 5px';
-            capacityIndicator.innerHTML = `<strong>Used:</strong> <span id="used-capacity">0</span>/${capacity}`;
-            knapsackBox.appendChild(capacityIndicator);
-            
-            // Add value indicator
-            const valueIndicator = document.createElement('div');
-            valueIndicator.style.position = 'absolute';
-            valueIndicator.style.top = '0';
-            valueIndicator.style.left = '10px';
-            valueIndicator.style.padding = '5px';
-            valueIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            valueIndicator.style.borderRadius = '0 0 5px 5px';
-            valueIndicator.innerHTML = `<strong>Total Value:</strong> <span id="total-value">0</span>`;
-            knapsackBox.appendChild(valueIndicator);
-            
-            knapsackContainer.appendChild(knapsackBox);
-            knapsackVisualization.appendChild(knapsackContainer);
-        }
-        
-        function solveKnapsack() {
-            if (items.length === 0) {
-                knapsackStepDisplay.innerHTML = '<p>Please generate items first.</p>';
-                return;
-            }
-            
-            capacity = parseInt(document.getElementById('capacityInput').value) || 50;
-            
-            // Sort items by value-to-weight ratio in descending order
-            items.sort((a, b) => b.ratio - a.ratio);
-            
-            // Solve using greedy approach
-            let totalValue = 0;
-            let remainingCapacity = capacity;
-            
-            for (const item of items) {
-                if (remainingCapacity >= item.weight) {
-                    // Take the whole item
-                    item.fraction = 1;
-                    totalValue += item.value;
-                    remainingCapacity -= item.weight;
-                } else if (remainingCapacity > 0) {
-                    // Take a fraction of the item
-                    item.fraction = remainingCapacity / item.weight;
-                    totalValue += item.value * item.fraction;
-                    remainingCapacity = 0;
-                } else {
-                    // Can't take any of this item
-                    item.fraction = 0;
-                }
-            }
-            
-            updateKnapsackVisualization();
-            
-            knapsackStepDisplay.innerHTML = `<p>Solved using greedy approach. Total value: ${totalValue.toFixed(2)}</p>`;
-            logKnapsack(`Solved fractional knapsack problem. Total value: ${totalValue.toFixed(2)}`);
-        }
-        
-        function updateKnapsackVisualization() {
-            // Update amount used in the table
-            items.forEach(item => {
-                const amountCell = document.getElementById(`item-amount-${item.id}`);
-                if (amountCell) {
-                    amountCell.textContent = item.fraction ? `${(item.fraction * 100).toFixed(0)}%` : '0%';
-                }
-                
-                // Highlight rows based on fraction used
-                const row = document.getElementById(`item-row-${item.id}`);
-                if (row) {
-                    if (item.fraction === 1) {
-                        row.style.backgroundColor = '#d4edda'; // Green for fully used
-                    } else if (item.fraction > 0) {
-                        row.style.backgroundColor = '#fff3cd'; // Yellow for partially used
-                    } else {
-                        row.style.backgroundColor = ''; // Default for unused
-                    }
-                }
-            });
-            
-            // Update knapsack visualization
-            const knapsackBox = document.getElementById('knapsack-box');
-            if (knapsackBox) {
-                knapsackBox.innerHTML = ''; // Clear previous content
-                
-                // Add capacity and value indicators
-                const usedCapacity = items.reduce((sum, item) => sum + (item.weight * item.fraction), 0);
-                const totalValue = items.reduce((sum, item) => sum + (item.value * item.fraction), 0);
-                
-                const capacityIndicator = document.createElement('div');
-                capacityIndicator.style.position = 'absolute';
-                capacityIndicator.style.top = '0';
-                capacityIndicator.style.right = '10px';
-                capacityIndicator.style.padding = '5px';
-                capacityIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                capacityIndicator.style.borderRadius = '0 0 5px 5px';
-                capacityIndicator.innerHTML = `<strong>Used:</strong> ${usedCapacity.toFixed(2)}/${capacity}`;
-                knapsackBox.appendChild(capacityIndicator);
-                
-                const valueIndicator = document.createElement('div');
-                valueIndicator.style.position = 'absolute';
-                valueIndicator.style.top = '0';
-                valueIndicator.style.left = '10px';
-                valueIndicator.style.padding = '5px';
-                valueIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                valueIndicator.style.borderRadius = '0 0 5px 5px';
-                valueIndicator.innerHTML = `<strong>Total Value:</strong> ${totalValue.toFixed(2)}`;
-                knapsackBox.appendChild(valueIndicator);
-                
-                // Create item blocks in the knapsack
-                let currentX = 0;
-                const knapsackWidth = knapsackBox.clientWidth - 2; // Account for border
-                
-                items.forEach(item => {
-                    if (item.fraction > 0) {
-                        const itemWidth = (item.weight * item.fraction / capacity) * knapsackWidth;
-                        
-                        const itemBlock = document.createElement('div');
-                        itemBlock.style.position = 'absolute';
-                        itemBlock.style.left = `${currentX}px`;
-                        itemBlock.style.top = '30px'; // Below the indicators
-                        itemBlock.style.width = `${itemWidth}px`;
-                        itemBlock.style.height = '60px';
-                        itemBlock.style.backgroundColor = getItemColor(item.id);
-                        itemBlock.style.borderRight = '1px dashed #333';
-                        itemBlock.style.display = 'flex';
-                        itemBlock.style.alignItems = 'center';
-                        itemBlock.style.justifyContent = 'center';
-                        itemBlock.style.color = 'white';
-                        itemBlock.style.fontWeight = 'bold';
-                        itemBlock.style.overflow = 'hidden';
-                        itemBlock.style.fontSize = '12px';
-                        itemBlock.innerHTML = `<div>Item ${item.id}<br>${(item.fraction * 100).toFixed(0)}%</div>`;
-                        
-                        knapsackBox.appendChild(itemBlock);
-                        currentX += itemWidth;
-                    }
-                });
-            }
-        }
-        
-        function getItemColor(id) {
-            // Different colors for different items
-            const colors = [
-                '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', 
-                '#1abc9c', '#d35400', '#34495e', '#16a085', '#c0392b'
-            ];
-            
-            return colors[(id - 1) % colors.length];
-        }
-        
-        function setupKnapsackSteps() {
-            if (items.length === 0) {
-                knapsackStepDisplay.innerHTML = '<p>Please generate items first.</p>';
-                return;
-            }
-            
-            capacity = parseInt(document.getElementById('capacityInput').value) || 50;
-            
-            // Sort items by value-to-weight ratio in descending order
-            items.sort((a, b) => b.ratio - a.ratio);
-            
-            // Create steps for visualization
-            knapsackSteps = [];
-            let totalValue = 0;
-            let remainingCapacity = capacity;
-            
-            // Reset item fractions
-            items.forEach(item => {
-                item.fraction = 0;
-            });
-            
-            // Step 1: Calculate ratios
-            knapsackSteps.push({
-                description: 'Calculate value-to-weight ratio for each item',
-                items: items.map(item => ({ ...item })),
-                remainingCapacity: remainingCapacity,
-                totalValue: totalValue,
-                highlight: null
-            });
-            
-            // Step 2: Sort by ratio
-            knapsackSteps.push({
-                description: 'Sort items by value-to-weight ratio in descending order',
-                items: items.map(item => ({ ...item })),
-                remainingCapacity: remainingCapacity,
-                totalValue: totalValue,
-                highlight: null
-            });
-            
-            // Steps 3+: Process items one by one
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-                
-                if (remainingCapacity >= item.weight) {
-                    // Take the whole item
-                    item.fraction = 1;
-                    totalValue += item.value;
-                    remainingCapacity -= item.weight;
-                    
-                    knapsackSteps.push({
-                        description: `Take the whole item ${item.id} (weight: ${item.weight}, value: ${item.value}). Remaining capacity: ${remainingCapacity}`,
-                        items: items.map(i => ({ ...i })),
-                        remainingCapacity: remainingCapacity,
-                        totalValue: totalValue,
-                        highlight: item.id
-                    });
-                } else if (remainingCapacity > 0) {
-                    // Take a fraction of the item
-                    item.fraction = remainingCapacity / item.weight;
-                    totalValue += item.value * item.fraction;
-                    
-                    knapsackSteps.push({
-                        description: `Take ${(item.fraction * 100).toFixed(0)}% of Item ${item.id} (weight: ${item.weight}, value: ${item.value}). This uses all remaining capacity.`,
-                        items: items.map(i => ({ ...i })),
-                        remainingCapacity: 0,
-                        totalValue: totalValue,
-                        highlight: item.id,
-                        partial: true
-                    });
-                    
-                    remainingCapacity = 0;
-                } else {
-                    // Can't take any of this item
-                    knapsackSteps.push({
-                        description: `Cannot take Item ${item.id} as there is no remaining capacity.`,
-                        items: items.map(i => ({ ...i })),
-                        remainingCapacity: remainingCapacity,
-                        totalValue: totalValue,
-                        highlight: item.id,
-                        skip: true
-                    });
-                }
-            }
-            
-            // Final step
-            knapsackSteps.push({
-                description: `Finished! Total value: ${totalValue.toFixed(2)} using capacity ${capacity - remainingCapacity} out of ${capacity}`,
-                items: items.map(i => ({ ...i })),
-                remainingCapacity: remainingCapacity,
-                totalValue: totalValue,
-                highlight: null
-            });
-            
-            currentKnapsackStep = 0;
-            showKnapsackStep(currentKnapsackStep);
-            
-            document.getElementById('stepKnapsackBtn').disabled = true;
-            logKnapsack('Started step-by-step visualization for fractional knapsack');
-        }
-        
-        function showKnapsackStep(stepIndex) {
-            if (stepIndex < 0 || stepIndex >= knapsackSteps.length) return;
-            
-            const step = knapsackSteps[stepIndex];
-            knapsackStepDisplay.innerHTML = `<p>Step ${stepIndex + 1}/${knapsackSteps.length}: ${step.description}</p>`;
-            
-            visualizeKnapsackStep(step);
-        }
-        
-        function visualizeKnapsackStep(step) {
-            // Update amount used in the table
-            step.items.forEach(item => {
-                const amountCell = document.getElementById(`item-amount-${item.id}`);
-                if (amountCell) {
-                    amountCell.textContent = item.fraction ? `${(item.fraction * 100).toFixed(0)}%` : '0%';
-                }
-                
-                // Highlight rows based on fraction used and current highlight
-                const row = document.getElementById(`item-row-${item.id}`);
-                if (row) {
-                    // Reset background
-                    row.style.backgroundColor = '';
-                    
-                    // Set background based on usage
-                    if (item.fraction === 1) {
-                        row.style.backgroundColor = '#d4edda'; // Green for fully used
-                    } else if (item.fraction > 0) {
-                        row.style.backgroundColor = '#fff3cd'; // Yellow for partially used
-                    }
-                    
-                    // Highlight current item being considered
-                    if (item.id === step.highlight) {
-                        if (step.skip) {
-                            row.style.backgroundColor = '#f8d7da'; // Red for skipped
-                        } else if (step.partial) {
-                            row.style.backgroundColor = '#fff3cd'; // Yellow for partial
-                            row.style.border = '2px solid #f39c12';
-                        } else {
-                            row.style.border = '2px solid #2ecc71';
-                        }
-                    } else {
-                        row.style.border = '';
-                    }
-                }
-            });
-            
-            // Update knapsack visualization
-            const knapsackBox = document.getElementById('knapsack-box');
-            if (knapsackBox) {
-                knapsackBox.innerHTML = ''; // Clear previous content
-                
-                // Add capacity and value indicators
-                const capacityIndicator = document.createElement('div');
-                capacityIndicator.style.position = 'absolute';
-                capacityIndicator.style.top = '0';
-                capacityIndicator.style.right = '10px';
-                capacityIndicator.style.padding = '5px';
-                capacityIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                capacityIndicator.style.borderRadius = '0 0 5px 5px';
-                capacityIndicator.innerHTML = `<strong>Used:</strong> ${(capacity - step.remainingCapacity).toFixed(2)}/${capacity}`;
-                knapsackBox.appendChild(capacityIndicator);
-                
-                const valueIndicator = document.createElement('div');
-                valueIndicator.style.position = 'absolute';
-                valueIndicator.style.top = '0';
-                valueIndicator.style.left = '10px';
-                valueIndicator.style.padding = '5px';
-                valueIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                valueIndicator.style.borderRadius = '0 0 5px 5px';
-                valueIndicator.innerHTML = `<strong>Total Value:</strong> ${step.totalValue.toFixed(2)}`;
-                knapsackBox.appendChild(valueIndicator);
-                
-                // Create item blocks in the knapsack
-                let currentX = 0;
-                const knapsackWidth = knapsackBox.clientWidth - 2; // Account for border
-                
-                step.items.forEach(item => {
-                    if (item.fraction > 0) {
-                        const itemWidth = (item.weight * item.fraction / capacity) * knapsackWidth;
-                        
-                        const itemBlock = document.createElement('div');
-                        itemBlock.style.position = 'absolute';
-                        itemBlock.style.left = `${currentX}px`;
-                        itemBlock.style.top = '30px'; // Below the indicators
-                        itemBlock.style.width = `${itemWidth}px`;
-                        itemBlock.style.height = '60px';
-                        itemBlock.style.backgroundColor = getItemColor(item.id);
-                        itemBlock.style.borderRight = '1px dashed #333';
-                        itemBlock.style.display = 'flex';
-                        itemBlock.style.alignItems = 'center';
-                        itemBlock.style.justifyContent = 'center';
-                        itemBlock.style.color = 'white';
-                        itemBlock.style.fontWeight = 'bold';
-                        itemBlock.style.overflow = 'hidden';
-                        itemBlock.style.fontSize = '12px';
-                        
-                        // Highlight current item
-                        if (item.id === step.highlight) {
-                            itemBlock.style.border = '2px solid #e74c3c';
-                        }
-                        
-                        itemBlock.innerHTML = `<div>Item ${item.id}<br>${(item.fraction * 100).toFixed(0)}%</div>`;
-                        
-                        knapsackBox.appendChild(itemBlock);
-                        currentX += itemWidth;
-                    }
-                });
-            }
-        }
-        
-        function resetKnapsack() {
-            knapsackVisualization.innerHTML = '<p>Generate random items and set a knapsack capacity, then click "Solve Greedily" to see the algorithm in action.</p>';
-            knapsackStepDisplay.innerHTML = '<p>Generate random items and set a knapsack capacity, then click "Solve Greedily" to see the algorithm in action.</p>';
-            knapsackLog.innerHTML = '';
-            items = [];
-            knapsackSteps = [];
-            currentKnapsackStep = 0;
-        }
-        
-        function logKnapsack(message) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            knapsackLog.prepend(logEntry);
-        }
-        
-        // Initialize the page
-        window.addEventListener('load', () => {
-            // Set up navigation buttons for activity selection
-            const prevStepBtn = document.createElement('button');
-            prevStepBtn.id = 'prev-step-btn';
-            prevStepBtn.textContent = 'Previous Step';
-            prevStepBtn.disabled = true;
-            prevStepBtn.addEventListener('click', () => {
-                currentActivityStep--;
-                showActivityStep(currentActivityStep);
-            });
-            
-            const nextStepBtn = document.createElement('button');
-            nextStepBtn.id = 'next-step-btn';
-            nextStepBtn.textContent = 'Next Step';
-            nextStepBtn.disabled = true;
-            nextStepBtn.addEventListener('click', () => {
-                currentActivityStep++;
-                showActivityStep(currentActivityStep);
-            });
-            
-            const stepControls = document.createElement('div');
-            stepControls.className = 'step-controls';
-            stepControls.appendChild(prevStepBtn);
-            stepControls.appendChild(nextStepBtn);
-            
-            document.getElementById('activityVisualization').after(stepControls);
-            
-            // Set up navigation buttons for coin change
-            const prevCoinBtn = document.createElement('button');
-            prevCoinBtn.id = 'prev-coin-btn';
-            prevCoinBtn.textContent = 'Previous Step';
-            prevCoinBtn.disabled = true;
-            prevCoinBtn.addEventListener('click', () => {
-                currentCoinStep--;
-                showCoinChangeStep(currentCoinStep);
-            });
-            
-            const nextCoinBtn = document.createElement('button');
-            nextCoinBtn.id = 'next-coin-btn';
-            nextCoinBtn.textContent = 'Next Step';
-            nextCoinBtn.disabled = true;
-            nextCoinBtn.addEventListener('click', () => {
-                currentCoinStep++;
-                showCoinChangeStep(currentCoinStep);
-            });
-            
-            const coinStepControls = document.createElement('div');
-            coinStepControls.className = 'step-controls';
-            coinStepControls.appendChild(prevCoinBtn);
-            coinStepControls.appendChild(nextCoinBtn);
-            
-            document.getElementById('coinChangeVisualization').after(coinStepControls);
-            
-            // Set up navigation buttons for knapsack
-            const prevKnapsackBtn = document.createElement('button');
-            prevKnapsackBtn.id = 'prev-knapsack-btn';
-            prevKnapsackBtn.textContent = 'Previous Step';
-            prevKnapsackBtn.disabled = true;
-            prevKnapsackBtn.addEventListener('click', () => {
-                currentKnapsackStep--;
-                showKnapsackStep(currentKnapsackStep);
-            });
-            
-            const nextKnapsackBtn = document.createElement('button');
-            nextKnapsackBtn.id = 'next-knapsack-btn';
-            nextKnapsackBtn.textContent = 'Next Step';
-            nextKnapsackBtn.disabled = true;
-            nextKnapsackBtn.addEventListener('click', () => {
-                currentKnapsackStep++;
-                showKnapsackStep(currentKnapsackStep);
-            });
-            
-            const knapsackStepControls = document.createElement('div');
-            knapsackStepControls.className = 'step-controls';
-            knapsackStepControls.appendChild(prevKnapsackBtn);
-            knapsackStepControls.appendChild(nextKnapsackBtn);
-            
-            document.getElementById('knapsackVisualization').after(knapsackStepControls);
-            
-            // Initialize coin system
-            updateCoinSystem();
-        });
-    </script>
-    <script src="../notifications/notification.js"></script>
+    <!-- What is Greedy -->
+    <section id="concept" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-hand-holding-dollar text-lime-500 mr-3"></i>إيه هي Greedy Algorithms؟</h2>
+
+            <div class="glass-card p-8 rounded-2xl border border-lime-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-lime-400 mb-6 font-arabic">🤑 الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه أكل الحلويات</h4>
+                            <p class="text-slate-300">
+                                تخيل طفل قدامه <span class="text-lime-400 font-bold">حلويات كتير</span>:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• بياخد <span class="text-lime-400 font-bold">أكبر حتة</span> في كل مرة</li>
+                                <li>• مش بيفكر في المستقبل</li>
+                                <li>• كل خطوة = <span class="text-yellow-400">أفضل اختيار متاح دلوقتي</span></li>
+                            </ul>
+                            <p class="mt-3 text-lime-400 font-bold">
+                                "Take the best option NOW, don't look back!"
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">🎯 الاستراتيجية</h4>
+                            <div class="space-y-3 mt-4">
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-lime-400 text-xl">1️⃣</span>
+                                    <span>في كل خطوة، اختار <span class="text-lime-400 font-bold">الأفضل محلياً</span>
+                                        (Locally Optimal)</span>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-lime-400 text-xl">2️⃣</span>
+                                    <span>ما ترجعش في قراراتك (No Backtracking)</span>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="text-lime-400 text-xl">3️⃣</span>
+                                    <span>تأمل إن ده يوديك للحل الأمثل (Globally Optimal)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-yellow-950/30 rounded-xl border border-yellow-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">⚠️ تحذير مهم!</h4>
+                            <p class="text-slate-300">
+                                Greedy <span class="text-red-400 font-bold">مش دايماً بيدي الحل الأمثل</span>!
+                                <br>
+                                بس لما بينفع، بيكون <span class="text-emerald-400 font-bold">سريع جداً</span> وبسيط.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coin Change Example -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i class="fa-solid fa-coins text-yellow-500 mr-3"></i>مثال:
+                Coin Change</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">أقل عدد عملات لتكوين مبلغ</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- When Greedy Works -->
+                <div class="glass-card p-6 rounded-2xl border border-emerald-700/50" data-aos="fade-right">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> لما Greedy بينفع ✓
+                    </h3>
+                    <p class="text-sm text-slate-400 font-arabic rtl-block mb-4">
+                        عملات: [25, 10, 5, 1] | المبلغ: 41
+                    </p>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                            <div class="coin bg-yellow-500 border-yellow-300">25</div>
+                            <span class="text-slate-400">← أكبر عملة ≤ 41</span>
+                            <span class="text-emerald-400 font-mono ml-auto">41-25=16</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                            <div class="coin bg-slate-400 border-slate-200">10</div>
+                            <span class="text-slate-400">← أكبر عملة ≤ 16</span>
+                            <span class="text-emerald-400 font-mono ml-auto">16-10=6</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                            <div class="coin bg-orange-400 border-orange-200">5</div>
+                            <span class="text-slate-400">← أكبر عملة ≤ 6</span>
+                            <span class="text-emerald-400 font-mono ml-auto">6-5=1</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                            <div class="coin bg-stone-500 border-stone-300">1</div>
+                            <span class="text-slate-400">← أكبر عملة ≤ 1</span>
+                            <span class="text-emerald-400 font-mono ml-auto">1-1=0 ✓</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-emerald-400 font-bold mt-4">
+                        الإجابة: 4 عملات (أمثل!)
+                    </p>
+                </div>
+
+                <!-- When Greedy Fails -->
+                <div class="glass-card p-6 rounded-2xl border border-red-700/50" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
+                        <i class="fas fa-times-circle"></i> لما Greedy بيفشل ✗
+                    </h3>
+                    <p class="text-sm text-slate-400 font-arabic rtl-block mb-4">
+                        عملات: [1, 3, 4] | المبلغ: 6
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-red-950/30 rounded-lg border border-red-700">
+                            <p class="text-red-400 font-bold mb-2">Greedy يقول:</p>
+                            <p class="text-slate-300">4 + 1 + 1 = <span class="text-red-400 font-bold">3 عملات</span>
+                            </p>
+                        </div>
+                        <div class="p-4 bg-emerald-950/30 rounded-lg border border-emerald-700">
+                            <p class="text-emerald-400 font-bold mb-2">الحل الأمثل:</p>
+                            <p class="text-slate-300">3 + 3 = <span class="text-emerald-400 font-bold">2 عملات!</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="text-center text-yellow-400 text-sm mt-4 font-arabic">
+                        ⚠️ Greedy ما لقاش الحل الأمثل!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activity Selection -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-4"><i
+                    class="fa-solid fa-calendar-check text-blue-500 mr-3"></i>مثال: Activity Selection</h2>
+            <p class="text-center text-slate-400 font-arabic mb-12">أكتر عدد أنشطة ممكن تعملها (من غير تعارض)</p>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="rtl-block mb-6 font-arabic">
+                    <h3 class="text-lg font-bold text-blue-400 mb-3">📋 المشكلة:</h3>
+                    <p class="text-slate-300">
+                        عندك أنشطة بأوقات بداية ونهاية. اختار <span class="text-blue-400 font-bold">أكتر عدد</span> من
+                        غير تعارض.
+                    </p>
+                    <p class="text-sm text-lime-400 mt-2 font-bold">
+                        الاستراتيجية الجشعة: دايماً اختار النشاط اللي <span class="text-yellow-400">ينتهي أولاً</span>!
+                    </p>
+                </div>
+
+                <div class="relative bg-slate-900/50 rounded-xl p-4 overflow-x-auto">
+                    <div class="min-w-[500px]">
+                        <!-- Time axis -->
+                        <div class="flex justify-between text-xs text-slate-500 mb-2 px-2">
+                            <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span>
+                        </div>
+
+                        <!-- Activities -->
+                        <div class="space-y-2">
+                            <div class="relative h-8">
+                                <div class="activity-bar bg-emerald-600 absolute" style="left:0%; width:25%;">A (0-3) ✓
+                                </div>
+                            </div>
+                            <div class="relative h-8">
+                                <div class="activity-bar bg-red-600/50 absolute" style="left:8.3%; width:33.3%;">B (1-5)
+                                    ✗</div>
+                            </div>
+                            <div class="relative h-8">
+                                <div class="activity-bar bg-emerald-600 absolute" style="left:33.3%; width:25%;">C (4-7)
+                                    ✓</div>
+                            </div>
+                            <div class="relative h-8">
+                                <div class="activity-bar bg-red-600/50 absolute" style="left:41.6%; width:33.3%;">D
+                                    (5-9) ✗</div>
+                            </div>
+                            <div class="relative h-8">
+                                <div class="activity-bar bg-emerald-600 absolute" style="left:66.6%; width:25%;">E
+                                    (8-11) ✓</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-emerald-950/30 rounded-xl border border-emerald-700 rtl-block">
+                    <p class="text-emerald-400 font-bold font-arabic">✓ الإجابة: A, C, E (3 أنشطة)</p>
+                    <p class="text-sm text-slate-400 font-arabic mt-1">
+                        اخترنا اللي ينتهي أولاً في كل مرة، عشان نفضي وقت لأنشطة تانية!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Greedy vs DP -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-scale-balanced text-purple-500 mr-3"></i>Greedy vs DP</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-4 text-right font-arabic">المقارنة</th>
+                            <th class="py-4 px-4 text-center text-lime-400">Greedy</th>
+                            <th class="py-4 px-4 text-center text-rose-400">Dynamic Programming</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الاستراتيجية</td>
+                            <td class="py-4 px-4 text-center text-lime-300">أفضل اختيار محلي</td>
+                            <td class="py-4 px-4 text-center text-rose-300">جرب كل الاحتمالات</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الحل الأمثل؟</td>
+                            <td class="py-4 px-4 text-center text-yellow-400">أحياناً</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">دايماً ✓</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">السرعة</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">سريع جداً ✓</td>
+                            <td class="py-4 px-4 text-center text-yellow-400">أبطأ</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الذاكرة</td>
+                            <td class="py-4 px-4 text-center text-emerald-400">قليلة ✓</td>
+                            <td class="py-4 px-4 text-center text-yellow-400">أكتر (Table)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">التعقيد</td>
+                            <td class="py-4 px-4 text-center text-lime-300">بسيط</td>
+                            <td class="py-4 px-4 text-center text-rose-300">أصعب</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Famous Greedy Problems -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-star text-yellow-500 mr-3"></i>مشاكل
+                Greedy الشهيرة</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up">
+                    <h3 class="font-bold text-emerald-400 mb-2"><i class="fas fa-tree mr-2"></i>Minimum Spanning Tree
+                    </h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">أقل تكلفة لربط كل الـ nodes</p>
+                    <p class="text-xs text-slate-500 mt-2">Prim's, Kruskal's</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="font-bold text-blue-400 mb-2"><i class="fas fa-route mr-2"></i>Dijkstra's Algorithm</h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">أقصر طريق من نقطة لباقي النقط</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="font-bold text-purple-400 mb-2"><i class="fas fa-file-zipper mr-2"></i>Huffman Coding
+                    </h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">ضغط البيانات (Compression)</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="font-bold text-yellow-400 mb-2"><i class="fas fa-calendar mr-2"></i>Activity Selection
+                    </h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">أكتر عدد أنشطة من غير تعارض</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up" data-aos-delay="400">
+                    <h3 class="font-bold text-orange-400 mb-2"><i class="fas fa-suitcase mr-2"></i>Fractional Knapsack
+                    </h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">Knapsack لما ممكن تقسم الحاجات</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl" data-aos="fade-up" data-aos-delay="500">
+                    <h3 class="font-bold text-cyan-400 mb-2"><i class="fas fa-clock mr-2"></i>Job Scheduling</h3>
+                    <p class="text-xs text-slate-400 font-arabic rtl-block">ترتيب المهام بأقل تأخير</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
+
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">activitySelection.js</span>
+                </div>
+                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">function</span> <span class="text-blue-400">activitySelection</span>(<span class="text-orange-300">activities</span>) {
+  <span class="text-slate-500">// Sort by end time (Greedy choice)</span>
+  activities.sort((a, b) => a.end - b.end);
+  
+  <span class="text-purple-400">const</span> selected = [activities[<span class="text-emerald-400">0</span>]];
+  <span class="text-purple-400">let</span> lastEnd = activities[<span class="text-emerald-400">0</span>].end;
+  
+  <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> i = <span class="text-emerald-400">1</span>; i < activities.length; i++) {
+    <span class="text-slate-500">// If no overlap, select it</span>
+    <span class="text-purple-400">if</span> (activities[i].start >= lastEnd) {
+      selected.push(activities[i]);
+      lastEnd = activities[i].end;
+    }
+  }
+  
+  <span class="text-purple-400">return</span> selected;
+}</code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block">
+                        <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+                        <div class="space-y-3 font-arabic text-xs">
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-lime-500">
+                                <span class="text-lime-400 font-bold">سطر 3:</span>
+                                رتب حسب وقت النهاية (الجشعة!)
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">سطر 5:</span>
+                                اختار أول نشاط (ينتهي أولاً)
+                            </div>
+                            <div class="p-2 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">سطر 10-12:</span>
+                                لو ما فيش تعارض، اختاره
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
+        <p>Grokking Algorithms Course - Week 4</p>
+    </footer>
+
+    <script>AOS.init({ duration: 800, once: true });</script>
 </body>
+
 </html>
