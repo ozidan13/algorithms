@@ -5,54 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Array Operations | عمليات المصفوفات</title>
-    <meta name="description" content="Interactive Array Operations visualization with Arabic explanations.">
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
-
-    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        neon: {
-                            green: '#10B981',
-                            blue: '#3B82F6',
-                            purple: '#8B5CF6',
-                            orange: '#F59E0B'
-                        },
-                        dark: {
-                            bg: '#020617',
-                            card: '#0F172A',
-                            border: '#1E293B'
-                        }
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', cyan: '#06B6D4' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        arabic: ['Cairo', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    }
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
                 }
             }
         }
     </script>
-
     <style>
         body {
-            background-color: #020617;
+            background: #020617;
             color: #E2E8F0;
             overflow-x: hidden;
         }
@@ -63,40 +39,10 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .glass-card:hover {
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 0 30px -10px rgba(59, 130, 246, 0.2);
-        }
-
         .text-gradient {
-            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            background: linear-gradient(135deg, #06B6D4, #3B82F6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #020617;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1E293B;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3B82F6;
-        }
-
-        /* RTL Arabic Support */
-        .rtl-text {
-            direction: rtl;
-            text-align: right;
-            font-family: 'Cairo', sans-serif;
         }
 
         .rtl-block {
@@ -104,53 +50,48 @@
             text-align: right;
         }
 
-        /* Array Element Styles */
-        .array-element {
-            width: 55px;
-            height: 55px;
+        .array-cell {
+            min-width: 50px;
+            height: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
-            color: white;
-            border-radius: 12px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 1.1rem;
-            font-family: 'Fira Code', monospace;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-            position: relative;
+            font-family: 'Fira Code';
+            transition: all 0.3s;
+            border: 2px solid #334155;
+            background: linear-gradient(135deg, #1E293B, #0F172A);
         }
 
-        .array-element .index {
-            position: absolute;
-            bottom: -22px;
-            font-size: 0.7rem;
+        .array-cell .index {
+            font-size: 0.65rem;
             color: #64748b;
         }
 
-        .array-element.accessed {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            transform: scale(1.15);
-            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        .array-cell .value {
+            font-size: 1rem;
+            color: white;
         }
 
-        .array-element.inserting {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-            animation: pulse-insert 0.5s ease-in-out;
+        .array-cell.highlight {
+            border-color: #F59E0B;
+            background: linear-gradient(135deg, #78350f, #451a03);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
         }
 
-        .array-element.removing {
-            opacity: 0;
-            transform: scale(0.5) translateY(-20px);
+        .array-cell.new {
+            border-color: #10B981;
+            background: linear-gradient(135deg, #064e3b, #022c22);
+            animation: pulse 0.5s;
         }
 
-        .array-element.shifting {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+        .array-cell.shifting {
+            animation: shiftRight 0.3s ease-out;
         }
 
-        @keyframes pulse-insert {
+        @keyframes pulse {
 
             0%,
             100% {
@@ -158,586 +99,550 @@
             }
 
             50% {
-                transform: scale(1.2);
+                transform: scale(1.1);
             }
         }
 
-        .code-line {
-            display: flex;
-            gap: 12px;
-            padding: 4px 0;
-        }
+        @keyframes shiftRight {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0.5;
+            }
 
-        .line-num {
-            color: #64748b;
-            min-width: 24px;
-            text-align: right;
-            user-select: none;
-        }
-
-        .complexity-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            font-family: 'Fira Code', monospace;
-        }
-
-        .complexity-badge.fast {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
-        }
-
-        .complexity-badge.slow {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Nav -->
-    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
         <div class="container mx-auto px-6 h-16 flex items-center justify-between">
             <a href="../index.html#week2" class="flex items-center gap-3 hover:opacity-80 transition">
                 <div
-                    class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </div>
-                <span class="font-bold text-lg tracking-wide">Array<span class="text-blue-500">Ops</span></span>
+                    class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Array<span class="text-cyan-500">Ops</span></span>
             </a>
-            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-                <a href="#concept" class="hover:text-blue-400 transition">المفهوم</a>
-                <a href="#demo" class="hover:text-blue-400 transition">التجربة</a>
-                <a href="#code" class="hover:text-blue-400 transition">الكود</a>
-            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <header class="relative pt-32 pb-20 px-6 overflow-hidden">
         <div
-            class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[128px] pointer-events-none">
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
-        <div
-            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[128px] pointer-events-none">
-        </div>
-
         <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-blue-400 mb-6">
-                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-cyan-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
                 WEEK 2 • هياكل البيانات
             </div>
-
-            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
-                <span class="text-gradient">Array</span> Operations
-            </h1>
-
-            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
-                عمليات المصفوفات
-            </h2>
-
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
-                Master the fundamental operations: Access, Insert, and Delete elements in arrays.
-            </p>
-
-            <!-- Arabic Explanation Box -->
-            <div class="max-w-4xl mx-auto mb-12">
-                <div class="p-6 bg-blue-950/30 border border-blue-900/50 rounded-2xl rtl-block">
-                    <h3 class="text-2xl font-bold text-blue-400 mb-4 font-arabic">📦 إيه هي المصفوفة (Array)؟</h3>
-                    <div class="space-y-4 text-blue-100/90 font-arabic text-lg leading-loose">
-                        <p>
-                            المصفوفة هي <span class="text-yellow-400">صناديق متجاورة</span> في الذاكرة، كل صندوق فيه
-                            قيمة ورقم (index).
-                        </p>
-
-                        <div class="grid md:grid-cols-3 gap-4 mt-6">
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700 text-center">
-                                <div class="text-3xl mb-2">🎯</div>
-                                <div class="text-emerald-400 font-bold">Access - الوصول</div>
-                                <div class="text-xs text-slate-400 mt-1">O(1) - فوري! أدي الـ index وهات القيمة</div>
-                            </div>
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700 text-center">
-                                <div class="text-3xl mb-2">➕</div>
-                                <div class="text-yellow-400 font-bold">Insert - الإضافة</div>
-                                <div class="text-xs text-slate-400 mt-1">O(n) - لازم نزحزح العناصر!</div>
-                            </div>
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700 text-center">
-                                <div class="text-3xl mb-2">➖</div>
-                                <div class="text-red-400 font-bold">Delete - الحذف</div>
-                                <div class="text-xs text-slate-400 mt-1">O(n) - لازم نملأ الفراغ!</div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
-                            <p class="text-emerald-300">
-                                <strong>💡 الخلاصة:</strong> Arrays سريعة جداً في <span class="text-white">الوصول</span>
-                                للعناصر،
-                                لكن <span class="text-white">الإضافة والحذف</span> من النص بطيئين عشان لازم نزحزح
-                                العناصر.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero SVG Visualization -->
-            <div class="max-w-4xl mx-auto">
-                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-blue-900/20">
-                    <svg viewBox="0 0 800 280" class="w-full h-auto bg-[#0B1121] rounded-xl"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#3B82F6" />
-                                <stop offset="100%" style="stop-color:#1D4ED8" />
-                            </linearGradient>
-                            <linearGradient id="accessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#10B981" />
-                                <stop offset="100%" style="stop-color:#059669" />
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Title -->
-                        <text x="400" y="30" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="14"
-                            font-weight="bold">
-                            المصفوفة = صناديق متجاورة في الذاكرة 📦📦📦
-                        </text>
-
-                        <!-- Memory Address Labels -->
-                        <g transform="translate(100, 60)" fill="#475569" font-family="Fira Code" font-size="10">
-                            <text x="35" y="0" text-anchor="middle">0x100</text>
-                            <text x="115" y="0" text-anchor="middle">0x104</text>
-                            <text x="195" y="0" text-anchor="middle">0x108</text>
-                            <text x="275" y="0" text-anchor="middle">0x10C</text>
-                            <text x="355" y="0" text-anchor="middle">0x110</text>
-                            <text x="435" y="0" text-anchor="middle">0x114</text>
-                            <text x="515" y="0" text-anchor="middle">0x118</text>
-                        </g>
-
-                        <!-- Array Elements -->
-                        <g transform="translate(100, 70)">
-                            <rect x="0" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="35" y="35" text-anchor="middle" fill="white" font-family="Fira Code" font-size="18"
-                                font-weight="bold">42</text>
-                            <text x="35" y="75" text-anchor="middle" fill="#64748b" font-size="11">[0]</text>
-
-                            <rect x="80" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="115" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="18" font-weight="bold">17</text>
-                            <text x="115" y="75" text-anchor="middle" fill="#64748b" font-size="11">[1]</text>
-
-                            <!-- Accessed element -->
-                            <rect x="160" y="-5" width="70" height="65" rx="8" fill="url(#accessGrad)" stroke="#34D399"
-                                stroke-width="2" />
-                            <text x="195" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="20" font-weight="bold">83</text>
-                            <text x="195" y="75" text-anchor="middle" fill="#10B981" font-size="11"
-                                font-weight="bold">[2] ✓</text>
-
-                            <rect x="240" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="275" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="18" font-weight="bold">5</text>
-                            <text x="275" y="75" text-anchor="middle" fill="#64748b" font-size="11">[3]</text>
-
-                            <rect x="320" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="355" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="18" font-weight="bold">91</text>
-                            <text x="355" y="75" text-anchor="middle" fill="#64748b" font-size="11">[4]</text>
-
-                            <rect x="400" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="435" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="18" font-weight="bold">28</text>
-                            <text x="435" y="75" text-anchor="middle" fill="#64748b" font-size="11">[5]</text>
-
-                            <rect x="480" y="0" width="70" height="55" rx="8" fill="url(#boxGrad)" />
-                            <text x="515" y="35" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="18" font-weight="bold">64</text>
-                            <text x="515" y="75" text-anchor="middle" fill="#64748b" font-size="11">[6]</text>
-                        </g>
-
-                        <!-- Access Arrow -->
-                        <path d="M295 55 L295 40 L295 25" stroke="#10B981" stroke-width="2" fill="none"
-                            marker-end="url(#arrowGreen)" />
-                        <text x="295" y="18" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="11"
-                            font-weight="bold">arr[2] = 83</text>
-
-                        <!-- Explanation boxes -->
-                        <rect x="100" y="180" width="250" height="80" rx="8" fill="#0F172A" stroke="#1E293B" />
-                        <text x="225" y="205" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="12"
-                            font-weight="bold">✅ Access = O(1)</text>
-                        <text x="225" y="225" text-anchor="middle" fill="#94a3b8" font-family="Cairo"
-                            font-size="10">عنوان = بداية + (index × حجم العنصر)</text>
-                        <text x="225" y="245" text-anchor="middle" fill="#64748b" font-family="Fira Code"
-                            font-size="9">0x100 + (2 × 4) = 0x108</text>
-
-                        <rect x="450" y="180" width="250" height="80" rx="8" fill="#0F172A" stroke="#1E293B" />
-                        <text x="575" y="205" text-anchor="middle" fill="#F59E0B" font-family="Cairo" font-size="12"
-                            font-weight="bold">⚠️ Insert/Delete = O(n)</text>
-                        <text x="575" y="225" text-anchor="middle" fill="#94a3b8" font-family="Cairo"
-                            font-size="10">لازم نزحزح كل العناصر اللي بعده!</text>
-                        <text x="575" y="245" text-anchor="middle" fill="#64748b" font-family="Cairo" font-size="9">عشان
-                            كده Linked Lists أحسن للإضافة والحذف</text>
-                    </svg>
-                </div>
-            </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Array</span> Operations</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">عمليات المصفوفات</h2>
         </div>
     </header>
 
-    <!-- Concept Section -->
+    <!-- What is Array Section -->
     <section id="concept" class="py-20 px-6 bg-slate-900/30">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-4xl font-bold text-center mb-4">
-                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
-                Understanding Array Operations
-            </h2>
-            <p class="text-center text-slate-400 font-arabic mb-16">فهم عمليات المصفوفات</p>
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-table-cells text-cyan-500 mr-3"></i>إيه هي الـ Array؟</h2>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Access -->
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-up">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div
-                            class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center text-2xl">
-                            🎯
+            <div class="glass-card p-8 rounded-2xl border border-cyan-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-6 font-arabic">📦 الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه الأدراج</h4>
+                            <p class="text-slate-300">
+                                تخيل دولاب فيه <span class="text-cyan-400 font-bold">أدراج متتالية</span>، كل درج:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• ليه <span class="text-yellow-400 font-bold">رقم (Index)</span> بيبدأ من 0</li>
+                                <li>• بيشيل <span class="text-emerald-400 font-bold">قيمة واحدة</span> (Value)</li>
+                                <li>• الأدراج <span class="text-purple-400 font-bold">ورا بعض في الذاكرة</span>
+                                    (Contiguous Memory)</li>
+                            </ul>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Access</h3>
-                            <span class="complexity-badge fast">O(1)</span>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">⚡ الميزة الكبيرة: Random Access</h4>
+                            <p class="text-slate-300">
+                                بما إن العناصر <span class="text-cyan-400 font-bold">ورا بعض في الذاكرة</span>،
+                                الكمبيوتر يقدر يوصل لأي عنصر <span class="text-emerald-400 font-bold">مباشرة</span>!
+                            </p>
+                            <div class="mt-4 p-4 bg-slate-800/50 rounded-lg font-mono text-sm text-left" dir="ltr">
+                                <span class="text-slate-500">// Access element at index 5</span><br>
+                                arr[5] <span class="text-slate-500">// O(1) - instant!</span>
+                            </div>
+                            <p class="text-sm text-slate-400 mt-3">
+                                <span class="text-yellow-400">💡 السر:</span>
+                                عنوان العنصر = عنوان البداية + (index × حجم العنصر)
+                            </p>
                         </div>
-                    </div>
-                    <p class="text-slate-300 mb-4">Get any element instantly using its index.</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-slate-300 text-sm leading-relaxed">
-                            <strong class="text-emerald-400">الشرح:</strong> الوصول لأي عنصر = عملية واحدة!
-                            عشان العناصر متجاورة في الذاكرة.
-                        </p>
-                    </div>
-                    <div class="mt-4 p-3 bg-slate-900 rounded-lg">
-                        <code class="text-emerald-300 font-mono text-sm">arr[5]</code>
-                        <span class="text-slate-500 text-sm"> → instant!</span>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">📊 العمليات الأساسية</h4>
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div class="p-3 bg-emerald-950/30 rounded-lg border border-emerald-700">
+                                    <span class="text-emerald-400 font-bold">Read / Access</span>
+                                    <p class="text-sm text-slate-400 mt-1">O(1) - مباشر!</p>
+                                </div>
+                                <div class="p-3 bg-blue-950/30 rounded-lg border border-blue-700">
+                                    <span class="text-blue-400 font-bold">Search</span>
+                                    <p class="text-sm text-slate-400 mt-1">O(n) - لازم نبحث</p>
+                                </div>
+                                <div class="p-3 bg-yellow-950/30 rounded-lg border border-yellow-700">
+                                    <span class="text-yellow-400 font-bold">Insert</span>
+                                    <p class="text-sm text-slate-400 mt-1">O(n) - لازم نزحلق</p>
+                                </div>
+                                <div class="p-3 bg-red-950/30 rounded-lg border border-red-700">
+                                    <span class="text-red-400 font-bold">Delete</span>
+                                    <p class="text-sm text-slate-400 mt-1">O(n) - لازم نملأ الفراغ</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Insert -->
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-yellow-500" data-aos="fade-up"
-                    data-aos-delay="100">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div
-                            class="w-16 h-16 bg-yellow-500/20 text-yellow-400 rounded-xl flex items-center justify-center text-2xl">
-                            ➕
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Insert</h3>
-                            <span class="complexity-badge slow">O(n)</span>
-                        </div>
-                    </div>
-                    <p class="text-slate-300 mb-4">Must shift elements to make space.</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-slate-300 text-sm leading-relaxed">
-                            <strong class="text-yellow-400">الشرح:</strong> لو عايز تضيف في النص، لازم تزحزح كل اللي
-                            بعده مكان!
-                            ده بياخد وقت.
-                        </p>
-                    </div>
-                    <div class="mt-4 p-3 bg-slate-900 rounded-lg">
-                        <code class="text-yellow-300 font-mono text-sm">arr.splice(2, 0, x)</code>
-                    </div>
+            <!-- Memory Layout Visualization -->
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <h3 class="text-2xl font-bold text-center mb-6">Memory Layout</h3>
+                <div class="flex justify-center mb-4">
+                    <svg viewBox="0 0 600 150" class="w-full max-w-2xl" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="cellGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1E293B" />
+                                <stop offset="100%" style="stop-color:#0F172A" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Memory Address Labels -->
+                        <text x="50" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x100</text>
+                        <text x="130" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x104</text>
+                        <text x="210" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x108</text>
+                        <text x="290" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x10C</text>
+                        <text x="370" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x110</text>
+                        <text x="450" y="25" text-anchor="middle" fill="#64748b" font-size="10"
+                            font-family="Fira Code">0x114</text>
+
+                        <!-- Array Cells -->
+                        <rect x="20" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="50" y="55" text-anchor="middle" fill="#64748b" font-size="9">[0]</text>
+                        <text x="50" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">10</text>
+
+                        <rect x="100" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="130" y="55" text-anchor="middle" fill="#64748b" font-size="9">[1]</text>
+                        <text x="130" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">25</text>
+
+                        <rect x="180" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="210" y="55" text-anchor="middle" fill="#64748b" font-size="9">[2]</text>
+                        <text x="210" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">33</text>
+
+                        <rect x="260" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="290" y="55" text-anchor="middle" fill="#64748b" font-size="9">[3]</text>
+                        <text x="290" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">47</text>
+
+                        <rect x="340" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="370" y="55" text-anchor="middle" fill="#64748b" font-size="9">[4]</text>
+                        <text x="370" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">58</text>
+
+                        <rect x="420" y="35" width="60" height="50" rx="6" fill="url(#cellGrad)" stroke="#06B6D4"
+                            stroke-width="2" />
+                        <text x="450" y="55" text-anchor="middle" fill="#64748b" font-size="9">[5]</text>
+                        <text x="450" y="75" text-anchor="middle" fill="white" font-size="14"
+                            font-weight="bold">62</text>
+
+                        <!-- Contiguous Arrow -->
+                        <text x="300" y="115" text-anchor="middle" fill="#06B6D4" font-size="11" font-family="Cairo">←
+                            متتالية في الذاكرة (Contiguous) →</text>
+                        <path d="M30 100 L470 100" stroke="#06B6D4" stroke-width="2" stroke-dasharray="5" />
+                    </svg>
+                </div>
+                <p class="text-center text-slate-400 font-arabic text-sm rtl-block">
+                    كل خلية بتاخد 4 bytes (لو int)، فالعنوان بيزيد 4 كل مرة
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Operations Deep Dive -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-gears text-yellow-500 mr-3"></i>العمليات بالتفصيل</h2>
+
+            <!-- Insert Operation -->
+            <div class="glass-card p-8 rounded-2xl mb-8" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-yellow-500 text-white font-bold rounded-lg">INSERT</span>
+                    <span class="text-2xl font-bold text-yellow-400">إضافة عنصر</span>
+                    <span
+                        class="ml-auto px-3 py-1 bg-yellow-900/30 text-yellow-400 rounded-full text-sm font-mono">O(n)</span>
                 </div>
 
-                <!-- Delete -->
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-red-500" data-aos="fade-up"
-                    data-aos-delay="200">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div
-                            class="w-16 h-16 bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center text-2xl">
-                            ➖
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="rtl-block font-arabic">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-4">📝 الخطوات:</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">1.</span> حدد مكان الإضافة (index)
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">2.</span> زحلق كل العناصر من الـ index لآخر
+                                المصفوفة <span class="text-red-400">خطوة واحدة لليمين</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">3.</span> حط العنصر الجديد في المكان الفاضي
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Delete</h3>
-                            <span class="complexity-badge slow">O(n)</span>
+
+                        <div class="mt-6 p-4 bg-orange-950/30 rounded-xl border border-orange-900">
+                            <p class="text-orange-400 font-bold mb-2">⚠️ ليه O(n)؟</p>
+                            <p class="text-sm text-slate-300">
+                                لو حبيت تضيف في <span class="text-yellow-400">أول المصفوفة</span>، لازم تزحلق <span
+                                    class="text-red-400">كل العناصر</span>!
+                                <br>
+                                أسوأ حالة = n عملية زحلقة.
+                            </p>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-emerald-950/30 rounded-xl border border-emerald-900">
+                            <p class="text-emerald-400 font-bold mb-2">💡 الحالة الأفضل</p>
+                            <p class="text-sm text-slate-300">
+                                لو أضفت في <span class="text-emerald-400">آخر المصفوفة</span> = <span
+                                    class="text-emerald-400 font-bold">O(1)</span>!
+                                <br>
+                                مفيش حاجة تتزحلق.
+                            </p>
                         </div>
                     </div>
-                    <p class="text-slate-300 mb-4">Must shift elements to fill the gap.</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-slate-300 text-sm leading-relaxed">
-                            <strong class="text-red-400">الشرح:</strong> لو شيلت عنصر من النص، لازم تملأ الفراغ
-                            بإنك تزحزح كل اللي بعده!
-                        </p>
+
+                    <!-- Visual -->
+                    <div>
+                        <p class="text-sm text-slate-400 mb-3">مثال: إضافة 99 في index 2</p>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">Before:</p>
+                                <div class="flex gap-2">
+                                    <div class="array-cell"><span class="index">[0]</span><span class="value">10</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[1]</span><span class="value">25</span>
+                                    </div>
+                                    <div class="array-cell highlight"><span class="index">[2]</span><span
+                                            class="value">33</span></div>
+                                    <div class="array-cell"><span class="index">[3]</span><span class="value">47</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-yellow-400">↓ Shift elements right ↓</div>
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">After:</p>
+                                <div class="flex gap-2">
+                                    <div class="array-cell"><span class="index">[0]</span><span class="value">10</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[1]</span><span class="value">25</span>
+                                    </div>
+                                    <div class="array-cell new"><span class="index">[2]</span><span
+                                            class="value text-emerald-400">99</span></div>
+                                    <div class="array-cell"><span class="index">[3]</span><span class="value">33</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[4]</span><span class="value">47</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-4 p-3 bg-slate-900 rounded-lg">
-                        <code class="text-red-300 font-mono text-sm">arr.splice(2, 1)</code>
+                </div>
+            </div>
+
+            <!-- Delete Operation -->
+            <div class="glass-card p-8 rounded-2xl mb-8" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg">DELETE</span>
+                    <span class="text-2xl font-bold text-red-400">حذف عنصر</span>
+                    <span
+                        class="ml-auto px-3 py-1 bg-red-900/30 text-red-400 rounded-full text-sm font-mono">O(n)</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="rtl-block font-arabic">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-4">📝 الخطوات:</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-red-500">
+                                <span class="text-red-400 font-bold">1.</span> حدد مكان العنصر المطلوب حذفه
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">2.</span> زحلق كل العناصر بعده <span
+                                    class="text-blue-400">خطوة واحدة لليسار</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">3.</span> قلل حجم المصفوفة
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <p class="text-cyan-400 font-bold mb-2">💡 نفس المنطق</p>
+                            <p class="text-sm text-slate-300">
+                                الحذف من <span class="text-yellow-400">الأول</span> = <span
+                                    class="text-red-400">O(n)</span> (نزحلق كل حاجة)
+                                <br>
+                                الحذف من <span class="text-emerald-400">الآخر</span> = <span
+                                    class="text-emerald-400">O(1)</span> (مفيش زحلقة)
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Visual -->
+                    <div>
+                        <p class="text-sm text-slate-400 mb-3">مثال: حذف العنصر في index 1</p>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">Before:</p>
+                                <div class="flex gap-2">
+                                    <div class="array-cell"><span class="index">[0]</span><span class="value">10</span>
+                                    </div>
+                                    <div class="array-cell" style="border-color:#EF4444; opacity:0.5;"><span
+                                            class="index">[1]</span><span
+                                            class="value text-red-400 line-through">25</span></div>
+                                    <div class="array-cell"><span class="index">[2]</span><span class="value">33</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[3]</span><span class="value">47</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center text-blue-400">↓ Shift elements left ↓</div>
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">After:</p>
+                                <div class="flex gap-2">
+                                    <div class="array-cell"><span class="index">[0]</span><span class="value">10</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[1]</span><span class="value">33</span>
+                                    </div>
+                                    <div class="array-cell"><span class="index">[2]</span><span class="value">47</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Operation -->
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg">SEARCH</span>
+                    <span class="text-2xl font-bold text-blue-400">البحث</span>
+                    <span class="ml-auto px-3 py-1 bg-blue-900/30 text-blue-400 rounded-full text-sm font-mono">O(n) /
+                        O(log n)</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-5 bg-slate-900/50 rounded-xl border border-blue-700">
+                        <h4 class="text-lg font-bold text-blue-400 mb-3 rtl-block font-arabic">🔍 Linear Search</h4>
+                        <div class="rtl-block font-arabic text-slate-300 space-y-2">
+                            <p>بندور عنصر عنصر من الأول للآخر</p>
+                            <p class="text-sm text-slate-400">التعقيد: <span class="text-blue-400 font-mono">O(n)</span>
+                            </p>
+                            <p class="text-sm text-yellow-400">✓ بيشتغل على أي array (مترتبة أو لأ)</p>
+                        </div>
+                    </div>
+                    <div class="p-5 bg-slate-900/50 rounded-xl border border-cyan-700">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-3 rtl-block font-arabic">⚡ Binary Search</h4>
+                        <div class="rtl-block font-arabic text-slate-300 space-y-2">
+                            <p>بنقسم المصفوفة على نصين كل مرة</p>
+                            <p class="text-sm text-slate-400">التعقيد: <span class="text-cyan-400 font-mono">O(log
+                                    n)</span></p>
+                            <p class="text-sm text-red-400">⚠️ بيشتغل بس لو الـ array <span
+                                    class="font-bold">مترتبة</span>!</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Interactive Demo Section -->
-    <section id="demo" class="py-24 px-6">
-        <div class="container mx-auto max-w-5xl">
-            <div class="text-center mb-16">
-                <span class="text-blue-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
-                <h2 class="text-4xl font-bold text-white mt-2">Try Array Operations</h2>
-                <p class="text-slate-400 mt-2 font-arabic">جرب عمليات المصفوفات بنفسك!</p>
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-cyan-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Try It Yourself!</h2>
             </div>
 
-            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
-                <!-- Initial Array Input -->
-                <div class="flex flex-wrap gap-4 mb-6 justify-center items-center">
-                    <label class="text-slate-400">Initial Array:</label>
-                    <input type="text" id="initial-array" value="42, 17, 83, 5, 91, 28"
-                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white font-mono w-64 focus:border-blue-500 focus:outline-none">
-                    <button id="set-array-btn"
-                        class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transition flex items-center gap-2">
-                        <i class="fas fa-check"></i> Set
-                    </button>
-                    <button id="clear-btn"
-                        class="px-5 py-2 bg-slate-800 text-slate-300 font-bold rounded-xl border border-slate-700 hover:bg-slate-700 transition flex items-center gap-2">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                    <input type="number" id="value-input" placeholder="Value"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-24 text-center">
+                    <input type="number" id="index-input" placeholder="Index"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-24 text-center">
+                    <button id="insert-btn"
+                        class="px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition"><i
+                            class="fas fa-plus mr-1"></i>Insert</button>
+                    <button id="delete-btn"
+                        class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition"><i
+                            class="fas fa-minus mr-1"></i>Delete</button>
+                    <button id="access-btn"
+                        class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition"><i
+                            class="fas fa-eye mr-1"></i>Access</button>
+                    <button id="reset-btn"
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
                 </div>
 
-                <!-- Array Container -->
-                <div id="array-container"
-                    class="flex flex-wrap gap-4 justify-center p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[120px] mb-8">
+                <div id="array-display"
+                    class="flex flex-wrap gap-2 justify-center p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[80px]">
                 </div>
 
-                <!-- Operation Controls -->
-                <div class="grid md:grid-cols-3 gap-6 mb-6">
-                    <!-- Access -->
-                    <div class="p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
-                        <h4 class="font-bold text-emerald-400 mb-3 flex items-center gap-2">
-                            <i class="fas fa-bullseye"></i> Access
-                            <span class="complexity-badge fast text-xs">O(1)</span>
-                        </h4>
-                        <div class="flex gap-2">
-                            <input type="number" id="access-index" placeholder="index" min="0"
-                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-emerald-500 focus:outline-none">
-                            <button id="access-btn"
-                                class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition">
-                                Access
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Insert -->
-                    <div class="p-4 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
-                        <h4 class="font-bold text-yellow-400 mb-3 flex items-center gap-2">
-                            <i class="fas fa-plus"></i> Insert
-                            <span class="complexity-badge slow text-xs">O(n)</span>
-                        </h4>
-                        <div class="flex gap-2 mb-2">
-                            <input type="number" id="insert-index" placeholder="index" min="0"
-                                class="w-20 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-yellow-500 focus:outline-none">
-                            <input type="number" id="insert-value" placeholder="value"
-                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-yellow-500 focus:outline-none">
-                        </div>
-                        <button id="insert-btn"
-                            class="w-full px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition">
-                            Insert
-                        </button>
-                    </div>
-
-                    <!-- Delete -->
-                    <div class="p-4 bg-red-900/20 rounded-xl border border-red-500/30">
-                        <h4 class="font-bold text-red-400 mb-3 flex items-center gap-2">
-                            <i class="fas fa-minus"></i> Delete
-                            <span class="complexity-badge slow text-xs">O(n)</span>
-                        </h4>
-                        <div class="flex gap-2">
-                            <input type="number" id="delete-index" placeholder="index" min="0"
-                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-red-500 focus:outline-none">
-                            <button id="delete-btn"
-                                class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Enter a value and index, then click an operation.</p>
                 </div>
 
-                <!-- Log -->
                 <div id="log"
-                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
-                    <p class="text-slate-500">Set an array and perform operations.</p>
+                    class="mt-4 bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-28 overflow-y-auto font-mono text-xs">
+                    <p class="text-slate-500">Logs here.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Code Section -->
-    <section id="code" class="py-24 px-6 bg-black/20">
-        <div class="container mx-auto max-w-5xl">
-            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
-            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
+    <!-- Complexity Summary Table -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-table text-purple-500 mr-3"></i>ملخص
+                التعقيد</h2>
 
-            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
-                <!-- Code Header -->
-                <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
-                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                    <span class="ml-4 font-mono text-sm text-slate-400">arrayOperations.js</span>
-                </div>
-
-                <div class="grid md:grid-cols-2 divide-x divide-slate-800">
-                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">class</span> <span class="text-blue-400">ArrayWrapper</span> {</span>
-<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">constructor</span>() {</span>
-<span class="code-line"><span class="line-num">3</span>    <span class="text-purple-400">this</span>.arr = [];</span>
-<span class="code-line"><span class="line-num">4</span>  }</span>
-<span class="code-line"><span class="line-num">5</span></span>
-<span class="code-line"><span class="line-num">6</span>  <span class="text-gray-500">// O(1) - الوصول فوري!</span></span>
-<span class="code-line"><span class="line-num">7</span>  <span class="text-blue-400">access</span>(<span class="text-orange-300">index</span>) {</span>
-<span class="code-line"><span class="line-num">8</span>    <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.arr[index];</span>
-<span class="code-line"><span class="line-num">9</span>  }</span>
-<span class="code-line"><span class="line-num">10</span></span>
-<span class="code-line"><span class="line-num">11</span>  <span class="text-gray-500">// O(n) - لازم نزحزح!</span></span>
-<span class="code-line"><span class="line-num">12</span>  <span class="text-blue-400">insert</span>(<span class="text-orange-300">index</span>, <span class="text-orange-300">value</span>) {</span>
-<span class="code-line"><span class="line-num">13</span>    <span class="text-purple-400">this</span>.arr.<span class="text-blue-400">splice</span>(index, <span class="text-emerald-400">0</span>, value);</span>
-<span class="code-line"><span class="line-num">14</span>  }</span>
-<span class="code-line"><span class="line-num">15</span></span>
-<span class="code-line"><span class="line-num">16</span>  <span class="text-gray-500">// O(n) - لازم نملأ الفراغ!</span></span>
-<span class="code-line"><span class="line-num">17</span>  <span class="text-blue-400">delete</span>(<span class="text-orange-300">index</span>) {</span>
-<span class="code-line"><span class="line-num">18</span>    <span class="text-purple-400">this</span>.arr.<span class="text-blue-400">splice</span>(index, <span class="text-emerald-400">1</span>);</span>
-<span class="code-line"><span class="line-num">19</span>  }</span>
-<span class="code-line"><span class="line-num">20</span>}</span></code></pre>
-
-                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
-                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
-                        <div class="space-y-4 font-arabic text-sm">
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
-                                <span class="text-emerald-400 font-bold">access (سطر 7-9):</span>
-                                <br>
-                                الوصول للعنصر = عملية واحدة فقط!
-                                <br>
-                                <span class="text-xs text-slate-500">عشان العناصر متجاورة في الذاكرة</span>
-                            </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-yellow-500">
-                                <span class="text-yellow-400 font-bold">insert (سطر 12-14):</span>
-                                <br>
-                                splice بتزحزح كل العناصر من index للآخر
-                                <br>
-                                <span class="text-xs text-slate-500">في أسوأ الحالات: n عملية 😓</span>
-                            </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-red-500">
-                                <span class="text-red-400 font-bold">delete (سطر 17-19):</span>
-                                <br>
-                                splice بتحذف وتزحزح الباقي لملأ الفراغ
-                                <br>
-                                <span class="text-xs text-slate-500">نفس المشكلة: O(n) 😓</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-6 text-right font-arabic">العملية</th>
+                            <th class="py-4 px-6 text-center">Average</th>
+                            <th class="py-4 px-6 text-center">Worst</th>
+                            <th class="py-4 px-6 text-right font-arabic">ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-arabic">Access (القراءة)</td>
+                            <td class="py-4 px-6 text-center text-emerald-400 font-mono">O(1)</td>
+                            <td class="py-4 px-6 text-center text-emerald-400 font-mono">O(1)</td>
+                            <td class="py-4 px-6 text-right font-arabic text-slate-400 text-xs">مباشر بالـ index</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-arabic">Search (البحث)</td>
+                            <td class="py-4 px-6 text-center text-blue-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-center text-blue-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-right font-arabic text-slate-400 text-xs">O(log n) لو مترتبة</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-arabic">Insert (الإضافة)</td>
+                            <td class="py-4 px-6 text-center text-yellow-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-center text-yellow-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-right font-arabic text-slate-400 text-xs">O(1) في الآخر</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-6 font-arabic">Delete (الحذف)</td>
+                            <td class="py-4 px-6 text-center text-red-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-center text-red-400 font-mono">O(n)</td>
+                            <td class="py-4 px-6 text-right font-arabic text-slate-400 text-xs">O(1) من الآخر</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
 
     <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
         <p>Grokking Algorithms Course - Week 2</p>
-        <p class="font-arabic mt-1">Advanced Monitoring</p>
     </footer>
 
     <script>
-        AOS.init({ duration: 800, once: true, offset: 100 });
+        AOS.init({ duration: 800, once: true });
 
-        const arrayContainer = document.getElementById('array-container');
-        const initialArrayInput = document.getElementById('initial-array');
-        const setArrayBtn = document.getElementById('set-array-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const accessIndexInput = document.getElementById('access-index');
-        const accessBtn = document.getElementById('access-btn');
-        const insertIndexInput = document.getElementById('insert-index');
-        const insertValueInput = document.getElementById('insert-value');
-        const insertBtn = document.getElementById('insert-btn');
-        const deleteIndexInput = document.getElementById('delete-index');
-        const deleteBtn = document.getElementById('delete-btn');
-        const logElement = document.getElementById('log');
+        const arrayDisplay = document.getElementById('array-display');
+        const valueInput = document.getElementById('value-input');
+        const indexInput = document.getElementById('index-input');
+        const info = document.getElementById('info');
+        const logEl = document.getElementById('log');
+        let arr = [10, 25, 33, 47, 58, 62];
 
-        let currentArray = [];
-
-        setArrayBtn.addEventListener('click', () => {
-            const values = initialArrayInput.value.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
-            currentArray = values;
-            renderArray();
-            log(`✨ Array set: [${currentArray.join(', ')}]`, 'info');
-        });
-
-        clearBtn.addEventListener('click', () => {
-            currentArray = [];
-            renderArray();
-            log('🗑️ Array cleared', 'info');
-        });
-
-        accessBtn.addEventListener('click', () => {
-            const index = parseInt(accessIndexInput.value);
-            if (isNaN(index) || index < 0 || index >= currentArray.length) {
-                log('❌ Invalid index!', 'error');
-                return;
-            }
-            renderArray(index, 'accessed');
-            log(`🎯 arr[${index}] = ${currentArray[index]} (O(1) - فوري!)`, 'success');
-        });
-
-        insertBtn.addEventListener('click', () => {
-            const index = parseInt(insertIndexInput.value);
-            const value = parseInt(insertValueInput.value);
-            if (isNaN(index) || isNaN(value) || index < 0 || index > currentArray.length) {
-                log('❌ Invalid index or value!', 'error');
-                return;
-            }
-            currentArray.splice(index, 0, value);
-            renderArray(index, 'inserting');
-            log(`➕ Inserted ${value} at index ${index} (O(n) - زحزحنا ${currentArray.length - index - 1} عنصر!)`, 'success');
-        });
-
-        deleteBtn.addEventListener('click', () => {
-            const index = parseInt(deleteIndexInput.value);
-            if (isNaN(index) || index < 0 || index >= currentArray.length) {
-                log('❌ Invalid index!', 'error');
-                return;
-            }
-            const removed = currentArray[index];
-            const shifted = currentArray.length - index - 1;
-            currentArray.splice(index, 1);
-            renderArray();
-            log(`➖ Deleted ${removed} from index ${index} (O(n) - زحزحنا ${shifted} عنصر!)`, 'success');
-        });
-
-        function renderArray(highlightIndex = -1, highlightClass = '') {
-            arrayContainer.innerHTML = '';
-            if (currentArray.length === 0) {
-                arrayContainer.innerHTML = '<p class="text-slate-500 font-arabic">المصفوفة فارغة - أضف عناصر!</p>';
-                return;
-            }
-            currentArray.forEach((value, index) => {
-                const element = document.createElement('div');
-                element.className = 'array-element';
-                if (index === highlightIndex && highlightClass) {
-                    element.classList.add(highlightClass);
-                }
-                element.innerHTML = `<span>${value}</span><span class="index">[${index}]</span>`;
-                arrayContainer.appendChild(element);
+        function render(highlightIdx = -1, newIdx = -1) {
+            arrayDisplay.innerHTML = '';
+            arr.forEach((v, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'array-cell';
+                if (i === newIdx) cell.classList.add('new');
+                else if (i === highlightIdx) cell.classList.add('highlight');
+                cell.innerHTML = `<span class="index">[${i}]</span><span class="value">${v}</span>`;
+                arrayDisplay.appendChild(cell);
             });
         }
 
-        function log(message, type = 'info') {
+        document.getElementById('insert-btn').onclick = () => {
+            const val = parseInt(valueInput.value);
+            const idx = parseInt(indexInput.value);
+            if (isNaN(val)) { log('Enter a value!', 'error'); return; }
+            const insertIdx = isNaN(idx) || idx > arr.length ? arr.length : Math.max(0, idx);
+            arr.splice(insertIdx, 0, val);
+            render(-1, insertIdx);
+            log(`Inserted ${val} at index ${insertIdx}. Shifted ${arr.length - insertIdx - 1} elements.`, 'success');
+            info.innerHTML = `<p class="text-yellow-400 font-arabic">تم إضافة ${val} في index ${insertIdx} - O(${arr.length - insertIdx - 1 > 0 ? 'n' : '1'})</p>`;
+        };
+
+        document.getElementById('delete-btn').onclick = () => {
+            const idx = parseInt(indexInput.value);
+            if (isNaN(idx) || idx < 0 || idx >= arr.length) { log('Invalid index!', 'error'); return; }
+            const removed = arr.splice(idx, 1)[0];
+            render();
+            log(`Deleted ${removed} from index ${idx}. Shifted ${arr.length - idx} elements.`, 'success');
+            info.innerHTML = `<p class="text-red-400 font-arabic">تم حذف ${removed} - O(${arr.length - idx > 0 ? 'n' : '1'})</p>`;
+        };
+
+        document.getElementById('access-btn').onclick = () => {
+            const idx = parseInt(indexInput.value);
+            if (isNaN(idx) || idx < 0 || idx >= arr.length) { log('Invalid index!', 'error'); return; }
+            render(idx);
+            log(`Accessed arr[${idx}] = ${arr[idx]}`, 'info');
+            info.innerHTML = `<p class="text-emerald-400 font-arabic">arr[${idx}] = ${arr[idx]} - <span class="font-mono">O(1)</span> مباشر!</p>`;
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            arr = [10, 25, 33, 47, 58, 62];
+            render();
+            info.innerHTML = '<p class="text-slate-400">Reset to original array.</p>';
+            log('Reset', 'info');
+        };
+
+        function log(m, t = 'info') {
             const p = document.createElement('p');
-            p.textContent = message;
-            p.className = {
-                info: 'text-blue-400',
-                success: 'text-emerald-400',
-                error: 'text-red-400'
-            }[type] + ' mb-1';
-            logElement.prepend(p);
-            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
+            p.textContent = m;
+            p.className = { success: 'text-emerald-400', error: 'text-red-400', info: 'text-cyan-400' }[t];
+            logEl.prepend(p);
+            while (logEl.children.length > 8) logEl.removeChild(logEl.lastChild);
         }
 
-        // Initial render
-        setArrayBtn.click();
+        render();
     </script>
 </body>
 

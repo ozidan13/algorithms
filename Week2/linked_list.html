@@ -5,54 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linked List | القوائم المتصلة</title>
-    <meta name="description" content="Interactive Linked List visualization with Arabic explanations.">
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
-
-    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        neon: {
-                            green: '#10B981',
-                            blue: '#3B82F6',
-                            purple: '#8B5CF6',
-                            orange: '#F59E0B'
-                        },
-                        dark: {
-                            bg: '#020617',
-                            card: '#0F172A',
-                            border: '#1E293B'
-                        }
+                        neon: { green: '#10B981', blue: '#3B82F6', purple: '#8B5CF6', orange: '#F59E0B' },
+                        dark: { bg: '#020617', card: '#0F172A', border: '#1E293B' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        arabic: ['Cairo', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    }
+                    fontFamily: { sans: ['Inter'], arabic: ['Cairo'], mono: ['Fira Code'] }
                 }
             }
         }
     </script>
-
     <style>
         body {
-            background-color: #020617;
+            background: #020617;
             color: #E2E8F0;
             overflow-x: hidden;
         }
@@ -63,40 +39,10 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .glass-card:hover {
-            border-color: rgba(139, 92, 246, 0.4);
-            box-shadow: 0 0 30px -10px rgba(139, 92, 246, 0.2);
-        }
-
         .text-gradient {
-            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            background: linear-gradient(135deg, #F59E0B, #10B981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #020617;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #1E293B;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #8B5CF6;
-        }
-
-        /* RTL Arabic Support */
-        .rtl-text {
-            direction: rtl;
-            text-align: right;
-            font-family: 'Cairo', sans-serif;
         }
 
         .rtl-block {
@@ -104,402 +50,431 @@
             text-align: right;
         }
 
-        /* Node Styles */
-        .node {
+        .node-box {
+            display: inline-flex;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #334155;
+            transition: all 0.3s;
+        }
+
+        .node-box .data {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            color: white;
+            font-family: 'Fira Code';
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .node-box .next {
+            padding: 12px 14px;
+            background: #0F172A;
+            border-left: 2px solid #334155;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 70px;
-            height: 60px;
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            color: white;
-            border-radius: 12px;
-            font-weight: bold;
-            font-family: 'Fira Code', monospace;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        .node .value {
-            font-size: 1.1rem;
+        .node-box.head {
+            border-color: #10B981;
         }
 
-        .node .pointer-section {
-            font-size: 0.6rem;
-            background: rgba(0, 0, 0, 0.2);
-            width: 100%;
-            text-align: center;
-            padding: 2px 0;
-            border-radius: 0 0 12px 12px;
-            position: absolute;
-            bottom: 0;
+        .node-box.head .data {
+            background: linear-gradient(135deg, #064e3b, #022c22);
         }
 
-        .node.head-node {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        .node-box.highlight {
+            border-color: #F59E0B;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
         }
 
-        .node.null-node {
-            background: linear-gradient(135deg, #475569 0%, #334155 100%);
-            opacity: 0.7;
-            font-size: 0.8rem;
-        }
-
-        .node.highlight {
-            transform: scale(1.15);
-            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
-        }
-
-        .pointer-arrow {
-            width: 40px;
-            height: 2px;
-            background: linear-gradient(90deg, #8B5CF6, #A78BFA);
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .pointer-arrow::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -4px;
-            width: 0;
-            height: 0;
-            border-left: 8px solid #A78BFA;
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-        }
-
-        .complexity-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            font-family: 'Fira Code', monospace;
-        }
-
-        .complexity-badge.fast {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
-        }
-
-        .complexity-badge.slow {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-        }
-
-        .complexity-badge.medium {
-            background: rgba(245, 158, 11, 0.2);
+        .arrow {
             color: #F59E0B;
+            font-size: 1.5rem;
+            margin: 0 8px;
         }
 
-        .code-line {
-            display: flex;
-            gap: 12px;
-            padding: 4px 0;
-        }
-
-        .line-num {
+        .null-box {
+            display: inline-flex;
+            padding: 12px 16px;
+            background: #1E293B;
+            border: 2px dashed #475569;
+            border-radius: 8px;
             color: #64748b;
-            min-width: 24px;
-            text-align: right;
-            user-select: none;
+            font-family: 'Fira Code';
+            font-size: 0.85rem;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Nav -->
-    <nav class="fixed top-0 w-full z-50 glass-card border-b-0 border-b-white/5">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b-0">
         <div class="container mx-auto px-6 h-16 flex items-center justify-between">
             <a href="../index.html#week2" class="flex items-center gap-3 hover:opacity-80 transition">
                 <div
-                    class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </div>
-                <span class="font-bold text-lg tracking-wide">Linked<span class="text-purple-500">List</span></span>
+                    class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-emerald-500 flex items-center justify-center text-white">
+                    <i class="fas fa-arrow-left text-sm"></i></div>
+                <span class="font-bold text-lg">Linked<span class="text-orange-500">List</span></span>
             </a>
-            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-                <a href="#concept" class="hover:text-purple-400 transition">المفهوم</a>
-                <a href="#demo" class="hover:text-purple-400 transition">التجربة</a>
-                <a href="#code" class="hover:text-purple-400 transition">الكود</a>
-            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <header class="relative pt-32 pb-20 px-6 overflow-hidden">
         <div
-            class="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[128px] pointer-events-none">
+            class="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[128px] pointer-events-none">
         </div>
-        <div
-            class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[128px] pointer-events-none">
-        </div>
-
         <div class="container mx-auto text-center relative z-10" data-aos="fade-up">
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-purple-400 mb-6">
-                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-mono text-orange-400 mb-6">
+                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                 WEEK 2 • هياكل البيانات
             </div>
-
-            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
-                <span class="text-gradient">Linked</span> List
-            </h1>
-
-            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">
-                القوائم المتصلة
-            </h2>
-
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-6">
-                A linear data structure where elements are connected using pointers, allowing dynamic memory allocation.
-            </p>
-
-            <!-- Arabic Explanation Box -->
-            <div class="max-w-4xl mx-auto mb-12">
-                <div class="p-6 bg-purple-950/30 border border-purple-900/50 rounded-2xl rtl-block">
-                    <h3 class="text-2xl font-bold text-purple-400 mb-4 font-arabic">🔗 إيه هي القائمة المتصلة؟</h3>
-                    <div class="space-y-4 text-purple-100/90 font-arabic text-lg leading-loose">
-                        <p>
-                            تخيل <span class="text-yellow-400">عربيات القطر</span> 🚂 - كل عربية فيها بضاعة (Data)
-                            وسلسلة متوصلة بالعربية اللي بعدها (Pointer).
-                        </p>
-
-                        <div class="grid md:grid-cols-2 gap-4 mt-6">
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-700">
-                                <div class="text-2xl mb-2">✅</div>
-                                <div class="text-emerald-400 font-bold">المميزات</div>
-                                <ul class="text-sm text-slate-400 mt-2 space-y-1">
-                                    <li>• الإضافة والحذف سريعين جداً O(1)</li>
-                                    <li>• الحجم قابل للتغيير بسهولة</li>
-                                    <li>• مش محتاج مساحة متجاورة في الذاكرة</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-900/50 p-4 rounded-xl border border-red-700">
-                                <div class="text-2xl mb-2">❌</div>
-                                <div class="text-red-400 font-bold">العيوب</div>
-                                <ul class="text-sm text-slate-400 mt-2 space-y-1">
-                                    <li>• الوصول لعنصر معين بطيء O(n)</li>
-                                    <li>• بتستهلك ذاكرة إضافية للـ pointers</li>
-                                    <li>• مفيش index زي الـ Array</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hero SVG Visualization -->
-            <div class="max-w-4xl mx-auto">
-                <div class="glass-card p-1 rounded-2xl shadow-2xl shadow-purple-900/20">
-                    <svg viewBox="0 0 800 220" class="w-full h-auto bg-[#0B1121] rounded-xl"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="headGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#10B981" />
-                                <stop offset="100%" style="stop-color:#059669" />
-                            </linearGradient>
-                            <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8B5CF6" />
-                                <stop offset="100%" style="stop-color:#7C3AED" />
-                            </linearGradient>
-                            <linearGradient id="nullGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#475569" />
-                                <stop offset="100%" style="stop-color:#334155" />
-                            </linearGradient>
-                            <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L0,6 L9,3 z" fill="#A78BFA" />
-                            </marker>
-                        </defs>
-
-                        <!-- Title -->
-                        <text x="400" y="30" text-anchor="middle" fill="#94a3b8" font-family="Cairo" font-size="14"
-                            font-weight="bold">
-                            كل Node فيها: قيمة (Data) + مؤشر (Pointer) للـ Node التالية
-                        </text>
-
-                        <!-- Linked List Nodes -->
-                        <g transform="translate(60, 70)">
-                            <!-- Head Node -->
-                            <rect x="0" y="0" width="80" height="70" rx="10" fill="url(#headGrad)" />
-                            <text x="40" y="30" text-anchor="middle" fill="white" font-family="Fira Code" font-size="16"
-                                font-weight="bold">42</text>
-                            <rect x="5" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
-                            <text x="40" y="59" text-anchor="middle" fill="#a7f3d0" font-family="Fira Code"
-                                font-size="9">next →</text>
-                            <text x="40" y="95" text-anchor="middle" fill="#10B981" font-family="Cairo" font-size="10"
-                                font-weight="bold">HEAD</text>
-
-                            <!-- Arrow 1 -->
-                            <line x1="80" y1="35" x2="120" y2="35" stroke="#A78BFA" stroke-width="2"
-                                marker-end="url(#arrowPurple)" />
-
-                            <!-- Node 2 -->
-                            <rect x="130" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
-                            <text x="170" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="16" font-weight="bold">17</text>
-                            <rect x="135" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
-                            <text x="170" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
-                                font-size="9">next →</text>
-
-                            <!-- Arrow 2 -->
-                            <line x1="210" y1="35" x2="250" y2="35" stroke="#A78BFA" stroke-width="2"
-                                marker-end="url(#arrowPurple)" />
-
-                            <!-- Node 3 -->
-                            <rect x="260" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
-                            <text x="300" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="16" font-weight="bold">83</text>
-                            <rect x="265" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
-                            <text x="300" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
-                                font-size="9">next →</text>
-
-                            <!-- Arrow 3 -->
-                            <line x1="340" y1="35" x2="380" y2="35" stroke="#A78BFA" stroke-width="2"
-                                marker-end="url(#arrowPurple)" />
-
-                            <!-- Node 4 -->
-                            <rect x="390" y="0" width="80" height="70" rx="10" fill="url(#nodeGrad)" />
-                            <text x="430" y="30" text-anchor="middle" fill="white" font-family="Fira Code"
-                                font-size="16" font-weight="bold">5</text>
-                            <rect x="395" y="45" width="70" height="20" rx="5" fill="rgba(0,0,0,0.2)" />
-                            <text x="430" y="59" text-anchor="middle" fill="#c4b5fd" font-family="Fira Code"
-                                font-size="9">next →</text>
-
-                            <!-- Arrow 4 -->
-                            <line x1="470" y1="35" x2="510" y2="35" stroke="#A78BFA" stroke-width="2"
-                                marker-end="url(#arrowPurple)" />
-
-                            <!-- NULL Node -->
-                            <rect x="520" y="10" width="70" height="50" rx="10" fill="url(#nullGrad)" opacity="0.7" />
-                            <text x="555" y="42" text-anchor="middle" fill="#94a3b8" font-family="Fira Code"
-                                font-size="13">NULL</text>
-                            <text x="555" y="80" text-anchor="middle" fill="#64748b" font-family="Cairo"
-                                font-size="10">نهاية القائمة</text>
-                        </g>
-
-                        <!-- Memory Address Indicators (scattered) -->
-                        <g fill="#475569" font-family="Fira Code" font-size="9">
-                            <text x="100" y="185">0x7A2</text>
-                            <text x="230" y="185">0x4F8</text>
-                            <text x="360" y="185">0x1B0</text>
-                            <text x="490" y="185">0x9D4</text>
-                        </g>
-                        <text x="400" y="205" text-anchor="middle" fill="#64748b" font-family="Cairo" font-size="10">
-                            العناصر مش متجاورة في الذاكرة! 🧩
-                        </text>
-                    </svg>
-                </div>
-            </div>
+            <h1 class="text-5xl md:text-7xl font-black mb-6"><span class="text-gradient">Linked</span> List</h1>
+            <h2 class="text-3xl font-bold text-slate-400 font-arabic mb-8">القوائم المتصلة</h2>
         </div>
     </header>
 
-    <!-- Concept Section -->
+    <!-- What is Linked List Section -->
     <section id="concept" class="py-20 px-6 bg-slate-900/30">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-4xl font-bold text-center mb-4">
-                <i class="fa-solid fa-graduation-cap text-yellow-500 mr-3"></i>
-                Array vs Linked List
-            </h2>
-            <p class="text-center text-slate-400 font-arabic mb-16">المقارنة بين المصفوفة والقائمة المتصلة</p>
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i class="fa-solid fa-link text-orange-500 mr-3"></i>إيه هي
+                الـ Linked List؟</h2>
 
-            <div class="glass-card p-8 rounded-2xl border border-slate-700/50 mb-12" data-aos="fade-up">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-slate-900/80 border-b border-slate-700">
-                                <th class="px-6 py-4 text-left text-slate-300 font-bold">Operation</th>
-                                <th class="px-6 py-4 text-center text-blue-400 font-bold">Array</th>
-                                <th class="px-6 py-4 text-center text-purple-400 font-bold">Linked List</th>
-                                <th class="px-6 py-4 text-right text-slate-300 font-bold font-arabic">الشرح</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-slate-800">
-                                <td class="px-6 py-4 text-slate-300">Access</td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)</span></td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
-                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">Array = فوري | List =
-                                    لازم تعدي على كل node</td>
-                            </tr>
-                            <tr class="border-b border-slate-800">
-                                <td class="px-6 py-4 text-slate-300">Insert (middle)</td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)*</span></td>
-                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">*لو عندك pointer
-                                    للمكان</td>
-                            </tr>
-                            <tr class="border-b border-slate-800">
-                                <td class="px-6 py-4 text-slate-300">Delete (middle)</td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge slow">O(n)</span></td>
-                                <td class="px-6 py-4 text-center"><span class="complexity-badge fast">O(1)*</span></td>
-                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">*لو عندك pointer
-                                    للمكان</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 text-slate-300">Memory</td>
-                                <td class="px-6 py-4 text-center text-blue-400">Contiguous</td>
-                                <td class="px-6 py-4 text-center text-purple-400">Scattered</td>
-                                <td class="px-6 py-4 text-slate-400 text-sm font-arabic rtl-text">Array = متجاورة | List
-                                    = متفرقة</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="glass-card p-8 rounded-2xl border border-orange-900/50 mb-12" data-aos="fade-up">
+                <div class="rtl-block">
+                    <h3 class="text-2xl font-bold text-orange-400 mb-6 font-arabic">🔗 الفكرة الأساسية</h3>
+
+                    <div class="space-y-6 text-lg leading-loose font-arabic">
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-yellow-400 mb-3">📖 تشبيه القطار</h4>
+                            <p class="text-slate-300">
+                                تخيل <span class="text-orange-400 font-bold">قطار</span> - كل عربية فيها:
+                            </p>
+                            <ul class="mt-3 space-y-2 text-slate-300">
+                                <li>• <span class="text-emerald-400 font-bold">البيانات</span> (الركاب)</li>
+                                <li>• <span class="text-orange-400 font-bold">وصلة للعربية اللي بعدها</span>
+                                    (pointer/reference)</li>
+                            </ul>
+                            <p class="mt-3 text-slate-300">
+                                آخر عربية <span class="text-slate-400">(last node)</span> بتشاور على <span
+                                    class="text-red-400 font-bold">null</span> - مفيش حاجة بعدها!
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-emerald-400 mb-3">💡 الفرق الكبير عن الـ Array</h4>
+                            <p class="text-slate-300">
+                                في الـ Array، العناصر <span class="text-cyan-400">ورا بعض في الذاكرة</span>
+                                (contiguous).
+                            </p>
+                            <p class="text-slate-300 mt-2">
+                                في الـ Linked List، العناصر <span class="text-orange-400 font-bold">متفرقة في
+                                    الذاكرة</span>!
+                                <br>
+                                بس كل واحد <span class="text-yellow-400">عارف مكان اللي بعده</span>.
+                            </p>
+                        </div>
+
+                        <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                            <h4 class="text-xl font-bold text-purple-400 mb-3">🧩 تركيبة الـ Node</h4>
+                            <div class="flex justify-center items-center gap-4 mt-4" dir="ltr">
+                                <div class="node-box">
+                                    <div class="data">Data</div>
+                                    <div class="next"><i class="fas fa-arrow-right text-orange-400"></i></div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-400 mt-4">
+                                <span class="text-emerald-400">Data:</span> القيمة المخزنة
+                                <br>
+                                <span class="text-orange-400">Next:</span> مؤشر (pointer) للـ node التالي
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Operations Cards -->
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-emerald-500" data-aos="fade-up">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-emerald-400"></i>
-                        Insert at Head
-                    </h3>
-                    <div class="complexity-badge fast mb-4">O(1)</div>
-                    <p class="text-slate-400 mb-4">Create new node, point to old head, update head pointer.</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-sm text-slate-300">
-                            <strong class="text-emerald-400">سريع!</strong> بتعمل node جديدة وتخليها تشاور على الأول،
-                            وتحدث الـ head.
-                        </p>
+            <!-- Visual Linked List -->
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <h3 class="text-2xl font-bold text-center mb-6">Linked List Structure</h3>
+                <div class="flex flex-wrap items-center justify-center gap-2 p-4 bg-slate-900/50 rounded-xl overflow-x-auto"
+                    dir="ltr">
+                    <div class="text-emerald-400 text-sm font-mono border border-emerald-500 px-2 py-1 rounded">HEAD →
+                    </div>
+                    <div class="node-box head">
+                        <div class="data">10</div>
+                        <div class="next"><i class="fas fa-arrow-right text-orange-400"></i></div>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="node-box">
+                        <div class="data">25</div>
+                        <div class="next"><i class="fas fa-arrow-right text-orange-400"></i></div>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="node-box">
+                        <div class="data">33</div>
+                        <div class="next"><i class="fas fa-arrow-right text-orange-400"></i></div>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="node-box">
+                        <div class="data">47</div>
+                        <div class="next"><i class="fas fa-times text-red-400"></i></div>
+                    </div>
+                    <span class="arrow">→</span>
+                    <div class="null-box">null</div>
+                </div>
+                <p class="text-center text-slate-400 font-arabic text-sm rtl-block mt-4">
+                    كل node بتشاور على اللي بعدها، وآخر واحدة بتشاور على null
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Array vs Linked List -->
+    <section class="py-20 px-6">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-scale-balanced text-purple-500 mr-3"></i>Array vs Linked List</h2>
+
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-900 text-slate-400">
+                        <tr>
+                            <th class="py-4 px-4 text-right font-arabic">المقارنة</th>
+                            <th class="py-4 px-4 text-center text-cyan-400">Array</th>
+                            <th class="py-4 px-4 text-center text-orange-400">Linked List</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الذاكرة</td>
+                            <td class="py-4 px-4 text-center text-cyan-300">متتالية (Contiguous)</td>
+                            <td class="py-4 px-4 text-center text-orange-300">متفرقة (Scattered)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Access بالـ Index</td>
+                            <td class="py-4 px-4 text-center text-emerald-400 font-mono">O(1) ✓</td>
+                            <td class="py-4 px-4 text-center text-red-400 font-mono">O(n) ✗</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Insert في الأول</td>
+                            <td class="py-4 px-4 text-center text-red-400 font-mono">O(n)</td>
+                            <td class="py-4 px-4 text-center text-emerald-400 font-mono">O(1) ✓</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">Delete من الأول</td>
+                            <td class="py-4 px-4 text-center text-red-400 font-mono">O(n)</td>
+                            <td class="py-4 px-4 text-center text-emerald-400 font-mono">O(1) ✓</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">استهلاك الذاكرة</td>
+                            <td class="py-4 px-4 text-center text-emerald-300">أقل</td>
+                            <td class="py-4 px-4 text-center text-orange-300">أكتر (pointer لكل node)</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="py-4 px-4 font-arabic rtl-block">الحجم</td>
+                            <td class="py-4 px-4 text-center text-cyan-300">ثابت (في بعض اللغات)</td>
+                            <td class="py-4 px-4 text-center text-orange-300">متغير (Dynamic)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mt-8 grid md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-cyan-950/30 rounded-xl border border-cyan-700 rtl-block">
+                        <h4 class="text-lg font-bold text-cyan-400 font-arabic mb-3">🎯 امتى تستخدم Array؟</h4>
+                        <ul class="space-y-2 font-arabic text-sm text-slate-300">
+                            <li>• لما تحتاج توصل للعناصر <span class="text-cyan-400">بالـ index كتير</span></li>
+                            <li>• لما تعرف الحجم من البداية</li>
+                            <li>• لما الذاكرة مهمة</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 bg-orange-950/30 rounded-xl border border-orange-700 rtl-block">
+                        <h4 class="text-lg font-bold text-orange-400 font-arabic mb-3">🎯 امتى تستخدم Linked List؟</h4>
+                        <ul class="space-y-2 font-arabic text-sm text-slate-300">
+                            <li>• لما تضيف/تحذف من <span class="text-orange-400">الأول كتير</span></li>
+                            <li>• لما الحجم متغير</li>
+                            <li>• لما مش محتاج access بالـ index</li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-yellow-500" data-aos="fade-up"
-                    data-aos-delay="100">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-search text-yellow-400"></i>
-                        Search
-                    </h3>
-                    <div class="complexity-badge slow mb-4">O(n)</div>
-                    <p class="text-slate-400 mb-4">Must traverse from head until found.</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-sm text-slate-300">
-                            <strong class="text-yellow-400">بطيء!</strong> لازم تعدي من أول node لحد ما تلاقي اللي بتدور
-                            عليه.
-                        </p>
-                    </div>
+    <!-- Operations Deep Dive -->
+    <section class="py-20 px-6 bg-slate-900/30">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center mb-12"><i
+                    class="fa-solid fa-gears text-yellow-500 mr-3"></i>العمليات بالتفصيل</h2>
+
+            <!-- Insert at Head -->
+            <div class="glass-card p-8 rounded-2xl mb-8" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-emerald-500 text-white font-bold rounded-lg">INSERT HEAD</span>
+                    <span class="text-2xl font-bold text-emerald-400">إضافة في الأول</span>
+                    <span
+                        class="ml-auto px-3 py-1 bg-emerald-900/30 text-emerald-400 rounded-full text-sm font-mono">O(1)</span>
                 </div>
 
-                <div class="glass-card p-8 rounded-2xl border-t-4 border-t-red-500" data-aos="fade-up"
-                    data-aos-delay="200">
-                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-trash text-red-400"></i>
-                        Delete
-                    </h3>
-                    <div class="complexity-badge fast mb-4">O(1)*</div>
-                    <p class="text-slate-400 mb-4">Just update the previous node's pointer!</p>
-                    <div class="rtl-block bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="font-arabic text-sm text-slate-300">
-                            <strong class="text-emerald-400">سريع!*</strong> بتغير pointer اللي قبله يشاور على اللي
-                            بعده.
-                            <span class="text-xs text-slate-500">*لو عندك pointer للـ node</span>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="rtl-block font-arabic">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-4">📝 الخطوات:</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">1.</span> اعمل node جديد بالقيمة
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-orange-500">
+                                <span class="text-orange-400 font-bold">2.</span> خلي الـ next بتاع الـ node الجديد
+                                يشاور على الـ head الحالي
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-cyan-500">
+                                <span class="text-cyan-400 font-bold">3.</span> حدث الـ head يشاور على الـ node الجديد
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-emerald-950/30 rounded-xl border border-emerald-900">
+                            <p class="text-emerald-400 font-bold">💡 ليه O(1)؟</p>
+                            <p class="text-sm text-slate-300">
+                                مش محتاجين نعدي على أي node تانية - بنتعامل مع الـ head مباشرة!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-sm text-slate-400 mb-3">مثال: إضافة 5 في الأول</p>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">Before:</p>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="text-emerald-400 text-xs font-mono">HEAD →</div>
+                                    <div class="node-box head">
+                                        <div class="data">10</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">25</div>
+                                        <div class="next"><i class="fas fa-times text-red-400 text-sm"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">After:</p>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="text-emerald-400 text-xs font-mono">HEAD →</div>
+                                    <div class="node-box head highlight">
+                                        <div class="data text-yellow-400">5</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">10</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">25</div>
+                                        <div class="next"><i class="fas fa-times text-red-400 text-sm"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete from Head -->
+            <div class="glass-card p-8 rounded-2xl mb-8" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg">DELETE HEAD</span>
+                    <span class="text-2xl font-bold text-red-400">حذف من الأول</span>
+                    <span
+                        class="ml-auto px-3 py-1 bg-emerald-900/30 text-emerald-400 rounded-full text-sm font-mono">O(1)</span>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="rtl-block font-arabic">
+                        <h4 class="text-lg font-bold text-cyan-400 mb-4">📝 الخطوات:</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-red-500">
+                                <span class="text-red-400 font-bold">1.</span> خلي الـ head يشاور على الـ node التانية
+                                (head.next)
+                            </div>
+                            <div class="p-3 bg-slate-900/50 rounded-lg border-r-3 border-r-slate-500">
+                                <span class="text-slate-400 font-bold">2.</span> الـ node الأولى هتتمسح من الذاكرة
+                                (Garbage Collection)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-sm text-slate-400 mb-3">مثال: حذف أول عنصر</p>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">Before:</p>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="text-emerald-400 text-xs font-mono">HEAD →</div>
+                                    <div class="node-box" style="opacity:0.5; border-color:#EF4444;">
+                                        <div class="data text-red-400 line-through">10</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">25</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">33</div>
+                                        <div class="next"><i class="fas fa-times text-red-400 text-sm"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 mb-2">After:</p>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="text-emerald-400 text-xs font-mono">HEAD →</div>
+                                    <div class="node-box head">
+                                        <div class="data">25</div>
+                                        <div class="next"><i class="fas fa-arrow-right text-orange-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <span class="arrow text-lg">→</span>
+                                    <div class="node-box">
+                                        <div class="data">33</div>
+                                        <div class="next"><i class="fas fa-times text-red-400 text-sm"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traversal -->
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg">TRAVERSE</span>
+                    <span class="text-2xl font-bold text-blue-400">التنقل / البحث</span>
+                    <span
+                        class="ml-auto px-3 py-1 bg-blue-900/30 text-blue-400 rounded-full text-sm font-mono">O(n)</span>
+                </div>
+
+                <div class="rtl-block font-arabic">
+                    <div class="p-5 bg-slate-900/50 rounded-xl border border-slate-700">
+                        <p class="text-slate-300">
+                            عشان توصل لعنصر معين، لازم <span class="text-blue-400 font-bold">تبدأ من الـ head</span>
+                            وتمشي node بـ node لحد ما توصل!
+                        </p>
+                        <p class="text-sm text-orange-400 mt-3">
+                            ⚠️ مفيش random access زي الـ Array - ده العيب الكبير!
                         </p>
                     </div>
                 </div>
@@ -507,143 +482,115 @@
         </div>
     </section>
 
-    <!-- Interactive Demo Section -->
-    <section id="demo" class="py-24 px-6">
-        <div class="container mx-auto max-w-5xl">
-            <div class="text-center mb-16">
-                <span class="text-purple-500 font-mono text-sm tracking-wider">INTERACTIVE</span>
-                <h2 class="text-4xl font-bold text-white mt-2">Build Your Linked List</h2>
-                <p class="text-slate-400 mt-2 font-arabic">ابني القائمة المتصلة بنفسك!</p>
+    <!-- Interactive Demo -->
+    <section id="demo" class="py-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <div class="text-center mb-12">
+                <span class="text-orange-500 font-mono text-sm">INTERACTIVE</span>
+                <h2 class="text-4xl font-bold text-white mt-2">Try It Yourself!</h2>
             </div>
 
-            <div class="glass-card p-8 rounded-2xl border border-slate-700/50" data-aos="fade-up">
-                <!-- Controls -->
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/30">
-                        <h4 class="font-bold text-emerald-400 mb-3">Add Node</h4>
-                        <div class="flex gap-2">
-                            <input type="number" id="add-value" placeholder="value"
-                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-emerald-500 focus:outline-none">
-                            <button id="add-head-btn"
-                                class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition text-sm">
-                                Add Head
-                            </button>
-                            <button id="add-tail-btn"
-                                class="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition text-sm">
-                                Add Tail
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="p-4 bg-red-900/20 rounded-xl border border-red-500/30">
-                        <h4 class="font-bold text-red-400 mb-3">Remove / Search</h4>
-                        <div class="flex gap-2">
-                            <input type="number" id="target-value" placeholder="value"
-                                class="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-red-500 focus:outline-none">
-                            <button id="remove-btn"
-                                class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition text-sm">
-                                Remove
-                            </button>
-                            <button id="search-btn"
-                                class="px-4 py-2 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-500 transition text-sm">
-                                Search
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- List Container -->
-                <div id="list-container"
-                    class="flex flex-wrap items-center gap-2 justify-center p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[120px] mb-6 overflow-x-auto">
-                    <div class="node head-node">Head</div>
-                    <div class="pointer-arrow"></div>
-                    <div class="node null-node">NULL</div>
-                </div>
-
-                <!-- Reset -->
-                <div class="flex justify-center mb-6">
+            <div class="glass-card p-8 rounded-2xl" data-aos="fade-up">
+                <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                    <input type="number" id="value-input" placeholder="Value"
+                        class="px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono w-24 text-center">
+                    <button id="prepend-btn"
+                        class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition"><i
+                            class="fas fa-plus mr-1"></i>Add Head</button>
+                    <button id="append-btn"
+                        class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition"><i
+                            class="fas fa-plus mr-1"></i>Add Tail</button>
+                    <button id="remove-btn"
+                        class="px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-500 transition"><i
+                            class="fas fa-minus mr-1"></i>Remove Head</button>
                     <button id="reset-btn"
-                        class="px-6 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg border border-slate-700 hover:bg-slate-700 transition flex items-center gap-2">
-                        <i class="fas fa-redo"></i> Reset List
-                    </button>
+                        class="px-4 py-2 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition"><i
+                            class="fas fa-redo mr-1"></i>Reset</button>
                 </div>
 
-                <!-- Log -->
-                <div id="log"
-                    class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 max-h-40 overflow-y-auto font-mono text-sm">
-                    <p class="text-slate-500">Add nodes to the list to get started.</p>
+                <div id="list-display"
+                    class="flex flex-wrap items-center justify-center gap-2 p-6 bg-slate-900/50 rounded-xl border border-slate-800 min-h-[80px] overflow-x-auto">
+                </div>
+
+                <div id="info" class="mt-6 p-4 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                    <p class="text-slate-400">Enter a value and click an operation.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Code Section -->
-    <section id="code" class="py-24 px-6 bg-black/20">
+    <!-- Code Implementation -->
+    <section class="py-20 px-6 bg-slate-900/30">
         <div class="container mx-auto max-w-5xl">
-            <h2 class="text-4xl font-bold text-white mb-4 text-center">Implementation</h2>
-            <p class="text-center text-slate-400 font-arabic mb-12">الكود مع الشرح</p>
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">Implementation</h2>
 
-            <div class="glass-card rounded-2xl overflow-hidden border border-slate-700/50" data-aos="fade-up">
+            <div class="glass-card rounded-2xl overflow-hidden" data-aos="fade-up">
                 <div class="flex items-center gap-2 px-4 py-3 bg-slate-900 border-b border-slate-800">
                     <span class="w-3 h-3 rounded-full bg-red-500"></span>
                     <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
                     <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                    <span class="ml-4 font-mono text-sm text-slate-400">linkedList.js</span>
+                    <span class="ml-4 font-mono text-sm text-slate-400">LinkedList.js</span>
                 </div>
-
                 <div class="grid md:grid-cols-2 divide-x divide-slate-800">
-                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-sm"><code class="font-mono"><span class="code-line"><span class="line-num">1</span><span class="text-purple-400">class</span> <span class="text-blue-400">Node</span> {</span>
-<span class="code-line"><span class="line-num">2</span>  <span class="text-purple-400">constructor</span>(<span class="text-orange-300">data</span>) {</span>
-<span class="code-line"><span class="line-num">3</span>    <span class="text-purple-400">this</span>.data = data;</span>
-<span class="code-line"><span class="line-num">4</span>    <span class="text-purple-400">this</span>.next = <span class="text-purple-400">null</span>;</span>
-<span class="code-line"><span class="line-num">5</span>  }</span>
-<span class="code-line"><span class="line-num">6</span>}</span>
-<span class="code-line"><span class="line-num">7</span></span>
-<span class="code-line"><span class="line-num">8</span><span class="text-purple-400">class</span> <span class="text-blue-400">LinkedList</span> {</span>
-<span class="code-line"><span class="line-num">9</span>  <span class="text-purple-400">constructor</span>() {</span>
-<span class="code-line"><span class="line-num">10</span>    <span class="text-purple-400">this</span>.head = <span class="text-purple-400">null</span>;</span>
-<span class="code-line"><span class="line-num">11</span>  }</span>
-<span class="code-line"><span class="line-num">12</span></span>
-<span class="code-line"><span class="line-num">13</span>  <span class="text-gray-500">// O(1) - أضف في الأول</span></span>
-<span class="code-line"><span class="line-num">14</span>  <span class="text-blue-400">addHead</span>(<span class="text-orange-300">data</span>) {</span>
-<span class="code-line"><span class="line-num">15</span>    <span class="text-purple-400">const</span> node = <span class="text-purple-400">new</span> <span class="text-blue-400">Node</span>(data);</span>
-<span class="code-line"><span class="line-num">16</span>    node.next = <span class="text-purple-400">this</span>.head;</span>
-<span class="code-line"><span class="line-num">17</span>    <span class="text-purple-400">this</span>.head = node;</span>
-<span class="code-line"><span class="line-num">18</span>  }</span>
-<span class="code-line"><span class="line-num">19</span></span>
-<span class="code-line"><span class="line-num">20</span>  <span class="text-gray-500">// O(n) - دور</span></span>
-<span class="code-line"><span class="line-num">21</span>  <span class="text-blue-400">search</span>(<span class="text-orange-300">data</span>) {</span>
-<span class="code-line"><span class="line-num">22</span>    <span class="text-purple-400">let</span> curr = <span class="text-purple-400">this</span>.head;</span>
-<span class="code-line"><span class="line-num">23</span>    <span class="text-purple-400">while</span> (curr) {</span>
-<span class="code-line"><span class="line-num">24</span>      <span class="text-purple-400">if</span> (curr.data === data)</span>
-<span class="code-line"><span class="line-num">25</span>        <span class="text-purple-400">return</span> curr;</span>
-<span class="code-line"><span class="line-num">26</span>      curr = curr.next;</span>
-<span class="code-line"><span class="line-num">27</span>    }</span>
-<span class="code-line"><span class="line-num">28</span>    <span class="text-purple-400">return</span> <span class="text-purple-400">null</span>;</span>
-<span class="code-line"><span class="line-num">29</span>  }</span>
-<span class="code-line"><span class="line-num">30</span>}</span></code></pre>
+                    <pre class="p-6 bg-[#0B1221] overflow-x-auto text-xs"><code class="font-mono"><span class="text-purple-400">class</span> <span class="text-blue-400">Node</span> {
+  <span class="text-blue-400">constructor</span>(<span class="text-orange-300">value</span>) {
+    <span class="text-purple-400">this</span>.value = value;
+    <span class="text-purple-400">this</span>.next = <span class="text-orange-400">null</span>;
+  }
+}
 
-                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto">
-                        <h4 class="font-bold text-white mb-4 font-arabic text-lg">شرح الكود 📖</h4>
-                        <div class="space-y-4 font-arabic text-sm">
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-purple-500">
-                                <span class="text-purple-400 font-bold">Node (سطر 1-6):</span>
-                                <br>
-                                كل node فيها: data (القيمة) و next (pointer للـ node التالية)
+<span class="text-purple-400">class</span> <span class="text-blue-400">LinkedList</span> {
+  <span class="text-blue-400">constructor</span>() {
+    <span class="text-purple-400">this</span>.head = <span class="text-orange-400">null</span>;
+  }
+  
+  <span class="text-slate-500">// O(1) - Add to head</span>
+  <span class="text-blue-400">prepend</span>(<span class="text-orange-300">value</span>) {
+    <span class="text-purple-400">const</span> node = <span class="text-purple-400">new</span> Node(value);
+    node.next = <span class="text-purple-400">this</span>.head;
+    <span class="text-purple-400">this</span>.head = node;
+  }
+  
+  <span class="text-slate-500">// O(n) - Add to tail</span>
+  <span class="text-blue-400">append</span>(<span class="text-orange-300">value</span>) {
+    <span class="text-purple-400">const</span> node = <span class="text-purple-400">new</span> Node(value);
+    <span class="text-purple-400">if</span> (!<span class="text-purple-400">this</span>.head) {
+      <span class="text-purple-400">this</span>.head = node;
+      <span class="text-purple-400">return</span>;
+    }
+    <span class="text-purple-400">let</span> curr = <span class="text-purple-400">this</span>.head;
+    <span class="text-purple-400">while</span> (curr.next) curr = curr.next;
+    curr.next = node;
+  }
+  
+  <span class="text-slate-500">// O(1) - Remove from head</span>
+  <span class="text-blue-400">removeHead</span>() {
+    <span class="text-purple-400">if</span> (<span class="text-purple-400">this</span>.head) <span class="text-purple-400">this</span>.head = <span class="text-purple-400">this</span>.head.next;
+  }
+}</code></pre>
+
+                    <div class="p-6 bg-slate-900/50 rtl-block overflow-y-auto max-h-[450px]">
+                        <h4 class="font-bold text-white mb-4 font-arabic">شرح الكود 📖</h4>
+                        <div class="space-y-3 font-arabic text-sm">
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-purple-500">
+                                <span class="text-purple-400 font-bold">class Node:</span>
+                                الـ node الواحدة - فيها value و next
                             </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-emerald-500">
-                                <span class="text-emerald-400 font-bold">addHead (سطر 14-18):</span>
-                                <br>
-                                اعمل node جديدة، خليها تشاور على الـ head الحالي، وحدث الـ head!
-                                <br>
-                                <span class="text-xs text-slate-500">O(1) - سريع جداً! 🚀</span>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-blue-500">
+                                <span class="text-blue-400 font-bold">class LinkedList:</span>
+                                القائمة نفسها - فيها head بس!
                             </div>
-                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-2 border-r-yellow-500">
-                                <span class="text-yellow-400 font-bold">search (سطر 21-29):</span>
-                                <br>
-                                ابدأ من الـ head وعدي على كل node لحد ما تلاقي القيمة
-                                <br>
-                                <span class="text-xs text-slate-500">O(n) - في أسوأ الحالات تعدي على كلهم 😓</span>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-emerald-500">
+                                <span class="text-emerald-400 font-bold">prepend():</span>
+                                إضافة في الأول - O(1)
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-yellow-500">
+                                <span class="text-yellow-400 font-bold">append():</span>
+                                إضافة في الآخر - O(n) لأن لازم نعدي على كل الـ nodes
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg border-r-3 border-r-red-500">
+                                <span class="text-red-400 font-bold">removeHead():</span>
+                                حذف من الأول - O(1)
                             </div>
                         </div>
                     </div>
@@ -654,126 +601,81 @@
 
     <footer class="py-12 text-center text-slate-600 bg-black/40 text-sm">
         <p>Grokking Algorithms Course - Week 2</p>
-        <p class="font-arabic mt-1">Advanced Monitoring</p>
     </footer>
 
     <script>
-        AOS.init({ duration: 800, once: true, offset: 100 });
+        AOS.init({ duration: 800, once: true });
 
-        const listContainer = document.getElementById('list-container');
-        const addValueInput = document.getElementById('add-value');
-        const addHeadBtn = document.getElementById('add-head-btn');
-        const addTailBtn = document.getElementById('add-tail-btn');
-        const targetValueInput = document.getElementById('target-value');
-        const removeBtn = document.getElementById('remove-btn');
-        const searchBtn = document.getElementById('search-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const logElement = document.getElementById('log');
+        const listDisplay = document.getElementById('list-display');
+        const valueInput = document.getElementById('value-input');
+        const info = document.getElementById('info');
+        let list = [10, 25, 33, 47];
 
-        let list = [];
-
-        addHeadBtn.addEventListener('click', () => {
-            const value = parseInt(addValueInput.value);
-            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
-            list.unshift(value);
-            renderList();
-            log(`➕ Added ${value} at HEAD (O(1) - فوري!)`, 'success');
-            addValueInput.value = '';
-        });
-
-        addTailBtn.addEventListener('click', () => {
-            const value = parseInt(addValueInput.value);
-            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
-            list.push(value);
-            renderList();
-            log(`➕ Added ${value} at TAIL (O(n) - لازم نعدي للآخر)`, 'success');
-            addValueInput.value = '';
-        });
-
-        removeBtn.addEventListener('click', () => {
-            const value = parseInt(targetValueInput.value);
-            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
-            const index = list.indexOf(value);
-            if (index === -1) { log(`❌ ${value} not found!`, 'error'); return; }
-            list.splice(index, 1);
-            renderList();
-            log(`🗑️ Removed ${value} (O(n) - لازم نلاقيه الأول)`, 'success');
-            targetValueInput.value = '';
-        });
-
-        searchBtn.addEventListener('click', () => {
-            const value = parseInt(targetValueInput.value);
-            if (isNaN(value)) { log('❌ Enter a valid number!', 'error'); return; }
-            const index = list.indexOf(value);
-            if (index === -1) {
-                log(`🔍 ${value} NOT found (searched ${list.length} nodes)`, 'error');
-            } else {
-                renderList(index);
-                log(`🔍 Found ${value} at position ${index} (checked ${index + 1} nodes)`, 'success');
-            }
-        });
-
-        resetBtn.addEventListener('click', () => {
-            list = [];
-            renderList();
-            log('🔄 List reset', 'info');
-        });
-
-        function renderList(highlightIndex = -1) {
-            listContainer.innerHTML = '';
-
-            // Head indicator
-            const headNode = document.createElement('div');
-            headNode.className = 'node head-node';
-            headNode.innerHTML = '<span class="value">Head</span>';
-            listContainer.appendChild(headNode);
+        function render(newIdx = -1) {
+            listDisplay.innerHTML = '<span class="text-emerald-400 text-xs font-mono border border-emerald-500 px-2 py-1 rounded">HEAD →</span>';
 
             if (list.length === 0) {
-                const arrow = document.createElement('div');
-                arrow.className = 'pointer-arrow';
-                listContainer.appendChild(arrow);
-
-                const nullNode = document.createElement('div');
-                nullNode.className = 'node null-node';
-                nullNode.textContent = 'NULL';
-                listContainer.appendChild(nullNode);
-            } else {
-                list.forEach((value, index) => {
-                    const arrow = document.createElement('div');
-                    arrow.className = 'pointer-arrow';
-                    listContainer.appendChild(arrow);
-
-                    const node = document.createElement('div');
-                    node.className = 'node';
-                    if (index === highlightIndex) node.classList.add('highlight');
-                    node.innerHTML = `<span class="value">${value}</span><span class="pointer-section">next →</span>`;
-                    listContainer.appendChild(node);
-                });
-
-                const arrow = document.createElement('div');
-                arrow.className = 'pointer-arrow';
-                listContainer.appendChild(arrow);
-
-                const nullNode = document.createElement('div');
-                nullNode.className = 'node null-node';
-                nullNode.textContent = 'NULL';
-                listContainer.appendChild(nullNode);
+                listDisplay.innerHTML += '<div class="null-box">null (empty)</div>';
+                return;
             }
+
+            list.forEach((v, i) => {
+                const node = document.createElement('div');
+                node.className = 'node-box' + (i === 0 ? ' head' : '') + (i === newIdx ? ' highlight' : '');
+                node.innerHTML = `<div class="data${i === newIdx ? ' text-yellow-400' : ''}">${v}</div><div class="next">${i === list.length - 1 ? '<i class="fas fa-times text-red-400 text-sm"></i>' : '<i class="fas fa-arrow-right text-orange-400 text-sm"></i>'}</div>`;
+                listDisplay.appendChild(node);
+
+                if (i < list.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow text-lg';
+                    arrow.textContent = '→';
+                    listDisplay.appendChild(arrow);
+                }
+            });
+
+            const nullBox = document.createElement('span');
+            nullBox.className = 'arrow text-lg';
+            nullBox.textContent = '→';
+            listDisplay.appendChild(nullBox);
+
+            const nul = document.createElement('div');
+            nul.className = 'null-box';
+            nul.textContent = 'null';
+            listDisplay.appendChild(nul);
         }
 
-        function log(message, type = 'info') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            p.className = {
-                info: 'text-blue-400',
-                success: 'text-emerald-400',
-                error: 'text-red-400'
-            }[type] + ' mb-1';
-            logElement.prepend(p);
-            while (logElement.children.length > 10) logElement.removeChild(logElement.lastChild);
-        }
+        document.getElementById('prepend-btn').onclick = () => {
+            const val = parseInt(valueInput.value);
+            if (isNaN(val)) { info.innerHTML = '<p class="text-red-400">Enter a value!</p>'; return; }
+            list.unshift(val);
+            render(0);
+            info.innerHTML = `<p class="text-emerald-400 font-arabic">تم إضافة ${val} في الأول - <span class="font-mono">O(1)</span>!</p>`;
+            valueInput.value = '';
+        };
 
-        renderList();
+        document.getElementById('append-btn').onclick = () => {
+            const val = parseInt(valueInput.value);
+            if (isNaN(val)) { info.innerHTML = '<p class="text-red-400">Enter a value!</p>'; return; }
+            list.push(val);
+            render(list.length - 1);
+            info.innerHTML = `<p class="text-blue-400 font-arabic">تم إضافة ${val} في الآخر - <span class="font-mono">O(n)</span> (عدينا على ${list.length - 1} nodes)</p>`;
+            valueInput.value = '';
+        };
+
+        document.getElementById('remove-btn').onclick = () => {
+            if (list.length === 0) { info.innerHTML = '<p class="text-red-400">List is empty!</p>'; return; }
+            const removed = list.shift();
+            render();
+            info.innerHTML = `<p class="text-red-400 font-arabic">تم حذف ${removed} من الأول - <span class="font-mono">O(1)</span>!</p>`;
+        };
+
+        document.getElementById('reset-btn').onclick = () => {
+            list = [10, 25, 33, 47];
+            render();
+            info.innerHTML = '<p class="text-slate-400">Reset to original list.</p>';
+        };
+
+        render();
     </script>
 </body>
 
