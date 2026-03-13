@@ -5,409 +5,530 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algorithms & Data Structures | الخوارزميات وهياكل البيانات</title>
+    <meta name="description" content="تعلم الخوارزميات وهياكل البيانات بطريقة تفاعلية ومبسطة باللغة العربية">
     <link rel="icon" type="image/svg+xml" href="public/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#007bff',
-                        accent: '#8a7ef8',
-                        dark: { 900: '#0a0a0f', 800: '#121218', 700: '#1a1a24', 600: '#24243a' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        arabic: ['Cairo', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html,
-        body {
-            height: 100%;
-            overflow-x: hidden;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        html, body { height: 100%; overflow-x: hidden; }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: #0a0a0f;
+            background: #07070d;
             color: #e0e0e0;
             min-height: 100vh;
         }
 
-        /* Hero takes full viewport */
+        /* =================== HERO =================== */
         .hero {
             min-height: 100vh;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
+            padding: 60px 24px 40px;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #0a0a0f 0%, #121218 50%, #0a0a0f 100%);
-            background-size: 200% 200%;
-            animation: gradientFlow 15s ease infinite;
+            background: radial-gradient(ellipse 120% 80% at 50% 0%, #0e1630 0%, #07070d 60%);
         }
 
-        @keyframes gradientFlow {
-            0% {
-                background-position: 0% 50%;
-            }
+        /* Aurora glow blobs */
+        .aurora { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0; animation: auroraIn 2s ease forwards; pointer-events: none; }
+        .aurora-1 { width: 500px; height: 500px; top: -10%; left: -5%; background: rgba(59,130,246,0.12); animation-delay: 0.2s; }
+        .aurora-2 { width: 400px; height: 400px; bottom: 10%; right: -5%; background: rgba(139,92,246,0.10); animation-delay: 0.5s; }
+        .aurora-3 { width: 350px; height: 350px; top: 40%; left: 50%; transform: translateX(-50%); background: rgba(16,185,129,0.07); animation-delay: 0.8s; }
 
-            50% {
-                background-position: 100% 50%;
-            }
+        @keyframes auroraIn { to { opacity: 1; } }
 
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+        .aurora-1 { animation: auroraIn 2s ease forwards, auroraFloat1 20s ease-in-out infinite 2s; }
+        .aurora-2 { animation: auroraIn 2s ease forwards, auroraFloat2 18s ease-in-out infinite 2.5s; }
+        .aurora-3 { animation: auroraIn 2s ease forwards, auroraFloat3 22s ease-in-out infinite 3s; }
 
-        /* Floating particles */
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(0, 123, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(138, 126, 248, 0.08) 0%, transparent 50%);
-            z-index: 0;
-            animation: pulse 8s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.5;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-        }
+        @keyframes auroraFloat1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px,30px); } }
+        @keyframes auroraFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30px,-40px); } }
+        @keyframes auroraFloat3 { 0%,100% { transform: translateX(-50%) translate(0,0); } 50% { transform: translateX(-50%) translate(20px,-20px); } }
 
         /* Grid overlay */
         .hero::after {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            position: absolute; inset: 0;
             background-image:
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
             z-index: 0;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%);
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 1400px;
-        }
+        /* Floating particles canvas */
+        #particles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 
-        /* Title section */
-        .title-section {
-            text-align: center;
-            margin-bottom: 40px;
+        .hero-content { position: relative; z-index: 10; width: 100%; max-width: 1400px; }
+
+        /* =================== TITLE =================== */
+        .title-section { text-align: center; margin-bottom: 60px; }
+
+        .title-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 16px; border-radius: 100px;
+            background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+            color: #60a5fa; font-size: 0.8rem; font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0; animation: fadeSlideUp 0.8s ease 0.3s forwards;
         }
+        .title-badge i { font-size: 0.7rem; }
 
         .title-section h1 {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #ffffff, #007bff, #8a7ef8, #ffffff);
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #60a5fa 40%, #a78bfa 70%, #ffffff 100%);
             background-size: 300% 100%;
-            -webkit-background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientText 6s ease infinite;
+            animation: gradientText 8s ease infinite, fadeSlideUp 0.8s ease 0.5s both;
         }
-
-        @keyframes gradientText {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+        @keyframes gradientText { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
         .title-section p {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 1.1rem; color: #94a3b8; max-width: 550px; margin: 0 auto; line-height: 1.7;
+            opacity: 0; animation: fadeSlideUp 0.8s ease 0.7s forwards;
         }
 
-        /* Weeks grid */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            color: #475569; font-size: 0.75rem; z-index: 10;
+            opacity: 0; animation: fadeSlideUp 0.8s ease 1.5s forwards;
+        }
+        .scroll-mouse {
+            width: 24px; height: 38px; border: 2px solid rgba(255,255,255,0.15); border-radius: 12px;
+            position: relative;
+        }
+        .scroll-mouse::after {
+            content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 8px; border-radius: 2px; background: rgba(255,255,255,0.3);
+            animation: scrollDot 1.8s ease-in-out infinite;
+        }
+        @keyframes scrollDot { 0%,100% { opacity: 1; transform: translateX(-50%) translateY(0); } 50% { opacity: 0.3; transform: translateX(-50%) translateY(10px); } }
+
+        /* =================== WEEKS GRID =================== */
         .weeks-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 24px;
             width: 100%;
         }
 
-        @media (max-width: 1200px) {
-            .weeks-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        @media (max-width: 1200px) { .weeks-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 640px) {
-            .weeks-container {
-                grid-template-columns: 1fr;
-            }
-
-            .title-section h1 {
-                font-size: 2rem;
-            }
+            .weeks-container { grid-template-columns: 1fr; }
+            .title-section { margin-bottom: 40px; }
         }
 
-        /* Week card */
+        /* =================== WEEK CARD =================== */
         .week-card {
-            background: rgba(26, 26, 36, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
+            background: rgba(15,15,25,0.7);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease, box-shadow 0.4s ease;
+            opacity: 0; transform: translateY(40px);
         }
+        .week-card.visible {
+            opacity: 1; transform: translateY(0);
+            transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        /* Top glow line */
+        .week-card::before {
+            content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+            border-radius: 1px;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .week-card:hover::before { opacity: 1; }
+        .week-1::before { background: linear-gradient(90deg, transparent, #3B82F6, transparent); }
+        .week-2::before { background: linear-gradient(90deg, transparent, #10B981, transparent); }
+        .week-3::before { background: linear-gradient(90deg, transparent, #F59E0B, transparent); }
+        .week-4::before { background: linear-gradient(90deg, transparent, #8B5CF6, transparent); }
 
         .week-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(0, 123, 255, 0.3);
-            box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.1);
         }
+        .week-1:hover { box-shadow: 0 20px 60px -15px rgba(59,130,246,0.2); }
+        .week-2:hover { box-shadow: 0 20px 60px -15px rgba(16,185,129,0.2); }
+        .week-3:hover { box-shadow: 0 20px 60px -15px rgba(245,158,11,0.2); }
+        .week-4:hover { box-shadow: 0 20px 60px -15px rgba(139,92,246,0.2); }
+
+        /* Corner glow on hover */
+        .week-card::after {
+            content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
+            border-radius: 50%; opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+        }
+        .week-1::after { background: radial-gradient(circle, rgba(59,130,246,0.08), transparent 70%); }
+        .week-2::after { background: radial-gradient(circle, rgba(16,185,129,0.08), transparent 70%); }
+        .week-3::after { background: radial-gradient(circle, rgba(245,158,11,0.08), transparent 70%); }
+        .week-4::after { background: radial-gradient(circle, rgba(139,92,246,0.08), transparent 70%); }
+        .week-card:hover::after { opacity: 1; }
 
         .week-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 20px; padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: relative; z-index: 1;
         }
 
         .week-number {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1rem;
-            color: white;
+            width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1rem; color: white;
+            position: relative; overflow: hidden;
         }
+        .week-number::after {
+            content: ''; position: absolute; inset: 0; border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .week-card:hover .week-number::after { opacity: 1; }
 
-        .week-1 .week-number {
-            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
-        }
+        .week-1 .week-number { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+        .week-2 .week-number { background: linear-gradient(135deg, #10B981, #059669); }
+        .week-3 .week-number { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .week-4 .week-number { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
 
-        .week-2 .week-number {
-            background: linear-gradient(135deg, #10B981, #059669);
-        }
+        .week-info { flex: 1; }
+        .week-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .week-subtitle { font-size: 0.72rem; color: #64748b; font-weight: 400; }
 
-        .week-3 .week-number {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-        }
-
-        .week-4 .week-number {
-            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
-        }
-
-        .week-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* Lesson list */
-        .lessons-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        /* =================== LESSONS =================== */
+        .lessons-list { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
 
         .lesson-item {
-            display: block;
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 10px;
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
             text-decoration: none;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+            position: relative; overflow: hidden;
         }
 
-        .lesson-item:hover {
-            background: rgba(0, 123, 255, 0.1);
-            border-color: rgba(0, 123, 255, 0.3);
-            transform: translateX(-4px);
+        .lesson-item::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
         }
+        .lesson-item:hover::before { opacity: 1; }
+
+        .lesson-item:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateX(-6px);
+        }
+
+        .lesson-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; flex-shrink: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .lesson-item:hover .lesson-icon { transform: scale(1.1) rotate(-4deg); }
+
+        .week-1 .lesson-icon { background: rgba(59,130,246,0.12); color: #60a5fa; }
+        .week-2 .lesson-icon { background: rgba(16,185,129,0.12); color: #34d399; }
+        .week-3 .lesson-icon { background: rgba(245,158,11,0.12); color: #fbbf24; }
+        .week-4 .lesson-icon { background: rgba(139,92,246,0.12); color: #a78bfa; }
+
+        .lesson-text { flex: 1; min-width: 0; }
 
         .lesson-name {
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #fff;
-            direction: ltr;
-            text-align: left;
-            margin-bottom: 4px;
+            font-size: 0.85rem; font-weight: 600; color: #f1f5f9;
+            direction: ltr; text-align: left; margin-bottom: 3px;
+            transition: color 0.3s ease;
         }
+        .week-1 .lesson-item:hover .lesson-name { color: #60a5fa; }
+        .week-2 .lesson-item:hover .lesson-name { color: #34d399; }
+        .week-3 .lesson-item:hover .lesson-name { color: #fbbf24; }
+        .week-4 .lesson-item:hover .lesson-name { color: #a78bfa; }
 
         .lesson-desc {
             font-family: 'Cairo', sans-serif;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            direction: rtl;
-            text-align: right;
-            line-height: 1.5;
+            font-size: 0.73rem; color: #64748b; direction: rtl; text-align: right; line-height: 1.5;
         }
 
-        /* Footer */
+        .lesson-arrow {
+            color: #334155; font-size: 0.75rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .lesson-item:hover .lesson-arrow { transform: translateX(-4px); color: #94a3b8; }
+
+        /* =================== STATS BAR =================== */
+        .stats-bar {
+            display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+            margin-bottom: 50px;
+            opacity: 0; animation: fadeSlideUp 0.8s ease 1s forwards;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 0.8rem; color: #475569; margin-top: 2px; }
+
+        /* =================== FOOTER =================== */
         .footer-note {
-            text-align: center;
-            margin-top: 40px;
-            color: #64748b;
-            font-size: 0.85rem;
+            text-align: center; margin-top: 50px; padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #475569; font-size: 0.8rem;
         }
-
         .footer-note a {
-            color: #007bff;
-            text-decoration: none;
+            color: #60a5fa; text-decoration: none;
+            transition: color 0.3s ease;
         }
+        .footer-note a:hover { color: #a78bfa; }
 
-        .footer-note a:hover {
-            text-decoration: underline;
-        }
+        /* =================== CUSTOM SCROLLBAR =================== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
     </style>
 </head>
 
 <body>
     <section class="hero">
+        <!-- Aurora blobs -->
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+
+        <!-- Floating particles -->
+        <canvas id="particles"></canvas>
+
         <div class="hero-content">
             <!-- Title Section -->
             <div class="title-section">
+                <div class="title-badge">
+                    <i class="fas fa-code"></i>
+                    <span>Interactive Learning Platform</span>
+                </div>
                 <h1>Algorithms & Data Structures</h1>
                 <p>تعلم الخوارزميات وهياكل البيانات بطريقة تفاعلية ومبسطة باللغة العربية</p>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">أسابيع</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">16</div>
+                    <div class="stat-label">درس تفاعلي</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">تمارين</div>
+                </div>
             </div>
 
             <!-- Weeks Grid -->
             <div class="weeks-container">
                 <!-- Week 1 -->
-                <div class="week-card week-1">
-
+                <div class="week-card week-1" id="week-card-1">
+                    <div class="week-header">
+                        <div class="week-number">1</div>
+                        <div class="week-info">
+                            <div class="week-title">الأساسيات</div>
+                            <div class="week-subtitle">Foundations & Basics</div>
+                        </div>
+                    </div>
                     <div class="lessons-list">
                         <a href="Week1/binary_search.html" class="lesson-item">
-                            <div class="lesson-name">Binary Search</div>
-                            <div class="lesson-desc">البحث الثنائي - إزاي تدور في قايمة مرتبة بسرعة</div>
+                            <div class="lesson-icon"><i class="fas fa-search"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Binary Search</div>
+                                <div class="lesson-desc">البحث الثنائي - إزاي تدور في قايمة مرتبة بسرعة</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week1/big_o_visualization.html" class="lesson-item">
-                            <div class="lesson-name">Big O Notation</div>
-                            <div class="lesson-desc">تحليل التعقيد - إزاي تقيس سرعة الكود</div>
+                            <div class="lesson-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Big O Notation</div>
+                                <div class="lesson-desc">تحليل التعقيد - إزاي تقيس سرعة الكود</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week1/selection_sort.html" class="lesson-item">
-                            <div class="lesson-name">Selection Sort</div>
-                            <div class="lesson-desc">الترتيب بالاختيار - خوارزمية ترتيب بسيطة</div>
+                            <div class="lesson-icon"><i class="fas fa-sort-amount-down"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Selection Sort</div>
+                                <div class="lesson-desc">الترتيب بالاختيار - خوارزمية ترتيب بسيطة</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week1/recursion_examples.html" class="lesson-item">
-                            <div class="lesson-name">Recursion</div>
-                            <div class="lesson-desc">التكرار الذاتي - الدوال اللي بتنادي نفسها</div>
+                            <div class="lesson-icon"><i class="fas fa-redo"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Recursion</div>
+                                <div class="lesson-desc">التكرار الذاتي - الدوال اللي بتنادي نفسها</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Week 2 -->
-                <div class="week-card week-2">
-
+                <div class="week-card week-2" id="week-card-2">
+                    <div class="week-header">
+                        <div class="week-number">2</div>
+                        <div class="week-info">
+                            <div class="week-title">هياكل البيانات</div>
+                            <div class="week-subtitle">Data Structures</div>
+                        </div>
+                    </div>
                     <div class="lessons-list">
                         <a href="Week2/array_operations.html" class="lesson-item">
-                            <div class="lesson-name">Array Operations</div>
-                            <div class="lesson-desc">عمليات المصفوفة - إضافة وحذف وبحث</div>
+                            <div class="lesson-icon"><i class="fas fa-th"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Array Operations</div>
+                                <div class="lesson-desc">عمليات المصفوفة - إضافة وحذف وبحث</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week2/linked_list.html" class="lesson-item">
-                            <div class="lesson-name">Linked List</div>
-                            <div class="lesson-desc">القوائم المتصلة - بديل ذكي للمصفوفات</div>
+                            <div class="lesson-icon"><i class="fas fa-link"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Linked List</div>
+                                <div class="lesson-desc">القوائم المتصلة - بديل ذكي للمصفوفات</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week2/memory_visualization.html" class="lesson-item">
-                            <div class="lesson-name">Memory Visualization</div>
-                            <div class="lesson-desc">تصور الذاكرة - إزاي البيانات بتتخزن</div>
+                            <div class="lesson-icon"><i class="fas fa-memory"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Memory Visualization</div>
+                                <div class="lesson-desc">تصور الذاكرة - إزاي البيانات بتتخزن</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week2/recursive_divide_conquer.html" class="lesson-item">
-                            <div class="lesson-name">Divide & Conquer</div>
-                            <div class="lesson-desc">فرق تسد - قسم المشكلة الكبيرة لصغيرة</div>
+                            <div class="lesson-icon"><i class="fas fa-project-diagram"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Divide & Conquer</div>
+                                <div class="lesson-desc">فرق تسد - قسم المشكلة الكبيرة لصغيرة</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Week 3 -->
-                <div class="week-card week-3">
-
+                <div class="week-card week-3" id="week-card-3">
+                    <div class="week-header">
+                        <div class="week-number">3</div>
+                        <div class="week-info">
+                            <div class="week-title">خوارزميات متقدمة</div>
+                            <div class="week-subtitle">Advanced Algorithms</div>
+                        </div>
+                    </div>
                     <div class="lessons-list">
                         <a href="Week3/hash_table.html" class="lesson-item">
-                            <div class="lesson-name">Hash Table</div>
-                            <div class="lesson-desc">جدول التجزئة - البحث السريع O(1)</div>
+                            <div class="lesson-icon"><i class="fas fa-hashtag"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Hash Table</div>
+                                <div class="lesson-desc">جدول التجزئة - البحث السريع O(1)</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week3/quicksort_visualization.html" class="lesson-item">
-                            <div class="lesson-name">QuickSort</div>
-                            <div class="lesson-desc">الترتيب السريع - أسرع خوارزمية ترتيب</div>
+                            <div class="lesson-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">QuickSort</div>
+                                <div class="lesson-desc">الترتيب السريع - أسرع خوارزمية ترتيب</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week3/graph_representation.html" class="lesson-item">
-                            <div class="lesson-name">Graph Representation</div>
-                            <div class="lesson-desc">تمثيل الرسوم البيانية - Matrix vs List</div>
+                            <div class="lesson-icon"><i class="fas fa-sitemap"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Graph Representation</div>
+                                <div class="lesson-desc">تمثيل الرسوم البيانية - Matrix vs List</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week3/graph_traversal.html" class="lesson-item">
-                            <div class="lesson-name">BFS & DFS</div>
-                            <div class="lesson-desc">التنقل في الرسوم البيانية - بالعرض والعمق</div>
+                            <div class="lesson-icon"><i class="fas fa-route"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">BFS & DFS</div>
+                                <div class="lesson-desc">التنقل في الرسوم البيانية - بالعرض والعمق</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Week 4 -->
-                <div class="week-card week-4">
-
+                <div class="week-card week-4" id="week-card-4">
+                    <div class="week-header">
+                        <div class="week-number">4</div>
+                        <div class="week-info">
+                            <div class="week-title">حل المشاكل</div>
+                            <div class="week-subtitle">Problem Solving</div>
+                        </div>
+                    </div>
                     <div class="lessons-list">
                         <a href="Week4/dynamic_programming.html" class="lesson-item">
-                            <div class="lesson-name">Dynamic Programming</div>
-                            <div class="lesson-desc">البرمجة الديناميكية - حل مشاكل معقدة</div>
+                            <div class="lesson-icon"><i class="fas fa-cubes"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Dynamic Programming</div>
+                                <div class="lesson-desc">البرمجة الديناميكية - حل مشاكل معقدة</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week4/greedy_algorithms.html" class="lesson-item">
-                            <div class="lesson-name">Greedy Algorithms</div>
-                            <div class="lesson-desc">الخوارزميات الجشعة - أفضل اختيار دلوقتي</div>
+                            <div class="lesson-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Greedy Algorithms</div>
+                                <div class="lesson-desc">الخوارزميات الجشعة - أفضل اختيار دلوقتي</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week4/knapsack_problem.html" class="lesson-item">
-                            <div class="lesson-name">Knapsack Problem</div>
-                            <div class="lesson-desc">مشكلة الحقيبة - اختار أغلى حاجات</div>
+                            <div class="lesson-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">Knapsack Problem</div>
+                                <div class="lesson-desc">مشكلة الحقيبة - اختار أغلى حاجات</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                         <a href="Week4/knn_classifier.html" class="lesson-item">
-                            <div class="lesson-name">K-Nearest Neighbors</div>
-                            <div class="lesson-desc">أقرب K جيران - تعلم الآلة البسيط</div>
+                            <div class="lesson-icon"><i class="fas fa-brain"></i></div>
+                            <div class="lesson-text">
+                                <div class="lesson-name">K-Nearest Neighbors</div>
+                                <div class="lesson-desc">أقرب K جيران - تعلم الآلة البسيط</div>
+                            </div>
+                            <i class="fas fa-chevron-left lesson-arrow"></i>
                         </a>
                     </div>
                 </div>
@@ -415,11 +536,129 @@
 
             <!-- Footer -->
             <div class="footer-note">
-                <p>© 2026-2025 الخوارزميات | صُمم بـ ❤️ بواسطة <a href="https://www.linkedin.com/in/osaadzin/">Osama</a>
-                </p>
+                <p>© 2025 الخوارزميات | صُمم بـ ❤️ بواسطة <a href="https://www.linkedin.com/in/osaadzin/">Osama</a></p>
             </div>
         </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-hint">
+            <div class="scroll-mouse"></div>
+        </div>
     </section>
+
+    <script>
+        // =================== FLOATING PARTICLES ===================
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: -1000, y: -1000 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        document.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.hue = Math.random() > 0.5 ? 220 : 260;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                // Mouse repulsion
+                const dx = this.x - mouse.x, dy = this.y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    const force = (120 - dist) / 120 * 0.8;
+                    this.x += (dx / dist) * force;
+                    this.y += (dy / dist) * force;
+                }
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        const particleCount = Math.min(80, Math.floor(window.innerWidth / 15));
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function drawLines() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 130) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(100,140,255,${0.06 * (1 - dist / 130)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawLines();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // =================== SCROLL REVEAL ===================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    const delay = Array.from(document.querySelectorAll('.week-card')).indexOf(card) * 150;
+                    setTimeout(() => card.classList.add('visible'), delay);
+                    observer.unobserve(card);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.week-card').forEach(card => observer.observe(card));
+
+        // =================== TILT EFFECT ON CARDS ===================
+        document.querySelectorAll('.week-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `translateY(-6px) perspective(800px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // =================== HIDE SCROLL HINT ===================
+        window.addEventListener('scroll', () => {
+            const hint = document.querySelector('.scroll-hint');
+            if (hint && window.scrollY > 60) hint.style.opacity = '0';
+        }, { passive: true });
+    </script>
 </body>
 
 </html>
