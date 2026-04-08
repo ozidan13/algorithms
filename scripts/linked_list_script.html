@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت تسجيل - Linked Lists | القوائم المتصلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2.2; margin: 0; padding: 2rem; direction: rtl; }
+        .container { max-width: 900px; margin: auto; }
+        h1 { color: #f59e0b; text-align: center; margin-bottom: 2rem; }
+        .block { background: #1e293b; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #f59e0b; }
+        .action { display: inline-block; background: #334155; color: #38bdf8; padding: 0.3rem 0.8rem; border-radius: 6px; font-weight: bold; font-size: 0.95rem; margin-bottom: 1rem; border: 1px solid #475569; }
+        .text { font-size: 1.2rem; color: #f8fafc; font-weight: 500; }
+        .en { font-family: sans-serif; direction: ltr; display: inline-block; color: #fcd34d; }
+        .note { background: #022c22; border-right: 4px solid #10b981; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 1.05rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>سكريبت التصوير - Linked Lists</h1>
+        
+        <div class="block">
+            <span class="action">🎥 [المقدمة - الكاميرا عليك مباشرة]</span>
+            <div class="text">
+                أهلاً بيكم.<br>
+                في الدرس اللي فات شوفنا إزاي הـ <span class="en">Arrays</span> ممكن تكون مزعجة جداً لو حاولنا نضيف بيانات في أولها أو في النص، عشان بنضطر نزحزح كل العناصر، وده بيأثر على الأداء جداً لو الداتا كبيرة.<br>
+                لو بتعمل سيستم زي طابور تحميل الأغاني مثلاً اللي كل شوية بتضيف وتسمح فيه بشكل سريع، الـ Array مش هتسعفك.<br>
+                وهنا بيجي دور الهيكل التاني اللي بيعالج المشكلة دي تحديداً: الـ <span class="en">Linked Lists</span> أو القوائم المتصلة. يلا بينا نشوف بتشتغل إزاي.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن "إيه هي الـ Linked List" واطرح تشبيه القطار]</span>
+            <div class="text">
+                الـ <span class="en">Linked List</span> فكرتها مختلفة تماماً عن الـ Array. العناصر هنا مش لازم تكون متتالية أو וرا بعض في המيموري أبداً.<br>
+                الكمبيوتر بيحجز أي مكان فاضي في الذاكرة بيلاقيه ويحط فيه العنصر. طب هيربطهم ببعض إزاي؟<br>
+                التشبيه الأقرب هنا هو "قطار العربيات". كل عربية في القطار بتمثل <span class="en">Node</span>.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: خليطك واقف عند "تركيبة הـ Node" لشرح المربع]</span>
+            <div class="text">
+                زي ما احنا شايفين في تركيبة الـ Node اللي قدامنا.. الـ Node الواحدة بتنقسم لحاجتين:<br>
+                النص الأول هو الداتا نفسها (زي رقم أو اسم أو رسالة).<br>
+                والنص التاني بنسميه الـ <span class="en">Next pointer</span>.. وده مجرد سهم، أو عنوان بيشاور على مكان الـ Node اللي بعدها فين في الذاكرة. 
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن "Linked List Structure" عشان تشرح الرسمة الكبيرة]</span>
+            <div class="text">
+                ودي الصورة الكاملة للـ List. دايماً بنبدأ من أول واحدة ودي بنسميها הـ <span class="en">HEAD</span>.<br>
+                لو بصينا هنا، الـ Head فيه 10 والسهم بتاعه رايح للـ 25، والـ 25 بتشاور لـ 33... وهكذا لحد ما نوصل لآخر واحدة.<br>
+                آخر واحدة السهم بتاعها بيشاور على إيه؟ بيشاور على حاجة اسمها <span class="en">null</span>، يعني مفيش حد بعدي والقطار خلص.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن "Array vs Linked List" المقارنة]</span>
+            <div class="text">
+                عشان نلخص الفرق، الجدول ده مهم جداً.<br>
+                الـ Array بطلة العالم في الـ Access لأنها <span class="en">O(1)</span>، وتقدر تجيب بيها أي عنصر بالاندكس. لكن الـ Linked List بتاخد <span class="en">O(n)</span> عشان لازم تمشي على الأسهم واحد واحد.<br>
+                بينما لو بصينا على الإضافة من الأول <span class="en">(Insert at Head)</span> هتلاقي الـ Linked List بتخلصها بـ <span class="en">O(1)</span> من غير أي شيفتنج، عكس הـ Array البطيئة جداً في الموضوع ده.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن "العمليات بالتفصيل - INSERT HEAD"]</span>
+            <div class="text">
+                خلونا نشوف ليه الإضافة سريعة كده.<br>
+                في الرسمة اللي قدامنا: قبل الاضافة، الـ Head كان بيشاور على 10. <br>
+                لما جينا نضيف الـ 5، كل اللي عملناه إننا جبنا Node جديدة حطيناها في الأول، وخلينا السهم بتاعها يمسك في הـ 10، وقلنا للـ Head أنت بقيت بتشاور على الـ 5.<br>
+                مجرد تغییر أسهم! الداتا متحركتش من مكانها. عشان كده دي عملية <span class="en">O(1)</span>.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن "DELETE HEAD"]</span>
+            <div class="text">
+                نفس الكلام في الديليت. لو حبيت أمسح הـ 10 اللي في الأول. <br>
+                مش هنزحزح حد. احنا بس هنقول للـ Head.. سيب الـ 10 وامسك في اللي بعدها اللي هى 25.<br>
+                وبكده العنصر الأول اتقطع عنه السلك ومبقاش ليه وجود. برضه عملية <span class="en">O(1)</span> قوية جداً.
+            </div>
+            <div class="note">
+                <span class="action">🎥 [بص للكاميرا وقول كمعلومة سريعة]</span><br>
+                لكن طبعاً العيب القاتل إن لو قلتلك هاتلي العنصر الخامس، مش هتعرف تروحه مباشرة، ولازم تعمل <span class="en">Traversal</span> وتبدأ تسأل الـ Head يوديك للي بعده، واللي بعده للي بعده.. عشان كده الوصول بطيء <span class="en">O(n)</span>.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن הـ "Interactive Demo"]</span>
+            <div class="text">
+                ممكن نجرب هنا التفاعلية بتاعت الـ Linked list..<br>
+                (جرب تضغط Add Head و Remove Head.. ولاحظ السرعة)<br>
+                العمليات دي بتتم من غير ما العناصر اللي تحت تحس بأي حاجة ولا تتغير من مكانها.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">👇 [Scroll: انزل لسكشن الكود "Implementation"]</span>
+            <div class="text">
+                عشان نكتب الكلام ده بالكود بنبني 2 كلاس زي ما واضح قدامنا.<br>
+                كلاس הـ <span class="en">Node</span> بياخد الداتا ويخلي الـ next بـ null كبداية.<br>
+                وكلاس הـ <span class="en">LinkedList</span> بيبدأ بـ Head فاضي.<br>
+                دالة הـ <span class="en">prepend</span> سطرين بس! بنعمل نود جديدة، سهمها بيشاور عالـ Head، وبعدين هى تبقى הـ Head.<br>
+                كود بسيط جداً وبيوضح قوة الـ Pointers.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [خاتمة - الكاميرا عليك]</span>
+            <div class="text">
+                أهم سؤال تسأله لنفسك كمبرمج: السيستم بتاعي بيعتمد أكتر على البحث السريع ولا الإضافة والحذف المستمر؟<br>
+                لو البحث والقراءة كتير.. مفيش بديل للـ Arrays.<br>
+                لو الإضافة والحذف وتغيير الطابور كتير.. الـ Linked Lists هتنقذ الأداء بتاعك.<br>
+                في الدروس الجاية هنستخدم الهياكل دي بشكل أعمق عشان نبني بيها خوارزميات الترتيب والبحث المعقدة.<br>
+                أشوفكم الدرس الجاي. 
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

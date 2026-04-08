@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Recursion | التكرار الذاتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(139,92,246,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(139,92,246,.35);box-shadow:0 8px 32px rgba(139,92,246,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#c4b5fd;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #8b5cf6}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .code-box{font-size:.92rem;color:#a5f3fc;margin-top:1rem;padding:1rem 1.2rem;background:rgba(0,0,0,.45);border-radius:8px;border-right:3px solid #8b5cf6;line-height:1.7;direction:ltr;text-align:left;font-family:'Fira Code','Consolas',monospace;overflow-x:auto;white-space:pre-wrap}
+        .code-box::before{content:"💻 الكود: ";font-weight:bold;color:#c4b5fd;display:block;direction:rtl;text-align:right;font-family:'Cairo',sans-serif;margin-bottom:.5rem;font-size:.9rem}
+        .formula-note{font-size:1.05rem;color:#d1fae5;margin-top:1rem;padding:1rem 1.2rem;background:rgba(16,185,129,.07);border-radius:8px;border-right:3px solid #10b981;line-height:1.9;direction:ltr;text-align:center}
+        .formula-note::before{content:"🔢 المعادلة: ";font-weight:bold;color:#34d399;display:block;direction:rtl;text-align:right;font-size:.95rem;margin-bottom:.5rem}
+        .law-box{font-size:.95rem;color:#e0f2fe;margin-top:1rem;padding:.8rem 1.2rem;background:rgba(59,130,246,.08);border-radius:8px;border-right:3px solid #3b82f6;line-height:1.9}
+        .law-box::before{content:"📖 القاعدة: ";font-weight:bold;color:#60a5fa;display:block;margin-bottom:.5rem}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#a78bfa;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);border-radius:8px;color:#c4b5fd;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(139,92,246,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(139,92,246,.08);border-right:3px solid #8b5cf6;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#c4b5fd}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#c4b5fd;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#f1f5f9;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#c4b5fd}
+        .toc a::before{content:"• ";color:#8b5cf6}
+        .comparison-table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.9rem}
+        .comparison-table th{background:rgba(139,92,246,.1);color:#c4b5fd;padding:.5rem;text-align:right;border:1px solid rgba(255,255,255,.06)}
+        .comparison-table td{padding:.5rem;border:1px solid rgba(255,255,255,.06);color:#cbd5e1}
+        .comparison-table tr:hover{background:rgba(255,255,255,.02)}
+        .output-box{font-size:.88rem;color:#86efac;margin-top:.8rem;padding:.8rem 1rem;background:rgba(0,0,0,.4);border-radius:6px;border-right:3px solid #22c55e;direction:ltr;text-align:left;font-family:'Consolas',monospace;line-height:1.6;white-space:pre-wrap}
+        .output-box::before{content:"📤 النتيجة: ";font-weight:bold;color:#4ade80;display:block;direction:rtl;text-align:right;font-family:'Cairo',sans-serif;margin-bottom:.4rem;font-size:.88rem}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="big_o_script.html" class="back-btn"><i class="fas fa-arrow-right"></i> الدرس السابق: Big O</a>
+    <a href="../index.html" class="back-btn" style="margin-right:.75rem"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Recursion</h1>
+    <p class="subtitle">التكرار الذاتي · الأسبوع الأول · الدرس الرابع</p>
+
+    <!-- TOC -->
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: حلم جوه حلم جوه حلم...</a>
+        <a href="#what">يعني إيه Recursion؟ (تشبيه المرايا)</a>
+        <a href="#rules">القواعد الذهبية: إزاي متكسرش الكمبيوتر</a>
+        <a href="#callstack">الـ Call Stack: كومة الأطباق الجبارة</a>
+        <a href="#factorial">مثال 1: المضروب (Factorial)</a>
+        <a href="#fibonacci">مثال 2: متتالية فيبوناتشي (The Nightmare)</a>
+        <a href="#memoization">المنقذ: Memoization (إزاي ننقذ الكود من الموت)</a>
+        <a href="#battle">الـ Recursion ضد الـ اللوب العادي (Loop)</a>
+        <a href="#outro">الختام</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">فيلم Inception وحقيقة الحلم جوه الحلم<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا وبتتكلم بصوت هادي، غموض خفيف]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى غامضة شبه مزيكا Inception]</span>
+        شفتوا فيلم <span class="english">Inception</span> بتاع كريستوفر نولان؟
+        <br><br>
+        ديكابريو كان بيدخل جوه حلم... وجوه الحلم ده بينام ويدخل حلم تاني... وجوه الحلم التاني ينام ويدخل حلم تالت. 
+        <br>ومشكلة الفيلم الكبيرة كانت: <strong class="hl-red">إزاي هيصحوا ويطلعوا بره كل ده؟</strong>
+        <br><br>
+        لو دخلوا أحلام للما لا نهاية مش هيصحوا أبداً! كان لازم يكون فيه نقطة معينة... <strong class="highlight">زرار طوارئ</strong>، أو إشارة صحيان تخليهم يخلصوا الحلم التالت، فيصحوا في التاني، فيصحوا في الأول... ونرجع للواقع.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم وتقرب من الكاميرا]</span>
+        عالم البرمجة فيه الـ <span class="english">Inception</span> بتاعه. 
+        فجأة... دالة <span class="english">(Function)</span>، وهي شغالة... <strong class="hl-purple">تنادي نفسها!</strong> فتدخل جوه نسخة تانية من نفسها... والنسخة التانية تنادي نفسها فتدخل في نسخة تالتة... وهكذا!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة Recursion بتظهر مرسومة جوه نفسها وتصغر وتتكرر]</span>
+        الحوار ده اسمه <strong class="hl-purple"><span class="english">Recursion</span></strong> (التكرار الذاتي).
+        <br><br>
+        لو معملتوش صح... كودك هيدخل في غيبوبة للما لا نهاية والبرنامج هينفجر. 
+        بس لو عملته بذكاء...؟ هتكتب بيه أعقد الخوارزميات في سطرين بس. 
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: دقة درامية BOOM]</span>
+        جاهز تدخل الحلم؟ يلا بينا.
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS IT ═══════ -->
+    <div class="section-divider" id="what">المفهوم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">يعني إيه Recursion؟ (تشبيه المرايا والبوكسات)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمشي وتتكلم بإيدك]</span>
+        بعيداً عن الأفلام... تخيل صالون حلاقة. واقف بين مرايتين قصاد بعض.
+        بتبص، بتشوف انعكاسك... وجوه الانعكاس فيه انعكاس أصغر... وجوه الأصغر فيه انعكاس أصغر لحد المالا نهاية. 
+        <br><br>
+        <div class="term-def"><strong>Recursion:</strong> ببساطة، هو إنك تحل مشكلة كبيرة، عن طريق إنك تخلي الـ <span class="english">Function</span> <strong>تنادي نفسها</strong> بس على جزء <strong>أصغر</strong> من المشكلة.</div>
+        <br>
+        <span class="vfx-cue">✨ [VFX: بوكس كبير بيتفتح، بيطلع منه بوكس أصغر متقفل، وتتكرر]</span>
+        <strong class="hl-amber">مثال فظيع من كتاب Grokking Algorithms:</strong>
+        <br>تخيل معاك كرتونة كبيرة مقفولة، ومطلوب منك تدور على <strong>مفتاح</strong> جواها.
+        <br>تفتح الكرتونة تلاقي... بدل المفتاح، <strong class="hl-red">كراتين صغيرة!</strong>
+        <br><br>
+        بالبرمجة العادية هتعمل <span class="english">While Loop</span> وتفكك كل الصناديق صندوق صندوق (وجع دماغ).
+        <br><br>
+        <strong class="hl-purple">بالـ Recursion، بتعمل خطوتين طعمتين جداً:</strong>
+        <br>1- طلع حاجة من الصندوق. لو لقيتها مفتاح؟ <strong class="highlight">مبروك خلصنا!</strong>
+        <br>2- لو لقيتها صندوق؟ <strong class="hl-blue">نادي نفس الدالة </strong> تاني عشان تفتح الصندوق الجديد ده.
+        <br><br>
+        شفت الجمال؟ <strong class="hl-purple">الدالة عالجت نفسها بنفسها!</strong>
+    </div></div></div>
+
+    <!-- ═══════ THE TWO RULES ═══════ -->
+    <div class="section-divider" id="rules">القواعد الذهبية</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي متكسرش الكمبيوتر: قاعدة التوقف<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بتحذير وتوقف إيدك قدامك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت سحب فرامل]</span>
+        استنى! الدالة لو بتنادي نفسها... هتفضل تنادي نفسها للصبح والكمبيوتر هيهنج!
+        عشان كده... <strong>كل</strong> دالة Recursion في الدنيا <strong class="hl-red">لازم</strong> يكون فيها جزئين:
+        <br><br>
+        <div class="step-box">
+            <strong class="hl-red">1. الـ Base Case (حالة التوقف 🛑):</strong>
+            <br>
+            الشرط اللي بيقول للدالة: كفاية! ستوب! أنا لقيت المفتاح بلاش ننادي نفسنا تاني. من غير الـ Base Case... البرنامج هينفجر بحاجة اسمها <span class="english">Stack Overflow</span>.
+        </div>
+        
+        <div class="step-box">
+            <strong class="hl-blue">2. الـ Recursive Case (حالة التكرار 🔄):</strong>
+            <br>
+            اللحظة اللي الدالة بتنادي فيها نفسها على الـ input <strong>الأصغر</strong>.
+        </div>
+        <br>
+        <span class="camera-cue">🎥 [بتبتسم ابتسامة واثقة]</span>
+        يعني زي فيلم Inception: حالة التوقف (الـ Base case) هي الإشارة اللي بتصحيك من الحلم... قبل ما تغرق جوه للما لا نهاية.
+    </div></div></div>
+
+    <!-- ═══════ CALL STACK ═══════ -->
+    <div class="section-divider" id="callstack">الـ Call Stack</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">كومة الأطباق الجبارة (The Call Stack)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [في إيدك حزمة أطباق بلاستيك]</span>
+        طيب، لما دالة تنادى نفسها وهي لسه مخلصتش، إيه بيحصل في الذاكرة؟
+        <br><br>
+        الكمبيوتر عنده حاجة اسمها <strong class="hl-amber"><span class="english">Call Stack</span></strong> (كومة النداءات).
+        زي بالظبط لو مسكت الأطباق دي.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسمة كومة أطباق بتترص فوق بعضها]</span>
+        لما الدالة الأولى تشتغل ← الكمبيوتر بيحط معلوماتها في طبق.
+        <br>لما الدالة الأولى تنادي دالة ثانية (نسختها الأصغر) قبل ما تخلص ← <strong class="hl-cyan">بنحط طبق جديد فوق القديم</strong>.
+        <br>لما الدالة الثانية تنادي ثالثة ← طبق ثالث <strong>فوق</strong>!
+        <br><br>
+        <span class="camera-cue">🎥 [بتشيل الطبق اللي فوق أوي]</span>
+        الكمبيوتر بيتعامل مع طبق واحد... <strong>الطبق اللي فوق خالص!</strong> 
+        أول ما الطبق اللي فوق خالص يخبط في الـ <span class="english">Base Case (شرط التوقف)</span>، بيخلص شغلته... <strong class="hl-red">ونشيله من الكومة (Pop)</strong>!
+        وننزل للطبق اللي تحته، نعطيه النتيجة عشان يكمل، ونشيله... لحد ما الكومة تفضي.
+    </div></div></div>
+
+    <!-- ═══════ FACTORIAL ═══════ -->
+    <div class="section-divider" id="factorial">المثال الأول</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">المضروب (Factorial): 5! = 5 × 4!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتشاور على الشاشة، بتشرح بثقة]</span>
+        يلا نطبق! مثال الـ <span class="english">Factorial</span>. (المضروب في الرياضيات).
+        <br><br>
+        إحنا عارفين إن <strong class="hl-amber">5!</strong> بيساوي: 
+        <span class="hl-blue">5 × 4 × 3 × 2 × 1</span> = 120.
+        <br><br>
+        بس استنى! لاحظت حاجة؟
+        <br>الجزئية بتاعة <span class="hl-blue">4 × 3 × 2 × 1</span> دي... هي أصلاً <strong class="hl-cyan">4!</strong>!
+        <br>يعني <strong class="hl-amber">5!</strong> هي عبارة عن <strong class="hl-amber">5 × 4!</strong>.
+        <br>وهي دي الـ <strong class="hl-purple">Recursion</strong>! المشكلة مبنية على نسخة أصغر من نفسها!
+        <br><br>
+        <div class="code-box">function factorial(n) {
+    // 🛑 1. Base Case (حالة التوقف عشان منجرّش للما لا نهاية!)
+    if (n === 1) { 
+        return 1; 
+    } 
+    
+    // 🔄 2. Recursive Case (نادي نفسك بس مع رقم أصغر)
+    return n * factorial(n - 1);
+}
+
+console.log(factorial(5));  // 120</div>
+        <br><br>
+        <strong class="hl-cyan">والذاكرة بتعمل إيه هنا؟ (الـ Stack):</strong>
+        <br>- الطبق 1: factorial(5) بيقول "استنى، هضرب 5 في factorial(4) لما تيجي".
+        <br>- الطبق 2: factorial(4) بيقول "استنى... هاتلي factorial(3)".
+        <br>- الطبق 3: لحد ما نوصل لـ factorial(1).
+        <br><span class="vfx-cue">✨ [VFX: الأطباق بتطير وتختفي بسرعة]</span>
+        أول ما نوصل لـ 1 (الـ Base Case)، يرجع النتيجة للّي تحته، ونضرب ونقفل الأطباق كلها!
+    </div></div></div>
+
+    <!-- ═══════ FIBONACCI ═══════ -->
+    <div class="section-divider" id="fibonacci">الكابوس</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">فيبوناتشي O(2ⁿ): الكابوس اللي هيفجر اللابتوب<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [النور بيغمق شوية، وصوتك بياخد شكل التحذير المرعب 😱]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت درامي — دقات قلب]</span>
+        افتكروا معايا المتتالية الشهيرة <span class="english">Fibonacci</span> اللي كل رقم فيها بيساوي مجموع الرقمين اللي قبله:
+        <br>0, 1, 1, 2, 3, 5, 8, 13...
+        <br><br>
+        بما إن الرقم هو مجموع الرقمين اللي قبله، نقدر نكتبه بالـ Recursion:
+        <div class="code-box">// ⚠️ الكود ده كارثة نووية صامتة ❌
+function fib(n) {
+    if (n <= 1) return n;  // 🛑 Base Case
+    return fib(n - 1) + fib(n - 2); // 🔄 Recursive Case
+}</div>
+        <br>
+        <span class="camera-cue">🎥 [بتبص في عين الكاميرا بالظبط]</span>
+        لو كتبت ده وشغلت <strong class="hl-amber">fib(6)</strong>... هيشتغل. 
+        <br>أما لو طلبت <strong class="hl-red">fib(50)</strong>... اللابتوب بتاعك هيسخن لحد ما يسلق بيض، ومش هيطلع النتيجة!
+        <br><br>
+        <strong class="hl-amber">ليه الكارثة دي؟!</strong>
+        <br>لأنها <span class="english">O(2ⁿ) - Exponential Time</span> (اللى حذرنا منه في درس الـ Big O).
+        <br>لأن الدالة دي عشان تحسب fib(5) بتنادي fib(4) و fib(3). 
+        <br>و fib(4) بتنادي fib(3) و fib(2).
+        <br><span class="vfx-cue">✨ [VFX: شجرة نداءات متفرعة بتظهر على الشاشة بتكبر بشكل مجنون]</span>
+        الكمبيوتر بيقعد <strong class="hl-red">يعيد حسابات</strong> fib(3) و fib(2) آلاف وملايين المرات من غير ما يحفظ النتيجة! كأنك بتسأل نفس السؤال لـ 10 طوابير وكلهم بيحسبوه من الصفر تاني!
+    </div></div></div>
+
+    <!-- ═══════ MEMOIZATION ═══════ -->
+    <div class="section-divider" id="memoization">المنقذ</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">سر الـ Memoization: احفظ عشان متتعبش<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمسح عرق وهمي وتقول بابتسامة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى النجاح]</span>
+        إزاي ننقذ الكود ده من الغباء؟
+        <br>بسؤال واحد: "يا صاحبي، مش إحنا حسبنا fib(3) من شوية؟! بدل ما نحسبها تاني، <strong class="hl-blue">تعالى نكتب النتيجة في ورقة ونسميها Cache أو Memo!</strong>"
+        <br><br>
+        هنا بتظهر تقنية عبقرية جداً اسمها <strong class="hl-cyan"><span class="english">Memoization</span></strong>.
+        <div class="code-box">// ✅ الكود السريع جداً O(n)
+function fibMemo(n, memo = {}) {
+    // لو حسبناها قبل كده... هاتها من الورقة!
+    if (memo[n]) return memo[n]; 
+    if (n <= 1) return n;
+
+    // احفظ النتيجة في الورقة الأول قبل ما ترجعها
+    memo[n] = fibMemo(n - 1, memo) + fibMemo(n - 2, memo);
+    return memo[n];
+}</div>
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: صاروخ بينطلق]</span>
+        بمجرد ما ضفنا "ورقة الحفظ" دي... السرعة اتحولت من <strong class="hl-red">O(2ⁿ)</strong> المرعب... لـ <strong class="highlight">O(n)</strong> الخطي السريع جداً!
+        <br>fib(50) هتحسب النتيجة في الميكروثانية بدل السنين! 
+        <br>حرفيا... أنقذنا الكوكب. 🌍
+    </div></div></div>
+
+    <!-- ═══════ BATTLE ═══════ -->
+    <div class="section-divider" id="battle">المعركة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">Loop vs Recursion: يا ترى مين يكسب؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتعمل حركة مقارنة بإيديك الاتنين]</span>
+        هتسألني: "طب ما أنا ممكن أعمل الـ Factorial بلوب (For loop) عادي جداً، ليه وجع الدماغ بتاع الـ Recursion ده؟"
+        <br><br>
+        <strong class="hl-amber">بكلمك بصراحة؟ عندك حق!</strong>
+        <br>أي حاجة بتتعمل بـ Recursion ينفع تتعمل بـ Loop (Iteration).
+        <br><br>
+        <table class="comparison-table">
+            <tr><th>النقطة</th><th style="color:#8b5cf6">🔄 Recursion (تكرار ذاتي)</th><th style="color:#10b981">🔁 Iteration (اللوب العادي)</th></tr>
+            <tr><td><strong>السرعة</strong></td><td style="color:#fbbf24">أبطأ شوية (فيها Overhead)</td><td style="color:#10b981">أسرع</td></tr>
+            <tr><td><strong>الذاكرة</strong></td><td style="color:#ef4444">بتسحب ذاكرة (Call Stack) O(n)</td><td style="color:#10b981">لا تستهلك ذاكرة إضافية O(1)</td></tr>
+            <tr><td><strong>شكل الكود</strong></td><td style="color:#c4b5fd">أنيق، קصير، وحلو في القراءة</td><td style="color:#94a3b8">أطول أحياناً ومفيهوش سحر</td></tr>
+            <tr><td><strong>امتى نستخدمه؟</strong></td><td style="color:#8b5cf6">مع الأشجار (Trees) والـ Graphs وخوارزميات Divide & Conquer (عالم سحري)</td><td style="color:#10b981">في العمليات البسيطة المتكررة</td></tr>
+        </table>
+        <br>
+        <span class="camera-cue">🎥 [بتبص بعمق]</span>
+        قاعدة عامة: <strong>"Loops قد تحقق لك أداءً أفضل لبرنامجك. Recursion قد يحقق لك أداءً أفضل كمبرمج!"</strong> 
+        الـ Recursion بيخليك تشوف المشكلة المعقدة بشكل أبسط كتير.
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الختام</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">خلصنا أول أسبوع... يا بطل!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقعد ورا مكتبك بابتسامة مرتاحة]</span>
+        <span class="sfx-cue">🔊 [SFX: Outro Music]</span>
+        النهاردة إحنا خلصنا الأسبوع الأول.
+        <br>بدأنا بـ <span class="english">Binary Search</span> وكيف نكسّر الداتا لنصين.
+        <br>اكتشفنا أبعاد الزمن مع الـ <span class="english">Big O Notation</span> وتجنبنا الكوارث.
+        <br>ونزلنا جوه الـ <span class="english">Inception</span> البرمجي مع הـ <span class="english">Recursion</span>.
+        <br><br>
+        <span class="camera-cue">🎥 [تشويقة سريعة]</span>
+        <span class="vfx-cue">✨ [VFX: عنوان الأسبوع القادم: Arrays & Linked Lists]</span>
+        الأسبوع الجاي هننزل تحت الغطاء... للذاكرة بتاعت الكمبيوتر نفسها! 
+        هنعرف الـ <span class="english">Arrays</span> ضد <span class="english">Linked Lists</span> ومين بيكسب وبياخد فلوس ومساحة أقل...
+        <br><br>
+        متحمس؟ <strong class="highlight">تعالى وشوف.</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Whoosh + Music cuts out]</span>
+        <span class="camera-cue">🎥 [✌️ — القطع للأسود]</span>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع الأول: Recursion · بشمهندس أسامة زينهم
+    </div>
+
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>
