@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الدحيح - Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2; margin: 0; padding: 2rem; direction: rtl; }
+        .container { max-width: 900px; margin: auto; }
+        h1 { color: #facc15; text-align: center; margin-bottom: 2rem; }
+        .block { background: #1e293b; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #facc15; }
+        .action { display: inline-block; background: #334155; color: #ffe4e6; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .text { font-size: 1.25rem; font-weight: 600; color: #e2e8f0; }
+        .en { font-family: sans-serif; font-weight: bold; color: #38bdf8; direction: ltr; display: inline-block; }
+        .highlight { color: #fbbf24; font-weight: 800; background: rgba(251,191,36,0.1); padding: 0 5px; }
+        .sfx { color: #10b981; font-size: 0.9rem; margin-top: 5px; display: block; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>سكريبت الدحيح - فندق الرامات المجنون (Memory)</h1>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا زووم إن، بتبدأ بصوت مليان تعجب وإيدك بتشاور كأنك بترسم مبنى]</span>
+            <div class="text">
+                تخيل معايا يا عزيزي فندق عجيب جداً.. فندق مفيهوش غرف! الفندق ده عبارة عن حيطة واحدة عملااااقة، فيها مليارات الأدراج الصغيرة. 
+                الريسبشنست بتاع الفندق ده راجل صارم جداً ومبيعرفش يهزر.. اسمه "نظام التشغيل" (OS).
+                <br>الريسبشنست ده أي حد بيطلب منه سكن، طالما دفع مقدماً، بيرميله مفتاح درج ويقوله: "حط حاجتك هنا".
+                بس فيه شروط غريبة جداً!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت مفاتيح كتير بتترمي على مكتب خشب]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتقطع بكاميرا جانبية بتبصلك وأنت بتمثل دور موظف الريسبشنست]</span>
+            <div class="text">
+                يجي واحد غلبان اسمه <span class="en">Boolean</span> (آه أو لأ).. يقوله أنا عاوز درج. يرميله درج واحد (Byte).
+                يجي راجل تخين شوية اسمه <span class="en">Integer</span> (رقم).. يقوله أنا عاوز أسكن. الريسبشنست يديله <span class="highlight">4 أدراج متأجّرة ورا بعض!</span>
+                يجي عيلة كاملة اسمها <span class="en">Array</span>.. تطلب 10 غرف.. الريسبشنست يقولها: "لازم تاخدي 10 أدراج لزق في بعض وإلا مفيش بيات عندنا النهاردة!" 
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتقف في نص الكادر وبتبص نظرة جادة]</span>
+            <div class="text">
+                يا عزيزي، الفندق ده مش من خيالي. 
+                الفندق ده راكب أودامك دلوقتي جوه اللابتوب أو الموبايل اللي بتتفرج عليا منه، واسمه <span class="en">RAM</span> (ذاكرة الوصول العشوائي).
+                لما نفهم الفندق ده بيسكن الناس إزاي.. هنبقى ملوك في كتابة أي كود في الدنيا.
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت إلكتروني سريع Data processing]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتبدأ تتحرك براحة – Scroll to: What is Memory/Hardware]</span>
+            <div class="text">
+                الـ RAM من جوه زي ما الرسوم التوضيحية بتقولنا.. شريحة سيليكون مليانة مليارات الترانزستورات اللي بتحتفظ بشحنة كهربية. (0 أو 1).
+                عشان الكمبيوتر ميتهش وسط المليارات دي.. بيقسمم لـ <span class="en">Bytes</span>. كل 8 بت جنب بعض بيعملوا درج (بايت).
+                وكل درج ليه "عنوان" (Address). زي رقم تليفون مستحيل يتكرر.. مثلاً 0x1A4 أو 0x200.. أرقام هيكساديسيمال بتخوف المبتدئين، بس هي مجرد "رقم شقة"!
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتقرب للكاميرا وبترفع صباعك كأنك بتنصح نصيحة العمر – Scroll to: Variables Visualization]</span>
+             <div class="text">
+                طيب إيه اللي بيحصل لما بتكتب في الكود بتاعك `let x = 50`؟
+                هل الكمبيوتر بيفهم يعني إيه x؟ إطلاقاً! الكمبيوتر بيروح في الفندق ده، يحجز كام درج.. يحط جواهم الرقم 50 بالباينري (الأصفار والوحايد).. وبدل ما يخليك تحفظ رقم العنوان المعقد اللي هو 0x1A4.. البرمجة من كرمها، لزقتلك ستيكر على الدرج مكتوب عليه (x). 
+                عشان أنت كبني آدم تنادي عليه بسهولة. شياكة!
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتغير نظرتك لشيء من الخبث – Scroll to: Memory Layout]</span>
+            <div class="text">
+                هنا بتظهر المشكلة.
+                لما الكود بتاعك بيكبر.. وتعمل متغيرات وArrays كتير. 
+                الفندق بيتملي زباين. بس مش زباين منظمين! زبون هنا، وزبون في الدور التالت، وزبون مشى وساب مكانه فاضي!
+                الظاهرة المرعبة دي بنسميها <span class="highlight">Memory Fragmentation (تجزئة الذاكرة)</span>.
+                يبقى عندك 100 درج فاضي.. بس للأسف مفيش 10 أدراج منهم "لزق في بعض"!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: زجاج بيتكسر أو حاجة بتدشدش]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتقعد ورا المكتب وتشبك إيديك كخبير – Scroll to: The Interactive Demo]</span>
+             <div class="text">
+                في لغات البرمجة القديمة زي C الضعيفة دي.. أنت كطالب غلبان اللي كنت بتروح تكلم الريسبشنست، ولو معملتش (Delete) לلبيانات، الفندق يتملي واللابتوب بتاعك يهنج وتعمل ريستارت.
+                <br>بس الحمدلله في اللغات الحديثة زي جافاسكريبت وبايثون، جابوا شركة نضافة إسمها الـ <span class="en">Garbage Collector</span> (جامع القمامة).. دة بيلف على الأدراج اللي محدش بيسأل عليها ويمسحها أوتوماتيك وينضفلك الفندق بتاعك أول بأول!
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [زوم آوت.. الكاميرا بترجع لمكانها الطبيعي]</span>
+            <div class="text">
+                الخلاصة يا صديقي المبرمج، الميموري ما هي إلا مساحات، عناوين، وصناديق. 
+                فهمك للعبة العناوين دي، هيخليك فاهم أنا ليه بشيل Array وبحط Linked list، وليه الكود ده أسرع من ده!
+                في الدروس الجاية بقا كل ما ارسملك مكعب، تبقى عارف إن ده درج في فندق الرامات العجيب!
+                بص عالأدراج اللي تحت دي، وجرب تفضيها وتملاها.. واشوفك الدرس الجاي! سلام!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: تيمة أغنية الانترو بتاعت الدحيح تخش هنا وتنهي]</span>
+        </div>
+    </div>
+</body>
+</html>

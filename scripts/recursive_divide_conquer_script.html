@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الدحيح - Divide and Conquer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2; margin: 0; padding: 2rem; direction: rtl; }
+        .container { max-width: 900px; margin: auto; }
+        h1 { color: #14B8A6; text-align: center; margin-bottom: 2rem; }
+        .block { background: #1e293b; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #14B8A6; }
+        .action { display: inline-block; background: #334155; color: #ffe4e6; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .text { font-size: 1.25rem; font-weight: 600; color: #e2e8f0; }
+        .en { font-family: sans-serif; font-weight: bold; color: #38bdf8; direction: ltr; display: inline-block; }
+        .highlight { color: #facc15; font-weight: 800; background: rgba(250,204,21,0.1); padding: 0 5px; }
+        .sfx { color: #10b981; font-size: 0.9rem; margin-top: 5px; display: block; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>سكريبت الدحيح - مكتبة الإسكندرية وفرّق تسد (Divide & Conquer)</h1>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا بتبدأ بزاوية سفلية بتديك هيبة، وبتتكلم بصوت مدير ديكتاتور]</span>
+            <div class="text">
+                تخيل إنك بقيت مدير مدرسة، وقدامك مصيبة سودا! 
+                عندك 10 آلاف ورقة إمتحان مكبوبة على الأرض، ومطلوب منك ترتبهم أبجدياً من الألف للياء!
+                <br>لو قعدت كمدير محترم، تمسك ورقة ورقة وتقارنها باللي قبلها، وتعمل نظام الـ <span class="en">Selection Sort</span>.. هتاخد بتاع 100 مليون عملية مقارنة! O(n^2)! إجازة الصيف هتبدأ وتخلص وأنت لسه بترتب في ورق الحضانة!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت ورق بيتبعثر وفوقيه صوت دقات ساعة متسارعة (تيك توك)]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا بتقطع جانبي سريع.. النظرة أصبحت شريرة وماكرة]</span>
+            <div class="text">
+                पण كأى مدير شاطر، أنت مش هتعمل الشغلانة دي بنفسك!
+                أنت هتستخدم استراتيجية سياسية قذرة وعظيمة في نفس الوقت اسمها: "فرّق تسد" <span class="en">(Divide & Conquer)</span>.
+                <br>هتروح قاسم الـ 10 آلاف ورقة دول نصين.. 5000 هنا و 5000 هنا.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتعلي صوتك وتتكلم بريتم طلقة]</span>
+            <div class="text">
+                وتدي النص ده للمدرس الأول، والنص ده للمدرس التاني. وتقولهم "رتبوهم ماليش دعوة!"
+                <br>يقوم المدرس الأول مقسمهم لـ 2500 ورقة ويديهم للمدرسين اللي تحته! والمدرسين يقسموهم لـ 1250! لحد ما نوصل إننا رمينا ورقة واحدة بس على 10 آلاف طالب!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت طبول الحرب بتبدأ تعلى]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا بتعمل زووم بطيء، وبتهدى فجأة كأن المشكلة اتحلت]</span>
+            <div class="text">
+                تخيل معايا يا عزيزي لما طالب يبص في إيده يلاقي "ورقة واحدة بس".. هيحتاج كام ثانية عشان يرتبها؟
+                <span class="highlight">صفر ثانية!</span> لأن الورقة الواحدة بطبيعة الحال.. مترتبة!
+                هنا بتبدأ المرحلة العكسية الجميلة.. الدمج! أو الـ <span class="en">Merge</span>.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتمشي في الإستوديو وتشاور بإيدك كأنك بتدمج ورق – Scroll to: Merge Sort Deep Dive]</span>
+            <div class="text">
+                الطالبين اللي جنب بعض يضموا ورقتين مترتبين لبعض! والـ 4 يضموا مع بعض.. لحد ما الورق كله يرجعلك على مكتبك كمدير، متقسم حزمتين 5000 مترتبين من أصغر لأكبر، و 5000 مترتبين من أصغر لأكبر!
+                أنت كمدير كل اللي هتعمله، تبص على أول ورقة هنا، وأول ورقة هنا.. اللي أصغر، تسحبها تحطها في الصندوق!
+                بمجهود لا يُذكر.. وبسرعة مهولة حرفياً!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت طقطقة أصابع مع كل كلمة "تسحبها"]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا بتقرب والنور بيتحول أزرق هادي – Scroll to: Tree Diagram]</span>
+             <div class="text">
+                الخوارزمية العظيمة دي اللي مبنية على הـ Strategy دي اسمها <span class="highlight"><span class="en">Merge Sort</span></span>.
+                وبطلة العالم في الـ recursion.. بتقسم، تحل المُصغر، وتدمج الكبير! (Divide, Conquer, Combine) زي ما شجرة الرسمة دي بتوضح بالظبط.
+                الأرقام قعدت تنزل تنزل تنزل تتفصل عن بعضها.. ولما بقوا فردانيين، رجعوا اتلموا وهما مترتبين جاهزين.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بترفع صباعك بتحذير – Scroll to: Complexity]</span>
+             <div class="text">
+                السرعة هنا معجزة! إحنا نزلنا من مصيبة הـ O(n^2) اللي هي 100 مليون عملية.. لحاجة اسمها <span class="en">O(n log n)</span> يعني بنتكلم في أقل من 150 ألف عملية! (وفرنا 99% من وقت الكمبيوتر)!
+                <br>بس استنى.. مفيش حلاوة من غير ضريبة.
+                مدير المدرسة عشان يدمج الورق محتاج إيه؟ محتاج "مكتب فاضي" كبير يحط عليه الورق المترتب!
+                يعني الـ Merge Sort محتاج <span class="highlight">مساحة إضافية في الذاكرة Memory Space</span> تساوي O(n). ودي ضريبة السرعة.
+            </div>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بترجع للكرسي تقعد وتقفل الحلقة – Scroll to: Interactive Demo & Code]</span>
+            <div class="text">
+                عشان كده يا صديقي، دي خوارزمية جبارة لكن بتاكل مساحة! لو بتبرمج ساعة سمارت راماتها 2 ميجا، إياك تستخدم הـ Merge Sort وابقى روح للـ Quick اللي هنخده بعدين!
+                لكن لو الداتا جبارة ومشكلة الرام محلولة، ده أفضل سلاح في جيبك.
+                <br>سيبتك أنا مع الديمو تحت تقسم وتدمج براحتك، وتشوف الكود بسلامته.. واشوفكم الحلقة الجاية! سلام!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: تيمة أغنية الانترو بتاعت الدحيح تخش هنا وتنهي مع لوجو الحلقة]</span>
+        </div>
+    </div>
+</body>
+</html>

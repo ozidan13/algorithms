@@ -3,107 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سكريبت تسجيل - Array Operations | المصفوفات</title>
+    <title>سكريبت الدحيح - Arrays</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2.2; margin: 0; padding: 2rem; direction: rtl; }
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2; margin: 0; padding: 2rem; direction: rtl; }
         .container { max-width: 900px; margin: auto; }
-        h1 { color: #38bdf8; text-align: center; margin-bottom: 2rem; }
-        .block { background: #1e293b; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #38bdf8; }
-        .action { display: inline-block; background: #334155; color: #facc15; padding: 0.3rem 0.8rem; border-radius: 6px; font-weight: bold; font-size: 0.95rem; margin-bottom: 1rem; border: 1px solid #475569; }
-        .text { font-size: 1.2rem; color: #f8fafc; font-weight: 500; }
-        .en { font-family: sans-serif; direction: ltr; display: inline-block; color: #7dd3fc; }
-        .note { background: #022c22; border-right: 4px solid #10b981; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 1.05rem; }
+        h1 { color: #facc15; text-align: center; margin-bottom: 2rem; }
+        .block { background: #1e293b; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #facc15; }
+        .action { display: inline-block; background: #334155; color: #ffe4e6; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .text { font-size: 1.25rem; font-weight: 600; color: #e2e8f0; }
+        .en { font-family: sans-serif; font-weight: bold; color: #38bdf8; direction: ltr; display: inline-block; }
+        .highlight { color: #fbbf24; font-weight: 800; background: rgba(251,191,36,0.1); padding: 0 5px; }
+        .sfx { color: #c084fc; font-size: 0.9rem; margin-top: 5px; display: block; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>سكريبت التصوير - Array Operations</h1>
-        
+        <h1>سكريبت الدحيح - عقدة طابور العيش (Arrays)</h1>
+
         <div class="block">
-            <span class="action">🎥 [المقدمة - الكاميرا عليك مباشرة]</span>
+            <span class="action">🎥 [زوم سريع في وشك.. نظرة استغراب ثم ابتسامة]</span>
             <div class="text">
-                أهلاً بيكم في درس جديد.<br>
-                أكتر حاجة بنتعامل معاها في أي لغة برمجة، سواء كنت بتكتب جافاسكريبت، بايثون، أو C++، هي المصفوفات، أو الـ <span class="en">Arrays</span>.<br>
-                كلنا بنستخدمها بشكل يومي عشان نخزن لستة يوزرز أو شوية أرقام... بس سألت نفسك قبل كده هي إزاي متخزنة جوه الميموري أصلاً؟ وليه ساعات بتكون سريعة جداً، وساعات بتهلك البروسيسور؟<br>
-                في الدرس ده هنفتح الغطا ونشوف الرامة بتتعامل إزاي مع הـ Array من جوه.
+                تخيل معايا يا عزيزي إنك عايش في الستينات.. وبالتحديد في الاتحاد السوفيتي.. وقررت تنزل تشتري عيش.
+                <br>الطوابير هناك مكنتش طوابير عادية، دي كانت ثقافة! صف طويل جداً من آلاف الناس مرصوصين ورا بعض لزق.. مفيش سنتيمتر واحد بين المواطن السوفيتي وأخوه المواطن السوفيتي.
+                <br>لحد ما فجأة.. يجي ظابط مهم، وعاوز يحشر نفسه في الطابور! مش في الأول، لأ.. عاوز يقف في النص! رقم 500 مثلاً!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت مارش عسكري روسي وفجأة يقطع بصوت (سكريبششش)]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتقطع بكاميرا جانبية بتبصلك من زاوية تانية وأنت بتهز راسك وتتكلم بسرعة]</span>
+            <div class="text">
+                المنطق بيقول إنه يقف في النص وخلاص.. لكن لا! 
+                عشان الباشا يقف في النص.. المواطن رقم 500 لازم يرجع خطوة لورا ويبقى 501.. و501 يرجع خطوة عشان يبقى 502.. وهكذا لحد آخر الطابور! 
+                حرفياً فيه ألف واحد هيضطروا يرحّلوا نفسهم عشان خاطر واحد بس دخل في النص!
+                <br>مجهود بدني وعضلي وجسدي رهيب! 
             </div>
         </div>
 
         <div class="block">
-            <span class="action">👇 [Scroll: انزل بالماوس لسكشن "إيه هي הـ Array؟" وعيش مع الشاشة]</span>
+            <span class="action">🎥 [زوم بطيء على وشك ونبرة صوتك بتهدى وتبقى جد كأنك بتكشف سر]</span>
             <div class="text">
-                عشان نفهم הـ Array صح، تخيل إن الميموري بتاعت الكمبيوتر دي عبارة عن دولاب ضخم جداً مليان أدراج.<br>
-                الميزة في الـ Array إنها بتروح تحجز أدراج "متتالية".. ورا بعض بالظبط. مفيش درج بيفصل بينهم. بنسميها في الكمبيوتر <span class="en">Contiguous Memory</span>.<br><br>
-                زي ما احنا شايفين في التقسيمة دي.. كل درج ليه رقم <span class="en">Index</span> بيبدأ من الصفر، وبيشيل قيمة معينة.
+                تصدقني يا عزيزي لو قولتلك إن الكمبيوتر بتاعك، واللي بالمناسبة أذكى مننا كلنا، بيعمل نفس المأساة السوفيتية دي كل يوم؟
+                <br>وأنت قاعد بتشرب القهوة وبتلعب في الكود، وبتستخدم أهم وأشهر هيكل بيانات في التاريخ.. الـ <span class="en">Arrays</span> (المصفوفة)!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: دقة طبلة درامية زووم إن بسرعة]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [بتمشي وتتحرك في الاستوديو – Scroll to: Memory Layout]</span>
+            <div class="text">
+                بص يا سيدي.. הـ Array دي معمولة على مبدأ الـ <span class="en">Contiguous Memory</span>. يعني كراسي ولازقة ف بعض. 
+                لو طلبت من הרامات 5 كراسي، لازم تديك 5 كراسي متصلين.. لو مفيش؟ الكمبيوتر ممكن يفجر المكان ويدورلك على قاعة تانية!
+                <br>بسبب اللزقة دي، הـ Array بقت صاروخ في القراية!
+                يعني لو قلت للكمبيوتر "هاتلي الكرسي رقم 50".. الكمبيوتر مبيعديش على 1 و 2 و 3! 
+                لأ، ده بيعمل معادلة رياضية في <span class="highlight">جزء من المليون من الثانية</span>. عنوان البداية زائد الاندكس.. طاخ! يروح للكرسي رقم 50 فوراً وبسرعة <span class="en">O(1)</span>. كأنك بتعمل Teleport!
             </div>
         </div>
 
         <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن 'Memory Layout' عشان تشرح الرسمة]</span>
+            <span class="action">🎥 [بتقف فجأة وترفع حاجبك – Scroll to: Insert Operation]</span>
             <div class="text">
-                تعالوا نبص على الرسمة دي مع بعض. دي قطعة من الميموري.<br>
-                شايفين العناوين اللي فوق؟ 0x100، 0x104، 0x108.<br>
-                الكمبيوتر ذكي جداً، عشان يوصل للعنصر رقم 4 مثلاً.. مش بيمشي على الأول والتاني والتالت!<br>
-                بيعمل حسبة رياضية سريعة جداً: بياخد عنوان أول درج 0x100، ويجمع عليه الاندكس مضروب في حجم البايت.<br>
-                عشان كده، كود زي <span class="en">arr[4]</span> بيوصل للعنصر مباشرة في زمن <span class="en">O(1)</span>. ودي أقوى ميزة في הـ Arrays على الإطلاق: الـ <span class="en">Random Access</span>. أنت معاك الاندكس؟ هجيبلك الداتا فوراً.
+                يا سلام! عظمة! أسرع حاجة في الكوكب!
+                <br>بس استنى.. فاكر الظابط السوفيتي؟ هنا بتيجي الكارثة السوداء. الإضافة في النص! الـ <span class="en">Insert</span>!
+                <br>يا عزيزي لو الـ Array بتاعتك فيها مليون عنصر.. وحبيت تدخل بـ "بوست" جديد في أول التايم لاين.. الكمبيوتر بيضطر ياخد المليون بوست القدام.. يزيحهم كلهم خطوة لليمين! مليون عملية إزاحة (Shifting)!
+                العلماء سموا الكارثة دي <span class="en">O(n)</span>. لأنك لو معاك N من العناصر.. هتعمل N زحزحة!
+            </div>
+            <span class="sfx">🔊 [مؤثر صوتي: صوت طوب بيتكردس وناس بتنهج من التعب]</span>
+        </div>
+
+        <div class="block">
+            <span class="action">🎥 [الكاميرا بتقرب جداااً – Scroll to: Interactive Demo]</span>
+             <div class="text">
+                ولو حاولت تمسح عنصر من النص؟ (Delete).. إياك تظن إن الكمبيوتر هيسيب مكانه فاضي.. لأ يا حبيبي الـ Arrays مبتقبلش الفراغ العاطفي.. هيروح واخډ كل العناصر اللي عاليمين، وساحبهم يشفّتهم شمال خطوة! برضه <span class="en">O(n)</span>! شقاء، تعب، استهلاك بروسيسور ملوش أول من آخر!
+                <br>عشان كده في الديمو اللي قدامك ده، جرب تحشر رقم في النص وشوف الكمبيوتر بيعاني إزاي بيكتبلك في اللوج إنه رحّل الداتا عشانك!
             </div>
         </div>
 
         <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن "Insert Operation" وركز على الرسمة]</span>
+            <span class="action">🎥 [زوم آوت.. بترجع تقعد على الكرسي بارتياح]</span>
             <div class="text">
-                طيب إيه المشكلة بقى؟ المشكلة بتظهر في عمليات معينة زي الإضافة الـ <span class="en">Insert</span>.<br>
-                بصوا على المثال اللي قدامنا. عندنا array وفيها 4 أرقام، وعاوزين نحشر الرقم 99 في הـ index رقم 2 اللي في النص.<br>
-                لأن الكراسي كلها ورا بعض، الكمبيوتر مقدرش يحطه وخلاص. لازم يعمل <span class="en">Shift</span>، زي ما الأنميشن بيوضح، خلى الـ 33 والـ 47 يتزحزحوا خطوة كاملة لليمين عشان يوسعوا مكان للـ 99.<br>
-                تخيل لو الـ array دي فيها مليون عنصر وأنت بتحاول تحط عنصر في الأول؟ المليون هيتزحزحوا! وده بيخلي الإضافة هنا تكلفتها <span class="en">O(n)</span>.
-            </div>
-            <div class="note">
-                <span class="action">🎥 [بص للكاميرا وقول كمعلومة سريعة]</span><br>
-                طبعاً لو بتضيف العنصر في "الآخر" خالص، مفيش زحزحة، وساعتها بتكون العملية <span class="en">O(1)</span> السريعة الحلوة اللي بنحبها.
+                إذن، الخلاصة الدحيحية! הـ Arrays سلاح فتاك.. تقرأ منه؟ هو طيارة F-16 مفيش أسرع منها.
+                <br>تعدل فيه وتحشر داتا في النص وتمسح من الأول؟ هيقلب معاك بجرار زراعي سوفيتي بياكل الرامات.
+                <br>طيب لو أنا شغال على سيستم زي تطبيق رسائل الواتساب، والرسائل بتيجي ورا بعض وعاوز أحط رسالة وامسح رسالة من غير ما الباقات تتزحزح والكمبيوتر يفرقع؟ أعمل إيه؟
             </div>
         </div>
 
         <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن "Delete Operation"]</span>
+            <span class="action">🎥 [بتبص للكاميرا بنظرة غامضة فيها تحدي]</span>
             <div class="text">
-                نفس الكلام بالملّي بيحصل في عملية الحذف. لو شلنا الـ 25 اللي في الأول دي... الكرسي هيفضى. הـ Array مبيقبلش الفراغات في النص.. فهتلاقي الداتا كلها اللي بعده اتسحبت واتزحزحت ناحية الشمال عشان تقفل الفجوة. وبرضه هندخل في <span class="en">O(n)</span>.
+                هنا علماء الكمبيوتر قعدوا مع بعض وقالوا: "احنا لازم نلغي فكرة الكراسي الملزقة دي.. وكل عنصر يقعد في البلد اللي تريحه!"
+                <br>ازاي ميتوهوش من بعض؟ ده اللي هنعرفه في الحلقة الجاية.. مع الخريطة السحرية: الـ <span class="en">Linked Lists</span>.
+                <br>يا ريت بقى قبل ما تمشي تبص بصه على المصادر تحت، وتقلب في الديمو وتعمل Insert للصبح. سلام!
             </div>
+            <span class="sfx">🔊 [مؤثر صوتي: تيمة أغنية الانترو بتاعت الدحيح تخش هنا وتنهي]</span>
         </div>
-
-        <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن "البحث Search"]</span>
-            <div class="text">
-                بالنسبة لاالبحث.. لو أنت معاك القيمة نفسها مش הـ Index وعاوز تدور عليها، معندكش حل غير إنك تستخدم الـ <span class="en">Linear Search</span> وتمشي عليهم من الأول للآخر، وده <span class="en">O(n)</span>.<br>
-                إلا لو.. الـ Array بتاعتك كانت مترتبة! ساعتها نقدر نستخدم الـ <span class="en">Binary Search</span> اللي اتعلمناه وننزل بالوقت لـ <span class="en">O(log n)</span>.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن الـ "Interactive Demo"]</span>
-            <div class="text">
-                تعالوا نجرب الكلام ده بنفسنا في الجزء التفاعلي ده.<br>
-                (جرب تكتب فاليو وتعمل insert في النص.. وشوف اللوجز اللي بتتكتب تحت وقول..) <br>
-                زي ما إحنا شايفين.. ضفنا العنصر وكتبلنا تحت انه اضطر يزيح كم عنصر عشان يوسع مكان. الـ Demo ده هيخليك تلعب بالعمليات وتشوف הـ Complexity بعينك.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">👇 [Scroll: انزل لسكشن "ملخص التعقيد Table"]</span>
-            <div class="text">
-                الجدول اللي في آخر الدرس ده بيلخص كل حاجة، وهو ده اللي تحطه في دماغك قبل أي انترفيو.<br>
-                الـ Access دائماً O(1). الـ Insert والـ Delete غالباً O(n) إلا لو شغالين في آخر الـ Array.
-            </div>
-        </div>
-        
-        <div class="block">
-            <span class="action">🎥 [خاتمة - الكاميرا عليك]</span>
-            <div class="text">
-                كده احنا فهمنا הـ Arrays بتشتغل إزاي من جوه وايه نقط ضعفها. لو الأبلكيشن بتاعنا معتمد على إضافة وحذف عناصر كتير من النص أو الأول، الـ Arrays هتبقى كارثة في الأداء. <br>
-                وهنا بيجي دور الهيكل التاني والأذكى في التعامل مع المشكلة دي.. הـ Linked Lists. وده اللي هنشوفه في الدرس الجاي. أشوفكم على خير.
-            </div>
-        </div>
-
     </div>
 </body>
 </html>
