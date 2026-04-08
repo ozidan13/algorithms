@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - درس 1: قوانين نيوتن للحركة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #0f1a2e, #0a1628);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+            color: #e0e0e0;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: rgba(16, 185, 129, 0.35);
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.10);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #34d399;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-title::before {
+            content: "🎬";
+        }
+
+        .section-title .toggle-icon {
+            margin-right: auto;
+            margin-left: 0;
+            color: #64748b;
+            font-size: 0.85rem;
+            transition: transform 0.3s;
+        }
+
+        .section-title.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .script-body {
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .script-text {
+            font-size: 1.12rem;
+            line-height: 2.2;
+            color: #f0f4f8;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1.2rem 1.5rem;
+            border-radius: 10px;
+            border-right: 4px solid #10b981;
+        }
+
+        .note {
+            font-size: 0.92rem;
+            color: #fbbf24;
+            margin-top: 1rem;
+            padding: 0.6rem 1.1rem;
+            background: rgba(251, 191, 36, 0.07);
+            border-radius: 8px;
+            border-right: 3px solid #fbbf24;
+            line-height: 1.8;
+        }
+
+        .note::before {
+            content: "📌 ملاحظة: ";
+            font-weight: bold;
+        }
+
+        .law-box {
+            font-size: 0.95rem;
+            color: #e0f2fe;
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 8px;
+            border-right: 3px solid #3b82f6;
+            line-height: 1.9;
+        }
+
+        .law-box::before {
+            content: "📖 القانون: ";
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .formula-note {
+            font-size: 0.95rem;
+            color: #d1fae5;
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(16, 185, 129, 0.07);
+            border-radius: 8px;
+            border-right: 3px solid #10b981;
+            line-height: 1.9;
+        }
+
+        .formula-note::before {
+            content: "🔢 المعادلة: ";
+            font-weight: bold;
+            color: #34d399;
+        }
+
+        .example-box {
+            font-size: 0.95rem;
+            color: #fde68a;
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(245, 158, 11, 0.07);
+            border-radius: 8px;
+            border-right: 3px solid #f59e0b;
+            line-height: 1.9;
+        }
+
+        .example-box::before {
+            content: "💡 مثال من الحياة: ";
+            font-weight: bold;
+        }
+
+        /* Video Cues Classes */
+        .camera-cue {
+            font-size: 0.85rem;
+            color: #fca5a5;
+            display: block;
+            margin: 0.5rem 0;
+            font-weight: bold;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            border-right: 2px solid #ef4444;
+        }
+
+        .vfx-cue {
+            font-size: 0.85rem;
+            color: #93c5fd;
+            display: block;
+            margin: 0.5rem 0;
+            font-weight: bold;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            border-right: 2px solid #3b82f6;
+        }
+
+        .sfx-cue {
+            font-size: 0.85rem;
+            color: #d8b4fe;
+            display: block;
+            margin: 0.5rem 0;
+            font-weight: bold;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            border-right: 2px solid #a855f7;
+        }
+
+        .highlight {
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .hl-blue {
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        .hl-amber {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        .hl-red {
+            color: #f87171;
+            font-weight: 700;
+        }
+
+        .hl-purple {
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        .english {
+            direction: ltr;
+            display: inline-block;
+            font-family: 'Segoe UI', sans-serif;
+            color: #93c5fd;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .pause {
+            color: #fb923c;
+            font-size: 0.82rem;
+            display: block;
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+
+        .symbol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .symbol-table th {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            padding: 0.6rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .symbol-table td {
+            padding: 0.55rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            line-height: 1.6;
+        }
+
+        .symbol-table tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        a.back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 0.7rem 1.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            color: #34d399;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        a.back-btn:hover {
+            background: rgba(16, 185, 129, 0.25);
+            color: #fff;
+        }
+
+        .section-divider {
+            text-align: center;
+            color: #475569;
+            font-size: 0.8rem;
+            margin: 1rem 0 1.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: " ── ";
+        }
+
+        .step-list {
+            padding-right: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .step-list li {
+            margin-bottom: 0.5rem;
+            line-height: 1.9;
+        }
+
+        .toc {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .toc h3 {
+            color: #34d399;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .toc a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 0.25rem 0;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .toc a:hover {
+            color: #34d399;
+        }
+
+        .toc a::before {
+            content: "• ";
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="lect01.html" class="back-btn"><i class="fas fa-arrow-right"></i> رجوع للدرس</a>
+        <a href="index.html" class="back-btn" style="margin-right:0.75rem"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+
+        <h1>📜 سكريبت الشرح — الدرس الأول</h1>
+        <p class="subtitle">قوانين نيوتن للحركة · أسلوب مخصص للمونتاج والتصوير التفاعلي · بشمهندس أسامة زينهم</p>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3>📋 محتويات السكريبت وتوجيهات التصوير</h3>
+            <a href="#intro">تفاحة نيوتن والكسل الكوني (المقدمة)</a>
+            <a href="#force">مين البلطجي اللي بيمشي كلامه هنا؟ (القوة)</a>
+            <a href="#first-law">أرسطو كان بيهبد.. ونيوتن ظبط الأداء (القانون الأول)</a>
+            <a href="#inertia">فرامل الميكروباص والـ Inertia بتاعتك</a>
+            <a href="#momentum">رصاصة سريعة ولا قطر بطيء؟ (كمية الحركة)</a>
+            <a href="#mass-weight">أكبر كذبة في الصيدلية (الـ Mass والـ Weight)</a>
+            <a href="#third-law">قانون الغدر والـ Reaction المرعب (القانون الثالث)</a>
+            <a href="#summary">الخلاصة اللي هتنجحك</a>
+        </div>
+
+        <!-- ───────── HOOK & INTRO ───────── -->
+        <div class="section-divider" id="intro">المقدمة</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                تفاحة نيوتن والكسل الكوني (المقدمة)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [Shot واسع، إضاءة خافتة، وأنت قاعد على كرسي خشب جنبه شجرة صغيرة أو ماسك تفاحة]</span>
+                    أغسطس 1665، إنجلترا بتقفل بيبانها كلها بسبب الطاعون العظيم. جامعة كامبريدج قررت تقفل وتسرّح الطلبة بتوعها عشان الوباء ميخلصش عليهم. 
+                    <span class="vfx-cue">✨ [VFX: صور أرشيفية سريعة أبيض وأسود لطاعون لندن مع تأثير قديم]</span>
+                    من ضمن الطلبة دول، كان فيه شاب انطوائي مفيش حد مهتم بوجوده، رجع مزرعة أمه في قرية معزولة.. قعد هناك فاضي، والفراغ القاتل ده خلاه قاعد تحت شجرة، مستني أي حاجة تحصل. 
+                    <br><br>
+                    وفجأة.. <span class="sfx-cue">🔊 [SFX: صوت خبطة تفاحة بتقع على الأرض "طُب"]</span> التفاحة وقعت.
+                    <span class="camera-cue">🎥 [Zoom in بطيء على وشك وتعبيراتك بتبدأ تتغير للجدية]</span>
+                    بص، القصة دي اتهرست لدرجة إنها بقت كليشيه ممل جداً. بس اللي محدش بيقولهولك، إن الشاب ده مسألش نفسه "التفاحة وقعت ليه؟".. هو سأل سؤال أرعب بكتير.
+                    <br><br>
+                    هو سأل: هو إيه أصلاً اللي بيتحكم في الكون ده؟ إيه اللي بيخلي الكرسي ده ثابت، وإيه اللي بيخلي الكوكب العبقري بتاعنا ده يلف من غير ما يقع؟ مين المخرج اللي بيوزع الأدوار دي؟
+                    <br>النهارده بقى، هندخل دماغ الشاب ده.. إيزاك نيوتن.
+                    <br><br>
+                    <span class="camera-cue">🎥 [الضحكة المعتادة وبداية حيوية وانطلاقة سريعة]</span>
+                    أهلاً بيك في عالم الميكانيكا الكلاسيكية.. أنا بشمهندس أسامة زينهم، وكوباية الشاي الجميلة بتاعتك، ويلا نفهم הـ <span class="highlight">Newton's Laws of Motion</span>!
+                    <span class="sfx-cue">🔊 [SFX: تتر بداية ديناميكي]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── FORCE ───────── -->
+        <div class="section-divider" id="force">القوة</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                مين البلطجي اللي بيمشي كلامه هنا؟ (القوة)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [أنت واقف ماسك سبورة صغيرة أو تابلت وبتشخبط عليه بخطوط عشوائية]</span>
+                    الكون ده يا سيدي عامل زي الموظف الحكومي اللي قاعد على المكتب.. مابيعملش أي حاجة خالص، مابيتلحلحش من مكانه، من غير "واسطة".. أو بتعبير فيزيائي أصح، من غير "زقة".
+                    <br><br>
+                    عشان أي <span class="english">Object</span> في الدنيا ييجي له مزاج إنه يتحرك لو كان واقف، أو يوقّف لو كان بيجري، أو حتى يغير رأيه ويلف يمين بدل شمال.. محتاج تأثير خارجي. التأثير البلطجي ده احنا بنسميه הـ <span class="highlight">Force</span>.
+                </div>
+
+                <div class="law-box">
+                    <strong>الـ Definition الرسمي:</strong>
+                    <br>An external effect that affects the object, it changes or attempts to change its state or direction.
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    <span class="vfx-cue">✨ [VFX: کلمة "attempts" بتنور بلون أحمر وبيتعمل عليها دائرة]</span>
+                    خدلي بالك من كلمة <span class="english">attempts</span> دي.. يعني "بيحاول". إنت ممكن تروح بكل صحتك دلوقتي تزق حيطة خرسانة بكتفك.. هل الحيطة هتتحرك؟ لأ. هل ده معناه إن مفيش <span class="english">Force</span>؟ لأ طبعاً فيه! إنت بس اللي صحتك على قدها ومقدرتش تتفوق على ثبات الحيطة.
+                    <br><br>
+                    <span class="camera-cue">🎥 [بتاخد خطوة للكاميرا وبترتب كلامك بصباعك]</span>
+                    الـ <span class="english">Force</span> دي مش كمية غشيمة بتمشي تخبط وخلاص.. دي <strong class="hl-blue">Derived Vector Quantity</strong>. يعني ليها مقدار، وليها اتجاه. زي ما بتشوط كورة بالظبط، إنت بتحدد هتشوطها بقوة قد إيه <span class="english">(Magnitude)</span> وهتشوطها في الجون اليمين ولا الشمال <span class="english">(Direction)</span>. والكمية المحترمة دي بنقيسها بجهاز اسمه الـ <strong class="hl-purple">Spring Balance</strong> ووحدتها هي الـ <span class="hl-amber">Newton</span> طبعاً تيمناً بعمنا إبراهيم نيوتن.. قصدي إسحاق نيوتن.
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── FIRST LAW ───────── -->
+        <div class="section-divider" id="first-law">القانون الأول</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                أرسطو كان بيهبد.. ونيوتن ظبط الأداء (القانون الأول)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [Low angle shot وأنت باصص لفوق كأنك بتتكلم عن حاجة قديمة]</span>
+                    زمان خالص، كان عم أرسطو مقنع البشرية بنظرية بديهية جداً.. بيقولك الطبيعي بتاع الحاجات في الكون إنها تبطأ وتقف وتستكين. رميت كورة على الأرض، هتدحرج شوية، وبعدين تتعب فتقف. وكلنا اقتنعنا.
+                    <br><br>
+                    <span class="sfx-cue">🔊 [SFX: صوت قلم بيشخبط بقوة أو إزاز بيتكسر للتعبير عن كسر الفكرة]</span>
+                    لحد ما جه نيوتن، وقال إيه الهبد ده! الكورة دي ماكانتش هتقف أبداً.. هي وقفت عشان فيه قوة تانية رخمة اتدخلت وعرقلتها، اسمها الـ <span class="english">Friction Force</span> أو الاحتكاك! لو مكنش في احتكاك، الكورة دي كانت هتكمل في طريقها لساعة القيامة.
+                    <br><br>
+                    ومن هنا، حط <span class="highlight">Newton's First Law</span>.
+                </div>
+
+                <div class="law-box">
+                    <strong>نص القانون:</strong>
+                    <br>A static object keeps its state of rest, and a moving object keeps its state of motion at uniform velocity in a straight line... <strong>UNLESS acted upon by a resultant force.</strong>
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    <span class="vfx-cue">✨ [VFX: Equation pop-up (ΣF = 0 → a = 0)]</span>
+                    الخلاصة المريحة للكسالى: الكسلان هيفضل كسلان وعاجبه السرير، والمتحرك هيفضل ماشي في <span class="english">straight line</span> لا بيحود يمين ولا شمال، بسرعة ثابتة مابتتغيرش. إمتى الكلام ده يتكسر؟ لو ظهرت <span class="english">Resultant force</span>!
+                    <br><br>
+                    <span class="camera-cue">🎥 [بتشاور على كتاب قدامك على المكتب]</span>
+                    يعني موبايلك لو رميته في الفضاء الخارجي، بعيد عن هوا واحتكاك وأي جاذبية، هيفضل مكمل بسرعة ثابتة للـ <span class="english">Infinity</span>. طب الكتاب اللي على المكتب ده ساكن ليه ومبتتلحلحش؟ عشان وزنه بيشده لتحت، والترابيزة بتزقه لفوق (الـ <span class="english">Normal force</span>). الاتنين قد بعض بالظبط فعاملين <span class="english">Equilibrium</span>. الـ <span class="hl-red">Sigma F</span> بـ صفر!
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── INERTIA ───────── -->
+        <div class="section-divider" id="inertia">الـ Inertia</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                فرامل الميكروباص والـ Inertia بتاعتك
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [بتمسك كوباية شاي مليانة على الآخر، وبتعمل نفسك هتمشي بيها بسرعة وهتدلق]</span>
+                    القانون الأول ده بقى، هو التفسير العلمي لمبدأ عظيم اسمه <span class="highlight">الـ Inertia</span> المشهور بالقصور الذاتي.
+                    <br><br>
+                    الأجسام يا صديقي تنحة جداً. مبتحبش تغير حالتها نهائي.. هي في <span class="english">Comfort zone</span> وبتحارب عشان تفضل جواها.
+                    <span class="vfx-cue">✨ [VFX: مقطع درامي صامت لبني آدم طاير قدام جوه عربية لما بتخبط]</span>
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    <ul class="step-list">
+                        <li>لو إنت راكب عربية، وصاحبك المتسربع دس بنزين وطلع فجأة.. تلاقي ضهرك لزق في الكرسي لورا. ليه؟ جسمك كان ساكن، كان مرتاح، وفجأة العربية اتسحبت لقدام وهو بيقاوم وعايز يفضل مكانه.</li>
+                        <li>طب لو السواق ده ضرب فرامل فجأة؟ <span class="sfx-cue">🔊 [SFX: فرامل حادة]</span> تلاقي وشك بيبوس التابلوه! جسمك كان واخد سرعة العربية، العربية استجابت للفرامل ووقفت، بس إنت مفيش جواك تيل فرامل! جسمك مكمل بسرعة العربية لقدام في خط مستقيم.</li>
+                    </ul>
+                    <span class="pause">[وقفة صارمة]</span>
+                    عشان كدة، اللي اخترع حزام الأمان ده مقالش نحطه زينة عشان المخالفات.. ده عمله عشان يكتف הـ <span class="english">Inertia</span> بتاعتك قبل ما جمجمتك تتكسر.
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── MOMENTUM ───────── -->
+        <div class="section-divider" id="momentum">الـ Momentum</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                رصاصة سريعة ولا قطر بطيء؟ (كمية الحركة)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [الكاميرا بتسحب لزاوية Wide شوية، وبتشاور بإيدك كأنك بتنظم سباق]</span>
+                    ناخد سؤال فلسفي بس خطر شوية. مين اللي يخبطك وتبقى نسبة نجاتك أقل: عجلة بسكليتة وزنها 15 كيلو بتمشي ببطء جداً.. ولا رصاصة وزنها يا دوب 20 جرام بس طالعة بسرعة الضوء من مسدس؟
+                    <br><br>
+                    الإجابة البديهية: الرصاصة! طب ليه الرصاصة مميتة رغم إنها خفيفة كدة؟
+                    ولو سألتك: مين يموتك أكتر، عجلة ماشية ببطء، ولا قطر بضاعة ماشي ببطء؟ هتقول قطار البضاعة طبعاً من غير تفكير، عشان ضخم جداً!
+                    <span class="pause">[وقفة وبتبتسم]</span>
+                    الفيزياء ريحت دماغها من الجدال ده، وحطت الـ <span class="english">Mass</span> والـ <span class="english">Velocity</span> في الخلاط، وطلعت بكمية مرعبة اسمها الـ <span class="highlight">Linear Momentum (P)</span>.
+                </div>
+
+                <div class="formula-note">
+                    <strong>السرعة في الكتلة = كارثة!</strong>
+                    <br><strong style="font-size:1.2rem">P = m × v</strong>
+                    <br><br>
+                    وحدتها <strong style="color:#fbbf24">kg·m/s</strong> وهي Vector طبعاً عشان فيها Velocity.
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    الـ <span class="english">Momentum</span> دي هي مقياس التدمير! هي اللي بتعرفك صعوبة إنك توقف جسم متحرك. القطر الـ <span class="english">Mass</span> بتاعته جبارة فـ הـ <span class="english">Momentum</span> عالى جداً وميوقفش بسهولة. الرصاصة الـ <span class="english">Velocity</span> بتاعتها مجنونة فبتخترق أي حاجة، הـ <span class="english">Momentum</span> شغال في الحالتين!
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── MASS VS WEIGHT ───────── -->
+        <div class="section-divider" id="mass-weight">Mass vs Weight</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                أكبر كذبة في الصيدلية (الـ Mass والـ Weight)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [بتمسك ميزان حمام عادي وتخبط عليه بإيدك]</span>
+                    في كذبة إحنا عايشين فيها من يوم ما اتولدنا. تدخل الصيدلية وتقف على البتاع ده، تلاقي المؤشر بيقول 80، فتطلع تقول لأصحابك "أنا وزني 80 كيلو".. علمياً الجملة دي جريمة ومحتاجة يتحط عليها <span class="english">Censorship</span>!
+                    <span class="sfx-cue">🔊 [SFX: Error buzzer]</span>
+                    <br><br>
+                    خلينا نفرّق بين حاجتين مبيرحموش بعض:
+                    <br><br>
+                    <strong class="hl-blue">أولاً، الـ Mass (الكتلة):</strong> ودي كمية المادة اللي فيك. إنت جواك كرش ولحم وعضم ومياة قد إيه؟ دي הـ <span class="english">Mass</span> ووحدتها الـ <span class="english">Kilogram</span>. والمفاجأة؟ <span class="highlight">مبتتغيرش نهائياً لو سافرت آخر الكون!</span> إنت هنا كتلتك 80 كيلو، وهناك على المريخ 80 كيلو! هي دي الـ 80 اللي الميزان طلعها لك.
+                </div>
+
+                <div class="law-box" style="border-right-color:#ef4444; background:rgba(239,68,68,0.07);">
+                    <strong style="color:#f87171">ثانياً، הـ Weight (الوزن):</strong>
+                    <br>الـ Weight ده قوة يا مؤمن.. قوة! הـ <span class="english">Force of Gravity</span>. الأرض ككوكب بتشد اللحم والعضم بتاعك ده لتحت بقوة كام نيوتن؟
+                    <br><strong style="color:#fca5a5; font-size:1.1rem;">Fg = m × g</strong>
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    عشان تحسب وزنك الحقيقي، تضرب كتلتك في الـ <span class="english">Gravity</span> بتاعت الكوكب. كوكب الأرض جاذبيته تقريباً 9.8. يعني (70 كجم × 9.8) هتطلع حوالي 686 نيوتن! وزنك 686 نيوتن يا بطل!
+                    <br><br>
+                    <span class="vfx-cue">✨ [VFX: المشهد بيتحول لسطح القمر، جاذبية قليلة وبتمشي بالراحة]</span>
+                    تروح القمر بقى؟ الجاذبية ميتة هناك 1.6 بس.. فتضربها في الـ 70 كجم، تلاقي وزنك نزل لـ 112 نيوتن! هتحسسك إنك فراشة، هتنط 3 متر لفوق وانت مرتاح، ده لأن الوزن قل، لكن كتلتك الـ 70 كيلو كرش زي ما هما مفيش جرام نزل!
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── THIRD LAW ───────── -->
+        <div class="section-divider" id="third-law">Newton's Third Law</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                قانون الغدر والـ Reaction المرعب (القانون الثالث)
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [العودة لكادر الاستوديو، بتخبط خبطة قوية بكف إيدك على الترابيزة]</span>
+                    آآآه!
+                    <span class="pause">[وقفة، بتبص لإيدك اللي لخبطت بيها الترابيزة باستغراب مصطنع]</span>
+                    أنا اللي ضربت الترابيزة.. الترابيزة جماد خشب، الترابيزة وجعتني ليه؟ 
+                    هنا بنيجي لأسطورة نيوتن.. <span class="highlight">Newton's Third Law</span>. القانون اللي أثبت إن الكون ده مبيمشيش فيه البلطجة من طرف واحد أبضاً!
+                </div>
+
+                <div class="law-box">
+                    <strong>الإثبات العلمي إن مفيش حد بيسيب حقه:</strong>
+                    <br>لكل فعل (Action)، رد فعل (Reaction)، مساوٍ له في المقدار ومضاد له في الاتجاه!
+                    <br><strong style="font-size:1.15rem; color:#f87171;">FA_on_B = - F_B_on_A</strong>
+                </div>
+
+                <div class="script-text" style="margin-top:1rem">
+                    <span class="vfx-cue">✨ [VFX: صاروخ بيطير والأسهم بتبين اتجاه الغاز واتجاه الانطلاق]</span>
+                    دي مش مقولة بتكتبها في التيك توك لما صاحبك يغدر بيك.. ده قانون بيحكم الميكرة والمجرة! الطيارة لما بتطير، بتزق الهوا لورا جامد، فالهوا بيزقها لقدام بنفس القوة فتندفع! 
+                    الصاروخ الـ <span class="english">Rocket</span> بيحرق غاز وينطره لتحت بعنف، فالصاروخ كـ رد فعل بيطير لفوق للفضاء.
+                    حتى وإنت بتشوط الكورة، رجلك بتزق الكورة لقدام، الكورة في نفس التانية بتزق رجلك لورا بنفس الـ <span class="english">Magnitude</span> عشان كدة بتحس بالخبطة في صباعك.
+                    <br><br>
+                    <span class="camera-cue">🎥 [بتقرب وشك من الكاميرا شوية بنبرة تحذير]</span>
+                    <strong class="hl-amber">هنا هيجي يسألك سؤال خبيث في الامتحان:</strong> 
+                    يا بشمهندس.. طالما القوتين قد بعض بالظبط، وعكس بعض.. ليه مبيعملوش <span class="english">Equilibrium</span>؟ ليه مابيكنسلوش بعض والكون يقف؟
+                    <br>عشان الـ <span class="english">Ation</span> بيحصل على <span class="hl-red">جسم</span>، والـ <span class="english">Reaction</span> بيحصل على <span class="hl-red">جسم تاني خالص!</span>
+                    أنا زقيت الحيطة.. الفعل على החיطة، الحيطة زقتني.. رد الفعل عليا أنا! مستحيل يكنسلوا بعض إلا لو بيأثروا على نفس الجسم بالظبط.
+                </div>
+            </div>
+        </div>
+
+        <!-- ───────── SUMMARY ───────── -->
+        <div class="section-divider" id="summary">الخلاصة</div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection(this)">
+                الخلاصة اللي هتنجحك
+                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+            </div>
+            <div class="script-body">
+                <div class="script-text">
+                    <span class="camera-cue">🎥 [الكاميرا بتاخد Medium Shot، وأنت باصص بثقة]</span>
+                    قصة نيوتن دي يا صديقي شقلبت علم الميكانيكا وبقت أساس كل حاجة بنبنيها لغاية النهارده، من أول العجلة للمحطة الفضائية. 
+                    <br><br>
+                    فهمنا إن الـ <span class="english">Force</span> هي البوس الكبير اللي بيأمر الحركة تتخلق أو تقف. وإن الأجسام كلها فيزيائياً بتحب الأنتخة والـ <span class="english">Inertia</span>. وعرفنا الإيفيه البايخ بتاع إن <span class="english">Mass</span> مش هي הـ <span class="english">Weight</span>، وإن كل حاجة بتديها <span class="english">Action</span> بتردهولك بـ <span class="english">Reaction</span>.
+                    <br><br>
+                    <span class="vfx-cue">✨ [VFX: أيقونات منصة الكورس والكويزات بتطلع ورا بعض Graphics 3D]</span>
+                    الفيزياء يا شباب مش شوية حروف وأرقام هتتبصمج وتخش ترصها في الورقة.. الفيزياء دي اللغة اللي الكون بيكلمك بيها عشان تفهم هو شغال إزاي.
+                    <br><br>
+                    عايزك تطبق على الكلام ده دلوقت حالا، انزل تحت وبص على الـ <span class="english">Quiz</span> اللي في الموقع. أنا مش عاملها عشان أختبرك، أنا عاملها عشان أثبتلك الفكرة في دماغك بمواقف كلها من الحياة العادية. ولو وقفت قدامك حاجة احنا موجودين في أي وقت، اللينكات كلها متسابة لك..
+                    <br><br>
+                    كان معاكم بشمهندس أسامة زينهم.. نتقابل الفيديو الجاي وحوار جديد في फिजिक्स! سلام 👋
+                    <span class="sfx-cue">🔊 [SFX: Whoosh sound و End screen Outro]</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:2rem; color:#475569; font-size:0.85rem; padding-bottom:2rem;">
+            فيزياء — الصف الأول ثانوي (STEM) · الدحيح Style Script · بشمهندس أسامة زينهم
+        </div>
+
+    </div>
+
+    <script>
+        function toggleSection(titleEl) {
+            const body = titleEl.nextElementSibling;
+            const icon = titleEl.querySelector('.toggle-icon i');
+            const isOpen = body.style.maxHeight && body.style.maxHeight !== '0px';
+
+            if (isOpen) {
+                body.style.maxHeight = '0px';
+                body.style.overflow = 'hidden';
+                icon.className = 'fas fa-chevron-left';
+            } else {
+                body.style.maxHeight = body.scrollHeight + 200 + 'px';
+                body.style.overflow = 'visible';
+                icon.className = 'fas fa-chevron-down';
+            }
+        }
+
+        // Open all sections by default
+        document.querySelectorAll('.script-body').forEach(body => {
+            body.style.maxHeight = 'none';
+            body.style.overflow = 'visible';
+        });
+
+        // Smooth scroll for TOC links
+        document.querySelectorAll('.toc a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+
+</html>
