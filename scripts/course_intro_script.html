@@ -19,8 +19,6 @@
         .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
         .script-body{overflow:hidden;transition:max-height .4s ease}
         .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #3b82f6}
-        .slide-badge{display:inline-block;background:rgba(71,85,105,.5);color:#f8fafc;padding:.2rem .8rem;border-radius:6px;font-size:.85rem;font-weight:700;margin-bottom:.8rem;margin-top:1.5rem;border-right:3px solid #8b5cf6;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-        .slide-badge:first-child{margin-top:0}
         .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
         .note::before{content:"📌 ملاحظة: ";font-weight:bold}
         .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
@@ -57,223 +55,226 @@
     <h1>📜 سكريبت الشرح — مقدمة الكورس</h1>
     <p class="subtitle">Algorithms & Data Structures · كورس الخوارزميات وهياكل البيانات · 4 أسابيع</p>
 
-    <!-- TOC -->
     <div class="toc">
         <h3>📋 محتويات السكريبت</h3>
-        <a href="#welcome">الترحيب والتعريف بالكورس</a>
-        <a href="#what-algo">إيه هي الخوارزمية أصلاً؟</a>
-        <a href="#why">ليه الخوارزميات مهمة لأي مبرمج؟</a>
-        <a href="#roadmap">خريطة الطريق: الـ 4 أسابيع</a>
-        <a href="#book">الكتاب المرجعي: Grokking Algorithms</a>
-        <a href="#platform">إزاي هنتعلم؟ المنصة التفاعلية</a>
-        <a href="#outro">الختام والتحفيز</a>
+        <a href="#hook">الهوك: سؤال يقلب الدنيا</a>
+        <a href="#what-algo">طيب ما هي الخوارزمية أصلاً؟</a>
+        <a href="#why">ليه لازم تتعلم الحاجات دي؟</a>
+        <a href="#roadmap">الرحلة: 4 أسابيع هتغيرك</a>
+        <a href="#book">الكتاب اللي غيّر اللعبة</a>
+        <a href="#outro">يلا بينا</a>
     </div>
 
-    <!-- ═══════ WELCOME ═══════ -->
-    <div class="section-divider" id="welcome">الترحيب</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">أهلاً بيكم في كورس الخوارزميات!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Shot واسع، أنت واقف أو قاعد قدام الشاشة، باصص للكاميرا بابتسامة وحماس]</span>
-        <span class="sfx-cue">🔊 [SFX: موسيقى intro حماسية خفيفة بتفيد]</span>
-        أهلاً بيكم يا جماعة في واحد من أهم الكورسات اللي أي مبرمج محتاج ياخدها في حياته! النهاردة بنبدأ مع بعض رحلة مع <strong class="hl-blue">الخوارزميات وهياكل البيانات</strong> — أو زي ما بيسموها بالإنجليزي <span class="english">Algorithms & Data Structures</span>.
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">في سنة 2006، Google وظّفت راجل مجنون...<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Extreme Close-up على الوش، إضاءة درامية من جنب واحد، صوت واطي كإنك بتحكي سر]</span>
+        <span class="sfx-cue">🔊 [SFX: نبضات قلب بطيئة... boom... boom... boom]</span>
+        في سنة 2006... شركة <span class="english">Google</span> كانت بتعمل مقابلات شغل لمبرمجين.
         <br><br>
-        <span class="camera-cue">🎥 [بتقرب من الكاميرا شوية]</span>
-        الكورس ده مش كورس نظري ممل! ده كورس <strong class="highlight">تفاعلي</strong> — يعني مش هنتفرج على سلايدات بس لا، هنشوف الكود بيشتغل قدام عنينا، هنلعب مع الخوارزميات، هنشوف الأرقام بتتحرك وبتترتب، وهنفهم ليه كود معين سريع وكود تاني بطيء.
+        جم اتنين. الاتنين أذكياء. الاتنين خريجين أحسن جامعات في العالم. الاتنين كتبوا كود بيشتغل صح.
         <br><br>
-        الكورس مقسم على <strong class="hl-amber">4 أسابيع</strong>، وكل أسبوع فيه <strong>4 دروس تفاعلية</strong> — يعني في الآخر هيكون عندنا <strong class="hl-blue">16 درس</strong> كامل.
-        <div class="note">الكورس ده مبني على واحد من أجمل الكتب في العالم في تبسيط الخوارزميات: كتاب <span class="english">Grokking Algorithms</span> — هنتكلم عنه كمان شوية.</div>
+        <span class="camera-cue">🎥 [بتقرب أكتر من الكاميرا، صوتك بينزل]</span>
+        <span class="sfx-cue">🔊 [SFX: النبضات بتسرّع]</span>
+        بس واحد منهم... <strong class="hl-red">اترفض</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [وقفة درامية ثانيتين]</span>
+        ... ليه؟
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: النبضات بتوقف فجأة — سكوت]</span>
+        <span class="camera-cue">🎥 [بتبعد عن الكاميرا، بتقعد مرتاح، صوتك بيرجع طبيعي]</span>
+        لأن الكود بتاعه كان بياخد <strong class="hl-red">ساعة</strong> عشان يعمل حاجة... الكود بتاع التاني كان بيعملها في <strong class="highlight">ثانية</strong>.
+        <br><br>
+        الاتنين بيجيبوا نفس النتيجة. بس واحد فاهم حاجة اسمها <strong class="hl-blue"><span class="english">Algorithms</span></strong>... والتاني لأ.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الشاشة بتنقسم نصين — كود بطيء على الشمال بيحمّل ببطء، كود سريع على اليمين بيخلص فوراً]</span>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بابتسامة ماكرة]</span>
+        والموضوع ده... هو بالظبط اللي هنتكلم عنه النهاردة.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Intro music — حماسية زي intro الدحيح]</span>
+        <span class="vfx-cue">✨ [VFX: العنوان بيطير على الشاشة: "الخوارزميات وهياكل البيانات — الرحلة"]</span>
     </div></div></div>
 
-    <!-- ═══════ WHAT IS AN ALGORITHM ═══════ -->
+    <!-- ═══════ WHAT IS ALGORITHM ═══════ -->
     <div class="section-divider" id="what-algo">إيه هي الخوارزمية؟</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">تعالوا نفهم: إيه هي الخوارزمية أصلاً؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص للكاميرا بنظرة "سؤال مهم"]</span>
-        طيب قبل ما نبدأ أي حاجة تقنية، لازم نجاوب على السؤال الأساسي: <strong class="hl-amber">إيه هي الخوارزمية؟</strong>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">طيب استنى... إيه هي الخوارزمية أصلاً يعني؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتمشي وأنت بتتكلم، إيدك في جيبك]</span>
+        طيب قبل ما ندخل في أي حاجة تقنية... خليني أسألك سؤال:
         <br><br>
-        <span class="vfx-cue">✨ [VFX: بتظهر كلمة "Algorithm" بخط كبير وبتتحول لعربي "خوارزمية"]</span>
-        الـ <span class="english">Algorithm</span> أو الخوارزمية هي ببساطة <strong class="highlight">مجموعة خطوات واضحة ومحددة عشان تحل مشكلة معينة</strong>.
+        <strong class="hl-amber">إنت بتعمل إيه الصبح لما بتصحى؟</strong>
         <br><br>
-        يعني تخيل كده إنك بتطبخ. الوصفة اللي بتمشي عليها — حط ملعقة ملح، سخن الزيت، حمّر البصل — دي <strong>خوارزمية</strong>! خطوات واضحة، بترتيب معين، بتوصلك لنتيجة محددة.
+        <span class="camera-cue">🎥 [بتعد على صوابعك]</span>
+        بتفتح عينيك. بتقوم من السرير. بتغسل وشك. بتعمل قهوة. بتلبس هدومك. بتنزل.
         <br><br>
-        <span class="camera-cue">🎥 [بتشاور بإيدك كأنك بتعد على صوابعك]</span>
-        <strong class="hl-blue">مثال تاني من حياتك:</strong> إنت بتلبس إزاي الصبح؟
-        <br>1️⃣ تفتح الدولاب
-        <br>2️⃣ تختار هدومك
-        <br>3️⃣ تلبس التيشيرت الأول
-        <br>4️⃣ بعدين البنطلون
-        <br>5️⃣ بعدين الجزمة
+        <span class="camera-cue">🎥 [بتوقف فجأة وتبص للكاميرا]</span>
+        مبروك. أنت لسه عملت <strong class="highlight">خوارزمية</strong>.
         <br><br>
-        لو غيرت الترتيب — لبست الجزمة قبل البنطلون — <strong class="hl-red">الخوارزمية هتفشل!</strong> 😂
+        <span class="vfx-cue">✨ [VFX: كلمة "Algorithm = خوارزمية" بتظهر بأنيميشن زي ختم]</span>
+        أيوه! الخوارزمية مش حاجة من كوكب تاني. هي ببساطة <strong class="hl-blue">مجموعة خطوات واضحة ومرتبة عشان تحل مشكلة</strong>. خلاص. كده. مفيش أسهل من كده.
         <br><br>
-        <span class="vfx-cue">✨ [VFX: يظهر تعريف رسمي في بوكس]</span>
-        <div class="term-def"><strong>Algorithm (خوارزمية):</strong> مجموعة من الخطوات المحددة والمرتبة اللي بنتبعها عشان نحل مشكلة معينة أو ننجز مهمة. لازم تكون: (1) واضحة ومحددة، (2) بترتيب منطقي، (3) لازم تنتهي — يعني مش بتفضل شغالة للأبد، (4) بتطلع نتيجة.</div>
-        <br>
-        في عالم البرمجة، الخوارزمية هي <strong>الطريقة</strong> اللي بيحل بيها الكمبيوتر مشكلة. والفرق بين مبرمج عادي ومبرمج محترف؟ إن المحترف بيعرف يختار <strong class="highlight">الخوارزمية الأسرع والأكفأ</strong> للمشكلة اللي قدامه!
-        <div class="note">اسم "خوارزمية" جاي من العالم المسلم <strong>محمد بن موسى الخوارزمي</strong> — عالم رياضيات عاش في القرن التاسع الميلادي وهو اللي أسس علم الجبر! يعني الكلمة دي عربية أصيلة 🇪🇬</div>
+        <span class="camera-cue">🎥 [بتمشي وبتتكلم بحماس متصاعد]</span>
+        وصفة الكيك؟ خوارزمية. 🍰
+        <br>تعليمات تركيب عفش ايكيا؟ خوارزمية. 🔧
+        <br>طريقك من البيت للشغل اللي بتختاره كل يوم؟ خوارزمية. 🚗
+        <br><br>
+        <span class="camera-cue">🎥 [بتوقف وبتبص للكاميرا بجدية]</span>
+        بس في البرمجة... الموضوع بيبقى أعمق من كده. لأن في عالم الكمبيوتر... <strong class="hl-red">مش أي خطوات بتنفع</strong>. فيه طرق ذكية... وطرق غبية. والفرق بينهم؟ ممكن يكون الفرق بين كود بيخلص في ثانية... وكود <strong class="hl-red">مش هيخلص لحد يوم القيامة</strong>. حرفياً.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: صوت درامي — dun dun duuun]</span>
+        <span class="vfx-cue">✨ [VFX: ساعة رملية بتقلب]</span>
+        وعشان كده... الموضوع ده مهم.
+        <br><br>
+        بس استنى... الاسم نفسه — <strong class="hl-amber">"خوارزمية"</strong> — جاي منين؟
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بفخر]</span>
+        <span class="vfx-cue">✨ [VFX: صورة الخوارزمي بتظهر مع خريطة بغداد في القرن التاسع]</span>
+        الاسم ده جاي من واحد اسمه <strong class="hl-purple">محمد بن موسى الخوارزمي</strong>. عالم رياضيات مسلم عاش في بغداد في القرن التاسع الميلادي. الراجل ده — من ألف سنة وزيادة — حط أسس <strong>الجبر</strong>. أيوه، كلمة <span class="english">Algebra</span> اللي كل العالم بيستخدمها... جاية من كتابه <strong>"الكتاب المختصر في حساب الجبر والمقابلة"</strong>.
+        <br><br>
+        يعني لما Google و Facebook و Amazon بيقولوا <span class="english">Algorithm</span>... هم بيتكلموا عن حاجة واحد عربي اخترعها من أكتر من <strong>1200 سنة</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم]</span>
+        مش وحشة دي. 😏
     </div></div></div>
 
-    <!-- ═══════ WHY ALGORITHMS ═══════ -->
+    <!-- ═══════ WHY ═══════ -->
     <div class="section-divider" id="why">ليه مهمة؟</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">ليه الخوارزميات مهمة لأي مبرمج في العالم؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتتكلم بجدية وحماس]</span>
-        <span class="hl-red">سؤال مهم:</span> أنا بكتب كود وبيشتغل — ليه أتعب نفسي بالخوارزميات؟
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">طيب أنا بكتب كود وبيشتغل — ليه أصدّع دماغي؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقعد على كرسي وبتتكلم بنبرة "يا صديقي"]</span>
+        أنا عارف اللي بتفكر فيه دلوقتي. بتقول: "يا عم أنا بكتب كود وبيشتغل وخلاص، ليه أوجع دماغي بالخوارزميات؟"
         <br><br>
-        <span class="vfx-cue">✨ [VFX: شاشتين جنب بعض — كود بطيء vs كود سريع]</span>
-        <strong class="highlight">السبب الأول: السرعة.</strong>
-        <br>تخيل عندك قاعدة بيانات فيها <strong>مليون</strong> عنصر. لو استخدمت خوارزمية بحث غلط، الكمبيوتر ممكن يحتاج <strong class="hl-red">مليون عملية</strong> عشان يلاقي اللي بتدور عليه! بس لو استخدمت الخوارزمية الصح — الـ <span class="english">Binary Search</span> — محتاج بس <strong class="highlight">20 عملية</strong>! فرق مجنون!
+        <span class="camera-cue">🎥 [بتميل لقدام]</span>
+        طيب... خليني أحكيلك حكاية.
         <br><br>
-        <strong class="hl-blue">السبب التاني: الانترفيوهات.</strong>
-        <br>أي شركة تكنولوجيا محترمة — Google, Meta, Amazon, Microsoft — الانترفيو بتاعها فيه <span class="english">Data Structures & Algorithms</span> أساسي. مش هتعرف تعدي لو مش فاهم الحاجات دي.
+        <span class="sfx-cue">🔊 [SFX: موسيقى قصة — piano خفيف]</span>
+        <span class="vfx-cue">✨ [VFX: شاشة سوداء عليها "القصة الأولى"]</span>
+        تخيل إنك شغال في شركة، وعندك قاعدة بيانات فيها <strong>مليون</strong> يوزر. والعميل بتاعك عايز يدور على يوزر معين.
         <br><br>
-        <strong class="hl-amber">السبب التالت: التفكير المنطقي.</strong>
-        <br>الخوارزميات مش مجرد كود — دي <strong>طريقة تفكير</strong>. بتعلمك إزاي تفكك أي مشكلة لأجزاء صغيرة وتحلها واحدة واحدة. المهارة دي هتفيدك في كل حاجة في حياتك المهنية.
+        أنت كتبت كود — بيدور على كل يوزر واحد واحد. زي واحد واقف في طابور فيه مليون واحد وبيسأل كل واحد: "أنت فلان؟ لأ. أنت فلان؟ لأ."
         <br><br>
-        <strong class="hl-purple">السبب الرابع: توفير الموارد.</strong>
-        <br>كود سريع = سيرفرات أقل = <strong>فلوس أقل</strong>. الشركات بتوفر ملايين الدولارات لما المبرمجين بتوعها بيكتبوا كود محسّن بخوارزميات ذكية.
-        <div class="note">مش لازم تحفظ كل الخوارزميات — المهم تفهم <strong>الأنماط والتفكير</strong> اللي وراها. لما تفهم النمط، هتقدر تطبقه على أي مشكلة جديدة!</div>
+        الكود ده ممكن يحتاج <strong class="hl-red">مليون خطوة</strong>. 💀
+        <br><br>
+        <span class="camera-cue">🎥 [بتوقف. بتبص للكاميرا.]</span>
+        زميلك في الشغل... كتب كود بيعمل <strong>نفس الحاجة بالظبط</strong>... بس في <strong class="highlight">20 خطوة</strong>.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: صوت ارتطام — BOOM]</span>
+        <strong>مليون</strong> مقابل <strong>20</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتسكت ثانيتين عشان الرقم يوصل]</span>
+        ... ده مش فرق. ده <strong class="hl-red">كارثة</strong>. وده الفرق بين حد فاهم خوارزميات وحد لأ.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: 4 أيقونات بتظهر واحدة واحدة]</span>
+        <span class="camera-cue">🎥 [بتعد على صوابعك بحزم]</span>
+        <strong class="hl-amber">ليه لازم تتعلم خوارزميات؟</strong>
+        <br><br>
+        <strong class="hl-blue">1. السرعة:</strong> لأن الفرق بين كود كويس وكود وحش ممكن يكون فرق بين ثانية وسنة. مش مبالغة.
+        <br><br>
+        <strong class="hl-purple">2. الانترفيوهات:</strong> Google؟ Meta؟ Amazon? أي شركة محترمة في العالم — الانترفيو بتاعها <span class="english">Data Structures & Algorithms</span>. مش بيسألوك عملت إيه — بيسألوك <strong>بتفكر إزاي</strong>.
+        <br><br>
+        <strong class="highlight">3. التفكير:</strong> الخوارزميات مش مجرد كود. دي <strong>طريقة تفكير</strong>. بتعلمك تكسّر أي مشكلة في الدنيا لأجزاء صغيرة وتحلها. ده زي الـ gym بتاع المخ.
+        <br><br>
+        <strong class="hl-red">4. الفلوس:</strong> كود سريع = سيرفرات أقل = <strong>فلوس أقل</strong>. Amazon قالت إن لو موقعهم بطأ <strong>ثانية واحدة</strong>... بيخسروا <strong>1.6 مليار دولار في السنة</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بهدوء]</span>
+        يعني الموضوع مش رفاهية. الموضوع ده <strong class="hl-amber">هو اللي بيفرق بين مبرمج عادي... ومبرمج بيكسب 5 أضعاف</strong>.
     </div></div></div>
 
     <!-- ═══════ ROADMAP ═══════ -->
     <div class="section-divider" id="roadmap">خريطة الطريق</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الأسبوع الأول: الأساسيات — Foundations<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتشاور على شاشة عليها خريطة الكورس]</span>
-        <span class="vfx-cue">✨ [VFX: بطاقة الأسبوع الأول بتظهر بلون أزرق]</span>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الرحلة: 4 أسابيع... 16 درس... هتطلع واحد تاني<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقوم وتمشي قدام خريطة عليها 4 محطات]</span>
+        <span class="vfx-cue">✨ [VFX: خريطة زي خريطة كنز بتتفرد — 4 محطات بألوان مختلفة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى مغامرة — adventure theme]</span>
+        تعالوا أوريكم الخريطة. 4 أسابيع. 16 درس. من الصفر... لحد ما تبقى فاهم أهم خوارزميات في علم الكمبيوتر.
+        <br><br>
+
         <div class="week-card w1">
-        <strong class="hl-blue">🔵 الأسبوع الأول: أساسيات التفكير الخوارزمي</strong>
+        <strong class="hl-blue">🔵 المحطة الأولى: الأساسيات — "إزاي تدور وإزاي تقيس"</strong>
         <br><br>
-        <strong>الدرس 1: <span class="english">Binary Search</span> — البحث الثنائي</strong>
-        <br>ده أول خوارزمية هنتعلمها. تخيل إنك بتدور على كلمة في القاموس — هل بتبدأ من أول صفحة؟ لأ طبعاً! بتفتح من النص، وتشوف الكلمة قبل ولا بعد، وتقسم تاني. ده بالظبط اللي الـ <span class="english">Binary Search</span> بيعمله. هنتعلم إنه بدل ما ندور في <strong class="hl-red">مليون عنصر في مليون خطوة</strong>، ندور في <strong class="highlight">20 خطوة بس</strong>!
+        هنبدأ بسؤال بسيط: لو عندك قاموس فيه مليون كلمة... إزاي تلاقي كلمة معينة في <strong>20 محاولة بس</strong>؟ ده اسمه <span class="english">Binary Search</span>.
         <br><br>
-        <strong>الدرس 2: <span class="english">Big O Notation</span> — ترميز التعقيد</strong>
-        <br>إزاي نقيس سرعة الكود؟ إزاي نقارن بين خوارزميتين ونعرف مين أسرع؟ هنتعلم نظام قياس اسمه <span class="english">Big O</span>. هنفهم الفرق بين <span class="english">O(1)</span> و <span class="english">O(n)</span> و <span class="english">O(n²)</span> و <span class="english">O(log n)</span> — وليه الفرق بينهم ممكن يكون فرق بين كود بيخلص في ثانية وكود بياخد سنة!
+        وبعدين هنسأل: طيب إزاي أعرف إن الكود بتاعي سريع ولا بطيء؟ ده اسمه <span class="english">Big O Notation</span> — وده هيغير تفكيرك عن البرمجة <strong>للأبد</strong>.
         <br><br>
-        <strong>الدرس 3: <span class="english">Selection Sort</span> — الترتيب بالاختيار</strong>
-        <br>أول خوارزمية ترتيب هنتعلمها. بسيطة جداً: بندور على الأصغر، نحطه في الأول، وبعدين ندور على اللي بعده، ونحطه في التاني. سهلة بس بطيئة — <span class="english">O(n²)</span>! وده هيخلينا نقدّر الخوارزميات الأذكى اللي جاية.
+        وبعدين هنتعلم أول خوارزمية ترتيب — <span class="english">Selection Sort</span> — بسيطة وبطيئة، بس لازم تفهمها عشان تقدّر اللي جاي.
         <br><br>
-        <strong>الدرس 4: <span class="english">Recursion</span> — التكرار الذاتي</strong>
-        <br>واحدة من أجمل وأغرب الأفكار في البرمجة: <strong>دالة بتنادي نفسها!</strong> هنتعلم الـ <span class="english">Base Case</span> والـ <span class="english">Recursive Case</span>، وهنشوف مثال الـ <span class="english">Factorial</span> والـ <span class="english">Fibonacci</span> بالتفصيل، وهنفهم الـ <span class="english">Call Stack</span> — وهو إيه ده أصلاً.
+        وآخر حاجة: <span class="english">Recursion</span> — <strong>دالة بتنادي نفسها!</strong> 🤯 أيوه، هتفهم إزاي ده منطقي.
         </div>
-    </div></div></div>
 
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الأسبوع التاني: هياكل البيانات — Data Structures<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بطاقة الأسبوع التاني بتظهر بلون أخضر]</span>
         <div class="week-card w2">
-        <strong class="highlight">🟢 الأسبوع التاني: هياكل البيانات والتكرار المتقدم</strong>
+        <strong class="highlight">🟢 المحطة التانية: هياكل البيانات — "إزاي نحفظ الداتا بذكاء"</strong>
         <br><br>
-        <strong>الدرس 1: <span class="english">Arrays</span> — المصفوفات</strong>
-        <br>الـ <span class="english">Array</span> هو أبسط هيكل بيانات — أرقام جنب بعض في الذاكرة. هنتعلم عملياته: الإضافة، الحذف، البحث — وهنعرف ليه بعض العمليات سريعة <span class="english">O(1)</span> وبعضها بطيء <span class="english">O(n)</span>.
+        هنتكلم عن <span class="english">Arrays</span> — المصفوفات. حاجة بسيطة؟ صح، بس فيها أسرار مش كل الناس تعرفها.
         <br><br>
-        <strong>الدرس 2: <span class="english">Linked Lists</span> — القوائم المترابطة</strong>
-        <br>بديل ذكي للـ <span class="english">Array</span>! كل عنصر بيشاور على اللي بعده زي سلسلة. الإضافة والحذف في الأول <span class="english">O(1)</span>! بس البحث بطيء. هنتعلم <span class="english">Singly</span> و <span class="english">Doubly Linked Lists</span>.
+        وبعدين <span class="english">Linked Lists</span> — القوائم المترابطة. تخيل سلسلة: كل حلقة مشبوكة في اللي بعدها. ليه ده أحسن من الـ Array في بعض الحالات؟
         <br><br>
-        <strong>الدرس 3: <span class="english">Memory Visualization</span> — تخيل الذاكرة</strong>
-        <br>هنشوف إزاي الكمبيوتر بيخزن الداتا فعلياً في الذاكرة. الفرق بين الـ <span class="english">Contiguous</span> (متجاورة) والـ <span class="english">Linked</span> (مترابطة). وليه ده بيأثر على السرعة.
+        وهنشوف إزاي الكمبيوتر بيحفظ الحاجات في الذاكرة فعلياً — <span class="english">Memory Visualization</span>.
         <br><br>
-        <strong>الدرس 4: <span class="english">Divide & Conquer</span> — فرّق تسُد</strong>
-        <br>استراتيجية عبقرية: كسّر المشكلة الكبيرة لمشاكل صغيرة، حل كل واحدة لوحدها، وبعدين اجمعهم! هنشوف الـ <span class="english">Merge Sort</span> — خوارزمية ترتيب بتشتغل في <span class="english">O(n log n)</span>!
+        وآخر حاجة: <span class="english">Divide & Conquer</span> — فرّق تسُد. استراتيجية نابليون في الحروب... والمبرمجين في الكود.
         </div>
-    </div></div></div>
 
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الأسبوع التالت: Quicksort, Hash Tables, Graphs<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بطاقة الأسبوع التالت بتظهر بلون برتقاني]</span>
         <div class="week-card w3">
-        <strong class="hl-amber">🟡 الأسبوع التالت: خوارزميات متقدمة وهياكل بيانات قوية</strong>
+        <strong class="hl-amber">🟡 المحطة التالتة: الأسلحة الثقيلة — "هناك بنلعب على المكشوف"</strong>
         <br><br>
-        <strong>الدرس 1: <span class="english">Quicksort</span> — الترتيب السريع</strong>
-        <br>أشهر خوارزمية ترتيب في العالم! بتختار عنصر عشوائي اسمه <span class="english">Pivot</span>، وبتقسم الباقي: اللي أصغر منه على الشمال واللي أكبر على اليمين. متوسط سرعتها <span class="english">O(n log n)</span> — أسرع من <span class="english">Selection Sort</span> بمراحل!
+        <span class="english">Quicksort</span> — أسرع خوارزمية ترتيب عملياً. هتفهم ليه اسمها "Quick" ولا هي مجرد كلام.
         <br><br>
-        <strong>الدرس 2: <span class="english">Hash Tables</span> — جداول الهاش</strong>
-        <br>أسرع هيكل بيانات للبحث! بتدي مفتاح <span class="english">(Key)</span> وبيرجعلك القيمة <span class="english">(Value)</span> في <span class="english">O(1)</span>! هنفهم الـ <span class="english">Hash Function</span> وإزاي بتتعامل مع الـ <span class="english">Collisions</span>.
+        <span class="english">Hash Tables</span> — أسرع هيكل بيانات للبحث. بتدور على حاجة في <strong>خطوة واحدة</strong>؟ أيوه بجد.
         <br><br>
-        <strong>الدرس 3: <span class="english">Graph Representation</span> — تمثيل الرسوم البيانية</strong>
-        <br>الـ <span class="english">Graphs</span> هي طريقة تمثيل العلاقات. زي خريطة المترو — كل محطة <span class="english">Node</span> وكل سكة <span class="english">Edge</span>. هنتعلم نمثلها بالـ <span class="english">Adjacency List</span> والـ <span class="english">Adjacency Matrix</span>.
-        <br><br>
-        <strong>الدرس 4: <span class="english">Graph Traversal — BFS & DFS</span></strong>
-        <br>إزاي نتمشى جوة الـ <span class="english">Graph</span>؟ نبحث بالعرض <span class="english">(Breadth-First Search)</span> ولا بالعمق <span class="english">(Depth-First Search)</span>؟ هنتعلم الاتنين ونعرف كل واحد فيهم بيتسخدم إمتى. وهنحل مشكلة أقصر طريق!
+        <span class="english">Graphs</span> — الرسوم البيانية. إزاي نمثل خريطة المترو في الكمبيوتر؟ وإزاي نلاقي أقصر طريق من محطة لمحطة؟ <span class="english">BFS و DFS</span> — اسمع الأسامي بس، قريب هتعرف.
         </div>
-    </div></div></div>
 
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الأسبوع الرابع: خوارزميات متقدمة — Advanced<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بطاقة الأسبوع الرابع بتظهر بلون بنفسجي]</span>
         <div class="week-card w4">
-        <strong class="hl-purple">🟣 الأسبوع الرابع: حل المشاكل المعقدة</strong>
+        <strong class="hl-purple">🟣 المحطة الأخيرة: المستوى الصعب — "هنا بنبقى محترفين"</strong>
         <br><br>
-        <strong>الدرس 1: <span class="english">Greedy Algorithms</span> — الخوارزميات الجشعة</strong>
-        <br>فكرة بسيطة وذكية: في كل خطوة اختار الأحسن <strong>دلوقتي</strong> ومتفكرش في المستقبل! مش دايماً بتدي الحل الأمثل، بس في كتير من المشاكل بتشتغل ممتاز.
+        <span class="english">Greedy Algorithms</span> — الخوارزميات الجشعة. في كل خطوة اختار أحسن حاجة وامشي. بسيطة بس ذكية.
         <br><br>
-        <strong>الدرس 2: <span class="english">Dynamic Programming</span> — البرمجة الديناميكية</strong>
-        <br>ده <strong class="hl-red">أصعب موضوع في الكورس!</strong> بس أقوى واحد كمان. الفكرة: بدل ما تحسب نفس الحاجة ألف مرة، احسبها مرة واحدة واحفظها! هنتعلم الـ <span class="english">Memoization</span> والـ <span class="english">Tabulation</span>.
+        <span class="english">Dynamic Programming</span> — <strong class="hl-red">أصعب حاجة في الكورس</strong>. بس لما تفهمها؟ هتحس إنك بقيت <strong>Neo في The Matrix</strong>. بتشوف الحلول قبل ما تشوف المشاكل.
         <br><br>
-        <strong>الدرس 3: <span class="english">Knapsack Problem</span> — مشكلة الحقيبة</strong>
-        <br>مشكلة كلاسيكية: عندك شنطة بحجم محدد وحاجات كتير عايز تحطها جوه — كل حاجة ليها وزن وقيمة. إيه أحسن تشكيلة تحطها عشان تحقق أعلى قيمة؟ هنحلها بالـ <span class="english">Dynamic Programming</span>!
+        <span class="english">Knapsack Problem</span> — مشكلة الحقيبة الكلاسيكية. شنطة بحجم محدد وحاجات كتير — إيه أحسن تشكيلة؟
         <br><br>
-        <strong>الدرس 4: <span class="english">K-Nearest Neighbors (KNN)</span></strong>
-        <br>أول خطوة في عالم الـ <span class="english">Machine Learning</span>! خوارزمية بسيطة بتصنف حاجة جديدة بناءً على أقرب جيرانها. هنتعلم الـ <span class="english">Distance Metrics</span> وإزاي نختار الـ <span class="english">K</span> الصح.
+        <span class="english">KNN</span> — أول خطوة في عالم الـ <span class="english">Machine Learning</span>. أيوه، بنهاية الأسبوع الرابع هتكون حطيت رجلك في عالم الذكاء الاصطناعي.
         </div>
-        <div class="note">بنهاية الأسبوع الرابع، هتكون عندك أساس قوي في أهم الخوارزميات وهياكل البيانات — وهتبقى جاهز لأي انترفيو تقني!</div>
+
+        <span class="camera-cue">🎥 [بتبص للكاميرا بابتسامة]</span>
+        4 أسابيع. من "إيه هي الخوارزمية؟" ... لحد <span class="english">Dynamic Programming</span> والـ <span class="english">Machine Learning</span>. ده مش كورس... ده <strong class="hl-amber">تحوّل</strong>.
     </div></div></div>
 
     <!-- ═══════ BOOK ═══════ -->
-    <div class="section-divider" id="book">الكتاب المرجعي</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">كتاب Grokking Algorithms — ليه هو الأحسن للمبتدئين؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتمسك الكتاب وبتوريه للكاميرا]</span>
-        الكورس بتاعنا مبني على كتاب اسمه <strong class="hl-blue"><span class="english">Grokking Algorithms</span></strong> للمؤلف <span class="english">Aditya Bhargava</span>. وده واحد من أجمل الكتب اللي اتكتبت في موضوع الخوارزميات.
+    <div class="section-divider" id="book">الكتاب</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الكتاب اللي خلّى الخوارزميات "سهلة"<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمسك كتاب Grokking Algorithms وبتلوح بيه]</span>
+        الكورس ده مبني على كتاب اسمه <strong class="hl-blue"><span class="english">Grokking Algorithms</span></strong>. ومعنى <span class="english">Grokking</span>؟ معناها "فهم عميق" — مش مجرد حفظ... <strong>فهم من جواك</strong>.
         <br><br>
-        <strong class="hl-amber">ليه الكتاب ده بالذات؟</strong>
-        <br>- <strong>مليان رسوم توضيحية:</strong> كل خوارزمية مرسومة بصور ملونة عشان تفهم بصرياً مش بس بالكود.
-        <br>- <strong>أسلوب بسيط:</strong> المؤلف بيشرح وكأنه بيتكلم مع صاحبه — مفيهوش تعقيد أكاديمي.
-        <br>- <strong>عملي:</strong> كل خوارزمية معاها أمثلة من الحياة الحقيقية.
-        <br>- <strong>حجمه مش كبير:</strong> ~250 صفحة بس — مش موسوعة تخوف!
+        <span class="camera-cue">🎥 [بتفتح الكتاب وبتوري الرسوم]</span>
+        واللي بيخلي الكتاب ده مختلف عن أي كتاب خوارزميات تاني؟ إنه <strong class="highlight">مرسوم</strong>! أيوه، كل خوارزمية متشرحة بصور ملونة وتشبيهات من الحياة. مفيش رياضيات معقدة ومفيش أسلوب أكاديمي ممل.
         <br><br>
-        <span class="vfx-cue">✨ [VFX: غلاف الكتاب يظهر مع نجوم حواليه]</span>
-        إحنا أخدنا المحتوى بتاع الكتاب وحولناه لـ <strong class="highlight">16 درس تفاعلي برسوم متحركة وكود حقيقي</strong> تقدر تشغله في المتصفح! يعني أخدنا الكتاب ونقلناه مستوى تاني من التجربة.
-        <div class="note">مش لازم تشتري الكتاب عشان تاخد الكورس — المنصة بتاعتنا فيها كل المحتوى. بس لو حبيت ترجع للكتاب كمرجع، هيكون مفيد جداً!</div>
-    </div></div></div>
-
-    <!-- ═══════ PLATFORM ═══════ -->
-    <div class="section-divider" id="platform">المنصة التفاعلية</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي هنتعلم؟ المنصة التفاعلية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتفتح المنصة على الشاشة وبتشاور]</span>
-        <span class="vfx-cue">✨ [VFX: سكرين ريكورد للصفحة الرئيسية للمنصة]</span>
-        المنصة بتاعتنا عبارة عن موقع بسيط — بتفتحه في المتصفح وكل حاجة جاهزة.
-        <br><br>
-        <strong class="hl-blue">كل درس فيه:</strong>
-        <br>📝 <strong>الشرح النظري:</strong> بالعربي وبتشبيهات من الحياة — عشان تفهم المفهوم من غير ما تتوه في الرياضيات.
-        <br>👁️ <strong>رسوم متحركة:</strong> الخوارزمية بتشتغل قدام عينيك — تشوف الأرقام بتتحرك وبتترتب والمؤشرات بتتنقل.
-        <br>🎮 <strong>تجربة تفاعلية:</strong> في كل درس فيه زرار <span class="english">"Try It Yourself!"</span> — تقدر تدخل أرقامك وتشوف الخوارزمية بتعمل إيه.
-        <br>💻 <strong>الكود الكامل:</strong> مع شرح كل سطر — تقدر تنسخه وتجربه.
-        <br>📊 <strong>تحليل التعقيد:</strong> <span class="english">Time و Space Complexity</span> لكل خوارزمية.
-        <br><br>
-        <strong class="hl-amber">الطريقة المثالية للتعلم:</strong>
-        <br>1️⃣ <strong>اقرأ الشرح</strong> واستوعب المفهوم
-        <br>2️⃣ <strong>شاهد الأنيميشن</strong> وتتبع كل خطوة
-        <br>3️⃣ <strong>جرب بنفسك</strong> في القسم التفاعلي
-        <br>4️⃣ <strong>ادرس الكود</strong> واكتبه بإيدك — مش مجرد نسخ ولصق!
-        <br>5️⃣ <strong>حل تمارين</strong> إضافية عشان تثبت المعلومة
+        <span class="camera-cue">🎥 [بتقفل الكتاب وتبص للكاميرا]</span>
+        إحنا أخدنا الكتاب ده وحولناه لـ <strong class="hl-cyan">16 درس تفاعلي</strong> — مش بس شرح، لا... أنيميشن، كود بيشتغل في المتصفح، وتقدر تجرب كل خوارزمية بنفسك. يعني أخدنا الكتاب ونقلناه <strong class="hl-amber">بُعد تاني</strong>.
+        <div class="note">مش لازم تشتري الكتاب — المنصة فيها كل المحتوى. بس لو عايز ترجعله كمرجع، ده أجمل 250 صفحة هتقراها في موضوع الخوارزميات.</div>
     </div></div></div>
 
     <!-- ═══════ OUTRO ═══════ -->
-    <div class="section-divider" id="outro">الختام</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">جاهزين نبدأ الرحلة؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Medium Shot، باصص بثقة وحماس]</span>
-        يلا نلخص اللي قلناه:
-        <br>✅ الخوارزمية = خطوات واضحة لحل مشكلة
-        <br>✅ الخوارزميات مهمة للسرعة، الانترفيوهات، التفكير المنطقي، وتوفير الموارد
-        <br>✅ 4 أسابيع: أساسيات → هياكل بيانات → خوارزميات متقدمة → حل مشاكل معقدة
-        <br>✅ 16 درس تفاعلي بالعربي مع أنيميشن وكود حقيقي
-        <br>✅ مبني على كتاب <span class="english">Grokking Algorithms</span>
+    <div class="section-divider" id="outro">يلا بينا</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الحلقة الجاية: واحدة من أجمل أفكار علم الكمبيوتر<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، باصص بثقة وهدوء]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى بتعلي شوية — hopeful]</span>
+        يلا نلخص:
+        <br>الخوارزمية = خطوات واضحة لحل مشكلة.
+        <br>الخوارزمية الصح = الفرق بين ثانية وسنة.
+        <br>4 أسابيع = من الصفر لحد الـ Dynamic Programming.
+        <br>16 درس = كل درس فيه أنيميشن وكود حقيقي.
         <br><br>
-        <span class="sfx-cue">🔊 [SFX: موسيقى حماسية بتعلي شوية]</span>
-        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم بيظهر: "Binary Search — البحث الثنائي"]</span>
-        الحلقة الجاية — <strong class="hl-blue">الدرس الأول: Binary Search!</strong> أول خوارزمية في الكورس، وواحدة من أجمل الأفكار في علم الكمبيوتر. هتتعلم إزاي تدور في مليون عنصر في 20 خطوة بس!
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم بيظهر بأنيميشن ملحمية: "Binary Search — البحث الثنائي"]</span>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بابتسامة ماكرة]</span>
+        الحلقة الجاية... هنتكلم عن خوارزمية بتقدر تلاقي إبرة في كومة قش فيها <strong>مليار قشة</strong>... في <strong class="highlight">30 محاولة بس</strong>.
         <br><br>
-        أنا مستنيك! سلام 👋
-        <span class="sfx-cue">🔊 [SFX: Whoosh + Outro]</span>
+        مش مصدق؟ <strong class="hl-amber">تعال شوف.</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Whoosh + Outro Music]</span>
+        <span class="camera-cue">🎥 [بتبص للكاميرا، بتعمل إشارة سلام ✌️ — القطع]</span>
     </div></div></div>
 
     <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
         Algorithms & Data Structures — مقدمة الكورس · بشمهندس أسامة زينهم
     </div>
-
 </div>
 <script>
 function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}

@@ -19,8 +19,6 @@
         .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
         .script-body{overflow:hidden;transition:max-height .4s ease}
         .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #06b6d4}
-        .slide-badge{display:inline-block;background:rgba(71,85,105,.5);color:#f8fafc;padding:.2rem .8rem;border-radius:6px;font-size:.85rem;font-weight:700;margin-bottom:.8rem;margin-top:1.5rem;border-right:3px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-        .slide-badge:first-child{margin-top:0}
         .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
         .note::before{content:"📌 ملاحظة: ";font-weight:bold}
         .code-box{font-size:.92rem;color:#a5f3fc;margin-top:1rem;padding:1rem 1.2rem;background:rgba(0,0,0,.45);border-radius:8px;border-right:3px solid #06b6d4;line-height:1.7;direction:ltr;text-align:left;font-family:'Fira Code','Consolas',monospace;overflow-x:auto;white-space:pre-wrap}
@@ -64,340 +62,348 @@
     <a href="course_intro_script.html" class="back-btn"><i class="fas fa-arrow-right"></i> مقدمة الكورس</a>
     <a href="../index.html" class="back-btn" style="margin-right:.75rem"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
     <h1>📜 سكريبت الشرح — Binary Search</h1>
-    <p class="subtitle">البحث الثنائي · الأسبوع الأول · الدرس الأول · شرح مفصل خطوة بخطوة</p>
+    <p class="subtitle">البحث الثنائي · الأسبوع الأول · الدرس الأول</p>
 
-    <!-- TOC -->
     <div class="toc">
         <h3>📋 محتويات السكريبت</h3>
-        <a href="#intro">المقدمة: تشبيه القاموس</a>
-        <a href="#concept">إيه هو البحث الثنائي؟</a>
-        <a href="#condition">الشرط الأساسي: لازم مرتبة!</a>
-        <a href="#steps">الخطوات بالتفصيل (4 خطوات)</a>
-        <a href="#example">مثال رقمي كامل: خطوة بخطوة</a>
-        <a href="#code">الكود سطر بسطر</a>
-        <a href="#complexity">تحليل التعقيد: ليه O(log n)؟</a>
-        <a href="#comparison">مقارنة: Linear vs Binary</a>
+        <a href="#hook">الهوك: لعبة خطيرة</a>
+        <a href="#idea">الفكرة العبقرية</a>
+        <a href="#condition">الشرط اللي لو نسيته... هتندم</a>
+        <a href="#steps">الخطوات: 4 خطوات بس</a>
+        <a href="#example">مثال حي: هنعيشه مع بعض</a>
+        <a href="#code">الكود: 20 سطر غيّروا العالم</a>
+        <a href="#why-fast">ليه سريع؟ الرياضيات المجنونة</a>
+        <a href="#battle">المعركة: Linear vs Binary</a>
         <a href="#outro">الختام</a>
     </div>
 
-    <!-- ═══════ INTRO ═══════ -->
-    <div class="section-divider" id="intro">المقدمة</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">تشبيه القاموس — الفكرة ببساطة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Shot واسع، أنت ماسك قاموس سميك في إيدك]</span>
-        <span class="sfx-cue">🔊 [SFX: صوت تقليب صفحات]</span>
-        أهلاً بيكم يا جماعة في أول درس في كورس الخوارزميات! النهاردة هنتعلم واحدة من أجمل وأذكى الخوارزميات اللي في الدنيا: <strong class="hl-cyan"><span class="english">Binary Search</span></strong> — البحث الثنائي.
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">تعال نلعب لعبة... بس في شرط<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Close-up على الوش، إضاءة درامية، بتبص للكاميرا بتحدي]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى game show — توتر]</span>
+        أنا فكرت في رقم. من 1 لـ <strong>مليون</strong>. ومعاك <strong>20 محاولة بس</strong> عشان تلاقيه.
         <br><br>
-        <span class="camera-cue">🎥 [بترفع القاموس وبتبصله]</span>
-        تخيل معايا كده: أنا عندي قاموس إنجليزي — عربي. عايز أدور على كلمة <strong class="hl-amber">"Python"</strong>.
+        <span class="camera-cue">🎥 [وقفة. بتبص للكاميرا.]</span>
+        ... مليون رقم. عشرين محاولة.
         <br><br>
-        <strong class="hl-red">الطريقة الغبية:</strong> أبدأ من أول صفحة — صفحة 1 — وأقلب صفحة صفحة لحد ما ألاقيها.
-        <br>القاموس فيه 1000 صفحة؟ ممكن أحتاج أقلب <strong class="hl-red">800 صفحة</strong> لحد ما أوصل لحرف P!
+        بتفكر إنها مستحيلة؟
         <br><br>
-        <strong class="highlight">الطريقة الذكية:</strong> أفتح القاموس <strong class="hl-cyan">من النص</strong>! 📖
-        <br>- لقيت حرف M. الـ P بعد الـ M ← يبقى ادور في <strong class="hl-blue">النص التاني</strong>.
-        <br>- أفتح نص النص التاني. لقيت حرف R. الـ P قبل الـ R ← ادور في <strong class="hl-purple">النص الأول</strong>.
-        <br>- أفتح تاني من النص. لقيت حرف P! <strong class="highlight">مبروك لقيتها! 🎉</strong>
+        <span class="camera-cue">🎥 [بتبتسم ابتسامة ماكرة]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت buzz خفيف]</span>
+        لأ. هي مش بس ممكنة... هي <strong class="highlight">مضمونة</strong>. مليون رقم. عشرين محاولة. <strong>كل مرة هتكسب</strong>.
         <br><br>
-        <span class="vfx-cue">✨ [VFX: أنيميشن قاموس بيتقسم على النص مع كل خطوة]</span>
-        في الطريقة الذكية دي، من 1000 صفحة، <strong>استخدمت 3 خطوات بس!</strong>
-        <br>في الطريقة الغبية، ممكن كنت أحتاج <strong>800 خطوة!</strong>
+        بشرط واحد بس: في كل محاولة أنا هقولك <strong class="hl-amber">"أكبر" ولا "أصغر"</strong>.
         <br><br>
-        الطريقة الذكية دي اسمها <strong class="hl-cyan"><span class="english">Binary Search</span></strong> — <strong>البحث الثنائي</strong>. واسمها "ثنائي" لأننا في كل خطوة <strong>بنقسم على 2!</strong>
+        <span class="camera-cue">🎥 [بتميل لقدام]</span>
+        وأنت... هتخمن من <strong class="hl-cyan">النص</strong>. في كل مرة. من النص.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الشاشة بتنقسم نصين — نص بيتشطب — النص التاني بينقسم تاني — وهكذا]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت قص — شششت — مع كل انقسام]</span>
+        مليون → نص مليون → ربع مليون → ... → 20 خطوة → <strong class="highlight">لقيته!</strong>
+        <br><br>
+        الفكرة البسيطة المجنونة دي... اسمها <strong class="hl-cyan"><span class="english">Binary Search</span></strong>. البحث الثنائي.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Intro music]</span>
+        <span class="vfx-cue">✨ [VFX: العنوان بيظهر: "Binary Search — البحث الثنائي"]</span>
     </div></div></div>
 
-    <!-- ═══════ CONCEPT ═══════ -->
-    <div class="section-divider" id="concept">المفهوم</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">إيه هو الـ Binary Search بالظبط؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص للكاميرا بجدية]</span>
-        <div class="term-def"><strong>Binary Search (البحث الثنائي):</strong> خوارزمية بحث بتشتغل على قائمة <strong>مرتبة</strong>. بتبدأ من النص، بتقارن العنصر اللي في النص بالعنصر اللي بتدور عليه، وبناءً على النتيجة بتشيل <strong>نص القائمة</strong> في كل خطوة. التعقيد الزمني: <span class="english">O(log n)</span>.</div>
-        <br>
-        يعني المبدأ بسيط جداً:
-        <br>1️⃣ دور في <strong>النص</strong>
-        <br>2️⃣ لو لقيت اللي بتدور عليه ← <strong class="highlight">خلاص!</strong>
-        <br>3️⃣ لو الـ target أكبر ← <strong class="hl-blue">روح يمين</strong>
-        <br>4️⃣ لو الـ target أصغر ← <strong class="hl-purple">روح شمال</strong>
-        <br>5️⃣ <strong>كرر</strong> لحد ما تلاقي أو النطاق يخلص
+    <!-- ═══════ IDEA ═══════ -->
+    <div class="section-divider" id="idea">الفكرة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الفكرة العبقرية: اقسم على 2... وكرر<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمشي وفي إيدك قاموس كبير]</span>
+        تخيل معايا كده: عايز تدور على كلمة <strong class="hl-amber">"Python"</strong> في قاموس. القاموس فيه ألف صفحة.
         <br><br>
-        <span class="hl-amber">الحاجة الجميلة:</span> في كل خطوة بنشيل <strong class="hl-red">نص العناصر</strong> من البحث! يعني لو عندك 1000 عنصر:
-        <br>الخطوة 1: بقوا 500
-        <br>الخطوة 2: بقوا 250
-        <br>الخطوة 3: بقوا 125
-        <br>... وهكذا لحد ما تلاقي اللي بتدور عليه!
-        <div class="note">ده زي لعبة "أعلى ولا أقل" — لما حد بيقولك "فكر في رقم من 1 لـ 100" وأنت بتخمن كل مرة من النص. في أقصى حالة، هتحتاج <strong>7 محاولات بس</strong> عشان تلاقي الرقم!</div>
+        <span class="camera-cue">🎥 [بتقف وبتبص للكاميرا باستنكار]</span>
+        طيب هل هتبدأ من الصفحة الأولى؟ وتقلب صفحة صفحة؟ يعني هتعمل حاجة زي:
+        <br>
+        "صفحة 1: حرف A — لأ."
+        <br>"صفحة 2: A تاني — لأ."
+        <br>"صفحة 3: لسه A — لأ."
+        <br>...
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بملل]</span>
+        هتقعد <strong class="hl-red">800 صفحة</strong> لحد ما توصل لحرف P. 😴
+        <br><br>
+        <span class="camera-cue">🎥 [فجأة بتبتسم وبتفتح القاموس من النص بحركة درامية]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت فتح كتاب — WHAP!]</span>
+        طبعاً لأ! أنت هتفتح <strong class="hl-cyan">من النص!</strong>
+        <br><br>
+        فتحت من النص. لقيت حرف <strong>M</strong>.
+        <br>الـ P بعد الـ M. يبقى <strong class="hl-purple">روح النص اليمين</strong>.
+        <br><br>
+        فتحت نص اليمين. لقيت حرف <strong>R</strong>.
+        <br>الـ P قبل الـ R. يبقى <strong class="hl-blue">روح النص الشمال</strong>.
+        <br><br>
+        فتحت تاني من النص. لقيت حرف <strong class="highlight">P! 🎉</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: تصفيق]</span>
+        <strong>3 خطوات بس!</strong> من ألف صفحة!
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بعيون واسعة]</span>
+        وده بالظبط اللي الـ <span class="english">Binary Search</span> بيعمله. إنه مش بيدور على كل عنصر — هو <strong class="hl-cyan">بيقسم الدنيا على نصين كل مرة</strong>. وعشان كده اسمه "ثنائي" — <strong>Binary</strong> — لأن الـ Binary يعني 2!
     </div></div></div>
 
     <!-- ═══════ CONDITION ═══════ -->
-    <div class="section-divider" id="condition">الشرط الأساسي</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">⚠️ شرط مهم جداً: لازم مرتبة!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص للكاميرا بوش جاد وبتشاور بإيدك "انتبه!"]</span>
-        <strong class="hl-red">ده أهم حاجة لازم تحفظها عن الـ Binary Search:</strong>
+    <div class="section-divider" id="condition">الشرط المهم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">⚠️ بس فيه شرط... لو نسيته الخوارزمية هتنفجر<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بوش "انتبه" وصوت جاد]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت إنذار خفيف]</span>
+        قبل ما تحفظ خطوة واحدة... احفظ الشرط ده:
         <br><br>
-        الـ <span class="english">Binary Search</span> <strong class="hl-red">بيشتغل بس</strong> على قوائم <strong class="hl-amber">مُرتبة <span class="english">(Sorted)</span></strong>!
+        <strong class="hl-red" style="font-size:1.3rem">الـ Binary Search بيشتغل بس على حاجات مُرتبة!</strong>
         <br><br>
-        <span class="vfx-cue">✨ [VFX: مصفوفتين — واحدة مرتبة وعليها ✅ وواحدة مش مرتبة وعليها ❌]</span>
-        ليه؟ لأن الخوارزمية بتعتمد على إن اللي على الشمال دايماً أصغر واللي على اليمين دايماً أكبر. لو البيانات مش مرتبة، مش هنقدر ناخد القرار "روح يمين ولا شمال".
+        <span class="vfx-cue">✨ [VFX: زرار أحمر كبير عليه "SORTED ONLY!"]</span>
+        فكر فيها كده: لو القاموس بتاعك مش مرتب أبجدياً... لو الكلمات عشوائية... هل تقدر تفتح من النص وتعرف تروح يمين ولا شمال؟ <strong class="hl-red">لأ!</strong> لأنك مش ضامن إن اللي على الشمال أصغر واللي على اليمين أكبر.
         <br><br>
-        <strong class="hl-blue">طب لو المصفوفة مش مرتبة؟</strong>
-        <br>عندك اختيارين:
-        <br>1️⃣ <strong>ترتبها الأول</strong> وبعدين تعمل <span class="english">Binary Search</span>.
-        <br>2️⃣ <strong>تستخدم <span class="english">Linear Search</span></strong> (بحث خطي — تعدي على كل عنصر واحد واحد).
+        <span class="camera-cue">🎥 [بتعمل حركة "اختار" بإيدك]</span>
+        يبقى عندك اختيارين:
+        <br><br>
+        🅰️ <strong class="highlight">رتب الأول</strong> وبعدين استخدم Binary Search.
+        <br>🅱️ استخدم <strong class="hl-blue"><span class="english">Linear Search</span></strong> — ادور واحدة واحدة (بطيء بس بيشتغل على أي حاجة).
         <br><br>
         <div class="law-box">
-            <strong>القاعدة الذهبية:</strong>
-            <br>Binary Search ← <strong>مرتبة (Sorted) ✅</strong> ← سريع O(log n)
-            <br>Linear Search ← <strong>أي قائمة ✅</strong> ← بطيء O(n)
+            <strong>القاعدة اللي مش هتنساها:</strong>
+            <br>مرتبة + Binary Search = <strong style="color:#34d399">صاروخ 🚀</strong>
+            <br>مش مرتبة + Linear Search = <strong style="color:#f87171">سلحفاة 🐢</strong>
+            <br>مش مرتبة + Binary Search = <strong style="color:#ef4444">كارثة وإجابات غلط 💥</strong>
         </div>
     </div></div></div>
 
     <!-- ═══════ STEPS ═══════ -->
-    <div class="section-divider" id="steps">الخطوات بالتفصيل</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الـ 4 خطوات: إزاي الخوارزمية بتشتغل<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتقف وترسم على السبورة أو بتشاور على الشاشة]</span>
-        <span class="vfx-cue">✨ [VFX: الخطوات الأربع بتظهر واحدة واحدة بأنيميشن]</span>
+    <div class="section-divider" id="steps">الخطوات</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">4 خطوات — ده كل اللي محتاج تحفظه<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتوقف وبتبص للكاميرا: "ركز معايا"]</span>
+        <span class="vfx-cue">✨ [VFX: 4 بوكسات بتظهر واحد واحد]</span>
+        الخوارزمية بتشتغل بـ <strong>4 خطوات بس</strong>. أي حد يقدر يحفظهم:
 
         <div class="step-box">
-        <strong class="hl-cyan">الخطوة 1: حدد نطاق البحث</strong>
-        <br>هنستخدم مؤشرين (متغيرين):
-        <br>- <span class="hl-blue">low</span> = أول عنصر في المصفوفة (index 0)
-        <br>- <span class="hl-purple">high</span> = آخر عنصر (index = length - 1)
-        <br>دول بيحددوا "الحدود" اللي بندور فيها. كل ما نقسم، الحدود بتضيق!
+        <strong class="hl-cyan">① حط مؤشرين</strong>
+        <br>واحد على <strong>أول عنصر</strong> — اسمه <span class="hl-blue">low</span> (يبدأ من 0).
+        <br>وواحد على <strong>آخر عنصر</strong> — اسمه <span class="hl-purple">high</span> (يبدأ من length - 1).
+        <br>دول بيرسموا "الحدود" بتاعة البحث. المنطقة اللي بندور فيها.
         </div>
 
         <div class="step-box">
-        <strong class="hl-amber">الخطوة 2: احسب النص</strong>
+        <strong class="hl-amber">② احسب النص</strong>
         <br><span class="hl-cyan">mid = Math.floor((low + high) / 2)</span>
-        <br>بناخد الـ low والـ high ونجمعهم ونقسم على 2. الناتج هو الـ <span class="english">index</span> بتاع العنصر اللي في النص.
-        <br>الـ <span class="english">Math.floor()</span> عشان ناخد رقم صحيح (لو الناتج طلع كسر، بناخد الجزء الصحيح).
+        <br>بنجمع low + high ونقسم على 2. كده عرفنا العنصر اللي في "النص".
         </div>
 
         <div class="step-box">
-        <strong class="highlight">الخطوة 3: قارن وقرر</strong>
-        <br>بنقارن العنصر اللي في النص <span class="hl-cyan">arr[mid]</span> بالهدف <span class="hl-amber">target</span>:
-        <br><br>
-        ✅ لو <span class="hl-cyan">arr[mid] == target</span> ← <strong class="highlight">لقيناه! 🎉</strong> نرجع الـ index.
-        <br>⬅️ لو <span class="hl-cyan">arr[mid] > target</span> ← الهدف في <strong class="hl-blue">النص الشمال</strong> ← نحدث <span class="hl-purple">high = mid - 1</span>
-        <br>➡️ لو <span class="hl-cyan">arr[mid] < target</span> ← الهدف في <strong class="hl-purple">النص اليمين</strong> ← نحدث <span class="hl-blue">low = mid + 1</span>
+        <strong class="highlight">③ قارن وقرر</strong>
+        <br>✅ لو <span class="hl-cyan">arr[mid] == target</span> ← <strong class="highlight">لقيناه!</strong> خلاص 🎉
+        <br>⬅️ لو <span class="hl-cyan">arr[mid] > target</span> ← الإجابة في الـ <strong class="hl-blue">نص الشمال</strong> ← <span class="hl-purple">high = mid - 1</span>
+        <br>➡️ لو <span class="hl-cyan">arr[mid] < target</span> ← الإجابة في الـ <strong class="hl-purple">نص اليمين</strong> ← <span class="hl-blue">low = mid + 1</span>
         </div>
 
         <div class="step-box">
-        <strong class="hl-red">الخطوة 4: كرر أو توقف</strong>
-        <br>نرجع للخطوة 2 ونحسب النص الجديد ونقارن تاني.
-        <br>نستمر طالما <span class="hl-cyan">low <= high</span> (يعني لسه فيه عناصر نبحث فيها).
-        <br>لو <span class="hl-red">low > high</span> ← يبقى العنصر <strong class="hl-red">مش موجود</strong> في المصفوفة — نرجع <span class="english">-1</span>.
+        <strong class="hl-red">④ كرر</strong>
+        <br>ارجع للخطوة ② طالما <span class="hl-cyan">low <= high</span>.
+        <br>لو <span class="hl-red">low > high</span> ← العنصر مش موجود.
         </div>
+
+        <span class="camera-cue">🎥 [بتبص للكاميرا ببساطة]</span>
+        فاهم؟ <strong>اقسم. قارن. كرر.</strong> كده. مفيش أبسط من كده.
     </div></div></div>
 
-    <!-- ═══════ FULL EXAMPLE ═══════ -->
-    <div class="section-divider" id="example">المثال الرقمي</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">مثال كامل: ندور على الرقم 23 خطوة بخطوة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتشاور على المصفوفة على الشاشة]</span>
-        <span class="vfx-cue">✨ [VFX: المصفوفة بتظهر بأنيميشن، كل عنصر في بوكس]</span>
+    <!-- ═══════ EXAMPLE ═══════ -->
+    <div class="section-divider" id="example">المثال</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">يلا نعيشها مع بعض — ندوّر على الرقم 23<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتشاور على المصفوفة اللي ظاهرة على الشاشة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى تحقيق — detective music]</span>
         عندنا المصفوفة المرتبة دي:
         <div class="output-box">[2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
- 0  1  2   3   4   5   6   7   8   9  ← الـ index</div>
-        وعايزين ندور على الرقم <strong class="hl-amber">23</strong>. يلا نشوف الخوارزمية هتعمل إيه:
+ 0  1  2   3   4   5   6   7   8   9  ← index</div>
+        والمطلوب: لاقيلي الرقم <strong class="hl-amber">23</strong>. فين هو؟
+        <br><br>
+        <span class="camera-cue">🎥 [بتحط إيدك ورا ضهرك زي المحقق]</span>
+        يلا بينا...
         <br><br>
 
-        <strong class="hl-cyan">═══ الخطوة الأولى ═══</strong>
-        <br><span class="hl-blue">low = 0</span> (أول عنصر: 2)
-        <br><span class="hl-purple">high = 9</span> (آخر عنصر: 91)
-        <br><span class="hl-amber">mid = Math.floor((0 + 9) / 2) = Math.floor(4.5) = 4</span>
-        <br>العنصر في النص: <span class="hl-cyan">arr[4] = 16</span>
+        <span class="vfx-cue">✨ [VFX: كل العناصر بتتلون أزرق — نطاق البحث كامل]</span>
+        <strong class="hl-cyan">═══ الجولة الأولى ═══</strong>
+        <br><span class="hl-blue">low = 0</span> (العنصر 2) &nbsp;|&nbsp; <span class="hl-purple">high = 9</span> (العنصر 91)
+        <br><span class="hl-amber">mid = (0+9)/2 = 4</span> ← نبص على <span class="hl-cyan">arr[4] = 16</span>
         <br><br>
-        <span class="vfx-cue">✨ [VFX: العنصر 16 بيتلون أصفر وباقي المصفوفة أزرق]</span>
-        نقارن: <strong>16 مع 23</strong>
-        <br>16 < 23 ← الهدف (23) <strong class="hl-purple">أكبر</strong> من اللي في النص (16)
-        <br>يبقى 23 لازم يكون في <strong class="hl-purple">النص اليمين</strong>!
-        <br><strong>القرار:</strong> <span class="hl-blue">low = mid + 1 = 5</span>
+        <span class="camera-cue">🎥 [بتبص للرقم 16 وبتهز راسك]</span>
+        16 أصغر من 23. يبقى الـ 23 في <strong class="hl-purple">النص اليمين</strong>! نشيل كل اللي على الشمال.
+        <br><strong>القرار:</strong> <span class="hl-blue">low = 4 + 1 = 5</span>
         <br><br>
-        <span class="vfx-cue">✨ [VFX: العناصر 2,5,8,12,16 بتبهت — اتشالوا من البحث]</span>
-        كده شيلنا <strong class="hl-red">5 عناصر</strong> من البحث في خطوة واحدة! 🔥
+        <span class="vfx-cue">✨ [VFX: العناصر 2, 5, 8, 12, 16 بتختفي بأنيميشن — اتشطبوا!]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت مقص — SNIP!]</span>
+        <strong class="hl-red">شيلنا 5 عناصر في ضربة واحدة!</strong> نص المصفوفة راح. 💪
         <br><br>
 
-        <strong class="hl-cyan">═══ الخطوة الثانية ═══</strong>
-        <br><span class="hl-blue">low = 5</span> (العنصر: 23)
-        <br><span class="hl-purple">high = 9</span> (العنصر: 91)
-        <br><span class="hl-amber">mid = Math.floor((5 + 9) / 2) = Math.floor(7) = 7</span>
-        <br>العنصر في النص: <span class="hl-cyan">arr[7] = 56</span>
+        <strong class="hl-cyan">═══ الجولة التانية ═══</strong>
+        <br><span class="hl-blue">low = 5</span> (العنصر 23) &nbsp;|&nbsp; <span class="hl-purple">high = 9</span> (العنصر 91)
+        <br><span class="hl-amber">mid = (5+9)/2 = 7</span> ← نبص على <span class="hl-cyan">arr[7] = 56</span>
         <br><br>
-        نقارن: <strong>56 مع 23</strong>
-        <br>56 > 23 ← الهدف (23) <strong class="hl-blue">أصغر</strong> من اللي في النص (56)
-        <br>يبقى 23 لازم يكون في <strong class="hl-blue">النص الشمال</strong>!
-        <br><strong>القرار:</strong> <span class="hl-purple">high = mid - 1 = 6</span>
+        <span class="camera-cue">🎥 [بتبص للرقم 56]</span>
+        56 أكبر من 23. يبقى الـ 23 في <strong class="hl-blue">النص الشمال</strong>!
+        <br><strong>القرار:</strong> <span class="hl-purple">high = 7 - 1 = 6</span>
         <br><br>
-        <span class="vfx-cue">✨ [VFX: العناصر 56,72,91 بتبهت كمان]</span>
-        كده شيلنا <strong class="hl-red">3 عناصر</strong> تاني! بقى عندنا بس: <strong>[23, 38]</strong>
+        <span class="vfx-cue">✨ [VFX: العناصر 56, 72, 91 بتختفي — بقى: [23, 38] بس!]</span>
+        <span class="sfx-cue">🔊 [SFX: SNIP! تاني]</span>
+        كمان 3 عناصر في الـ trash! 🗑️ بقى عندنا <strong>عنصرين بس!</strong>
         <br><br>
 
-        <strong class="highlight">═══ الخطوة الثالثة — لقيناه! 🎉 ═══</strong>
-        <br><span class="hl-blue">low = 5</span> (العنصر: 23)
-        <br><span class="hl-purple">high = 6</span> (العنصر: 38)
-        <br><span class="hl-amber">mid = Math.floor((5 + 6) / 2) = Math.floor(5.5) = 5</span>
-        <br>العنصر في النص: <span class="hl-cyan">arr[5] = 23</span>
+        <strong class="highlight">═══ الجولة التالتة — الضربة القاضية! 🥊 ═══</strong>
+        <br><span class="hl-blue">low = 5</span> &nbsp;|&nbsp; <span class="hl-purple">high = 6</span>
+        <br><span class="hl-amber">mid = (5+6)/2 = 5</span> ← نبص على <span class="hl-cyan">arr[5] = ...</span>
         <br><br>
-        <span class="sfx-cue">🔊 [SFX: صوت نجاح / جرس! 🔔]</span>
-        نقارن: <strong>23 مع 23</strong>
-        <br><strong class="highlight">23 == 23 ← لقيناه!! 🎉🎉🎉</strong>
-        <br>العنصر موجود في <strong>index = 5</strong>
+        <span class="camera-cue">🎥 [وقفة درامية. بتبص للكاميرا ببطء.]</span>
+        <span class="sfx-cue">🔊 [SFX: drum roll... 🥁]</span>
+        ...
         <br><br>
-        <span class="vfx-cue">✨ [VFX: العنصر 23 بيتلون أخضر مع نجوم حواليه]</span>
-        <strong class="hl-amber">النتيجة:</strong> لقينا الرقم 23 في <strong class="highlight">3 خطوات بس</strong> من أصل 10 عناصر!
-        <br>لو كنا استخدمنا <span class="english">Linear Search</span>، كنا هنحتاج <strong class="hl-red">6 خطوات</strong> (لأن 23 في index 5).
-        <div class="note">لاحظ: في كل خطوة بنقسم المصفوفة على 2. ده السر وراء سرعة الـ Binary Search! من 10 عناصر، بحثنا في 10 → 5 → 2 → لقيناه!</div>
+        <strong class="highlight" style="font-size:1.4rem">23!! لقيناه!! 🎉🎉🎉</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: DING DING DING! + تصفيق!]</span>
+        <span class="vfx-cue">✨ [VFX: الـ 23 بيتلون أخضر فسفوري مع ألعاب نارية 🎆]</span>
+        <br>
+        الرقم 23 موجود في <strong>index = 5</strong>.
+        <br>لقيناه في <strong class="hl-cyan">3 جولات بس</strong> من أصل 10 عناصر.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بفخر]</span>
+        اللي عمله <span class="english">Linear Search</span> في <strong class="hl-red">6 خطوات</strong>... إحنا عملناه في <strong class="highlight">3</strong>. واللي الـ Linear كان هيعمله في <strong class="hl-red">مليون خطوة</strong>... إحنا هنعمله في <strong class="highlight">20</strong>.
     </div></div></div>
 
     <!-- ═══════ CODE ═══════ -->
     <div class="section-divider" id="code">الكود</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الكود الكامل — كل سطر متشرح<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتتكلم وأنت بتشاور على الكود سطر سطر]</span>
-        يلا نكتب الخوارزمية بالـ <span class="english">JavaScript</span>:
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">20 سطر كود... بس فيهم سحر<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقعد قدام اللابتوب وبتفتح الإيديتور]</span>
+        يلا نكتبها بالـ JavaScript. وهشرحلك كل سطر:
         <div class="code-box">function binarySearch(arr, target) {
-    let low = 0;
-    let high = arr.length - 1;
+    let low = 0;                              // ① المؤشر على أول عنصر
+    let high = arr.length - 1;                // ① المؤشر على آخر عنصر
 
-    while (low <= high) {
-        let mid = Math.floor((low + high) / 2);
-        let guess = arr[mid];
+    while (low <= high) {                     // ④ كرر طالما فيه مكان تبحث فيه
+        let mid = Math.floor((low + high) / 2); // ② احسب النص
+        let guess = arr[mid];                 // شوف إيه اللي في النص
 
-        if (guess === target) {
-            return mid;
+        if (guess === target) {               // ③ لو لقيناه...
+            return mid;                       //    رجّع الـ index بتاعه!
         }
-        if (guess > target) {
-            high = mid - 1;
-        } else {
-            low = mid + 1;
+        if (guess > target) {                 // ③ لو التخمين أكبر...
+            high = mid - 1;                   //    روح الشمال
+        } else {                              // ③ لو التخمين أصغر...
+            low = mid + 1;                    //    روح اليمين
         }
     }
 
-    return -1;
+    return -1;                                // مش موجود! 😢
 }</div>
         <br>
-        يلا نفكك <strong>سطر سطر</strong>:
+        <span class="camera-cue">🎥 [بتبص للكاميرا]</span>
+        <strong class="hl-amber">يلا نفهم كل سطر:</strong>
         <br><br>
-        <strong class="hl-cyan">سطر 1:</strong> <span class="english">function binarySearch(arr, target)</span>
-        <br>بنعرّف الـ function. بتاخد حاجتين: <span class="hl-blue">arr</span> — المصفوفة المُرتبة، و <span class="hl-amber">target</span> — الرقم اللي بندور عليه.
+        <strong class="hl-cyan">سطر 1:</strong> <span class="english">function binarySearch(arr, target)</span> — بنعرّف الدالة. بتاخد حاجتين: المصفوفة المرتبة واللي بندور عليه.
         <br><br>
-        <strong class="hl-cyan">سطر 2:</strong> <span class="english">let low = 0</span>
-        <br>المؤشر الأول — بيشاور على <strong>أول عنصر</strong> في المصفوفة. الـ index بتاعه = 0.
+        <strong class="hl-cyan">سطر 2-3:</strong> بنحط المؤشرين — <span class="hl-blue">low</span> على الأول و <span class="hl-purple">high</span> على الآخر. دول حدود الملعب.
         <br><br>
-        <strong class="hl-cyan">سطر 3:</strong> <span class="english">let high = arr.length - 1</span>
-        <br>المؤشر التاني — بيشاور على <strong>آخر عنصر</strong>. لو المصفوفة فيها 10 عناصر، الـ high = 9 (لأن الـ index بيبدأ من 0).
+        <strong class="hl-cyan">سطر 5:</strong> <span class="english">while (low <= high)</span> — طالما الملعب لسه فيه مساحة نبحث فيها... نكمل!
         <br><br>
-        <strong class="hl-cyan">سطر 5:</strong> <span class="english">while (low <= high)</span>
-        <br>اللوب الرئيسي! بنستمر طالما الـ <span class="hl-blue">low</span> أقل من أو يساوي الـ <span class="hl-purple">high</span>. لو الـ low بقى أكبر من الـ high، يبقى مفيش حاجة نبحث فيها — العنصر مش موجود.
+        <strong class="hl-cyan">سطر 6:</strong> بنحسب النص. <span class="english">Math.floor</span> عشان لو طلع كسر (زي 4.5) ← ناخد 4.
         <br><br>
-        <strong class="hl-cyan">سطر 6:</strong> <span class="english">let mid = Math.floor((low + high) / 2)</span>
-        <br>بنحسب الـ index بتاع النص. بنجمع الـ low والـ high ونقسم على 2. الـ <span class="english">Math.floor()</span> بتاخد الجزء الصحيح (مثلاً 4.5 بتبقى 4).
+        <strong class="hl-cyan">سطر 9-10:</strong> <strong class="highlight">لقيناه!</strong> الـ guess = الـ target. بنرجّع الـ index. مبروك!
         <br><br>
-        <strong class="hl-cyan">سطر 7:</strong> <span class="english">let guess = arr[mid]</span>
-        <br>بنجيب القيمة اللي في النص. ده "تخميننا" — هنقارنه بالهدف.
+        <strong class="hl-cyan">سطر 12-13:</strong> التخمين أكبر ← الإجابة في الشمال ← بنقلص الملعب من فوق.
         <br><br>
-        <strong class="hl-cyan">سطر 9-11:</strong> <span class="english">if (guess === target) return mid</span>
-        <br><strong class="highlight">لقيناه!</strong> 🎉 لو التخمين = الهدف، بنرجع الـ index بتاعه. خلاص الخوارزمية خلصت بنجاح!
+        <strong class="hl-cyan">سطر 14-15:</strong> التخمين أصغر ← الإجابة في اليمين ← بنقلص الملعب من تحت.
         <br><br>
-        <strong class="hl-cyan">سطر 12-13:</strong> <span class="english">if (guess > target) high = mid - 1</span>
-        <br>التخمين <strong>أكبر</strong> من الهدف ← الهدف لازم يكون في النص <strong class="hl-blue">الشمال</strong> (الأصغر). فبنحرك الـ high لقبل النص بواحد.
+        <strong class="hl-cyan">سطر 18:</strong> خرجنا من اللوب ← العنصر <strong class="hl-red">مش موجود</strong>. بنرجّع -1.
         <br><br>
-        <strong class="hl-cyan">سطر 14-15:</strong> <span class="english">else low = mid + 1</span>
-        <br>التخمين <strong>أصغر</strong> من الهدف ← الهدف لازم يكون في النص <strong class="hl-purple">اليمين</strong> (الأكبر). فبنحرك الـ low لبعد النص بواحد.
-        <br><br>
-        <strong class="hl-cyan">سطر 18:</strong> <span class="english">return -1</span>
-        <br>لو خرجنا من اللوب من غير ما نلاقي ← العنصر <strong class="hl-red">مش موجود</strong>! بنرجع -1 (اتفاق عام في البرمجة إن -1 يعني "مش لقيته").
-        <br><br>
-        <strong class="hl-amber">يلا نجربه:</strong>
-        <div class="code-box">const myArray = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
+        <strong class="hl-amber">يلا نجرب:</strong>
+        <div class="code-box">const arr = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
 
-console.log(binarySearch(myArray, 23));  // 5 ✅
-console.log(binarySearch(myArray, 72));  // 8 ✅
-console.log(binarySearch(myArray, 50));  // -1 ❌ مش موجود</div>
+console.log(binarySearch(arr, 23));   // 5  ← لقيناه! ✅
+console.log(binarySearch(arr, 72));   // 8  ← لقيناه! ✅
+console.log(binarySearch(arr, 50));   // -1 ← مش موجود ❌</div>
         <div class="output-box">5
 8
 -1</div>
-        <div class="note">الكود ده 20 سطر بس! بس فيه قوة مجنونة — بيقدر يدور في <strong>مليار عنصر في 30 خطوة بس!</strong> ده السحر بتاع الخوارزميات.</div>
     </div></div></div>
 
-    <!-- ═══════ COMPLEXITY ═══════ -->
-    <div class="section-divider" id="complexity">تحليل التعقيد</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">ليه الـ Binary Search سرعته O(log n)؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتتكلم بحماس وبتشاور على الرسم البياني]</span>
-        <strong class="hl-cyan">التعقيد الزمني — <span class="english">Time Complexity: O(log n)</span></strong>
+    <!-- ═══════ WHY FAST ═══════ -->
+    <div class="section-divider" id="why-fast">ليه سريع؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الرياضيات المجنونة: ليه Binary Search سريع لدرجة جنونية؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتتكلم ببطء مع كل رقم، عشان يوصل]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى "mind blown" خفيفة]</span>
+        السؤال: <strong class="hl-amber">كام مرة نقدر نقسم رقم على 2 لحد ما يوصل لـ 1؟</strong>
         <br><br>
-        <strong class="hl-amber">ليه <span class="english">log n</span>؟</strong> تعالوا نفهم:
-        <br><br>
-        في كل خطوة، بنقسم المصفوفة على <strong>2</strong>. يعني:
-        <br>- بعد خطوة 1: بقى عندنا <strong>n/2</strong> عناصر
-        <br>- بعد خطوة 2: بقى عندنا <strong>n/4</strong> عناصر
-        <br>- بعد خطوة 3: بقى عندنا <strong>n/8</strong> عناصر
-        <br>- ... وهكذا
-        <br><br>
-        السؤال: <strong class="hl-amber">كام مرة نقدر نقسم n على 2 لحد ما نوصل لعنصر واحد؟</strong>
-        <br>الإجابة الرياضية: <strong class="highlight">log₂(n) مرة!</strong>
-        <br><br>
+        ده بالظبط اللي الرياضيات بتسميه <strong class="hl-cyan"><span class="english">log₂(n)</span></strong> — اللوغاريتم.
         <div class="formula-note">
-            n ÷ 2 ÷ 2 ÷ 2 ... = 1
-            <br>
-            كام مرة قسمنا؟ = log₂(n)
+            log₂(n) = "كام مرة نقسم n على 2 لحد ما نوصل لـ 1"
         </div>
         <br>
-        <strong class="hl-blue">أمثلة عملية:</strong>
+        <span class="camera-cue">🎥 [بتبص للكاميرا وبتعد]</span>
+        يلا نحسب:
         <table class="comparison-table">
-            <tr><th>حجم المصفوفة (n)</th><th>أقصى عدد خطوات</th><th>الحساب</th></tr>
-            <tr><td>8</td><td><strong style="color:#34d399">3</strong></td><td>log₂(8) = 3</td></tr>
-            <tr><td>16</td><td><strong style="color:#34d399">4</strong></td><td>log₂(16) = 4</td></tr>
-            <tr><td>1,000</td><td><strong style="color:#34d399">~10</strong></td><td>log₂(1000) ≈ 10</td></tr>
-            <tr><td>1,000,000</td><td><strong style="color:#34d399">~20</strong></td><td>log₂(1,000,000) ≈ 20</td></tr>
-            <tr><td>1,000,000,000</td><td><strong style="color:#34d399">~30</strong></td><td>log₂(1 مليار) ≈ 30</td></tr>
+            <tr><th>حجم المصفوفة (n)</th><th>عدد الخطوات</th><th>يعني</th></tr>
+            <tr><td>8</td><td><strong style="color:#34d399">3</strong></td><td>8→4→2→1 (3 مرات)</td></tr>
+            <tr><td>16</td><td><strong style="color:#34d399">4</strong></td><td>16→8→4→2→1</td></tr>
+            <tr><td>1,000</td><td><strong style="color:#34d399">~10</strong></td><td>ألف عنصر = 10 خطوات!</td></tr>
+            <tr><td>1,000,000</td><td><strong style="color:#34d399">~20</strong></td><td>مليون عنصر = 20 خطوة!</td></tr>
+            <tr><td>1,000,000,000</td><td><strong style="color:#34d399">~30</strong></td><td>مليار عنصر = 30 خطوة!!</td></tr>
         </table>
         <br>
-        <span class="sfx-cue">🔊 [SFX: صوت "wow"]</span>
-        <strong class="hl-red">يعني مليار عنصر — 30 خطوة بس!!</strong> فكر في الموضوع ده! مليار = ألف مليون، وأنت بتدور فيهم في 30 خطوة! ده جنون الرياضيات! 🤯
+        <span class="camera-cue">🎥 [بتوقف. بتبص للكاميرا. صمت ثانيتين.]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت BOOM خفيف]</span>
+        <strong class="hl-red">مليار. عنصر. تلاتين. خطوة.</strong>
         <br><br>
-        <strong class="hl-cyan">التعقيد المكاني — <span class="english">Space Complexity: O(1)</span></strong>
-        <br>الخوارزمية بتستخدم متغيرات ثابتة بس: <span class="hl-blue">low</span>، <span class="hl-purple">high</span>، <span class="hl-amber">mid</span>. مش بتعمل مصفوفات جديدة. يعني <strong>مش بتستهلك ذاكرة إضافية تتناسب مع حجم المصفوفة</strong>. ده اسمه <span class="english">Constant Space</span>.
-        <div class="note">لو كتبت الخوارزمية بطريقة <span class="english">Recursive</span> (الدالة بتنادي نفسها) بدل <span class="english">Iterative</span> (لوب while)، الـ Space هتبقى <span class="english">O(log n)</span> بسبب الـ <span class="english">Call Stack</span> — لأن كل استدعاء بياخد مكان في الذاكرة.</div>
+        فكّر في الرقم ده كويس. عدد سكان العالم تقريباً 8 مليار. لو حطيتهم في مصفوفة مرتبة — تقدر تلاقي أي واحد فيهم في <strong class="highlight">33 خطوة بس</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بابتسامة]</span>
+        ده مش سحر. ده <strong class="hl-amber">رياضيات</strong>. 🤯
+        <br><br>
+        <strong class="hl-cyan">والذاكرة؟</strong> <span class="english">Space Complexity: O(1)</span> — ثابتة. الخوارزمية بتحتاج 3 متغيرات بس: <span class="hl-blue">low</span>، <span class="hl-purple">high</span>، <span class="hl-amber">mid</span>. مش بتعمل مصفوفات جديدة.
+        <div class="note">لو كتبت Binary Search بطريقة <span class="english">Recursive</span> (الدالة بتنادي نفسها)، الـ Space Complexity هتبقى <span class="english">O(log n)</span> بسبب الـ Call Stack. هنفهم ده في درس الـ Recursion.</div>
     </div></div></div>
 
-    <!-- ═══════ COMPARISON ═══════ -->
-    <div class="section-divider" id="comparison">المقارنة</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">مقارنة: Linear Search vs Binary Search<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص للكاميرا وبتشاور بإيديك الاتنين "ده ولا ده؟"]</span>
-        <span class="vfx-cue">✨ [VFX: جدول مقارنة بيظهر]</span>
-        يلا نقارن الاتنين وجهاً لوجه:
+    <!-- ═══════ BATTLE ═══════ -->
+    <div class="section-divider" id="battle">المعركة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">المعركة الكبرى: Linear Search ⚔️ Binary Search<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بحماس زي معلق رياضي]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى ملاكمة — boxing bell — DING!]</span>
+        <span class="vfx-cue">✨ [VFX: شاشة مقسومة — Linear على الشمال بالأحمر، Binary على اليمين بالأخضر]</span>
+        يلا نحطهم وجهاً لوجه!
+        <br><br>
         <table class="comparison-table">
-            <tr><th>النقطة</th><th style="color:#f87171">Linear Search</th><th style="color:#34d399">Binary Search</th></tr>
-            <tr><td><strong>الفكرة</strong></td><td>ادور على كل عنصر واحد واحد</td><td>اقسم على النص كل مرة</td></tr>
-            <tr><td><strong>الوقت</strong></td><td style="color:#f87171">O(n)</td><td style="color:#34d399">O(log n)</td></tr>
-            <tr><td><strong>الذاكرة</strong></td><td>O(1)</td><td>O(1)</td></tr>
+            <tr><th>النقطة</th><th style="color:#f87171">🐢 Linear Search</th><th style="color:#34d399">🚀 Binary Search</th></tr>
+            <tr><td><strong>الفكرة</strong></td><td>واحد واحد... واحد واحد...</td><td>اقسم على 2. كل مرة.</td></tr>
+            <tr><td><strong>السرعة</strong></td><td style="color:#f87171">O(n) — بطيء</td><td style="color:#34d399">O(log n) — صاروخ</td></tr>
             <tr><td><strong>لازم مرتبة؟</strong></td><td style="color:#34d399">لا ✅</td><td style="color:#fbbf24">أيوه ⚠️</td></tr>
-            <tr><td><strong>n = 1,000</strong></td><td style="color:#f87171">1,000 خطوة</td><td style="color:#34d399">10 خطوات</td></tr>
-            <tr><td><strong>n = 1,000,000</strong></td><td style="color:#f87171">1,000,000 خطوة!</td><td style="color:#34d399">20 خطوة!</td></tr>
+            <tr><td><strong>100 عنصر</strong></td><td style="color:#f87171">100 خطوة</td><td style="color:#34d399">7 خطوات</td></tr>
+            <tr><td><strong>1,000 عنصر</strong></td><td style="color:#f87171">1,000 خطوة</td><td style="color:#34d399">10 خطوات</td></tr>
+            <tr><td><strong>1,000,000 عنصر</strong></td><td style="color:#f87171">مليون خطوة! 💀</td><td style="color:#34d399">20 خطوة! 🚀</td></tr>
         </table>
         <br>
-        <strong class="hl-amber">الخلاصة:</strong>
-        <br>لو البيانات <strong>مرتبة</strong> — استخدم <span class="english">Binary Search</span> دايماً!
-        <br>لو البيانات <strong>مش مرتبة</strong> وهتبحث فيها <strong>مرة واحدة</strong> بس — استخدم <span class="english">Linear Search</span>.
-        <br>لو البيانات <strong>مش مرتبة</strong> بس هتبحث فيها <strong>كتير</strong> — رتبها مرة واحدة واستخدم <span class="english">Binary Search</span> في كل مرة بعد كده!
+        <span class="camera-cue">🎥 [بتبص للكاميرا بهدوء]</span>
+        <strong class="hl-amber">الخلاصة بأبسط شكل:</strong>
+        <br>لو الداتا <strong>مرتبة</strong> ← <span class="english">Binary Search</span>. نقطة. انتهى الكلام.
+        <br>لو الداتا <strong>مش مرتبة</strong> وهتبحث مرة واحدة ← <span class="english">Linear Search</span>.
+        <br>لو الداتا <strong>مش مرتبة</strong> بس هتبحث <strong>كتير</strong> ← رتبها مرة واحدة واستخدم <span class="english">Binary</span> لحد الأبد.
     </div></div></div>
 
     <!-- ═══════ OUTRO ═══════ -->
     <div class="section-divider" id="outro">الختام</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">ملخص الدرس — النقط المهمة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Medium Shot، باصص بثقة]</span>
-        يلا نلخص اللي اتعلمناه النهاردة:
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الحلقة الجاية: إزاي "تقيس" سرعة أي كود<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بابتسامة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى hopeful]</span>
+        النهاردة اتعلمنا إن فيه طريقة تلاقي إبرة في مليار قشة... في 30 خطوة بس. وإن الفكرة ببساطة: <strong class="hl-cyan">اقسم على 2 وكرر</strong>.
         <br><br>
-        ✅ <strong>الـ <span class="english">Binary Search</span></strong> = خوارزمية بحث بتقسم المصفوفة على النص كل مرة.
-        <br>✅ <strong>الشرط:</strong> المصفوفة لازم تكون <strong class="hl-amber">مرتبة (Sorted)</strong>.
-        <br>✅ <strong>الخطوات:</strong> حدد النطاق (low, high) → احسب النص (mid) → قارن وقرر → كرر.
-        <br>✅ <strong>السرعة:</strong> <span class="english">O(log n)</span> — يعني مليون عنصر = 20 خطوة بس!
-        <br>✅ <strong>الذاكرة:</strong> <span class="english">O(1)</span> — ثابتة.
-        <br>✅ <strong>الكود:</strong> 20 سطر بس! بسيط وأنيق.
+        بس استنى. قلنا الـ Binary Search هو <span class="english">O(log n)</span> والـ Linear هو <span class="english">O(n)</span>. طيب...
         <br><br>
-        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم: "Big O Notation — تحليل التعقيد"]</span>
-        <span class="sfx-cue">🔊 [SFX: موسيقى حماسية]</span>
-        الحلقة الجاية هنتكلم عن <strong class="hl-blue"><span class="english">Big O Notation</span></strong> — هنتعلم إزاي نقيس سرعة أي كود ونقارن بين الخوارزميات بشكل علمي!
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا]</span>
+        <strong class="hl-amber">إيه الـ O دي أصلاً؟ ومين حطها؟ وبنقيس بيها إزاي؟</strong>
         <br><br>
-        جربوا الـ <span class="english">Interactive Demo</span> على المنصة واتلعبوا بالأرقام! سلام 👋
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم: "Big O Notation — القياس اللي غيّر كل حاجة"]</span>
+        الحلقة الجاية: <strong class="hl-blue"><span class="english">Big O Notation</span></strong>. هنتعلم إزاي نقيس سرعة أي كود، وليه الفرق بين خوارزمية وخوارزمية ممكن يكون... حرفياً... الفرق بين <strong class="hl-red">ثانية وعمر الكون</strong>.
+        <br><br>
+        مش مبالغة. <strong class="hl-amber">تعال شوف.</strong>
+        <br><br>
         <span class="sfx-cue">🔊 [SFX: Whoosh + Outro]</span>
+        <span class="camera-cue">🎥 [✌️ — القطع]</span>
     </div></div></div>
 
     <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">

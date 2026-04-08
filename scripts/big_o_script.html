@@ -19,8 +19,6 @@
         .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
         .script-body{overflow:hidden;transition:max-height .4s ease}
         .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #f59e0b}
-        .slide-badge{display:inline-block;background:rgba(71,85,105,.5);color:#f8fafc;padding:.2rem .8rem;border-radius:6px;font-size:.85rem;font-weight:700;margin-bottom:.8rem;margin-top:1.5rem;border-right:3px solid #8b5cf6;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-        .slide-badge:first-child{margin-top:0}
         .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
         .note::before{content:"📌 ملاحظة: ";font-weight:bold}
         .code-box{font-size:.92rem;color:#a5f3fc;margin-top:1rem;padding:1rem 1.2rem;background:rgba(0,0,0,.45);border-radius:8px;border-right:3px solid #06b6d4;line-height:1.7;direction:ltr;text-align:left;font-family:'Fira Code','Consolas',monospace;overflow-x:auto;white-space:pre-wrap}
@@ -68,416 +66,243 @@
     <a href="binary_search_script.html" class="back-btn"><i class="fas fa-arrow-right"></i> الدرس السابق</a>
     <a href="../index.html" class="back-btn" style="margin-right:.75rem"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
     <h1>📜 سكريبت الشرح — Big O Notation</h1>
-    <p class="subtitle">تحليل التعقيد · الأسبوع الأول · الدرس التاني · إزاي تقيس سرعة الكود</p>
+    <p class="subtitle">تحليل التعقيد · الأسبوع الأول · الدرس التاني</p>
 
     <!-- TOC -->
     <div class="toc">
         <h3>📋 محتويات السكريبت</h3>
-        <a href="#why">السؤال المهم: إيه أهمية السرعة؟</a>
-        <a href="#what">إيه هو الـ Big O بالظبط؟</a>
-        <a href="#n">ليه "n"؟ وبيمثل إيه؟</a>
-        <a href="#worst">الـ Worst Case ولا Average؟</a>
-        <a href="#o1">O(1) — Constant Time ⚡</a>
-        <a href="#ologn">O(log n) — Logarithmic Time 🚀</a>
-        <a href="#on">O(n) — Linear Time 📏</a>
-        <a href="#onlogn">O(n log n) — Linearithmic Time 📊</a>
-        <a href="#on2">O(n²) — Quadratic Time 🐌</a>
-        <a href="#o2n">O(2ⁿ) — Exponential Time 💥</a>
-        <a href="#table">جدول المقارنة الشامل</a>
-        <a href="#tips">نصائح عملية: إزاي تكتشف التعقيد</a>
-        <a href="#examples">أمثلة عملية بالكود</a>
+        <a href="#hook">الهوك: سباق مستحيل بين حمامة وانترنت</a>
+        <a href="#what">يعني إيه أصلا Big O؟</a>
+        <a href="#worst">ليه دايماً أسوأ الاحتمالات؟</a>
+        <a href="#classes">عائلات التعقيد الستة — وحوش الكود</a>
+        <a href="#battle">الجدول المرعب: لما الأرقام بتعض</a>
+        <a href="#tips">إزاي تقرأ الكود وتعرف التعقيد؟</a>
         <a href="#outro">الختام</a>
     </div>
 
-    <!-- ═══════ WHY ═══════ -->
-    <div class="section-divider" id="why">ليه السرعة مهمة</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">السؤال المهم: مش المهم الكود يشتغل وخلاص؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Shot واسع، بتتكلم بحماس]</span>
-        أهلاً بيكم في الدرس التاني! في الدرس اللي فات اتعلمنا الـ <span class="english">Binary Search</span> وقلنا إنه أسرع من الـ <span class="english">Linear Search</span>. بس <strong class="hl-amber">إزاي بنقيس "أسرع"؟</strong>
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">سباق غريب: حمامة زاجل ضد إنترنت ألياف بصرية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بتعجب، بتميل راسك كأنك بتسمع نكتة]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت حمامة 🐦]</span>
+        في سنة 2009... شركة إنترنت في جنوب أفريقيا طلعت في الطالعة وقالت إن الإنترنت بتاعها سرعتة خيالية. 
         <br><br>
-        <span class="camera-cue">🎥 [بتقرب من الكاميرا بصوت درامي]</span>
-        لما بتكتب كود، السؤال <strong class="hl-red">مش بس "هل الكود بيشتغل؟"</strong>
-        <br>السؤال الأهم: <strong class="hl-amber">"قد إيه الكود سريع؟ وبيستهلك ذاكرة إزاي؟"</strong>
+        واحد من العملاء — اللي كان متعذب بالإنترنت البطيء — قرر يعمل حاجة <strong class="hl-red">مجنونة</strong>.
         <br><br>
-        <span class="vfx-cue">✨ [VFX: شاشتين — واحدة فيها كود بيخلص في ثانية والتانية بياخد ساعة]</span>
-        تخيل كده: أنت عندك وظيفة ترتب مليون رقم.
-        <br>- <strong class="hl-red">كود 1:</strong> بياخد <strong>ساعة</strong> عشان يخلص 😰
-        <br>- <strong class="highlight">كود 2:</strong> بياخد <strong>ثانية</strong> عشان يخلص ⚡
+        قرر يعمل سباق. <strong class="hl-amber">بين الإنترنت... وبين حمامة زاجل!</strong>
         <br><br>
-        الاتنين بيجيبوا نفس النتيجة! بس الكود التاني <strong class="hl-amber">أحسن بملايين المرات!</strong>
+        <span class="vfx-cue">✨ [VFX: شاشة مقسومة — حمامة شايلة فلاش ميموري على الشمال / كابل فايبر على اليمين]</span>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا]</span>
+        العميل ده جاب فلاشة (USB) حط عليها داتا حجمها 4 جيجابايت. وربطها في رجل حمامة اسمها "وينستون". 
+        وطيّر وينستون يودي الفلاشة لمدينة تانية على بُعد 80 كيلومتر. 
+        وفي نفس اللحظة... داس "Upload" عشان يبعت نفس الـ 4 جيجا عبر الإنترنت السريع بتاع الشركة.
         <br><br>
-        الأداة اللي بتخلينا نقيس ونقارن ده اسمها <strong class="hl-amber"><span class="english">Big O Notation</span></strong>.
-        <div class="note">في الحياة العملية: كود سريع = سيرفرات أقل = <strong>فلوس أقل</strong> = يوزرز سعداء. Google بتقولك إن لو صفحتهم بطأت نص ثانية، <strong>بيخسروا 20% من اليوزرز!</strong></div>
+        <span class="camera-cue">🎥 [بتبتسم ابتسامة ماكرة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى تشويق — ticking clock]</span>
+        تفتكروا مين اللي كسب؟
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة "WINNER" فوق الحمامة]</span>
+        วินستون! الحمامة وينستون مش بس كسبت... دي لما وصلت وقرأت الفلاشة، كان الإنترنت يا دوب عمل Upload لـ <strong class="hl-red">4% بس</strong> من الداتا!
+        <br><br>
+        <span class="camera-cue">🎥 [بتقعد ورا مكتب]</span>
+        هتقولي إيه علاقة الحمامة دي بالبرمجة؟ هقولك علاقة وثيقة.
+        <br>لأننا النهاردة مش هنتكلم عن "السرعة" بالمعنى اللي إنت فاهمه.
+        <br>هنتكلم عن <strong class="hl-amber">إزاي السرعة بتتغير لما حجم الداتا يكبر</strong>.
+        <br><br>
+        هنتكلم عن الحاجة اللي بتفرق بين مبرمج محترف... ومبرمج الحمام السريع أسرع من الكود بتاعه.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: العنوان بيظهر زي ختم على الشاشة: "Big O Notation — القياس اللي غيّر كل حاجة"]</span>
+        <span class="sfx-cue">🔊 [SFX: Introduction Theme]</span>
     </div></div></div>
 
     <!-- ═══════ WHAT ═══════ -->
-    <div class="section-divider" id="what">إيه هو الـ Big O</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">إيه هو الـ Big O Notation بالظبط؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص للكاميرا وبتشرح بإيدك]</span>
-        <div class="term-def"><strong>Big O Notation:</strong> طريقة رياضية لوصف إزاي أداء الخوارزمية بيتغير لما <strong>حجم المدخلات يكبر</strong>. بتركز على <strong>أسوأ حالة</strong> وبتهمل الثوابت والحاجات الصغيرة.</div>
+    <div class="section-divider" id="what">المفهوم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">يعني إيه Big O بالظبط؟ ולيه مش بالثانية؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمشي وتتكلم بإيدك]</span>
+        لو سألتك سؤال: السكريبت ده بياخد كام ثانية؟ هتقولي والله على حسابات اللابتوب بتاعي بياخد كذا.
+        <br>بس أنا لو شغلته على سيرفرات جوجل المُرعبة... ممكن ياخد كسر من الملي ثانية.
+        <br>ولو شغلته على تليفون أبو قرص قديم... هياخد سنة ونصف.
+        <br><br>
+        <span class="hl-amber">استحالة نقيس سرعة الكود بـ "الثواني". لأن الثواني بتعتمد على "الهاردوير".</span>
+        <br><br>
+        <strong class="hl-cyan">إحنا كـ "هندسة" محتاجين مقياس مُحايد.</strong>
+        مقياس بيعتمد على المُعادلات الرياضية، مش على نوع المعالج بتاعك.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: حرف O كبير بيظهر وفيه كود شغال جواه]</span>
+        هنا جي <strong class="hl-blue"><span class="english">Big O Notation</span></strong>.
+        <br><br>
+        الـ Big O دي أداة رياضية بتجاوب على سؤال واحد بس:
+        <strong class="highlight" style="font-size:1.2rem">"لما حجم الداتا يعلى ويكبر جداً... الكود ده هيهنّج ويفطس في قد ايه؟"</strong>
+        <br><br>
+        <div class="term-def"><strong>Big O:</strong> بتوصف <strong>معدل النمو</strong> <span class="english">(Growth Rate)</span> بتاع الكود. म्हणजे لما الديك <span class="english">Input</span> أكبر... <strong>بكام ضعف الشغل بيزيد؟</strong></div>
         <br>
-        <strong class="hl-amber">بنقيس بيه حاجتين:</strong>
-        <br><br>
-        <span class="vfx-cue">✨ [VFX: أيقونتين بتظهر]</span>
-        ⏱️ <strong class="hl-blue"><span class="english">Time Complexity</span></strong> — التعقيد الزمني
-        <br><strong>كام عملية (operation)</strong> الكود بيعملها؟ مش بنقيس بالثواني! لأن الثواني بتختلف من جهاز للتاني. بدل كده بنعد <strong>عدد العمليات</strong>.
-        <br><br>
-        💾 <strong class="hl-purple"><span class="english">Space Complexity</span></strong> — التعقيد المكاني
-        <br><strong>قد إيه ذاكرة</strong> الكود بيستهلك؟ هل بيعمل مصفوفات جديدة؟ هل بيستهلك ذاكرة تتناسب مع حجم الـ input؟
-        <br><br>
-        <strong class="hl-cyan">الـ "O" بتاعة حرف كبير:</strong>
-        <br>الـ O ده حرف كبير — <span class="english">Big O</span>. وجواه بنحط <strong>دالة رياضية</strong> بتوصف سرعة النمو. مثلاً:
-        <br>- <span class="english">O(1)</span> ← ثابت
-        <br>- <span class="english">O(n)</span> ← خطي
-        <br>- <span class="english">O(n²)</span> ← تربيعي
-        <br>- <span class="english">O(log n)</span> ← لوغاريتمي
-    </div></div></div>
-
-    <!-- ═══════ N ═══════ -->
-    <div class="section-divider" id="n">ليه "n"</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">الحرف "n" — بيمثل إيه؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتشاور على حرف n كبير على الشاشة]</span>
-        الحرف <strong class="hl-amber">n</strong> بيمثل <strong>حجم المدخلات <span class="english">(Input Size)</span></strong>. وحجم المدخلات بيعتمد على المسألة:
-        <br><br>
-        🔹 لو بتدور في <span class="english">Array</span> ← <strong class="hl-cyan">n = عدد العناصر</strong>
-        <br>&nbsp;&nbsp;&nbsp;(مصفوفة فيها 1000 عنصر = n = 1000)
-        <br><br>
-        🔹 لو بتعالج <span class="english">String</span> ← <strong class="hl-cyan">n = طول النص</strong>
-        <br>&nbsp;&nbsp;&nbsp;(نص فيه 500 حرف = n = 500)
-        <br><br>
-        🔹 لو بتتعامل مع <span class="english">Matrix</span> ← <strong class="hl-cyan">n × m = الأبعاد</strong>
-        <br>&nbsp;&nbsp;&nbsp;(مصفوفة 100×200 = n = 100, m = 200)
-        <br><br>
-        🔹 لو بتتعامل مع <span class="english">Graph</span> ← <strong class="hl-cyan">V = عدد الـ nodes, E = عدد الـ edges</strong>
-        <br><br>
-        <strong class="highlight">المهم:</strong> الـ Big O بيقول لنا — لما الـ n <strong>يكبر</strong>، الكود <strong>هيتصرف إزاي</strong>؟ هل هيفضل سريع ولا هيبطّأ جداً؟
+        <strong class="hl-purple">وحرف الـ "n":</strong>
+        <br>دايماً هتشوف حرف n. 
+        <br>n ده هو القلق كله. هو "حجم الداتا". لو عندك مصفوفة فيها ألف عنصر ← n = ألف. فيسبوك عنده 3 مليار مستخدم ← n = 3 مليار.
     </div></div></div>
 
     <!-- ═══════ WORST CASE ═══════ -->
-    <div class="section-divider" id="worst">Worst Case</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">ليه بنركز على أسوأ حالة — Worst Case؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتبص بجدية]</span>
-        في الـ Big O بنركز على <strong class="hl-red">أسوأ حالة <span class="english">(Worst Case)</span></strong>.
+    <div class="section-divider" id="worst">أسوأ احتمال مقدّر</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">ليه دايماً متقوقعين في الـ Worst Case؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتبص للكاميرا بتشاؤم مصطنع]</span>
+        لما المبرمجين بييجوا يتكلموا عن الـ Big O... دايماً بيتكلموا عن أسوأ سيناريو. 
         <br><br>
-        <strong class="hl-amber">ليه؟</strong> لأننا عايزين نعرف: لو الحظ وحش، <strong>أسوأ حاجة ممكن تحصل إيه؟</strong>
+        <strong class="hl-red">ليه الحزن ده؟</strong>
+        <br>تخيل أنا بدور على اسم "حسين" في لستة أسامي. 
+        <br>لو حسين ده أول اسم → دي اسمها <span class="english">Best Case</span>. كود سريع ومفيش أحسن من كده.
         <br><br>
-        مثال: الـ <span class="english">Linear Search</span> — لو بتدور على رقم في مصفوفة:
-        <br>- <strong class="highlight">Best Case:</strong> الرقم في أول عنصر → خطوة واحدة! <span class="english">O(1)</span>
-        <br>- <strong class="hl-amber">Average Case:</strong> الرقم في النص → n/2 خطوات
-        <br>- <strong class="hl-red">Worst Case:</strong> الرقم في الآخر أو مش موجود → n خطوات! <span class="english">O(n)</span>
+        بس في هندسة البرمجيات... إحنا مبنعملش حسابنا على الحظ. بنبني على إن الدنيا هتخبط فينا.
+        <br>إحنا عايزين نعرف: <strong class="hl-amber">لو حسين ده كان آخر اسم في اللستة، أو ملوش وجود أصلاً... السيرفر هياخد وقت أد ايه لحد ما يعيط؟</strong>
         <br><br>
-        لما بنقول <span class="english">Linear Search</span> هو <span class="english">O(n)</span>، بنقصد <strong>أسوأ حالة</strong>.
-        <div class="note">فيه كمان <span class="english">Big Ω (Omega)</span> للـ Best Case و <span class="english">Big Θ (Theta)</span> للـ Average Case. بس في الحياة العملية 90% بنستخدم <span class="english">Big O</span>.</div>
+        عشان كده الـ Big O بيركز دايماً على <strong class="hl-red"><span class="english">Worst Case</span> (أسوأ حالة)</strong>.
     </div></div></div>
 
-    <!-- ═══════ O(1) ═══════ -->
-    <div class="section-divider" id="o1">الأنواع بالتفصيل</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">O(1) — Constant Time ⚡ أسرع حاجة!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج أخضر "أسرع ✓"]</span>
+    <!-- ═══════ CLASSES ═══════ -->
+    <div class="section-divider" id="classes">العائلات الستة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">عائلات التعقيد الستة — وحوش الكود<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقف قدام شاشة فيها الـ 6 أنواع زي كأنهم وحوش بتتحول]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت قلابات — swoosh x 6]</span>
+        عالم الخوارزميات متقسم لـ 6 عائلات. من العيلة الفخمة جداً السريعة... لحد العيلة الكارثية اللي بتخرّب أي حاجة تمسكها. 
+        <br>تعالوا نتعرف عليهم:
+
+        <!-- O(1) -->
         <div class="complexity-card best">
-        <strong style="color:#34d399;font-size:1.3rem"><span class="english">O(1)</span> — Constant Time — الوقت الثابت</strong>
+        <strong style="color:#34d399;font-size:1.3rem">① الثائر الأسرع: <span class="english">O(1) - Constant Time</span> ⚡</strong>
         <br><br>
-        الوقت <strong class="highlight">ثابت</strong> — مش مهم حجم الـ input!
-        <br>سواء المصفوفة فيها 10 عناصر أو 10 مليون — العملية بتاخد <strong>نفس الوقت بالظبط</strong>.
+        <span class="camera-cue">🎥 [بتتكلم باستمتاع]</span>
+        ده البرنس. الداتا 10 عناصر؟ بياخد ثانية. الداتا 10 مليار عنصر؟ بياخد ثانية. <strong class="hl-cyan">الوقت مش بيكبر أصلاً. ثابت.</strong>
+        <br><br>
+        <strong class="hl-amber">التشبيه:</strong> زي ما تفتح كتاب على صفحة رقم 50. مش هتفرق الكتاب 100 صفحة ولا 10 آلاف.
+        <div class="code-box">// O(1)
+function getFirstPlayer(players) {
+    return players[0]; // عملية واحدة، مهما كان عدد الـ players
+}</div>
         </div>
-        <br>
-        <strong class="hl-amber">📖 تشبيه:</strong> زي إنك تفتح كتاب على صفحة معينة — مش مهم الكتاب فيه كام صفحة. لو عايز صفحة 50 في كتاب من 100 صفحة أو 10,000 صفحة — بتفتحها مباشرة!
-        <br><br>
-        <strong class="hl-cyan">أمثلة:</strong>
-        <div class="code-box">// الوصول لعنصر في Array بالـ index
-const arr = [10, 20, 30, 40, 50];
-const first = arr[0];    // O(1) — دايماً عملية واحدة!
-const last = arr[4];     // O(1) — نفس الوقت!
 
-// الوصول لقيمة في Hash Map
-const map = { "name": "Ahmed", "age": 25 };
-const name = map["name"]; // O(1)</div>
-        <br>
-        <strong class="hl-blue">ليه O(1)؟</strong> لأن الـ Array بتخزن العناصر في ذاكرة <strong>متتالية</strong>. الكمبيوتر بيحسب العنوان مباشرة: عنوان البداية + (index × حجم العنصر) = <strong>عملية حسابية واحدة</strong>!
-        <div class="note">O(1) <strong>مش معناها عملية واحدة!</strong> معناها <strong>عدد ثابت</strong> من العمليات. ممكن 3 أو 5 عمليات — المهم إنها مش بتزيد لما n يكبر.</div>
-    </div></div></div>
-
-    <!-- ═══════ O(log n) ═══════ -->
-    <div class="section"><div class="section-title" onclick="toggleSection(this)"><span id="ologn"></span>O(log n) — Logarithmic Time 🚀 سريع جداً!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج سماوي "سريع جداً"]</span>
+        <!-- O(log n) -->
         <div class="complexity-card good">
-        <strong style="color:#22d3ee;font-size:1.3rem"><span class="english">O(log n)</span> — Logarithmic Time — الوقت اللوغاريتمي</strong>
+        <strong style="color:#22d3ee;font-size:1.3rem">② العبقري المكّار: <span class="english">O(log n) - Logarithmic Time</span> 🚀</strong>
         <br><br>
-        كل ما الـ n <strong class="hl-cyan">يتضاعف</strong>، الوقت بيزيد <strong class="hl-amber">خطوة واحدة بس</strong>!
-        </div>
-        <br>
-        <strong class="hl-amber">📖 تشبيه:</strong> زي البحث في القاموس — بتقسم على النص كل مرة. ده بالظبط اللي الـ <span class="english">Binary Search</span> بيعمله!
+        ده اللي اتكلمنا عنه الدرس اللي فات في <span class="english">Binary Search</span>. ده اللي بيقلّل الشغل للنص مع كل حركة. 
         <br><br>
-        <strong class="hl-cyan">ليه "log"؟</strong>
-        <br>الـ <span class="english">log₂(n)</span> بتقول: "كام مرة نقدر نقسم n على 2 لحد ما نوصل لـ 1؟"
-        <div class="formula-note">
-            log₂(8) = 3  →  8÷2=4, 4÷2=2, 2÷2=1  (3 مرات)
-            <br>
-            log₂(1,000,000) ≈ 20  (20 مرة بس!)
+        لو הדاتا كبرت 10 مليون ضعف... الوقت بتاعه هيزيد <strong class="hl-cyan">حاجات بسيطة جداً لا تذكر</strong>.
         </div>
-        <br>
-        <strong class="hl-blue">المثال الأساسي:</strong> <span class="english">Binary Search</span> — اللي اتعلمناه في الدرس اللي فات!
-        <div class="code-box">// Binary Search — O(log n)
-function binarySearch(arr, target) {
-    let low = 0, high = arr.length - 1;
-    while (low <= high) {
-        let mid = Math.floor((low + high) / 2);
-        if (arr[mid] === target) return mid;
-        if (arr[mid] > target) high = mid - 1;
-        else low = mid + 1;
-    }
-    return -1;
-}
-// n = 1,000,000 → ~20 خطوة بس!</div>
-    </div></div></div>
 
-    <!-- ═══════ O(n) ═══════ -->
-    <div class="section"><div class="section-title" onclick="toggleSection(this)"><span id="on"></span>O(n) — Linear Time 📏 مقبول<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج أزرق "مقبول"]</span>
+        <!-- O(n) -->
         <div class="complexity-card ok">
-        <strong style="color:#60a5fa;font-size:1.3rem"><span class="english">O(n)</span> — Linear Time — الوقت الخطي</strong>
+        <strong style="color:#60a5fa;font-size:1.3rem">③ الموظف الملتزم: <span class="english">O(n) - Linear Time</span> 📏</strong>
         <br><br>
-        الوقت <strong class="hl-blue">بيزيد بنفس نسبة</strong> زيادة الـ input. ضعف الـ input = ضعف الوقت.
-        </div>
-        <br>
-        <strong class="hl-amber">📖 تشبيه:</strong> زي قراءة كتاب صفحة صفحة — كتاب أكبر = وقت أكتر بالظبط بنفس النسبة.
+        <span class="camera-cue">🎥 [بتعمل حركة موظف بيمضي حضور وانصراف]</span>
+        ده اللي بيمشي خطوة خطوة. الداتا زادت الضعف؟ هياخد وقت الضعف. علاقة طردية كلاسيكية.
         <br><br>
-        <strong class="hl-cyan">إمتى بنشوفه؟</strong> لما بيكون عندنا <strong>لوب واحد</strong> بيعدي على كل عنصر:
-        <div class="code-box">// Linear Search — O(n)
-function findMax(arr) {
-    let max = arr[0];          // O(1)
-    for (let i = 1; i < arr.length; i++) {  // O(n) — لوب واحد
-        if (arr[i] > max) {    // O(1) لكل عنصر
-            max = arr[i];      // O(1)
-        }
+        <strong class="hl-amber">التشبيه:</strong> راجل بيقرا كتاب صفحة صفحة.
+        <div class="code-box">// O(n)
+function search(arr, name) {
+    for (let i = 0; i < arr.length; i++) {
+        if(arr[i] === name) return true;
     }
-    return max;                // O(1)
-}
-// n = 1,000 → 1,000 عملية</div>
-        <br>
-        <strong class="hl-blue">ليه O(n)؟</strong> لأننا لازم نعدي على <strong>كل عنصر</strong> مرة واحدة على الأقل عشان نلاقي الأكبر. مفيش طريقة نعرف الأكبر من غير ما نشوفهم كلهم!
-        <br><br>
-        <strong>أمثلة تانية:</strong> حساب مجموع مصفوفة، البحث عن عنصر في قائمة مش مرتبة، طباعة كل العناصر.
-    </div></div></div>
+}</div>
+        </div>
 
-    <!-- ═══════ O(n log n) ═══════ -->
-    <div class="section"><div class="section-title" onclick="toggleSection(this)"><span id="onlogn"></span>O(n log n) — Linearithmic Time 📊 جيد<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج أصفر "جيد"]</span>
+        <!-- O(n log n) -->
         <div class="complexity-card fair">
-        <strong style="color:#fbbf24;font-size:1.3rem"><span class="english">O(n log n)</span> — Linearithmic Time</strong>
+        <strong style="color:#fbbf24;font-size:1.3rem">④ المدير الكُفء: <span class="english">O(n log n)</span> 📊</strong>
         <br><br>
-        أحسن ما يمكن لخوارزميات <strong class="hl-amber">الترتيب</strong> المبنية على المقارنة!
+        ده أحسن ما يمكن الوصول ليه لما نيجي "نرتّب" حاجات <span class="english">(Sorting)</span>. بطيء شوية عن الـ O(n)، بس أحسن بمراحل من الكوارث اللي تحت.
+        <br>أمثلة: <span class="english">Merge Sort, Quick Sort</span>.
         </div>
-        <br>
-        <strong class="hl-amber">📖 تشبيه:</strong> زي ترتيب ورق الكوتشينة بطريقة ذكية — بتقسم الورق لنصين، ترتب كل نص لوحده، وبعدين تدمجهم.
-        <br><br>
-        <strong class="hl-cyan">ليه n log n؟</strong>
-        <br>الخوارزمية بتقسم المصفوفة <span class="english">log n</span> مرة (زي Binary Search)، وفي كل مرة بتعمل <span class="english">n</span> عمليات (بتعدي على كل العناصر). يبقى: <strong>n × log n</strong>.
-        <br><br>
-        <strong class="hl-blue">أمثلة:</strong>
-        <br>- <span class="english">Merge Sort</span> — ترتيب الدمج
-        <br>- <span class="english">Quick Sort</span> — الترتيب السريع (في المتوسط)
-        <br>- <span class="english">Heap Sort</span> — ترتيب الكومة
-        <br><br>
-        <strong>n = 1,000:</strong> 1000 × 10 = <strong class="hl-amber">~10,000 عملية</strong>
-        <br>مقارنة بـ O(n²): 1000 × 1000 = <strong class="hl-red">1,000,000 عملية!</strong>
-        <div class="note">لو حد قالك "رتب مصفوفة بأسرع طريقة" — أي خوارزمية ترتيب بالمقارنة <strong>مش ممكن</strong> تكون أسرع من O(n log n). ده حد رياضي مثبت!</div>
-    </div></div></div>
 
-    <!-- ═══════ O(n²) ═══════ -->
-    <div class="section"><div class="section-title" onclick="toggleSection(this)"><span id="on2"></span>O(n²) — Quadratic Time 🐌 بطيء!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج برتقاني "بطيء" مع علامة تحذير]</span>
+        <!-- O(n^2) -->
         <div class="complexity-card bad">
-        <strong style="color:#f97316;font-size:1.3rem"><span class="english">O(n²)</span> — Quadratic Time — الوقت التربيعي</strong>
+        <strong style="color:#f97316;font-size:1.3rem">⑤ الغبي المجتهد: <span class="english">O(n²) - Quadratic Time</span> 🐌</strong>
         <br><br>
-        الوقت بيزيد <strong class="hl-red">بمربع</strong> حجم الـ input! <strong>ضعف الـ input = 4 أضعاف الوقت!</strong>
+        <span class="camera-cue">🎥 [بتمسك راسك كأنك مصدع]</span>
+        ده الكابوس الأول للمبرمجين. ده اللي بيقارن كل عنصر... بكل عنصر تاني. يعني لو عندك 100 عنصر، هيعمل 10,000 خطوة. 
+        <br>لو عندك ألف؟ <strong class="hl-red">مليون خطوة.</strong>
+        <br><br>
+        غالباً بيحصل لما تكتب <strong class="hl-amber">لوب جوه لوب (Nested Loops)</strong>.
+        <div class="code-box">// O(n²) ❌
+for(let i=0; i<arr.length; i++) {
+    for(let j=0; j<arr.length; j++) {
+        // كارثة بتطبخ هنا
+    }
+}</div>
         </div>
-        <br>
-        <span class="camera-cue">🎥 [بتتكلم بتحذير]</span>
-        <strong class="hl-red">⚠️ تحذير:</strong>
-        <br>n = 100 → <strong>10,000 عملية</strong> (مقبول)
-        <br>n = 1,000 → <strong>1,000,000 عملية</strong> (بطيء)
-        <br>n = 10,000 → <strong>100,000,000 عملية</strong> (بطيء جداً!)
-        <br>n = 100,000 → <strong>10,000,000,000 عملية</strong> (كارثة! 💀)
-        <br><br>
-        <strong class="hl-cyan">إمتى بنشوفه؟</strong> لما يكون عندنا <strong>لوبين متداخلين</strong> — لوب جوه لوب:
-        <div class="code-box">// لوب جوه لوب — O(n²)
-function hasDuplicate(arr) {
-    for (let i = 0; i < arr.length; i++) {       // n مرة
-        for (let j = i + 1; j < arr.length; j++) { // n مرة تقريباً
-            if (arr[i] === arr[j]) {
-                return true;     // لقينا تكرار!
-            }
-        }
-    }
-    return false;               // مفيش تكرار
-}
-// كل عنصر بيتقارن بكل العناصر التانية!</div>
-        <br>
-        <strong class="hl-amber">أمثلة:</strong> <span class="english">Bubble Sort</span>، <span class="english">Selection Sort</span>، <span class="english">Insertion Sort</span> (أسوأ حالة).
-        <br><br>
-        <strong class="highlight">💡 الحل:</strong> في كتير من الحالات، ممكن نحسّن O(n²) لـ O(n) باستخدام <span class="english">Hash Set</span>!
-        <div class="code-box">// نفس المشكلة — بس O(n) باستخدام Set!
-function hasDuplicateFast(arr) {
-    const seen = new Set();
-    for (const num of arr) {        // لوب واحد بس!
-        if (seen.has(num)) return true;
-        seen.add(num);
-    }
-    return false;
-}
-// أسرع بمراحل! بس بتستهلك ذاكرة أكتر</div>
-        <div class="note">دايماً فكر: هل أقدر أشيل اللوب الداخلي باستخدام <span class="english">Hash</span> أو <span class="english">Set</span>؟ في أغلب الحالات — <strong>أيوه!</strong></div>
-    </div></div></div>
 
-    <!-- ═══════ O(2^n) ═══════ -->
-    <div class="section"><div class="section-title" onclick="toggleSection(this)"><span id="o2n"></span>O(2ⁿ) — Exponential Time 💥 كارثة!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="vfx-cue">✨ [VFX: بادج أحمر غامق "بطيء جداً!" مع لهب 🔥]</span>
+        <!-- O(2^n) -->
         <div class="complexity-card worst">
-        <strong style="color:#f87171;font-size:1.3rem"><span class="english">O(2ⁿ)</span> — Exponential Time — الوقت الأسي</strong>
+        <strong style="color:#ef4444;font-size:1.3rem">⑥ الوحش النووي: <span class="english">O(2ⁿ) - Exponential Time</span> 💥</strong>
         <br><br>
-        الوقت <strong class="hl-red">بيتضاعف</strong> مع <strong>كل عنصر بيتضاف!</strong>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا، وبتهمس]</span>
+        لو كودك فيه التعقيد ده... أوعدك، إن لو الداتا كبرت لـ 50 عنصر بس... الكود هيفضل شغال لحد ما <strong class="hl-red">الشمس تطفى</strong>.
+        <br>حرفياً، الرقم بيكبر لدرجة إن السنين مش هتكفي العمليات دي.
+        <br>مثال: خوارزمية بتحل مشكلة بانها تجرب <strong>كل الاحتمالات الممكنة</strong> في الكون.
         </div>
-        <br>
-        <span class="camera-cue">🎥 [بتبص بخوف مصطنع 😱]</span>
-        <strong class="hl-red">الأرقام المرعبة:</strong>
-        <br>n = 10 → <strong>1,024 عملية</strong> (كده كويس)
-        <br>n = 20 → <strong>1,048,576 عملية</strong> (مليون! 😰)
-        <br>n = 30 → <strong>1,073,741,824 عملية</strong> (أكتر من مليار!! 💀)
-        <br>n = 50 → عدد أكبر من ذرات الأرض! 🌍
-        <br><br>
-        <strong class="hl-cyan">المثال الكلاسيكي:</strong> حساب الـ <span class="english">Fibonacci</span> بطريقة ساذجة:
-        <div class="code-box">// Fibonacci — الطريقة الساذجة O(2ⁿ) ❌
-function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-// fibonacci(40) ← ممكن ياخد دقايق!
-// fibonacci(50) ← ممكن ياخد ساعات! 😱</div>
-        <br>
-        <strong class="hl-amber">ليه بطيء؟</strong> لأن كل استدعاء بيعمل <strong>استدعائين تانيين</strong>. يعني الشغل بيتضاعف في كل مستوى!
-        <br><br>
-        <strong class="highlight">💡 الحل: <span class="english">Dynamic Programming!</span></strong>
-        <div class="code-box">// Fibonacci — مع Memoization O(n) ✅
-function fibFast(n, memo = {}) {
-    if (n in memo) return memo[n];  // لو حسبناه قبل كده
-    if (n <= 1) return n;
-    memo[n] = fibFast(n - 1, memo) + fibFast(n - 2, memo);
-    return memo[n];
-}
-// fibFast(50) ← بيخلص في ميكروثانية! ⚡</div>
-        <div class="note">في الأسبوع الرابع هنتعلم <span class="english">Dynamic Programming</span> بالتفصيل — وده هيحول كتير من مشاكل O(2ⁿ) لـ O(n)!</div>
     </div></div></div>
 
-    <!-- ═══════ TABLE ═══════ -->
-    <div class="section-divider" id="table">جدول المقارنة</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">جدول المقارنة الشامل — Quick Reference<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتشاور على الجدول]</span>
-        <span class="vfx-cue">✨ [VFX: الجدول بيظهر صف صف]</span>
+    <!-- ═══════ THE BATTLE/TABLE ═══════ -->
+    <div class="section-divider" id="battle">الجدول المرعب</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الأرقام بتعض: الجدول اللي هيلخص كل حاجة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتشاور على شاشة كبيرة عليها الجدول، وبتخبط عليها بإيدك]</span>
+        <span class="sfx-cue">🔊 [SFX: خبطة قوية]</span>
+        مش مصدقني؟ كلام نظري؟ طب بص على الجدول ده.
+        <br>هفترض معاك إن الداتا <span class="english">(n) = 1,000</span>.
+        <br><br>
         <table class="comparison-table">
-            <tr><th>التعقيد</th><th>الاسم</th><th>n = 10</th><th>n = 1,000</th><th>n = 1,000,000</th><th>أمثلة</th></tr>
-            <tr><td style="color:#34d399;font-family:monospace">O(1)</td><td>Constant</td><td style="color:#34d399">1</td><td style="color:#34d399">1</td><td style="color:#34d399">1</td><td>Array access, Hash lookup</td></tr>
-            <tr><td style="color:#22d3ee;font-family:monospace">O(log n)</td><td>Logarithmic</td><td style="color:#22d3ee">~3</td><td style="color:#22d3ee">~10</td><td style="color:#22d3ee">~20</td><td>Binary Search</td></tr>
-            <tr><td style="color:#60a5fa;font-family:monospace">O(n)</td><td>Linear</td><td style="color:#60a5fa">10</td><td style="color:#60a5fa">1,000</td><td style="color:#60a5fa">1,000,000</td><td>Linear Search, Single loop</td></tr>
-            <tr><td style="color:#fbbf24;font-family:monospace">O(n log n)</td><td>Linearithmic</td><td style="color:#fbbf24">~33</td><td style="color:#fbbf24">~10,000</td><td style="color:#fbbf24">~20,000,000</td><td>Merge Sort, Quick Sort</td></tr>
-            <tr><td style="color:#f97316;font-family:monospace">O(n²)</td><td>Quadratic</td><td style="color:#f97316">100</td><td style="color:#f97316">1,000,000</td><td style="color:#f97316">10¹²!!</td><td>Bubble Sort, Nested loops</td></tr>
-            <tr><td style="color:#f87171;font-family:monospace">O(2ⁿ)</td><td>Exponential</td><td style="color:#f87171">1,024</td><td style="color:#f87171">∞</td><td style="color:#f87171">∞∞∞</td><td>Fibonacci naive, Subsets</td></tr>
+            <tr><th>عيلة الـ Big O</th><th>لما الـ n=1,000 .. الكود هيعمل كام خطوة؟</th></tr>
+            <tr><td style="color:#34d399;font-weight:bold"><span class="english">O(1)</span></td><td><strong style="color:#34d399">1 خطوة واحدة</strong></td></tr>
+            <tr><td style="color:#22d3ee;font-weight:bold"><span class="english">O(log n)</span></td><td><strong style="color:#22d3ee">10 خطوات</strong></td></tr>
+            <tr><td style="color:#60a5fa;font-weight:bold"><span class="english">O(n)</span></td><td><strong style="color:#60a5fa">1,000 خطوة</strong> (مش وحش)</td></tr>
+            <tr><td style="color:#fbbf24;font-weight:bold"><span class="english">O(n log n)</span></td><td><strong style="color:#fbbf24">10,000 خطوة</strong> (ماشي حاله)</td></tr>
+            <tr><td style="color:#f97316;font-weight:bold"><span class="english">O(n²)</span></td><td><strong style="color:#f97316">1,000,000 خطوة</strong> (بدأنا نعك!) ⚠️</td></tr>
+            <tr><td style="color:#ef4444;font-weight:bold"><span class="english">O(2ⁿ)</span></td><td><strong style="color:#ef4444">رقم فيه أكتر من 300 صفر!! الشاشة مش هتكفي!!</strong> 💀🔥</td></tr>
         </table>
         <br>
-        <span class="sfx-cue">🔊 [SFX: صوت "wow"]</span>
-        <strong class="hl-red">لاحظ الفرق:</strong> عند n = 1,000,000:
-        <br>- <span class="english">O(log n)</span> = <strong class="highlight">20 عملية</strong>
-        <br>- <span class="english">O(n)</span> = <strong class="hl-blue">مليون عملية</strong>
-        <br>- <span class="english">O(n²)</span> = <strong class="hl-red">تريليون عملية!!</strong>
-        <br><br>
-        فرق من 20 لتريليون! ده بالظبط ليه اختيار الخوارزمية الصح <strong class="hl-amber">مهم جداً!</strong>
+        <span class="camera-cue">🎥 [بتسكت. بتبص للكاميرا.]</span>
+        وضحت الرؤية؟ اختيارك للخوارزمية ممكن يودي البروجكت في داهية.
     </div></div></div>
 
     <!-- ═══════ TIPS ═══════ -->
     <div class="section-divider" id="tips">نصائح عملية</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي تكتشف التعقيد من الكود بسرعة؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتتكلم كأنك بتدي نصيحة سرية 🤫]</span>
-        <strong class="hl-amber">القواعد السريعة:</strong>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي تقرأ الكود وتعرف التعقيد في ثواني؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتتكلم بسرعة وثقة]</span>
+        طيب عشان منبقاش أكاديميين وبس... أول ما تبص على أي كود، إزاي تعرف التعقيد بتاعه بطرفة عين؟
         <br><br>
-        🔹 <strong>مفيش لوب</strong> ← غالباً <strong class="highlight">O(1)</strong>
+        <span class="vfx-cue">✨ [VFX: Rules popping up on screen dynamically]</span>
+        <strong class="hl-cyan">قاعدة 1:</strong> شفت <span class="english">Loop</span> واحد بيلف على الداتا؟ → <strong class="hl-blue">O(n)</strong>.
         <br><br>
-        🔹 <strong>لوب واحد</strong> بيعدي على كل العناصر ← <strong class="hl-blue">O(n)</strong>
+        <strong class="hl-cyan">قاعدة 2:</strong> شفت <span class="english">Loop</span> جواه <span class="english">Loop</span>؟ → <strong class="hl-red">O(n²)</strong>.
         <br><br>
-        🔹 <strong>لوب بيقسم على 2</strong> في كل مرة ← <strong class="hl-cyan">O(log n)</strong>
+        <strong class="hl-cyan">قاعدة 3:</strong> شفت حاجة بتقسم الداتا للنص في كل مرة (زي Binary Search)؟ → <strong class="hl-amber">O(log n)</strong>.
         <br><br>
-        🔹 <strong>لوبين متداخلين</strong> (nested) ← <strong class="hl-red">O(n²)</strong>
+        <strong class="hl-cyan">قاعدة 4: الثوابت ملهاش لازمة:</strong> 
+        <br>يعني إيه؟ لو عندك <span class="english">Loop</span> بيلف 100 مرة بس مش بيعتمد على <span class="english">n</span> (مثلاً n زادت بس هو برضه هيلف 100 مرة) → ده <strong class="highlight">O(1)</strong> مقنع!
+        <br>طب لو عندك 2 لوب ورا بعض (مش جوه بعض)؟ يبقى <span class="english">O(2n)</span>... بس في هندسة البرمجيات بنشيل الأرقام، فبيبقى برضة <strong class="hl-blue">O(n)</strong>.
         <br><br>
-        🔹 <strong>3 لوبات متداخلة</strong> ← <strong style="color:#f87171">O(n³)</strong> — خطر!
-        <br><br>
-        🔹 <strong>نداء تكراري بيعمل نداءين</strong> ← <strong class="hl-red">O(2ⁿ)</strong> — كارثة!
-        <br><br>
-        <div class="law-box">
-            <strong>قواعد الجمع والضرب:</strong>
-            <br>- لو عندك عمليتين <strong>ورا بعض</strong> (sequential): بتاخد الأكبر. O(n) + O(n²) = <strong>O(n²)</strong>
-            <br>- لو عندك عمليتين <strong>جوه بعض</strong> (nested): بتضربهم. O(n) × O(n) = <strong>O(n²)</strong>
-            <br>- الثوابت بنشيلها: O(3n) = <strong>O(n)</strong>، O(n² + n) = <strong>O(n²)</strong>
-        </div>
-    </div></div></div>
-
-    <!-- ═══════ PRACTICAL EXAMPLES ═══════ -->
-    <div class="section-divider" id="examples">أمثلة عملية</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">3 أمثلة عملية بالكود — حلل تعقيدها!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [بتتكلم بحماس: "يلا نطبق!"]</span>
-        <strong class="hl-cyan">مثال 1: الوصول لعنصر — O(1)</strong>
-        <div class="code-box">function getFirst(arr) {
-    return arr[0];  // عملية واحدة — مش مهم حجم المصفوفة
-}
-
-// arr = [1, 2, 3]       → O(1)
-// arr = [1, 2, ..., 1M] → O(1) — نفس الوقت!</div>
-        <strong class="highlight">التحليل:</strong> مفيش لوب. عملية واحدة بس. مش بتعتمد على n. يبقى <strong>O(1)</strong>. ✅
-        <br><br><br>
-        <strong class="hl-blue">مثال 2: جمع كل العناصر — O(n)</strong>
-        <div class="code-box">function sumArray(arr) {
-    let total = 0;                    // O(1)
-    for (let i = 0; i < arr.length; i++) {  // n مرة
-        total += arr[i];              // O(1) لكل عنصر
-    }
-    return total;                     // O(1)
-}
-
-// O(1) + O(n) × O(1) + O(1) = O(n)</div>
-        <strong class="hl-blue">التحليل:</strong> لوب واحد بيعدي على كل عنصر مرة واحدة. يبقى <strong>O(n)</strong>. ✅
-        <br><br><br>
-        <strong class="hl-red">مثال 3: مقارنة كل زوج — O(n²)</strong>
-        <div class="code-box">function printAllPairs(arr) {
-    for (let i = 0; i < arr.length; i++) {       // n مرة
-        for (let j = 0; j < arr.length; j++) {   // n مرة لكل i
-            console.log(arr[i], arr[j]);          // O(1)
-        }
-    }
-}
-
-// O(n) × O(n) = O(n²)
-// n = 10 → 100 طباعة
-// n = 100 → 10,000 طباعة!</div>
-        <strong class="hl-red">التحليل:</strong> لوبين متداخلين. اللوب الخارجي n مرة × اللوب الداخلي n مرة = <strong>O(n²)</strong>. ✅
+        إحنا مبنهتمش بالتفاصيل التافهة. بنهتم بالصورة الكبيرة. بالـ <strong class="highlight">معدل الانفجار</strong> بتاع الكود!
     </div></div></div>
 
     <!-- ═══════ OUTRO ═══════ -->
     <div class="section-divider" id="outro">الختام</div>
-    <div class="section"><div class="section-title" onclick="toggleSection(this)">ملخص الدرس — أهم النقط<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
-        <span class="camera-cue">🎥 [Medium Shot، باصص بثقة]</span>
-        يلا نلخص:
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">في الحلقة القادمة... أول خوارزمية ترتيب!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، باصص للكاميرا بنظرة هادية وفيها ترقب]</span>
+        <span class="sfx-cue">🔊 [SFX: Outro music starts building up]</span>
+        عرفت ليه قصة الحمامة والإنترنت مقياس مش كويس؟
+        <br>لأن الحمامة كانت هي الخوارزمية الفخمة اللي ما بتتاثرش بحجم الداتا... سرعتها وقتها كان <span class="english">O(1)</span>. لو حطيت فيها جيجا او 1000 الجيجا، الحمامة هطير في نفس الوقت المعين.
+        <br>اما الانترنت فكان <span class="english">O(n)</span>.
         <br><br>
-        ✅ <strong class="hl-amber"><span class="english">Big O</span></strong> = طريقة لقياس سرعة وكفاءة الخوارزمية
-        <br>✅ بنقيس <strong>Time Complexity</strong> (عدد العمليات) و <strong>Space Complexity</strong> (الذاكرة)
-        <br>✅ الـ <strong>n</strong> = حجم المدخلات
-        <br>✅ بنركز على <strong>Worst Case</strong>
-        <br>✅ <strong style="color:#34d399">O(1)</strong> أسرع → <strong style="color:#22d3ee">O(log n)</strong> → <strong style="color:#60a5fa">O(n)</strong> → <strong style="color:#fbbf24">O(n log n)</strong> → <strong style="color:#f97316">O(n²)</strong> → <strong style="color:#f87171">O(2ⁿ)</strong> أبطأ
-        <br>✅ لوب واحد = <strong>O(n)</strong>، لوبين متداخلين = <strong>O(n²)</strong>، بيقسم على 2 = <strong>O(log n)</strong>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا]</span>
+        دلوقتي أنت معاك <strong>السلاح الجبار</strong>. أنت مبقتش بتكتب كود وبس.
+        <br>أنت بقيت قادر "تبُص" للكود وتعرف هو هيعيش ولا هيموت.
         <br><br>
-        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم: "Selection Sort — الترتيب بالاختيار"]</span>
-        <span class="sfx-cue">🔊 [SFX: موسيقى حماسية]</span>
-        الدرس الجاي: <strong class="hl-blue"><span class="english">Selection Sort</span></strong>! أول خوارزمية ترتيب — بسيطة بس بطيئة O(n²). وهنا هتفهم <strong>ليه</strong> التعقيد مهم بالأرقام!
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Selection Sort"]</span>
+        الحلقة الجاية هندخل في عالم الـ <span class="english">Sorting</span>.
+        هندرس <span class="english">Selection Sort</span>... وهنشوف <span class="english">O(n²)</span> بعنينا وهو بيلهث عشان يرتبلنا شوية أرقام.
         <br><br>
-        روحوا جربوا الرسم البياني التفاعلي على المنصة — شوفوا الخطوط بتطير إزاي! 📊 سلام 👋
-        <span class="sfx-cue">🔊 [SFX: Whoosh + Outro]</span>
+        <strong class="hl-amber">سلام يا صديقي.</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Whoosh + Music cuts out]</span>
+        <span class="camera-cue">🎥 [✌️ — القطع للأسود]</span>
     </div></div></div>
 
     <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
