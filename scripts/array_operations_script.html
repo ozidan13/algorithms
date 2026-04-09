@@ -3,101 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سكريبت الدحيح - Arrays</title>
+    <title>سكريبت الشرح - Arrays</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2; margin: 0; padding: 2rem; direction: rtl; }
-        .container { max-width: 900px; margin: auto; }
-        h1 { color: #facc15; text-align: center; margin-bottom: 2rem; }
-        .block { background: #1e293b; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #facc15; }
-        .action { display: inline-block; background: #334155; color: #ffe4e6; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem; }
-        .text { font-size: 1.25rem; font-weight: 600; color: #e2e8f0; }
-        .en { font-family: sans-serif; font-weight: bold; color: #38bdf8; direction: ltr; display: inline-block; }
-        .highlight { color: #fbbf24; font-weight: 800; background: rgba(251,191,36,0.1); padding: 0 5px; }
-        .sfx { color: #c084fc; font-size: 0.9rem; margin-top: 5px; display: block; font-weight: bold; }
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(52,211,153,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(52,211,153,.35);box-shadow:0 8px 32px rgba(52,211,153,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#6ee7b7;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #10b981}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#6ee7b7;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-green{color:#10b981;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#34d399;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#6ee7b7;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(52,211,153,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(52,211,153,.08);border-right:3px solid #10b981;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#a7f3d0}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#34d399;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#34d399}
+        .toc a::before{content:"• ";color:#10b981}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>سكريبت الدحيح - عقدة طابور العيش (Arrays)</h1>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Arrays</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثاني · المصفوفات</p>
 
-        <div class="block">
-            <span class="action">🎥 [زوم سريع في وشك.. نظرة استغراب ثم ابتسامة]</span>
-            <div class="text">
-                تخيل معايا يا عزيزي إنك عايش في الستينات.. وبالتحديد في الاتحاد السوفيتي.. وقررت تنزل تشتري عيش.
-                <br>الطوابير هناك مكنتش طوابير عادية، دي كانت ثقافة! صف طويل جداً من آلاف الناس مرصوصين ورا بعض لزق.. مفيش سنتيمتر واحد بين المواطن السوفيتي وأخوه المواطن السوفيتي.
-                <br>لحد ما فجأة.. يجي ظابط مهم، وعاوز يحشر نفسه في الطابور! مش في الأول، لأ.. عاوز يقف في النص! رقم 500 مثلاً!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: صوت مارش عسكري روسي وفجأة يقطع بصوت (سكريبششش)]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتقطع بكاميرا جانبية بتبصلك من زاوية تانية وأنت بتهز راسك وتتكلم بسرعة]</span>
-            <div class="text">
-                المنطق بيقول إنه يقف في النص وخلاص.. لكن لا! 
-                عشان الباشا يقف في النص.. المواطن رقم 500 لازم يرجع خطوة لورا ويبقى 501.. و501 يرجع خطوة عشان يبقى 502.. وهكذا لحد آخر الطابور! 
-                حرفياً فيه ألف واحد هيضطروا يرحّلوا نفسهم عشان خاطر واحد بس دخل في النص!
-                <br>مجهود بدني وعضلي وجسدي رهيب! 
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [زوم بطيء على وشك ونبرة صوتك بتهدى وتبقى جد كأنك بتكشف سر]</span>
-            <div class="text">
-                تصدقني يا عزيزي لو قولتلك إن الكمبيوتر بتاعك، واللي بالمناسبة أذكى مننا كلنا، بيعمل نفس المأساة السوفيتية دي كل يوم؟
-                <br>وأنت قاعد بتشرب القهوة وبتلعب في الكود، وبتستخدم أهم وأشهر هيكل بيانات في التاريخ.. الـ <span class="en">Arrays</span> (المصفوفة)!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: دقة طبلة درامية زووم إن بسرعة]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتمشي وتتحرك في الاستوديو – Scroll to: Memory Layout]</span>
-            <div class="text">
-                بص يا سيدي.. הـ Array دي معمولة على مبدأ الـ <span class="en">Contiguous Memory</span>. يعني كراسي ولازقة ف بعض. 
-                لو طلبت من הרامات 5 كراسي، لازم تديك 5 كراسي متصلين.. لو مفيش؟ الكمبيوتر ممكن يفجر المكان ويدورلك على قاعة تانية!
-                <br>بسبب اللزقة دي، הـ Array بقت صاروخ في القراية!
-                يعني لو قلت للكمبيوتر "هاتلي الكرسي رقم 50".. الكمبيوتر مبيعديش على 1 و 2 و 3! 
-                لأ، ده بيعمل معادلة رياضية في <span class="highlight">جزء من المليون من الثانية</span>. عنوان البداية زائد الاندكس.. طاخ! يروح للكرسي رقم 50 فوراً وبسرعة <span class="en">O(1)</span>. كأنك بتعمل Teleport!
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتقف فجأة وترفع حاجبك – Scroll to: Insert Operation]</span>
-            <div class="text">
-                يا سلام! عظمة! أسرع حاجة في الكوكب!
-                <br>بس استنى.. فاكر الظابط السوفيتي؟ هنا بتيجي الكارثة السوداء. الإضافة في النص! الـ <span class="en">Insert</span>!
-                <br>يا عزيزي لو الـ Array بتاعتك فيها مليون عنصر.. وحبيت تدخل بـ "بوست" جديد في أول التايم لاين.. الكمبيوتر بيضطر ياخد المليون بوست القدام.. يزيحهم كلهم خطوة لليمين! مليون عملية إزاحة (Shifting)!
-                العلماء سموا الكارثة دي <span class="en">O(n)</span>. لأنك لو معاك N من العناصر.. هتعمل N زحزحة!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: صوت طوب بيتكردس وناس بتنهج من التعب]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [الكاميرا بتقرب جداااً – Scroll to: Interactive Demo]</span>
-             <div class="text">
-                ولو حاولت تمسح عنصر من النص؟ (Delete).. إياك تظن إن الكمبيوتر هيسيب مكانه فاضي.. لأ يا حبيبي الـ Arrays مبتقبلش الفراغ العاطفي.. هيروح واخډ كل العناصر اللي عاليمين، وساحبهم يشفّتهم شمال خطوة! برضه <span class="en">O(n)</span>! شقاء، تعب، استهلاك بروسيسور ملوش أول من آخر!
-                <br>عشان كده في الديمو اللي قدامك ده، جرب تحشر رقم في النص وشوف الكمبيوتر بيعاني إزاي بيكتبلك في اللوج إنه رحّل الداتا عشانك!
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [زوم آوت.. بترجع تقعد على الكرسي بارتياح]</span>
-            <div class="text">
-                إذن، الخلاصة الدحيحية! הـ Arrays سلاح فتاك.. تقرأ منه؟ هو طيارة F-16 مفيش أسرع منها.
-                <br>تعدل فيه وتحشر داتا في النص وتمسح من الأول؟ هيقلب معاك بجرار زراعي سوفيتي بياكل الرامات.
-                <br>طيب لو أنا شغال على سيستم زي تطبيق رسائل الواتساب، والرسائل بتيجي ورا بعض وعاوز أحط رسالة وامسح رسالة من غير ما الباقات تتزحزح والكمبيوتر يفرقع؟ أعمل إيه؟
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتبص للكاميرا بنظرة غامضة فيها تحدي]</span>
-            <div class="text">
-                هنا علماء الكمبيوتر قعدوا مع بعض وقالوا: "احنا لازم نلغي فكرة الكراسي الملزقة دي.. وكل عنصر يقعد في البلد اللي تريحه!"
-                <br>ازاي ميتوهوش من بعض؟ ده اللي هنعرفه في الحلقة الجاية.. مع الخريطة السحرية: الـ <span class="en">Linked Lists</span>.
-                <br>يا ريت بقى قبل ما تمشي تبص بصه على المصادر تحت، وتقلب في الديمو وتعمل Insert للصبح. سلام!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: تيمة أغنية الانترو بتاعت الدحيح تخش هنا وتنهي]</span>
-        </div>
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: عقدة طابور العيش</a>
+        <a href="#shifting">المأساة: لما الباشا يخش الطابور</a>
+        <a href="#arrays">الـ Array: صاروخ القراءة</a>
+        <a href="#insert-delete">الكارثة المتخفية: الإضافة والمسح</a>
+        <a href="#outro">الخلاصة وتمهيد القوائم</a>
     </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مأساة الطابور السوفيتي!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم سريع في وشك.. نظرة استغراب ثم ابتسامة]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت مارش عسكري روسي وفجأة يقطع بصوت (سكريبششش)]</span>
+        تخيل معايا يا عزيزي إنك عايش في الستينات.. وبالتحديد في الاتحاد السوفيتي.. وقررت تنزل تشتري عيش.
+        <br><br>
+        الطوابير هناك مكنتش طوابير عادية، دي كانت ثقافة! صف طويل جداً من آلاف الناس مرصوصين ورا بعض لازقين في بعض.. مفيش سنتيمتر واحد بين المواطن السوفيتي وأخوه المواطن السوفيتي.
+        <br><br>
+        لحد ما فجأة.. يجي ظابط مهم، وعاوز يحشر نفسه في الطابور! مش في الأول، لأ.. عاوز يقف في النص! رقم 500 مثلاً!
+    </div></div></div>
+
+    <!-- ═══════ SHIFTING ═══════ -->
+    <div class="section-divider" id="shifting">تأثير الحشر</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">عملية الزحزحة الجماعية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقطع بكاميرا جانبية بتبصلك من زاوية تانية وأنت بتهز راسك وتتكلم بسرعة]</span>
+        المنطق بيقول إنه يقف في النص ويمشي وخلاص.. لكن لا! 
+        عشان الباشا يقف في النص.. المواطن رقم 500 لازم يرجع خطوة لورا ويبقى 501.. و501 يرجع خطوة عشان يبقى 502.. وهكذا لحد آخر الطابور! 
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسم كرتوني لناس بتخبط في بعض وترجع لورا زي أحجار الدومينو]</span>
+        حرفياً فيه ألف واحد هيضطروا يرحّلوا نفسهم خطوة خطوة عشان خاطر واحد بس دخل في النص! مجهود بدني وعضلي وجسدي رهيب وبطيء! 
+    </div></div></div>
+
+    <!-- ═══════ ARRAYS ═══════ -->
+    <div class="section-divider" id="arrays">المصفوفة في الكمبيوتر</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">التطابق مع הـ Arrays<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم بطيء على وشك ونبرة صوتك بتهدى وتبقى جد كأنك بتكشف سر]</span>
+        <span class="sfx-cue">🔊 [SFX: دقة طبلة درامية زووم إن بسرعة]</span>
+        تصدقني يا عزيزي لو قولتلك إن الكمبيوتر بتاعك، واللي بالمناسبة أذكى مننا كلنا، بيعمل نفس المأساة السوفيتية دي كل يوم؟ وأنت قاعد بتشرب القهوة وبتلعب في الكود، وبتستخدم أهم وأشهر هيكل بيانات في التاريخ.. الـ <span class="english">Arrays (المصفوفة)</span>!
+        <br><br>
+        <div class="term-def">
+            بص يا سيدي.. הـ Array دي معمولة على مبدأ الـ <span class="english">Contiguous Memory</span>. يعني كراسي ولازقة ف بعض. 
+            لو طلبت من الرامات 5 كراسي، لازم تديك 5 كراسي متصلين.
+        </div>
+        <br>
+        بسبب اللزقة دي، הـ Array دي تعتبر <strong class="hl-cyan">صاروخ في القراية</strong>!
+        <br>يعني لو قلت للكمبيوتر "هاتلي الكرسي رقم 50".. الكمبيوتر مبيعديش على 1 و 2 و 3! 
+        لأ، ده بيعمل معادلة رياضية في جزء من المليون من الثانية. يروح للكرسي رقم 50 فوراً وبسرعة <span class="english">O(1)</span>. كأنك بتعمل Teleport!
+    </div></div></div>
+
+    <!-- ═══════ INSERT DELETE ═══════ -->
+    <div class="section-divider" id="insert-delete">الكارثة الخفية</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الإضافه والمسح (Insertion & Deletion)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقف فجأة وترفع حاجبك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت طوب بيتكردس وناس بتنهج من التعب]</span>
+        يا سلام! عظمة! أسرع حاجة في الكوكب!
+        بس استنى.. فاكر الظابط السوفيتي؟ هنا بتيجي الكارثة السوداء. 
+        <br><br>
+        <strong class="highlight">الإضافة في النص! الـ Insert!</strong>
+        يا عزيزي لو الـ Array بتاعتك فيها مليون عنصر.. وحبيت تدخل بـ "بوست" جديد في أول التايم لاين.. الكمبيوتر بيضطر ياخد المليون بوست القدام.. يزيحهم كلهم خطوة لليمين! <strong class="hl-red">مليون عملية إزاحة (Shifting)!</strong>
+        العلماء سموا الكارثة دي <span class="english">O(n)</span>. لأنك لو معاك N من العناصر.. هتعمل N زحزحة!
+        <br><br>
+        ولو حاولت تمسح عنصر من النص؟ (Delete).. إياك تظن إن الكمبيوتر هيسيب مكانه فاضي.. لأ يا حبيبي הـ Arrays مبتقبلش الفراغ العاطفي.. هيروح واخد كل العناصر اللي عاليمين، وساحبهم يشيّفتهم شمال خطوة لورا! شقاء، تعب، استهلاك بروسيسور ملوش أول من آخر!
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة للدرس القادم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">ما هو الحل؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم آوت.. بترجع تقعد على الكرسي بارتياح]</span>
+        إذن، الخلاصة الدحيحية! הـ <span class="english">Arrays</span> سلاح فتاك.. تقرأ منه وتبحث بالاندكس؟ هو طيارة F-16 مفيش أسرع منها.
+        بس لو حبيت تعدل فيه وتحشر داتا في النص وتمسح؟ هيقلب معاك بجرار زراعي سوفيتي بياكل הרامات.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بنظرة غامضة فيها تحدي]</span>
+        طيب لو أنا شغال على سيستم زي الواتساب، والرسائل بتيجي ورا بعض وعاوز أحط رسالة وامسح رسالة من غير ما الداتا تتزحزح والكمبيوتر يفرقع؟ أعمل إيه؟
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Linked Lists"]</span>
+        هنا علماء الكمبيوتر قعدوا وقالوا: "احنا لازم نلغي فكرة الكراسي الملزقة دي.. وكل عنصر يقعد في البلد اللي تريحه!"
+        إزاي ميتوهوش من بعض؟ ده اللي هنعرفه في الحلقة الجاية.. مع الخريطة السحرية: الـ <span class="english">Linked Lists</span>.
+        <br><br>
+        <strong class="highlight">جرب تحشر رقم في الديمو تحت وشوف المعاناة، وأشوفك الدرس الجاي! سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 2: Arrays
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
 </body>
 </html>

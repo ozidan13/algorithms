@@ -3,99 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سكريبت الدحيح - Divide and Conquer</title>
+    <title>سكريبت الشرح - Divide and Conquer</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #cbd5e1; line-height: 2; margin: 0; padding: 2rem; direction: rtl; }
-        .container { max-width: 900px; margin: auto; }
-        h1 { color: #14B8A6; text-align: center; margin-bottom: 2rem; }
-        .block { background: #1e293b; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-right: 4px solid #14B8A6; }
-        .action { display: inline-block; background: #334155; color: #ffe4e6; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem; }
-        .text { font-size: 1.25rem; font-weight: 600; color: #e2e8f0; }
-        .en { font-family: sans-serif; font-weight: bold; color: #38bdf8; direction: ltr; display: inline-block; }
-        .highlight { color: #facc15; font-weight: 800; background: rgba(250,204,21,0.1); padding: 0 5px; }
-        .sfx { color: #10b981; font-size: 0.9rem; margin-top: 5px; display: block; font-weight: bold; }
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(14,165,233,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(14,165,233,.35);box-shadow:0 8px 32px rgba(14,165,233,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#38bdf8;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #0ea5e9}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#7dd3fc;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-sky{color:#0ea5e9;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#38bdf8;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.3);border-radius:8px;color:#38bdf8;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(14,165,233,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(14,165,233,.08);border-right:3px solid #0ea5e9;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#bae6fd}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(14,165,233,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#38bdf8;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#38bdf8}
+        .toc a::before{content:"• ";color:#0ea5e9}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>سكريبت الدحيح - مكتبة الإسكندرية وفرّق تسد (Divide & Conquer)</h1>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Divide and Conquer</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثاني · خوارزمية فرّق تسد</p>
 
-        <div class="block">
-            <span class="action">🎥 [الكاميرا بتبدأ بزاوية سفلية بتديك هيبة، وبتتكلم بصوت مدير ديكتاتور]</span>
-            <div class="text">
-                تخيل إنك بقيت مدير مدرسة، وقدامك مصيبة سودا! 
-                عندك 10 آلاف ورقة إمتحان مكبوبة على الأرض، ومطلوب منك ترتبهم أبجدياً من الألف للياء!
-                <br>لو قعدت كمدير محترم، تمسك ورقة ورقة وتقارنها باللي قبلها، وتعمل نظام الـ <span class="en">Selection Sort</span>.. هتاخد بتاع 100 مليون عملية مقارنة! O(n^2)! إجازة الصيف هتبدأ وتخلص وأنت لسه بترتب في ورق الحضانة!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: صوت ورق بيتبعثر وفوقيه صوت دقات ساعة متسارعة (تيك توك)]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [الكاميرا بتقطع جانبي سريع.. النظرة أصبحت شريرة وماكرة]</span>
-            <div class="text">
-                पण كأى مدير شاطر، أنت مش هتعمل الشغلانة دي بنفسك!
-                أنت هتستخدم استراتيجية سياسية قذرة وعظيمة في نفس الوقت اسمها: "فرّق تسد" <span class="en">(Divide & Conquer)</span>.
-                <br>هتروح قاسم الـ 10 آلاف ورقة دول نصين.. 5000 هنا و 5000 هنا.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتعلي صوتك وتتكلم بريتم طلقة]</span>
-            <div class="text">
-                وتدي النص ده للمدرس الأول، والنص ده للمدرس التاني. وتقولهم "رتبوهم ماليش دعوة!"
-                <br>يقوم المدرس الأول مقسمهم لـ 2500 ورقة ويديهم للمدرسين اللي تحته! والمدرسين يقسموهم لـ 1250! لحد ما نوصل إننا رمينا ورقة واحدة بس على 10 آلاف طالب!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: صوت طبول الحرب بتبدأ تعلى]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [الكاميرا بتعمل زووم بطيء، وبتهدى فجأة كأن المشكلة اتحلت]</span>
-            <div class="text">
-                تخيل معايا يا عزيزي لما طالب يبص في إيده يلاقي "ورقة واحدة بس".. هيحتاج كام ثانية عشان يرتبها؟
-                <span class="highlight">صفر ثانية!</span> لأن الورقة الواحدة بطبيعة الحال.. مترتبة!
-                هنا بتبدأ المرحلة العكسية الجميلة.. الدمج! أو الـ <span class="en">Merge</span>.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بتمشي في الإستوديو وتشاور بإيدك كأنك بتدمج ورق – Scroll to: Merge Sort Deep Dive]</span>
-            <div class="text">
-                الطالبين اللي جنب بعض يضموا ورقتين مترتبين لبعض! والـ 4 يضموا مع بعض.. لحد ما الورق كله يرجعلك على مكتبك كمدير، متقسم حزمتين 5000 مترتبين من أصغر لأكبر، و 5000 مترتبين من أصغر لأكبر!
-                أنت كمدير كل اللي هتعمله، تبص على أول ورقة هنا، وأول ورقة هنا.. اللي أصغر، تسحبها تحطها في الصندوق!
-                بمجهود لا يُذكر.. وبسرعة مهولة حرفياً!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: صوت طقطقة أصابع مع كل كلمة "تسحبها"]</span>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [الكاميرا بتقرب والنور بيتحول أزرق هادي – Scroll to: Tree Diagram]</span>
-             <div class="text">
-                الخوارزمية العظيمة دي اللي مبنية على הـ Strategy دي اسمها <span class="highlight"><span class="en">Merge Sort</span></span>.
-                وبطلة العالم في الـ recursion.. بتقسم، تحل المُصغر، وتدمج الكبير! (Divide, Conquer, Combine) زي ما شجرة الرسمة دي بتوضح بالظبط.
-                الأرقام قعدت تنزل تنزل تنزل تتفصل عن بعضها.. ولما بقوا فردانيين، رجعوا اتلموا وهما مترتبين جاهزين.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بترفع صباعك بتحذير – Scroll to: Complexity]</span>
-             <div class="text">
-                السرعة هنا معجزة! إحنا نزلنا من مصيبة הـ O(n^2) اللي هي 100 مليون عملية.. لحاجة اسمها <span class="en">O(n log n)</span> يعني بنتكلم في أقل من 150 ألف عملية! (وفرنا 99% من وقت الكمبيوتر)!
-                <br>بس استنى.. مفيش حلاوة من غير ضريبة.
-                مدير المدرسة عشان يدمج الورق محتاج إيه؟ محتاج "مكتب فاضي" كبير يحط عليه الورق المترتب!
-                يعني الـ Merge Sort محتاج <span class="highlight">مساحة إضافية في الذاكرة Memory Space</span> تساوي O(n). ودي ضريبة السرعة.
-            </div>
-        </div>
-
-        <div class="block">
-            <span class="action">🎥 [بترجع للكرسي تقعد وتقفل الحلقة – Scroll to: Interactive Demo & Code]</span>
-            <div class="text">
-                عشان كده يا صديقي، دي خوارزمية جبارة لكن بتاكل مساحة! لو بتبرمج ساعة سمارت راماتها 2 ميجا، إياك تستخدم הـ Merge Sort وابقى روح للـ Quick اللي هنخده بعدين!
-                لكن لو الداتا جبارة ومشكلة الرام محلولة، ده أفضل سلاح في جيبك.
-                <br>سيبتك أنا مع الديمو تحت تقسم وتدمج براحتك، وتشوف الكود بسلامته.. واشوفكم الحلقة الجاية! سلام!
-            </div>
-            <span class="sfx">🔊 [مؤثر صوتي: تيمة أغنية الانترو بتاعت الدحيح تخش هنا وتنهي مع لوجو الحلقة]</span>
-        </div>
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: مكتبة الإسكندرية والمدير الديكتاتور</a>
+        <a href="#strategy">فرّق تسد: السياسة القذرة السريعة</a>
+        <a href="#base-case">ورقة واحدة: نقطة التوقف</a>
+        <a href="#merge">الدمج: الحصاد الجميل (Merge Sort)</a>
+        <a href="#complexity">الضريبة: مساحة הـ Memory</a>
+        <a href="#outro">الخلاصة ورسالة الأسبوع الثالث</a>
     </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">كارثة مكتبة الإسكندرية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [الكاميرا بتبدأ بزاوية سفلية بتديك هيبة، وبتتكلم بصوت مدير ديكتاتور]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت ورق بيتبعثر وفوقيه صوت دقات ساعة متسارعة (تيك توك)]</span>
+        تخيل إنك بقيت مدير מدرسة، وقدامك مصيبة سودا! 
+        عندك 10 آلاف ورقة إمتحان مكبوبة على الأرض، ومطلوب منك ترتبهم أبجدياً من الألف للياء!
+        <br><br>
+        לו קعدت كمدير محترم، تمسك ورقة ورقة وتقارنها باللي قبلها، ותعمل نظام الـ <span class="english">Selection Sort</span> أو الـ Bubble Sort.. هتاخد بتاع 100 مليون عملية مقارنة! <strong class="hl-red">O(n²)</strong>! 
+        <br>إجازة الصيف هتبدأ ותخلص وأنت لسه بترتب في ورق الحضانة!
+    </div></div></div>
+
+    <!-- ═══════ STRATEGY ═══════ -->
+    <div class="section-divider" id="strategy">التكتيك الجديد</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">فرّق تسد: السياسة העظيمة المُدمرة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [الكاميرا بتقطع جانبي سريع.. النظرة أصبحت شريرة وماكرة]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت طبول الحرب بتبدأ تعلى]</span>
+        بصفتك مدير شاطر، أنت مش هتعمل الشغلانة دي بنفسك!
+        أنت هتستخدم استراتيجية سياسية قذرة وعظيمة في نفس الوقت اسمها: "فرّق تسد" <span class="english">(Divide & Conquer)</span>.
+        <br><br>
+        هتروح قاسم الـ 10 آلاف ورقة دول نصين.. 5000 هنا و 5000 هنا.
+        <br><br>
+        <span class="camera-cue">🎥 [بتعلي صوتك وتتكلم بريتم طلقة]</span>
+        وتدي النص ده للمدرس الأول، والنص ده للمدرس التاني. وتقولهم "رتبوهم ماليش دعوة!"
+        يقوم المدرس الأول مقسمهم لـ 2500 ورقة ويديهم للمدرسين اللي تحته! والمدرسين يقسموهم لـ 1250! 
+        لحد ما نوصل إننا رمينا ورقة واحدة بس للترتيب على 10 آلاف طالب في החوش!
+    </div></div></div>
+
+    <!-- ═══════ BASE CASE ═══════ -->
+    <div class="section-divider" id="base-case">نقطة النهاية</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">ورقة واحدة مستحيل تترتب<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [الكاميرا بتعمل زووم بطيء، وبتهدى فجأة كأن المشكلة اتحلت]</span>
+        تخيل معايا يا عزيزي لما طالب يبص في إيده يلاقي "ورقة واحدة بس".. هيحتاج كام ثانية عشان يرتبها؟
+        <br><br>
+        <strong class="highlight">صفر ثانية!</strong> لأن الورقة الواحدة بطبيعة الحال.. مترتبة جاهزة!
+        هنا بتبدأ المرحلة العكسية الجميلة.. مرحلة الحصاد والدمج! أو الـ <span class="english">Merge</span>.
+    </div></div></div>
+
+    <!-- ═══════ MERGE ═══════ -->
+    <div class="section-divider" id="merge">سحر الدمج</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الـ Merge Sort وتجميع الأوراق بالطريق העكسي<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتمشي في الإستوديو وتشاور بإيدك كأنك بتدمج ورقين ورقين]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت طقطقة أصابع مع كل كلمة "تسحبها"]</span>
+        الطالبين اللى جنب بعض يضموا ورقتين مترتبين لبعض! والـ 4 يضموا مع بعض.. 
+        <br>لحد ما الورق كله يرجعلك في النهاية على مكتبك كمدير، מתقسم חزمتين عملاقتين: 5000 ورقة مترتبين من أصغر لأكبر على اليمين، و 5000 مترتبين من أصغر لأكبر على الشمال!
+        <br><br>
+        أنت كمدير كل اللي هتعمله، ہتبص على أول ورقة هنا، وأول ورقة هنا.. اللي أصغر، تسحبها تحطها في الصندوق!
+        בمجهود لا يُذكر.. وبسرعة مهولة حرفياً!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسمة متحركة لشجرة הـ Merge Sort وهي بتنقسم للأرقام وترجع تدمج تاني]</span>
+        <div class="term-def">
+            الخوارزمية העظيمة دي اللي مبنية على الـ Strategy دي اسمها <strong class="hl-sky">Merge Sort</strong>. 
+            ودي بطلة العالم في الـ recursion.. بتقسم، تحل المُصغر، وتدمج الكبير! (Divide, Conquer, Combine).
+        </div>
+    </div></div></div>
+
+    <!-- ═══════ COMPLEXITY ═══════ -->
+    <div class="section-divider" id="complexity">قياس الأداء</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">السرعة المعجزة والضريبة القاسية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بترفع صباعك بتحذير]</span>
+        السرعة هنا מעجزة! إحنا نزلنا من مصيبة הـ O(n²) اللي هي 100 مليون عملية مقرفة.. לחاجة اسمها <strong class="hl-cyan">O(n log n)</strong> يعني بنتكلم في أقل من 150 ألف عملية! (وفرنا 99.8% من وقت الكمبيوتر)!
+        <br><br>
+        بس استنى.. مفيش חلاوة من غير ضريبة.
+        מدير المدرسة عشان يدمج الورق محتاج إيه؟ محتاج "مكتب فاضي" كبير يحط عليه الورق المترتب كمسودة!
+        <br><br>
+        يعني الـ Merge Sort מحتاج <strong class="hl-amber">مساحة إضافية في הذاكرة Memory Space</strong> تساوي <span class="english">O(n)</span>. ودي ضريبة السرعة.
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة للدرس القادم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">نهاية الأسبوع الثاني<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بترجع לالكرسي تقعد وتقفل الحلقة]</span>
+        عشان كده يا صديقي، دي خوارزمية جبارة لكن بتاكل مساحة! لو بتبرمج ساعة סمارت רاماتها 2 ميجا، إياك تستخدم הـ Merge Sort وابقى روح للـ Quick اللي هندرسه المرة الجاية!
+        لكن لو הדاتا جبارة ومشكلة الـ RAM محلولة، ده أفضل سلاح لترتيب الداتا!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الأسبوع القادم "الأسبوع الثالث - QuickSort & Graphs"]</span>
+        إحنا بكدة خلصنا الأسبوع التاني من الكورس. فهمنا الذاكرة وهياكل البيانات. 
+        الأسبوع الجاي هنכנס في الوحوش الكبيرة.. إزاي الـ Data Bases بتجيب المعلومة في خطوة واحدة؟ وإزاي نرسم خرائط الشوارع في مخ الكمبيوتر!
+        <br><br>
+        <strong class="highlight">سيبتك أنا مع الديمو تحت تقسم ותدمج براحتك، وتشوف الكود بسلامته.. سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 2: Divide & Conquer
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
 </body>
 </html>
