@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Graph Representation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(56,189,248,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(56,189,248,.35);box-shadow:0 8px 32px rgba(56,189,248,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#7dd3fc;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #38bdf8}
+        .note{font-size:.92rem;color:#fcd34d;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fcd34d;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#7dd3fc;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-sky{color:#38bdf8;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#7dd3fc;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:8px;color:#7dd3fc;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(56,189,248,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(56,189,248,.08);border-right:3px solid #38bdf8;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#bae6fd}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#7dd3fc;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#7dd3fc}
+        .toc a::before{content:"• ";color:#38bdf8}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Graph Representation</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثالث · تمثيل الرسوم البيانية</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: مش كل الداتا بتترص في جدول!</a>
+        <a href="#what-graph">يعني إيه Graph؟ (عقد ووصلات)</a>
+        <a href="#matrix">الطريقة الأولى: مصفوفة التجاور (Adjacency Matrix)</a>
+        <a href="#list">الطريقة التانية: قائمة التجاور (Adjacency List)</a>
+        <a href="#comparison">المعركة: Matrix ولا List؟</a>
+        <a href="#outro">الخلاصة والتمهيد للمشي فيها</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">العالم متصل ببعضه، مفيش حاجة واقفة لوحدها!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف وإيدك بتشاور على حاجة غير مرئية قدامك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت زحمة خفيف، وصوت إشعارات سوشيال ميديا سريعة]</span>
+        على مدار الكورس كله، وإحنا بندرس داتا مرصوصة فوق بعض.. في <span class="english">Arrays</span> و <span class="english">Linked Lists</span> ومربعات وجداول.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا شوية]</span>
+        بس العالم الحقيقي معقد أكتر من رَصّة الجداول. العلاقات مش دايماً خط طويل.. العلاقات شبكة متداخلة. 
+        <br>
+        أنا صاحبك.. إنت صاحب فلان.. فلان ده أخو فلانة! شبكة الانترنت؟ عبارة عن مواقع بتشاور على بعض. شبكة الطرق والخرائط؟ مدن مربوطة بشوارع متفرعة في كل مكان.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: شبكة عنكبوتية معقدة بتبدأ تترسم على الشاشة لمدن أو أصدقاء]</span>
+        الشكل المعقد المتداخل المرعب ده... إزاي الكمبيوتر بيحفظه ويفهمه؟ النهاردة هندخل عالم הـ <strong class="hl-sky">Graphs (الرسوم البيانية أو الشبكات)</strong>. أقوى وأعظم هيكل بيانات بيحاكي الواقع. 
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS GRAPH ═══════ -->
+    <div class="section-divider" id="what-graph">يعني إيه جراف؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مكونات الـ Graph في العالم<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتتحرك وأنت بتشرح بإيدك]</span>
+        الـ <span class="english">Graph</span> بسيط جداً في تكوينه. هو بيتكون من حاجتين مفيش غيرهم:
+        <br><br>
+        <div class="term-def">
+            <strong>1- Nodes أو Vertices (العُقد أو النقاط):</strong> دي تمثل الأشياء.. زي الناس في الفيس بوك، أو المدن في الخريطة، أو الراوتر بتاعك في الانترنت.
+        </div>
+        <div class="term-def">
+            <strong>2- Edges (الوصلات أو الخطوط):</strong> دي الحاجة اللي بتربط بين الـ Nodes. يعني لو أنا صاحبك هيبقى فيه Edge بيني وبينك. لو إسكندرية والقاهرة بينهم طريق زراعي.. إذن فيه Edge بينهم!
+        </div>
+        <span class="camera-cue">🎥 [إبتسامة خفيفة و بتشاور للمشاهد]</span>
+        الفكرة إن الكمبيوتر ماعندهوش قدرة إنه يمسك ورقة وقلم ويرسم دوائر وخطوط زي ما أنا وإنت بنعمل! الكمبيوتر مبيهضمش غير الجداول والمصفوفات... وهنا العلماء اخترعوا طريقتين عشان نضحك على الكمبيوتر بيهم ونخليه يسجل الرسمة دي.
+    </div></div></div>
+
+    <!-- ═══════ MATRIX ═══════ -->
+    <div class="section-divider" id="matrix">أول حل للمشكلة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مصفوفة التجاور (Adjacency Matrix)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم للـ Visualizer في الشاشة على تصميم الـ Matrix]</span>
+        الطريقة الأولى ودي المباشرة والعنيفة... اسمها <span class="english">Adjacency Matrix</span>.
+        <br><br>
+        ببساطة إحنا بنعمل جدول גדול عبارة عن: أسماء المدن (أو الناس) موجودة في الصفوف وأيضاً موجودة في الأعمدة.
+        وبنعدي على كل خلية.. هل مدينة (أ) متصلة بمدينة (ب)؟ لو متصلים هنكتب <strong class="hl-blue">1</strong>. لو مڤيش طريق بينهم هنكتب <strong class="hl-red">0</strong>.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الماتريكس بتظهر وفيها أرقام 1 وأصفار 0 كتير جداً]</span>
+        بص نظرة كدة للجدول ده.. هتلاقي إن الجدول أغلبه متملي <strong class="hl-red">أصفار</strong>! لأن طبيعي أنا مش صديق לكل الناس اللي عالفيس بوك. أنا صديق لـ 500 مثلاً מתוך 2 مليار! 
+        <br><br>
+        تخيل بقى جدول الفيس بوك عامل إزاي؟ جدول لـ 2 مليار في 2 مليار، كله أصفار؟ ده بيسموه <span class="english">Sparse Matrix</span>.. وبصراحة، ده تضييع פظيع وفاسد للـ Memory بتاعة الكمبيوتر.
+    </div></div></div>
+
+    <!-- ═══════ LIST ═══════ -->
+    <div class="section-divider" id="list">الحل الأذكى</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">قائمة التجاور (Adjacency List)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقف وتغير نبرة صوتك لإسلوب فيه مكر ودهاء]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت لمبة بتنور أو جرس خفيف]</span>
+        ولإن المهندسين مش بيحبوا الإسراف في الذاكرة، اخترعوا الطريقة التانية والأوقع بكتير: <strong class="hl-cyan">Adjacency List</strong> (قائمة التجاور).
+        <br><br>
+        هنا إحنا بنجيب كل شخص.. ونعمل قصاده <strong class="highlight">قائمة (Array)</strong> بأسماء صحابه <strong class="hl-amber">هو بس</strong>.
+        مفيش حاجة اسمها أسجل الناس اللي هو ميعرفهمش.. لأ. أحمد؟ قائمة صحابه: (خالد، ومحمد). بس كدة خلاص! مبحجزش ذاكرة لكل الناس التانيين اللي ميعرفهمش.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: شكل הـ Hash Table أو Map بيظهر.. مفتاح وقصاده مصفوفة الأصدقاء]</span>
+        <br>
+        في لغة زي הـ JavaScript، بنعملها عن طريق الـ <span class="english">Objects</span> أو الـ Hash Map ببساطة شديدة. دي المفضلة بالنسبة لـ 90% من التطبيقات في العالم لأنها بتحفظ المساحة بجنون!
+    </div></div></div>
+
+    <!-- ═══════ COMPARISON ═══════ -->
+    <div class="section-divider" id="comparison">المعركة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">استعمل مين فيهم؟ (Trade-offs)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Close-up، نبرة محققة وجدية]</span>
+        طيب السؤال المعتاد.. "دايماً أستخدم الـ List يعني وأرمي الـ Matrix؟"
+        لا طبعاً! في الـ Algorithms... مفيش دايماً! فيه دايماً <strong class="hl-purple">Trade-offs (تنازلات)</strong>.
+        <br><br>
+        - الـ <span class="english">Adjacency List</span> عظيمة جداً عشان بتوفر Memory، ومناسبة جداً لو الجراف بتاعك <span class="english">Sparse</span> (يعني الوصلات قليلة زي أصحاب الفيس بوك). 
+        <br>بس لو جيت أسألك "هل أحمد وعلي أصحاب؟" هضطر امشي جوه القائمة كلها أدور.. <strong class="hl-red">O(n)</strong> بطيئة لحد ما ألاقيه!
+        <br><br>
+        - أما الـ <span class="english">Adjacency Matrix</span> رغم إنها بتاكل הـ Memory بوحشية... لكنها صاروخ. لو سألتها "هل أحمد وعلي أصحاب؟" هتقولك الرد في <strong class="hl-cyan">O(1)</strong> (بتبص في الخلية تلاقي 1 أو 0 وتجاوب). دي بقى بتنفع لو الجراف بتاعك كان <span class="english">Dense</span> (شبكة كثيفة.. كل النسبة العظمى من الـ Nodes متوصلين ببعض).
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة للدرس القادم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">سجلنا الجراف... إزاي نمشي جواه؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع.. بتبتسم وتقفل الكلام]</span>
+        إحنا النهاردة نجحنا نضحك على الكمبيوتر ونخليه يسجل شبكة النت أو شبكة الطرق في مخه، عن طريق قوائم الصحاب أو مصفوفة الوصلات.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Graph Traversal (BFS & DFS)"]</span>
+        بس الداتا دي لازمتها إيه لو إحنا مش هنعرف <strong>نمشي فيها</strong>؟ 
+        لو معايا خريطة، وعايز أجيب "أقصر طريق للبيت المحروق" علشان عربية المطافي توصله قبل ما يتدمر؟ أو عايز ألف على كل الناس؟
+        <br><br>
+        دي هي خوارزميات الـ <span class="english">Graph Traversal</span> اللي هندرسها الدرس الجاي.. هنمشي جوه המتاهة دي!
+        <strong class="highlight">شوفكم الدرس الجاي! سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 3: Graph Representation
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

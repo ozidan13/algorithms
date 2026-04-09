@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Dynamic Programming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(244,63,94,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(244,63,94,.35);box-shadow:0 8px 32px rgba(244,63,94,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#fb7185;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #f43f5e}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#fb7185;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);border-radius:8px;color:#fb7185;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(244,63,94,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(244,63,94,.08);border-right:3px solid #f43f5e;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#fda4af}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(244,63,94,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#fb7185;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#fb7185}
+        .toc a::before{content:"• ";color:#f43f5e}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Dynamic Programming</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الرابع · البرمجة الديناميكية</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: اسم بيخوف على الفاضي</a>
+        <a href="#what-dp">إيه هي الـ Dynamic Programming بشرياً؟</a>
+        <a href="#fibonacci">متتالية فيبوناتشي: فخ التكرار</a>
+        <a href="#approaches">الطريقتين الكبار: Top-Down و Bottom-Up</a>
+        <a href="#when-to-use">امتى أستخدم السحر ده؟</a>
+        <a href="#outro">خاتمة: لا تحل المشكلة مرتين</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">واحدة من أكتر الكلمات المرعبة في الـ Computer Science<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع (Wide Shot) — بتقف قدام خلفية هادية وأنت مكتف إيدك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت تقليب صفحات سريع]</span>
+        لو فتحت أي كتاب خوارزميات ورحت للفهرس... هتلاقي فصل اسمه <span class="english">Dynamic Programming</span>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا خطوة، نبرة صوتك بتقل كإنك بتقول سر]</span>
+        الاسم ده لوحده... بيخلي مبرمجين كتير يعرقوا. وبيحسوا إن دي حاجة للناس العباقرة اللي بيخترعوا صواريخ في <span class="english">NASA</span>.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة Dynamic Programming بتطير على الشاشة والكلمة بتنقسم لحرفين D و P]</span>
+        لكن الحقيقة الصادمة؟ الاسم ده تم اختياره <strong class="hl-red">عشان يبان معقد</strong>! بجد مش بهزر. مخترع الخوارزمية اختار الاسم ده عشان بس يبان ذكي قدام الممولين بتوعه. 
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم للمشاهدين كأن المقلب اتكشف]</span>
+        الفكرة الأساسية ورا الـ <span class="english">Dynamic Programming</span>... بسيطة لدرجة إنك <strong class="highlight">على الأرجح استخدمتها قبل كده وإنت مش حاسس</strong>. وبمجرد ما تفهم الخدعة البسيطة دي... هتلاقي نفسك بتكتب كود بيحل مشاكل مستحيلة في أجزاء من الثانية.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Whoosh Effect]</span>
+        جاهز تفك العقدة دي؟ يلا بينا.
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS DP ═══════ -->
+    <div class="section-divider" id="what-dp">إيه هو الـ DP؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">طيب إيه هي الفكرة اللي بيسموها DP؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتتحرك وأنت بتتكلم، وبتشاور للصفحة اللي فيها شرح "تشبيه الامتحان"]</span>
+        تخيل إن أستاذك في الجامعة أداك امتحان صعب جداً... أخد منك 5 ساعات عشان تحله. 
+        <br><br>
+        ولما جيت تسلمه... بص ليك وقال لك: "يا بطل، الامتحان ده هيجي هو هو بالمللي بكرا الصبح."
+        <br><br>
+        <span class="camera-cue">🎥 [بتسأل وأنت بتضحك]</span>
+        بذمتك... بكرا الصبح هتقعد تحل الامتحان من الأول تاني؟ ولا هتجيب الورقة اللي حليت فيها إمبارح وتنقل الإجابات اللي <strong class="hl-amber">إنت ஆல்ரெدي عارفها</strong>؟
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: بانر بيظهر: "Don't Repeat Yourself - لا تحل مشكلة مرتين"]</span>
+        ده بالظبط... هو الـ <span class="english">Dynamic Programming</span>. 
+        <br><br>
+        كل اللي بتعمله إنك لما تحل مشكلة صعبة... بتمسك النتيجة وتحفظها في الذاكرة. ولما الكمبيوتر يتطلب منه يحل نفس المشكلة تاني، مش بيقعد يعيد حساباته من الصفر... بيقولك: <strong class="hl-cyan">"أنا حسبت دي قبل كده... اتفضل الجواب أهو!"</strong>
+        <br><br>
+        <span class="camera-cue">🎥 [زوم بطيء على الشاشة عشان تشرح المكونات الأساسية]</span>
+        عشان الطريقة دي تنفع، المشكلة لازم يكون فيها صفتين:
+        <br>
+        <strong class="hl-blue">1. Optimal Substructure:</strong> يعني الحل الكبير هو تجميع لحلول أصغر منه.
+        <br>
+        <strong class="hl-purple">2. Overlapping Subproblems:</strong> يعني المشاكل الصغيرة دي بنحتاج نحسبها <strong class="hl-red">أكتر من مرة</strong>.
+        <br><br>
+        لو الصفتين دول موجودين... مبروك، أنت جاهز تستخدم سحر الـ DP.
+    </div></div></div>
+
+    <!-- ═══════ FIBONACCI ═══════ -->
+    <div class="section-divider" id="fibonacci">الكابوس الكلاسيكي</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">فيبوناتشي: كلاسيكية التعذيب للمبرمجين<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Close-up، بتشاور على متتالية الأرقام المكتوبة في الدرس]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت بوبينج خفيف مع كل رقم يظهر: 0, 1, 1, 2, 3, 5, 8]</span>
+        عشان نفهم يعني إيه مشكلة بتتعاد... أشهر مثال في التاريخ هو <strong class="hl-amber">متتالية فيبوناتشي</strong>.
+        <br><br>
+        قاعدة المتتالية بسيطة جداً: كل رقم هو مجموع الرقمين اللي قبله! وبنكتبها بالكود عن طريق Recursion... دالة بتنادي نفسها. 
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسم شجرة فروع الـ fib(5) بيتشعب ويشكل شبكة ضخمة]</span>
+        لو جينا نحسب <span class="english">fib(5)</span>... هي هتروح طالبة <span class="english">fib(4)</span> و <span class="english">fib(3)</span>.
+        <br>
+        بس استنى... <span class="english">fib(4)</span> ذات نفسها هترجع تطلب <span class="english">fib(3)</span> مرة تانية!
+        <br><br>
+        <span class="camera-cue">🎥 [بتفتح إيدك في صدمة]</span>
+        إنت متخيل الكارثة؟ الكمبيوتر هنا غبي حرفياً... بيحسب <span class="english">fib(3)</span> مرتين. وبيحسب <span class="english">fib(2)</span> تلات مرات! 
+        <br><br>
+        لو طلبت منه يحسب <span class="english">fib(50)</span>... عارف هياخد وقت أد إيه؟
+        <strong class="hl-red">سنين. الكوكب هينتهي والكود بتاعك لسه بيرن.</strong> لأن الـ Complexity بتاعته بتبقى <strong class="bad">O(2ⁿ)</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للشاشة بنظرة تحدي]</span>
+        لكن... إيه رأيك لو الكمبيوتر يسجل النتيجة كل مرة يحسب فيها رقم؟
+        <br>يعني أول ما يحسب <span class="english">fib(3)</span> يكتب في نوتة: المتغير رقم 3 قيمته 2. ولما الكود يطلب <span class="english">fib(3)</span> تاني المرة اللي جاية... يبص في النوتة ويرجع الرقم فوراً.
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: صوت Magic Chime]</span>
+        <strong class="highlight">النوتة دي... هي اللي حولت الخوارزمية من إنها تاخد ملايين السنين، لإنها تاخد مللي ثانية واحدة.</strong> ونزلنا من O(2ⁿ) المرعبة لـ O(n) السريعة جداً. خطيّة.
+        <br><br>
+        <div class="note">جرب تضغط Calculate في الـ Demo وشوف بعينك! الخانات الخضراء دي الحاجة اللي اتحسبت أول مرة ومكملين نستخدمها، من غير ما نعيد حسابها!</div>
+    </div></div></div>
+
+    <!-- ═══════ APPROACHES ═══════ -->
+    <div class="section-divider" id="approaches">إزاي نطبقها</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الطريقتين الكبار: Top-Down vs Bottom-Up<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتتحرك قدام بلوكات الكود، إيد بتشاور على اليمين وإيد على الشمال]</span>
+        فيه مدرستين في الـ DP، وكل مدرسة ليها طريقتها في حل المشكلة. 
+        <br><br>
+        <strong class="hl-cyan">1. الـ Top-Down (اللي بيسموها Memoization):</strong>
+        <br>
+        دي طريقة الكسلان الذكي. إنت بتبدأ من فوق الخالص. بتطلب <span class="english">fib(50)</span>. الكود بيسأل: "دي عندي في النوتة (الـ Cache)؟" لو مش موجودة، يحسبها، يحطها في النوتة ويرجعها. هنا إحنا بنستخدم <span class="english">Recursion</span>.
+        <br><br>
+        <strong class="hl-red">2. الـ Bottom-Up (اللي بيسموها Tabulation):</strong>
+        <br>
+        دي طريقة البناي (البناء). مش بنجيبها من فوق. إحنا بنبدأ من الصفر ونبني. نعمل <span class="english">Array</span> من تحت خالص: 0، وبعدها 1... طيب يلا نجمعهم ونطلع 1، ونجمع اللي بعدهم نطلع 2... ونمشي Loop لحد ما نوصل للـ 50 اللي إحنا عايزينه.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقف وتسأل الكاميرا]</span>
+        الاتنين بيوصلوا لنفس النتيجة، بس الـ <span class="english">Bottom-Up</span> (الـ Loop) بيكون أسرع شوية لأنه مبيستهلكش ذاكرة في عمل Recursion. بس بصراحة... الـ <span class="english">Top-Down</span> بيكون واضح وكتابته بديهية أكتر.
+    </div></div></div>
+
+    <!-- ═══════ WHEN TO USE ═══════ -->
+    <div class="section-divider" id="when-to-use">متى أستخدمها؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">امتى أعرف إن المشكلة دي عايزة سحر الـ DP؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقرب من الشاشة، نبرة نصيحة كأنك بتغشش المشاهد]</span>
+        في الـ Interviews... ممكن الممتَحِن يدّيك مسألة ومش هقولك "استخدم الـ DP". لازم إنت اللي تلقطها. بس فيه علامات واضحة جداً تفضح المشكلة.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلام بيظهر بلون أصفر كإنه ماركر بيعلم على كلام]</span>
+        لو لقيت السؤال بيقولك كلمة:
+        <strong class="highlight">"أقل عدد"</strong>... أو <strong class="highlight">"أكبر قيمة"</strong>... أو <strong class="highlight">"بكم طريقة ممكنة"</strong>.
+        <br><br>
+        لو بتحاول تحل المشكلة ولقيت دماغك تلقائياً بتقسّمها لمشاكل أصغر... ولقيت نفسك بتكرر نفس الحسبة مرتين تلاتة. 
+        <br><br>
+        في اللحظة دي... ارفع إيدك، وقف التفكير، وقول: <strong class="hl-cyan">"دي Dynamic Programming يا باشا"</strong>.
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخاتمة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إيه اللي جاي؟ شنطة المليون دولار<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتبتسم وتقفل الكلام]</span>
+        الـ <span class="english">Dynamic Programming</span> مشكلة بتخوف ناس كتير عشان لو قرأت عنها في الكتب الأكاديمية هتحسها معادلات معقدة، بس الحقيقة هي مجرد: <strong class="hl-blue">الاحتفاظ بالنتيجة عشان منتسوحش ونعيدها.</strong>
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم بيطير في الشاشة: "Knapsack Problem"]</span>
+        عشان نفهم الـ DP بجد في تطبيق عملي رهيب، الدرس الجاي هناخد أكتر مشكلة مشهورة في العالم بتتحل بالخطوات دي... مشكلة شنطة الحرامي — الـ <span class="english">Knapsack Problem</span>.
+        <br><br>
+        هنشوف إزاي نبني جدول يخلي الكمبيوتر يختار أكتر حاجات غالية تتحط في شنطة وزنها محدود، من غير ما يحسب كل الاحتمالات لحد ما يشتت!
+        <br><br>
+        <strong class="highlight">شغّل الدرس الجاي... عشان هناك، هنطبق السحر ده بجد. سلام!</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Whoosh + Outro Music]</span>
+        <span class="camera-cue">🎥 [بتبص للكاميرا و تودع — القطع]</span>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 4: Dynamic Programming
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

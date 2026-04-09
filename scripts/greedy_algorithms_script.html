@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Greedy Algorithms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(132,204,22,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(132,204,22,.35);box-shadow:0 8px 32px rgba(132,204,22,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#a3e635;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #84cc16}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#a3e635;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(132,204,22,.1);border:1px solid rgba(132,204,22,.3);border-radius:8px;color:#a3e635;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(132,204,22,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(132,204,22,.08);border-right:3px solid #84cc16;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#d9f99d}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(132,204,22,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#a3e635;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#a3e635}
+        .toc a::before{content:"• ";color:#84cc16}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Greedy Algorithms</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الرابع · الخوارزميات الجشعة</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: خد أحسن حاجة دلوقتي!</a>
+        <a href="#what-greedy">إيه هي فكرة הـ Greedy Algorithm؟</a>
+        <a href="#coin-works">مثال 1: إمتى الجشع بينفع (الفكة)</a>
+        <a href="#coin-fails">مثال 2: إمتى الجشع بيفشل!</a>
+        <a href="#activity">مثال 3: تنظيم الأنشطة بذكاء</a>
+        <a href="#dp-vs-greedy">Greedy vs Dynamic Programming</a>
+        <a href="#outro">الخلاصة</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">"خد أحسن حاجة قدامك ومتفكرش في بكرة"<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف إيدك ورا ضهرك، وبتبص للكاميرا بنظرة فيها خبث]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت كوين (Coin) بيرن]</span>
+        فيه نصيحة في الحياة دايماً بيقولوها لينا: "فكّر في بكرة... متشبطش في أول حاجة حلوة تقابلك."
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا شوية]</span>
+        بس في بعض الأحيان، القرار الصح بيكون إنك تكون <strong class="hl-red">جشع</strong>. تاخد أحسن وأكبر حتة متاحة <strong class="highlight">اللحظة دي</strong>، ومفيش داعي للتخطيط ولا التفكير في المستقبل!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة Greedy Algorithms بتظهر بخط نيون أخضر]</span>
+        النهاردة هنتكلم عن فئة من الخوارزميات اسمها الـ <span class="english">Greedy Algorithms</span> أو الخوارزميات الجشعة. دي خوارزميات مش بتوجع دماغها بالـ <span class="english">Dynamic Programming</span> والجداول والحسابات المعقدة. 
+        <br>
+        دي بتشوف قدامها خيارات... تروح واخدة <strong class="hl-amber">أحلى خيار في وشها دلوقتي حالاً</strong>! وتمشي على الفكرة دي لحد النهاية.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم للمشاهد]</span>
+        السؤال بقى: هل الطريقة "الجشعة" دي بتوديك للحل الصح؟ 
+        أحياناً بتوديك للحل المثالي بعبقرية، وأحياناً تانية... <strong class="hl-red">بتلبسك في الحيط</strong>. يلا نشوف متى بتنفع، ومتى بتبوظ الدنيا!
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS GREEDY ═══════ -->
+    <div class="section-divider" id="what-greedy">ما هو Greedy؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">استراتيجية الخوارزمية الجشعة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتتحرك وإيدك فيها حاجة بتشرح بيها]</span>
+        الفكرة الأساسية للـ <span class="english">Greedy Algorithms</span> سهلة جداً:
+        في كل خطوة بتظهر قدامها، الخوارزمية مش بتحاول تتوقع اللي جاي، هي بس بتسأل سؤال واحد: 
+        <br><br>
+        <strong class="hl-cyan">"أيه هو أفضل قرار ممكن آخده محلياً دلوقتي؟"</strong> — اللي بنسميه الـ <span class="english">Locally Optimal Choice</span>.
+        <br><br>
+        بتاخد أحسن حاجة، ومن غير ما تعمل <span class="english">Backtracking</span> أو تفكر ترجع في قرارها أبدًا. هي عاملة زي طفل قدامه طبق حلويات كبير، وبياخد أكبر قطعة تقع عينه عليها في كل مرة إيده تتمد، لحد ما الطبق يخلص.
+        <br><br>
+        <div class="term-def">
+            <strong>الأمل الوحيد للـ Greedy:</strong> إن تجميع القرارات الـ <strong class="hl-cyan">Locally Optimal</strong> (المحلية) هيؤدي في النهاية للحل الـ <strong class="highlight">Globally Optimal</strong> (العام أو الكلي). 
+        </div>
+        <span class="camera-cue">🎥 [بتبص للكاميرا بتعجب]</span>
+        مرات كتير ده بيحصل فعلاً! بس فيه مرات لو خدت قرار يبدو الأفضل دلوقتي، ممكن يحبسك في مسار مسدود بعدين. عشان نفهم، تعالوا نشوف مثال فكة الفلوس!
+    </div></div></div>
+
+    <!-- ═══════ COIN WORKS ═══════ -->
+    <div class="section-divider" id="coin-works">حين ينجح الجشع</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مثال 1: فكة الفلوس — هنا الـ Greedy أستاذ<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير جانبي (Profile) وإنت بتبص على شاشة الدرس]</span>
+        عايزين نفك مبلغ 41 قرش. ومعانا عملات فئات: 25، 10، 5، و 1. والمطلوب: تفك المبلغ بأقل عدد ممكن من العملات.
+        <br><br>
+        الخوارزمية الـ <span class="english">Greedy</span> هتقولك: 
+        "الجشع بيقول هات <strong class="hl-amber">أكبر</strong> عملة تقدر تحطها."
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: العملات بتطرح والتوتال بينزل قدام المشاهد]</span>
+        1. شيل 25 من 41... يتفضل 16. <br>
+        2. شيل 10 من 16... يتفضل 6. <br>
+        3. شيل 5 من 6... يتفضل 1. <br>
+        4. شيل 1... يتفضل 0.
+        <br><br>
+        <strong class="highlight">النتيجة: 4 عملات.</strong> هل فيه أي طريقة في الدنيا تفك بيها الرقم ده في 3 عملات؟ مستحيل. يعني الـ <span class="english">Greedy</span> هنا عبقري، وأدانا الحل الـ <strong class="hl-blue">Optimal</strong> بأسرع طريقة ممكنة من غير جداول ومن غير DP.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم للكاميرا]</span>
+        لما النظام بيبقى متصمم صح (زي العملات بتاعتنا)، الـ Greedy بيكون صاروخ!
+    </div></div></div>
+
+    <!-- ═══════ COIN FAILS ═══════ -->
+    <div class="section-divider" id="coin-fails">حين يفشل الجشع</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مثال 2: لما الجشع لبسنا في الحيط!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [إضاءة بتميل للأحمر خفيف (Warning)]</span>
+        تعالوا بقه نغير اللعبة شوية. 
+        لو خترعنا عملات فئاتها غريبة شوية: 1، 3، و 4 قروش. وعايزين نفك مبلغ قيمته <strong class="hl-amber">6 قروش</strong>!
+        <br><br>
+        الـ <span class="english">Greedy</span> الأعمى هيعمل إيه؟ هيقولك: "هات أكبر رقم!" 
+        <br>1. ياخد عملة بـ 4 (يتفضل 2).
+        <br>2. وياخد عملة بـ 1 (يتفضل 1).
+        <br>3. وياخد عملة بـ 1 (يتفضل 0).
+        <br><br>
+        الـ <span class="english">Greedy</span> هنا اقترح علينا <strong class="hl-red">3 عملات</strong> (4 + 1 + 1).
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب وشك من الكاميرا وتبرق عينك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت إجابة خاطئة (Buzzer)]</span>
+        لكن استنى! لو بطلت جشع وفكرت لحظة... مش كان ممكن تاخد عملتين فئة 3 قروش؟ (3 + 3 = 6)!
+        <br>يعني العدد الأمثل كان <strong class="highlight">2</strong> مش 3!
+        <br><br>
+        هنا الـ <span class="english">Greedy Failed</span> بالثُلث. عشان هو طمّاع ومفكرش لبعيد، اختار الأربعة الأول ومعرفش يرجع في كلامه. ودي اللحظة اللي بنحتاج فيها الـ <span class="english">Dynamic Programming</span> عشان يجرب الاحتمالات كلها.
+    </div></div></div>
+
+    <!-- ═══════ ACTIVITY ═══════ -->
+    <div class="section-divider" id="activity">تنظيم الوقت الجشع</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مثال 3: تنظيم الأنشطة بذكاء ساحق<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتشاور على الـ Timeline اللي في الدرس]</span>
+        فيه تطبيقات الـ <span class="english">Greedy</span> متفصل عليها تفصيل. زي مشكلة الـ <span class="english">Activity Selection</span>.
+        <br><br>
+        أنت في مدرسة وعندك قاعة واحدة، وعايز تعمل أعظم عدد ممكن من الأنشطة في القاعة دي ورا بعض من غير ما أوقاتهم تتعارض.
+        <br><br>
+        دماغنا الجشعة المره دي مش هتدور على "الأكبر"، المره دي الجشع هيكون في الـ <strong class="hl-cyan">وقت</strong>. الخوارزمية بتقولك: 
+        <strong class="highlight">"دايماً اختار النشاط اللي بينتهي ويخلص بدري!"</strong>
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الأنشطة اللي المظللة بالأخضر (A, C, E) بتترسم على الشاشة ببطء]</span>
+        لو دايماً بتختار النشاط اللي وقته بيخلص بدري... هتبقى بتفضي القاعة في أسرع وقت عشان النشاط اللي بعده يقدر يدخل! 
+        <br>الاستراتيجية البسيطة جداً دي... مُثبتة رياضياً إنها دايماً هتطلعلك <strong>الحد الأقصى الممكن</strong> من الأنشطة!
+        <br><br>
+        تخيل؟ الـ implementation بتاعها مجرد كود بيعمل <span class="english">Sort</span> للوقت، وبياخد اللي مابيتعارضش. سرعة رهيبة وبتشتغل في <strong class="hl-cyan">O(n log n)</strong>.
+    </div></div></div>
+
+    <!-- ═══════ DP VS GREEDY ═══════ -->
+    <div class="section-divider" id="dp-vs-greedy">المعركة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">Greedy vs. Dynamic Programming<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقف ورا جدول المقارنة]</span>
+        امتى أستخدم الـ Greedy؟ وامتى ألجأ للـ DP؟
+        <br><br>
+        الـ <span class="english">Greedy</span> سريع جداً، مش بياكل Memory، وكوده أسهل بكتير. بس عيبه القاتل؟ مش دايماً بيوصل للحل الأمثل.
+        <br>
+        أما الـ <span class="english">DP</span> بطيء شوية، وبيحتاج يبني Data، بس دايماً 100% بيجيب الجون وتوصل للنتيجة الصح.
+        <br><br>
+        <strong class="hl-amber">ببساطة:</strong> لو إنت معاك إثبات رياضي إن القرار اللحظي الجشع في مشكلتك هيوصل للصح דايماً (زي الـ Activity Selection، أو طريقة إيجاد أقصر طريق في Dijkstra)... استخدام Greedy فوراً! 
+        <br>
+        لكن لو المشكلة فيها قرارات مبنية على بعض ممكن تبوظ اللي جاي (زي مشكلة الشنطة المليانة Knapsack اللي هنشوفها الحلقة الجاية)... يبقى مفيش مفر من الـ DP!
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الجشع أداة مش منهج حياة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتبتسم وتقفل الكلام]</span>
+        الـ Greedy Algorithms سريعة، بديهية، وفي بعض المشاكل... عظيمة. بس دايماً لازم تشكك فيها. 
+        <br><br>
+        في البرمجة، زي ما في الحياة بالظبط... أحياناً بتبقى محتاج تاخد الفرصة اللي قدام عينك حالا. وأحياناً تانية بتبقى محتاج تاخد خطوة للوراء، وتعمل حسابات، وتبص على الصورة الكبيرة، عشان تضمن النتيجة الصح.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Knapsack Problem"]</span>
+        الدرس الجاي... هنشوف الـ DP وهي بتعاقب الـ Greedy في مشكلة شهيرة جداً... إيه أحسن حاجة ممكن تاخدها لو أنت معاك شنطة واحدة ووزنها محدود؟ 
+        <br><br>
+        <strong class="highlight">أشوفكم الدرس الجاي! سلام!</strong>
+        <br><br>
+        <span class="sfx-cue">🔊 [SFX: Outro Music fading rapidly]</span>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 4: Greedy Algorithms
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

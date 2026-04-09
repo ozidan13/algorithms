@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Graph Traversal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(234,88,12,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(234,88,12,.35);box-shadow:0 8px 32px rgba(234,88,12,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#fb923c;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #ea580c}
+        .note{font-size:.92rem;color:#34d399;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(52,211,153,.07);border-radius:8px;border-right:3px solid #34d399;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#fb923c;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-orange{color:#ea580c;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#fdba74;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(234,88,12,.1);border:1px solid rgba(234,88,12,.3);border-radius:8px;color:#fb923c;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(234,88,12,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(234,88,12,.08);border-right:3px solid #ea580c;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#fed7aa}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(234,88,12,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#fb923c;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#fb923c}
+        .toc a::before{content:"• ";color:#ea580c}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Graph Traversal</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثالث · التجول في المتاهة</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: المتاهة وأقصر طريق للنجاة</a>
+        <a href="#bfs">الـ BFS: موجة المياه الهادية (الطابور)</a>
+        <a href="#dfs">الـ DFS: الشخص المتهور (خيط أريادني)</a>
+        <a href="#demo">جربها بنفسك: سباق بين الخوارزميتين</a>
+        <a href="#outro">الخلاصة للدرس القادم</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي تنجو من المتاهة؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف وإضاءة خافتة بتميل للأحمر]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت رياح ومتاهة مخيفة]</span>
+        الدرس اللي فات اتعلمنا إزاي نسجل خريطة الإنترنت أو الشوارع في مخ الكمبيوتر عن طريق מصفوفات وقوائم הـ <span class="english">Graphs</span>.
+        <br><br>
+        بس تخيل معايا.. إنت جوه المتاهة دي دلوقتي.
+        الخريطة في إيدك، بس إنت عايز <strong class="hl-orange">تمشي</strong> جوه الخريطة وتسأل: إزاي أروح من النقطة A للنقطة B في أسرع وقت ممكن؟ أو إزاي أعدي على كل شبر في المتاهة دي؟
+        <br><br>
+        <span class="camera-cue">🎥 [زوم بطيء على وشك]</span>
+        عشان الكمبيوتر يمشي جوه הـ <span class="english">Graph</span> ويزور النقاط بتاعته، عندنا استراتيجيتين عقليتين عكس بعض تماماً. واحدة هادية، حذرة، ومضمونة.. والتانية متهورة، بتجري لقدام من غير ما تفكر، وبتخبط راسها في الحيط. 
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: حروف BFS بلون أزرق تنقسم لشمال الشاشة، وحروف DFS بلون برتقالي تنقسم لليمين]</span>
+        النهاردة هنتكلم عن <strong class="hl-blue">BFS</strong> و <strong class="hl-orange">DFS</strong>. الاستراتيجيتين اللي مبني عليهم خرائط جوجل كلها ومستكشفين الفضاء والذكاء الاصطناعي! يلا بينا.
+    </div></div></div>
+
+    <!-- ═══════ BFS ═══════ -->
+    <div class="section-divider" id="bfs">موجة المياه</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">BFS (البحث بالعرض) - موجة المياه الحذرة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتتحرك وأنت بتشرح بإيدك حركات دائرية بتوسع]</span>
+        الاستراتيجية الأولى اسمها <strong class="hl-blue">Breadth-First Search (BFS)</strong> أو البحث بالعرض.
+        <br><br>
+        تخيل معاها إنك رميت طوبة في نص بحيرة. إيه اللي بيحصل؟
+        بتعمل دائرة صغيرة حوالين الطوبة، وبعدين الدائرة توسع، وتوسع، وتوسع. 
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: دوائر زرقاء بتخرج منك على الشاشة كإنها دوائر ميه]</span>
+        الـ <span class="english">BFS</span> بيعمل كدة بالظبط. لو إنت واقف في مدينة، הـ BFS هيزور <strong class="highlight">كل جيرانك</strong> الأول (Level 1). وبعد ما يخلصهم، يزور جيران جيرانك (Level 2). مفيش أي عجلة. هو بياخدهم صف صف. دور دور.
+        <br><br>
+        عشان ينفذ الخطة المنظمة دي.. بيستخدم هيكل بيانات عبقري اسمه הـ <span class="english">Queue</span> (الطابور). "اللي ييجي الأول، نزوره الأول".
+        <br><br>
+        <div class="term-def">
+            <strong>قوة الـ BFS:</strong> السحر بتاعه إنه <strong class="hl-cyan">دايماً دايماً دايماً</strong> هيلاقيلך <span class="english">أقصر طريق (Shortest Path)</span> من غير ما يفكر! ليه؟ لأنه بيمشي بالمستويات. أول مرة يلمس فيها الهدف.. هيكون ده أقصر مستوى ليه. (ودي الفكرة اللي شغال بيها الـ GPS).
+        </div>
+    </div></div></div>
+
+    <!-- ═══════ DFS ═══════ -->
+    <div class="section-divider" id="dfs">العداء المتهور</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">DFS (البحث بالعمق) - الرجل المتهور العنيد<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتقف وتغير نبرة صوتك وكإنك بتوصف حد عنيد ومندفع]</span>
+        الإستراتيجية التانية هي הـ <strong class="hl-orange">Depth-First Search (DFS)</strong> أو البحث بالعمق.
+        <br><br>
+        الخوارزمية دي عاملة زي واحد دخل متاهة فقرر يقول: "أنا همشي طوالي ولن ألتفت خلفي أبداً لحد ما أخبط في الحيطة!". 
+        الـ <span class="english">DFS</span> مش بيزور جيرانه.. הـ DFS بيشوف طريق، وياخد أول طريق، ويكمل فيه لحد آخر المتاهة، ولما يخبط في طريق مسدود... يعمل إيه؟
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: خيط رفيع أحمر بيترسم وبينسحب تاني (خيط أريادني الأسطوري)]</span>
+        الـ <span class="english">DFS</span> بيرجع خطوة وحدة بس لورا ويجرب تفرع تاني. 
+        ولإن الخوارزمية دي محتاجة "تفتكر" الطريق اللي مشيت فيه عشان ترجع له.. بتستخدم هيكل 데이터 اسمه الـ <span class="english">Stack</span> أو المكدس (واللي بنداريه دايماً باستخدام الـ <span class="english">Recursion</span>).
+        <br><br>
+        <div class="note">عيب الـ DFS الوحيد؟ إنه ممكن الهدف يكون على بعد خطوة واحدة منك، بس הוא يقرر ياخد الطريق التاني الطويل ويلف العالم كله قبل ما يلاقيه! مابيجيبش الأقصر.. بس بيمسح המكان.</div>
+    </div></div></div>
+
+    <!-- ═══════ DEMO ═══════ -->
+    <div class="section-divider" id="demo">المعمل التفاعلي</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">جربها بنفسك... سباق الخوارزميات<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Close-up، بتشاور للمشاهد على الشاشة تحت]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت إشارة الانطلاق - طلقة رياضية]</span>
+        عشان تفهم احساس הـ BFS و DFS بجد، انزل قدامك للـ <span class="english">Interactive Demo</span>.
+        <br><br>
+        هات الـ Graph اللي قدامك واختار הـ BFS.. ودوس <span class="english">Start</span>. هتلاقيه بينتشر بنظام زي الموجة الخضراء، بياخد طبقة ورا طبقة.
+        <br><br>
+        وبعدين اختار الـ DFS ودوس.. هتلاقيه عامل زي الصاعقة البنفسجية اللي ضاربة لتحت في العمق لحد 6، وبعدين يبدأ يرجع ويقشر باقى الأرقام.
+        <br><br>
+        الـ <span class="english">Code</span> بتاعهم الاتنين كود ساحر وبسيط جداً، والفرق كله بس: بتسحب من الـ Queue ولا بتنادي نفسك בـ Recursion؟
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة للدرس القادم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الخلاصة... إحنا داخلين على إيه؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع.. بتبتسم وتقفل الكلام بثقة]</span>
+        الـ <span class="english">BFS</span> للخرائط وإيجاد الطريق السريع. 
+        الـ <span class="english">DFS</span> للألغاز والـ Sudoku وتفكيك الـ Graphs المعقدة.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الأسبوع القادم والأخير "Dynamic Programming"]</span>
+        وبكده إحنا خلصنا الأسبوع التالت بالكامل!
+        فهمنا الـ Sort، حفظنا في جداول הـ Map، ومشينا في الـ Graphs. إحنا كده غطينا أهم 90% מن المقابلات الشخصية في البرمجة.
+        <br><br>
+        لكن الأسبوع الجاي... هو أسبوع السحر. الأسبوع بتاع الذكاء والـ <strong class="hl-orange">Dynamic Programming</strong> والـ AI.
+        <br><br>
+        <strong class="highlight">شوفكم في الأسبوع الرابع والأخير! سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 3: Graph Traversal
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - QuickSort</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(168,85,247,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(168,85,247,.35);box-shadow:0 8px 32px rgba(168,85,247,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#c084fc;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #a855f7}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#c084fc;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#d8b4fe;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:8px;color:#c084fc;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(168,85,247,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(168,85,247,.08);border-right:3px solid #a855f7;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#e9d5ff}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(168,85,247,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#c084fc;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#c084fc}
+        .toc a::before{content:"• ";color:#a855f7}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — QuickSort</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثالث · الترتيب السريع</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: أسرع طريقة للترتيب في العالم</a>
+        <a href="#pivot">السر كله في الـ Pivot!</a>
+        <a href="#partition">التقسيم (Partitioning)</a>
+        <a href="#recursion">سحر الـ Recursion للترتيب النهائي</a>
+        <a href="#complexity">التعقيد (Big O) والفخ القاتل</a>
+        <a href="#outro">الخلاصة ليه ده المفضل؟</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إزاي ترتب مليون رقم في كسر من الثانية؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف وفي إيدك كوتشينة ملخبطة بتفرطها قدامك]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت تقليب ورق الكوتشينة (Shuffling)]</span>
+        إحنا اتكلمنا قبل كده عن ترتيب البيانات. وتعرفنا على حاجات زي الـ <span class="english">Selection Sort</span>.. اللي كانت شغالة، بس بطيئة جداً لو عندك أرقام كتير.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا وتتكلم بحماس]</span>
+        بس في الحقيقة.. المبرمجين المحترفين والشركات الكبيرة مبيستخدموش الحاجات البطيئة دي. هم بيستخدموا خوارزمية عبقرية بيستخدمها لغات البرمجة العريقة. خوارزمية اتسمت من كتر سرعتها <strong class="hl-purple">QuickSort</strong>.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة QuickSort بتظهر على الشاشة بتأثير يشبه البرق (Lightning)]</span>
+        الخوارزمية دي مش بترتب الأرقام بالتسلسل الممل... دي بتستخدم أسلوب عسكري اسمه <strong class="hl-blue">Divide and Conquer (فرّق تسُد)</strong>. يعني تكسر المشكلة الكبيرة لنصين، وتحل كل نص لوحده. 
+        <br><br>
+        يلا ننزل المعمل ونشوف إزاي السرعة العبقرية دي بتحصل خطوة بخطوة.
+    </div></div></div>
+
+    <!-- ═══════ PIVOT ═══════ -->
+    <div class="section-divider" id="pivot">المحور</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">البطل بتاعنا: الـ Pivot!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتشاور على الشاشة اللي فيها أرقام ملخبطة]</span>
+        تخيل قدامنا مجموعة أرقام ملخبطة. الفكرة بتاعة הـ QuickSort بتبدأ باختيار عشوائي تماماً... بنختار رقم واحد بس من الأرقام دي ونديله لقب شرفي: الـ <span class="english">Pivot</span> (يعني المحور).
+        <br><br>
+        <div class="term-def">
+            <strong>قاعدة הـ Pivot:</strong> المحور ده هو الحكم. وظيفته إنه يقسم باقي الأرقام لنصين.. نص أصغر منه على الشمال، ونص أكبر منه على اليمين.
+        </div>
+        عشان الأمور تكون بسيطة، هنختار دايماً <strong class="highlight">الرقم الأخير في المجموعة</strong> ليكون هو הـ <span class="english">Pivot</span>. هو ده اللي هيدير الماتش!
+        <br><br>
+        <span class="camera-cue">🎥 [وإنت بتبتسم بتحدي]</span>
+        بس استنى.. الـ <span class="english">Pivot</span> ميعرفش الأرقام التانية متنظمة إزاي، هو بس بيهتم بنفسه: "أنا فين مكاني المظبوط وسطهم؟"
+    </div></div></div>
+
+    <!-- ═══════ PARTITION ═══════ -->
+    <div class="section-divider" id="partition">التقسيم</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">عملية الـ Partitioning (الفرز الأولي)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم على الجزء اللي فيه الـ Visualizer بتاع Partitioning على الشاشة]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت زي توجيه السير (Swish sounds) مع حركة الأرقام يمين وشمال]</span>
+        بمجرد ما اخترنا الـ <span class="english">Pivot</span>.. بنمشي على باقي الأرقام واحد واحد.
+        <br><br>
+        - لو الرقم <strong class="hl-blue">أصغر</strong> من الـ المحور.. ارميه الناحية الشمال!
+        <br>
+        - لو الرقم <strong class="hl-red">أكبر</strong> من הـ المحور.. ارميه الناحية اليمين!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الأرقام بتطير فعلاً تتجمع في كومتين، المحور نازل في النص ببريق أخضر]</span>
+        بعد ما نخلص، بنمسك הـ <span class="english">Pivot</span> ونحطه في النص بين المجموعتين. ومبروووك!
+        <br>
+        الرقم ده (الـ Pivot) إنت كده متأكد بنسبة 100% إنه في <strong class="hl-cyan">مكانه الصحيح والنهائي الأبدي</strong>. حتى لو اللي على شماله ملخبطين واللي على يمينه ملخبطين، هو كدة رِسي في مكانه خلاص!
+    </div></div></div>
+
+    <!-- ═══════ RECURSION ═══════ -->
+    <div class="section-divider" id="recursion">السحر المتكرر</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الـ Recursion بيكمل المسيرة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بترجع ورا خطوة، إيديك الاتنين بتتحرك بشكل متوازي إشارة للانقسام]</span>
+        طيب النص اليمين والنص الشمال اللي لسه ملخبطين دول هنعمل فيهم إيه؟
+        <br><br>
+        هنا دور الساحر... الـ <span class="english">Recursion</span> اللي درسناه في الأسبوع الأول.
+        الكود هينادي نفسه مرتين: مرة يمسك النص الشمال ويختار له <span class="english">Pivot</span> جديد ويلخبطه يمين وشمال.. ومرة النص اليمين يعمل فيه نفس الكلام.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: تصوير سريع (Time-lapse) للمجموعات وهي بتنقسم لمجموعات أصغر وأصغر لحد ما كل رقم يبقي مجموعة لوحده]</span>
+        <span class="sfx-cue">🔊 [SFX: POP! POP! POP!]</span>
+        عملية بتفضل تكرر نفسها لحد ما نوصل لحالة الـ <span class="english">Base Case</span>: مصفوفة فيها رقم واحد بس. وطبيعي المصفوفة اللي فيها رقم واحد مفيهاش ترتيب.. هي دي مترتبة جاهزة!
+        <br>
+        ولما القطع كلها ترجع تتجمع تاني، هتلاقي الـ 100 حتة اللي قطعناهم اتلزقوا في بعض.. بس المرة دي <strong class="highlight">مترتبين من الصغير للكبير بشكل سحري</strong>!
+    </div></div></div>
+
+    <!-- ═══════ COMPLEXITY ═══════ -->
+    <div class="section-divider" id="complexity">قياس الأداء</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">سرعته الرهيبة... والفخ القاتل له!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [إضاءة بتميل للأحمر خفيف عند ذكر الفخ]</span>
+        الموضوع مش كله وردي! خلينا نتكلم بلغة المبرمجين.. الـ <span class="english">Big O Notation</span>.
+        <br><br>
+        في العادي، الـ QuickSort بيخلص المهمة دي في <strong class="highlight">O(n log n)</strong>. دي سرعة مبهرة. بفضل فكرة إنه بيكسر المصفوفة لنصين كل مرة.
+        <br><br>
+        بس فيه فخ... إيه اللي يحصل لو المصفوفة كانت أصلاً مترتبة، وجيت إنت اخترت آخر رقم ليكون هو الـ Pivot؟
+        هتيجي ترمي الأرقام الصغيرة عالشمال.. هتتفاجيء إن <strong class="hl-red">كل الأرقام رايحة شمال</strong>، واليمين فاضي! مفيش تكسير للأنصاص بيحصل!
+        <br><br>
+        في أسوأ كوابيس הـ QuickSort (الـ <span class="english">Worst Case</span>)، الخوارزمية دي هتنحدر سرعتها وتبقى <strong class="bad">O(n²)</strong>. زيه زي الـ Selection Sort البطيء بالظبط.
+        <br><br>
+        <div class="note">عشان نتجنب الفخ ده، المبرمجين المحترفين مش بيختاروا دايماً "الرقم الأخير" عمياني.. بيختاروه بشكل عشوائي تماماً (Random Pivot)، عشان احتمالية إنك تقع في الفخ ده تبقى شبه مستحيلة!</div>
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">خلاصة الـ QuickSort<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتبتسم وتقفل الكلام بثقة]</span>
+        الـ <span class="english">QuickSort</span> هو الاختيار المفضل لأغلب المبرمجين ولغات البرمجة (زي لغة الـ C مثلاً). بسيط جداً للكمبيوتر ومبياخدش مساحة إضافية في הـ Memory لأنه بيبدل الأرقام في نفس المصفوفة (<span class="english">In-place sorting</span>).
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Hash Tables"]</span>
+        بكده خلصنا موضوع الترتيب للبيانات كلها.. وفهمنا اللعبة. 
+        <br>
+        لكن لو أنا مش عايز أعمل ترتيب؟ لو أنا بقدم على شغل وعايز داتا بيز بتجيب الداتا في لحظة حرفياً.. في خطوة واحدة مهما كانت الكمية؟ ده اللي هنعرفه في الدرس الجاي مع הـ <span class="english">Hash Tables</span>!
+        <br><br>
+        <strong class="highlight">شوفكم هناك! سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 3: Quick Sort
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

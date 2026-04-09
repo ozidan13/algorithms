@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - K-Nearest Neighbors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(20,184,166,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(20,184,166,.35);box-shadow:0 8px 32px rgba(20,184,166,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#2dd4bf;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #14b8a6}
+        .note{font-size:.92rem;color:#fcd34d;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(252,211,77,.07);border-radius:8px;border-right:3px solid #fcd34d;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#2dd4bf;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#5eead4;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.3);border-radius:8px;color:#2dd4bf;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(20,184,166,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(20,184,166,.08);border-right:3px solid #14b8a6;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#99f6e4}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(20,184,166,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#5eead4;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#5eead4}
+        .toc a::before{content:"• ";color:#14b8a6}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — K-Nearest Neighbors</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الرابع · التعلم الآلي</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: قولي انت ساكن فين!</a>
+        <a href="#what-knn">طب إيه هو الـ KNN؟</a>
+        <a href="#steps">الخطوات التلاتة السحرية</a>
+        <a href="#k-value">طب أختار الـ K بكام؟</a>
+        <a href="#demo">الـ Demo التفاعلي</a>
+        <a href="#outro">خاتمة الكورس كله</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">"قولي مين جيرانك الثقات.. أقولك أنت مين"<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير قريب (Close-up) — إضاءة زهرية زرقاء كأنها جو AI]</span>
+        على مدار الكورس كله وإحنا عمالين نتكلم عن <span class="english">Data Structures و Algorithms</span> — حاجات بترتب الأرقام وحاجات بتبحث فيها وحاجات بتخزنها.
+        <br><br>
+        بس النهاردة إحنا هندخل في مستوى تاني خالص... إحنا هندخل عالم الآلة اللي "بتتعلم". هنحط رِجلنا في عالم الـ <strong class="hl-cyan">Machine Learning (التعلم الآلي)</strong>.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة K-Nearest Neighbors (KNN) بتظهر على الشاشة وتتفكك لـ "الجيران الأقرب"]</span>
+        لو كنت فاكر إن الذكاء الاصطناعي ده سحر وشعوذة ومعادلات قادمة من المريخ... هقولك على مفاجأة تسعدك. واحدة من أقدم وأشهر وألطف خوارزميات الذكاء الاصطناعي... معتمدة على مثل بلدي بسيط جداً بيقولك: <strong class="hl-amber">"قولي مين جيرانك.. أقولك إنت مين!"</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم للكاميرا ابتسامة ثقة]</span>
+        أه والله بكلمك بجد. الخوارزمية اللي هندرسها اسمها <span class="english">K-Nearest Neighbors</span> (أقرب K جيران). ودي مش بتحتاج عبقرية عشان تصنف... هي بتعتمد بس على ديمقراطية الشارع وتصويت الجيران! يلا بينا نفهم القصة.
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS KNN ═══════ -->
+    <div class="section-divider" id="what-knn">ما هو KNN؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">فكرة الخوارزمية: ديمقراطية تصويت الجيران<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتمشي براحة وإنت بتحكي السيناريو]</span>
+        تخيل إنك نزلت منطقة جديدة في مدينة إنت متعرفهاش... وإنت مش عارف المنطقة دي تصنيفها إيه؟ يعني هل دي منطقة شعبية أوي ولا منطقة راقية جداً ولا إيه بالظبط؟
+        <br><br>
+        هتعمل إيه؟ بكل بساطة ممكن تلف وتبص على <strong class="highlight">أقرب 5 بيوت حواليك</strong> في خريطتك.
+        لو لقيت 4 بيوت منهم تعتبر "فيلات راقية" وبيت واحد بس شعبي... هتقول بصوت عالي: "المنطقة دي غالباً راقية".
+        ولو لقيت 5 عمارات شعبية حواليك... هتحكم عليها إنها "شعبية".
+        <br><br>
+        <div class="term-def">
+            <strong>قاعدة KNN:</strong> الأشياء المتشابهة في الخصائص (على الخريطة) غالباً بتكون لنفس الفئة (Class). يعني اللي شبه بعض بيبقوا جنب بعض.
+        </div>
+        الخوارزمية دي شغالة بالظبط كده في التصنيف الـ <span class="english">Classification</span>. بتجيب البيانات القديمة وترصها زي النقط في خريطة. ولما تجيب حالة جديدة مجهولة (نقطة)، بتروح تبص على جيرانها القدام المعروفين.. وتاخد رأي الأغلبية!
+    </div></div></div>
+
+    <!-- ═══════ STEPS ═══════ -->
+    <div class="section-divider" id="steps">خطوات السحر</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">خطوات הـ KNN الثلاثة من غير تعقيد<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتشاور بصباعك وانت بتعد ٣ خطوات]</span>
+        علشان تنفذ الخدعة دي، الكمبيوتر بيعمل تلت خطوات ورا بعض. سهلين جداً مفيش فيهم تفكير:
+        <br><br>
+        <strong class="hl-blue">الخطوة الأولى: قيس المسافات (Calculate Distance)</strong>
+        <br>
+        الكمبيوتر بيجيب النقطة المجهولة، ويمسك مازورة المتر الافتراضية، ويقيس المسافة بينها وبين <strong>كل النقاط التانية اللي في الخريطة!</strong> إزاي؟ بقانون المسافة بتاع فيثاغورس اللي خدناه في إعدادي (المسافة الإقليدية).
+        <br><br>
+        <strong class="hl-cyan">الخطوة التانية: رتب واختار الـ K (Sort & Pick K)</strong>
+        <br>
+        بعد ما يقيس المسافات، بيقوم مرتب أرقام المسافات دي كلها تصاعدياً عشان يعرف مين <strong>أقرب جيران</strong>... وبيختار منهم عدد معين إحنا بنحدده في الأول كـ Parameter.. بنسميه الحرف <span class="english">K</span>. (مثلاً أقرب 5 جيران).
+        <br><br>
+        <strong class="hl-red">الخطوة التالتة: خد التصويت! (Vote!)</strong>
+        <br>
+        الخمس جيران الأقرب دول بنبص في بطاقتهم.. نلاقي تلاتة منهم صنفهم A واتنين صنفهم B. إذاً التصويت يخلص لإن النقطة المجهولة بتاعتنا أصبحت رسمياً... الصنف <strong>A</strong>!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسم كرتوني للنقطة المجهولة بتلبس طاقية حمراء مكتوب عليها A عشان التصويت نجح للصنف A]</span>
+    </div></div></div>
+
+    <!-- ═══════ K VALUE ═══════ -->
+    <div class="section-divider" id="k-value">الرقم السري</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">أختار حرف الـ K ده بناءً على إيه؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Close-up، نبرة تحذيرية ومهمة]</span>
+        بس استنى.. السؤال الأهم للمبرمجين هنا: المكتوب في الخوارزمية <span class="english">K-Nearest</span>. مش 5 ومش 10. إشمعنا بنسيبها متغيرة؟
+        <br><br>
+        لإن قيمة הـ K دي هي "الـ Magic Number" اللي بيبوظ الموديل أو بيشغله كأنه سحر. 
+        <br>
+        - لو اخترت <span class="english">K = 1</span> بصيت على جار واحد بس، فلو الجار ده كان غلط (نقطة شاذة عن القاعدة Outlier) التصنيف كله هيضرب وهتحكم بالغلط. الموديل هيبقى حساس جداً للـ Noise.
+        <br>
+        - ولو اخترت <span class="english">K = كل النقط</span> الموديل هيصوت دائماً للصنف الأكثر عدداً في كل الداتا، وده تخلف طبعاً وهيطلع النقط دي ملهاش معنى.
+        <br><br>
+        <strong class="highlight">الصح إيه؟</strong>
+        إنك تجرب شوية أرقام من 3 و 5 و 7 وتعمل حاجة اسمها <span class="english">Cross-Validation</span> عشان تختار الرقم اللي بيطلع أحسن نتائج. 
+        <br><br>
+        <div class="note">نصيحة للمحترفين: دايماً أو غالباً اختار قيمة K تبقى <strong class="hl-cyan">رقم فردي</strong> (Odd number). عشان الديمقراطية متحصلش فيها تعادل أصوات 50-50 وتقعد تحتاس!</div>
+    </div></div></div>
+
+    <!-- ═══════ DEMO ═══════ -->
+    <div class="section-divider" id="demo">متعة اللعب</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">خريطة الـ Interactive Demo التجريبية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتشاور على شاشة المعمل (الـ المربع الأسود اللي فيه النقط حمراء وزرقاء)]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت الماوس بيكليك]</span>
+        تعالى دلوقتي انزل للـ <span class="english">Interactive Demo</span> الموجود أسفل الصفحة في الدرس... 
+        هتلاقي عندنا نقط زرقا (صنف A) فوق في الركن.. ونقط حمراء (صنف B) تحت على اليمين. 
+        <br><br>
+        كليك بالماوس بتاعك في حتة في النص الفاضي كده.. هتظهر نقطة وحيدة مجهولة.. صفراء!
+        غير السلايدر بتاع حرف الـ K، خليه مثلاً 3، ودوس على زرار <span class="english">Classify</span> وشوف السحر! الموديل هيمد دوائر وتطلع موجة حوالين أقرب 3 ويكتب لك صنفها إيه!
+        <br><br>
+        <span class="camera-cue">🎥 [بتبتسم إبتسامة عريضة]</span>
+        اللي أنت بتلعبه دلوقتي ده هو جوهر الذكاء الاصطناعي.. كده الموديل قدر يصنف البيانات بدون أي سطور برمجية متصلبة (If و Else)!
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الوداع يا بطل</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">نهاية الرحلة، الوداع والخلاصة!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع.. هادي، بتطفي بعض اللمبات وبتسيب اضاءة ناعمة (Cinematic Mode)]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى هادية جداً.. بيانو وكمانجة بتقفل بسلام]</span>
+        وده يا سيدي.. كان درس الـ KNN، مسجلناش موديل، محفظناهوش حاجة مسبقة.. إحنا بس وفرنا خريطة وخليناه يستنتج. وده بيسمي <span class="english">Lazy Learner</span> لأنه بيستنى دايماً لحظة الاختبار علشان يتصرف. 
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا وتتكلم بصوت هادئ جداً وفيه فخر]</span>
+        ودي كمان.. نهاية كورس الـ <span class="english">Algorithms and Data Structures</span>.
+        بدأنا الكورس من 4 أسابيع، كنا بنسأل إزاي نبحث عن رقم في مصوفة.. والنهاردة، قفلنا الكورس بخوارزمية Machine Learning بتقدر تتنبأ وتصنف البيانات المعقدة!
+        <br><br>
+        في الرحلة دي، اكتشفنا إن علم الكمبيوتر كله عبارة عن حبة <strong class="hl-cyan">Trade-offs</strong> (تنازلات مساومة)!
+        مفيش هياكل بيانات "سريعة في كل حاجة". مفيش خوارزميات ترتيب "صح دايماً". QuickSort سريع بس غبي في الحالات السيئة. الـ Array سريع في البحث بطيء في الحشر. والـ Greedy سهل التنفيذ بس ممكن يفشل.
+        <br><br>
+        <strong class="highlight">المهندس الحقيقي</strong>، مش اللي بيكتب كود يشتغل. المهندس الحقيقي هو اللي بيقدر يقيم المعركة كويس، وبيختار السلاح الأنسب للمكان الأنسب علشان الكود يشتغل <strong class="hl-amber">بشكل مثالي</strong> وفي وقته القياسي اللي مايدفعناش ولا ثانية ولا مليون دولار زيادة لخزنة السيرفرات!
+        <br><br>
+        أنا فخور جداً إننا كملنا مع بعض لللحظة دي.
+        عاش يا بطل، أشوفك في رحلة تانية! سلااااام✌️
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: اسم الكورس واللوجو وتتر النهاية بيظهر مع انسحاب الموسيقى]</span>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — تمت الرحلة بحمد الله
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

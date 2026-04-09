@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Knapsack Problem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(245,158,11,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(245,158,11,.35);box-shadow:0 8px 32px rgba(245,158,11,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#fcd34d;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #f59e0b}
+        .note{font-size:.92rem;color:#34d399;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(52,211,153,.07);border-radius:8px;border-right:3px solid #34d399;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#34d399;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#fcd34d;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#fcd34d;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(245,158,11,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(245,158,11,.08);border-right:3px solid #f59e0b;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#fde68a}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#fcd34d;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#fcd34d}
+        .toc a::before{content:"• ";color:#f59e0b}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Knapsack Problem</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الرابع · مشكلة الحقيبة</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: أصعب شنطة سفر هترتبها!</a>
+        <a href="#types">الشنطة الكاملة ولا بالنص؟ (أنواعها)</a>
+        <a href="#example">مثال الأغراض الأربعة: فخ الـ Greedy</a>
+        <a href="#dp-table">جدول الـ DP: سحر الحسابات!</a>
+        <a href="#recurrence">المعادلة: تاخد ولا تسيب؟</a>
+        <a href="#outro">الخلاصة وتطبيقها في الحياة</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">"أغلى شنطة سفر في تاريخ الـ Computer Science"<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف وفي إيدك شنطة ظهر فاضية]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت سوستة الشنطة بتتفتح]</span>
+        تخيل معايا إنك مسافر... ومعاك شنطة، بس الشنطة دي صغيرة مش بتستحمل إلا وزن معين... نقول مثلاً 7 كيلو بالظبط.
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص قدامك وبتترسم قدامك حاجات جرافيكس عايمة]</span>
+        وقدامك على السرير شوية حاجات: <span class="english">Laptop</span> غالي جداً، وكاميرا التصوير بتاعتك، وجيتار، وسماعة ثقيلة شوية. كل حاجة من دول ليها <strong class="hl-red">وزن</strong>، وليها <strong class="highlight">قيمة</strong> بالفلوس. 
+        <br><br>
+        المشكلة هي: إزاي تعبي الشنطة دي بحيث تاخد <strong class="hl-cyan">أعلى قيمة ممكنة للفلوس</strong>... ومن غير ما الشنطة تفرقع لأنك عديت الـ 7 كيلو؟!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة Knapsack Problem بتظهر على الشنطة بخط عريض ملون]</span>
+        دي واحدة من أكتر المشاكل شهرة في علوم الكمبيوتر. اسمها الـ <span class="english">Knapsack Problem</span>. المشكلة دي مش مجرد لغز عن ترتيب الشنط، دي النموذج اللي بيتحل بيه الـ <span class="english">Budget allocation</span> في الشركات الكبيرة وحاجات تانية كتير.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب للكاميرا وبترمي الشنطة]</span>
+        الـ <span class="english">Greedy</span> هنا هيفشل بامتياز. والحل الوحيد هو السحر اللي اتعلمناه المرة اللي فاتت... الـ <span class="english">Dynamic Programming</span>! يلا نفهم إزاي.
+    </div></div></div>
+
+    <!-- ═══════ TYPES ═══════ -->
+    <div class="section-divider" id="types">أنواع الحقيبة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">0/1 vs Fractional — ينفع آخد نص اللابتوب؟<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتتحرك وأنت بتشرح بإيدك الاتنين]</span>
+        عشان نحل المشكلة دي برمجياً، لازم نسأل نفسنا سؤال مهم جداً عن الحاجات اللي هنعبيها في الشنطة:
+        <br><br>
+        <strong class="hl-amber">النوع الأول: الـ Fractional Knapsack</strong>
+        <br>
+        دي لو الحاجات اللي بنشتريها أكل أو دهب. يعني لو السعة فاضلة عندك نص كيلو وتشوف قدامك شوال تفاح، هتعمل إيه؟ هتاخد نص كيلو تفاح ببساطة! هنا استراتيجية الجشع (<span class="english">Greedy Algorithm</span>) بتشتغل زي الفل. هتجيب أغلى حاجة للجرام... وتعبي، ولما السعة تفضى تعبي جزء منها. حل سهل.
+        <br><br>
+        <strong class="hl-red">النوع التاني: الـ 0/1 Knapsack</strong>
+        <br>
+        <span class="sfx-cue">🔊 [SFX: صوت Error]</span>
+        ودي المشكلة بتاعتنا الحقيقية! هنا إنت بتعبي إلكترونيات... يعني يا بتاخد الكاميرا كلها... يا بتسيبها! مفيش اختراع إنك تاخد "نص لابتوب"! 
+        <br>اسمه 0/1 لأن 0 = متخدوش، و 1 = خده. وهنا الطريقة الجشعة بتبوظ، والدماغ لازم تشتغل بطريقة مختلفة تماماً... طريقة بتبني جدول! 
+    </div></div></div>
+
+    <!-- ═══════ EXAMPLE ═══════ -->
+    <div class="section-divider" id="example">فخ تفكيرك المعتاد</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">مثال الأغراض الأربعة: الـ Greedy هيوديك في داهية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [زوم على الجزء اللي فيه الأغراض الأربعة على الشاشة]</span>
+        بص قدامك. عندنا 4 أغراض، وسعة الشنطة القصوى 7 كيلوجرام.
+        <br><br>
+        - اللابتوب: 3 كيلو، بـ $4000.
+        <br>
+        - السماعة: 4 كيلو، بـ $3000.
+        <br>
+        - الكاميرا: 2 كيلو، بـ $2500.
+        <br>
+        - الجيتار: 1 كيلو، بـ $1500.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسم للشنطة وهي بتتملي لابتوب وسماعة]</span>
+        لو شغلت التفكير الجشع... هتجري فوراً على اللابتوب. 3 كيلو وبـ 4000. ممتاز!
+        هيتفضل فى الشنطة سعة لـ 4 كيلو. الجشع هيقولك خد السماعة عشان بـ 3000. 
+        بقى الإجمالي بـ 7000 دولار، والشنطة قفلت. حل عظيم؟
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص للكاميرا وتهز راسك (لا)]</span>
+        <span class="sfx-cue">🔊 [SFX: Record Scratch]</span>
+        لأ غلط.
+        <br><br>
+        إيه رأيك لو خدنا اللابتوب، والكاميرا، والجيتار؟ مجموع وزنهم: 3 + 2 + 1 = 6 كيلو! والشنطة لسه فيها مكان. بس مجموع الفلوس: $4000 + $2500 + $1500 = <strong class="highlight">$8000!</strong>
+        <br><br>
+        إزاي الكمبيوتر يوصل للرقم 8000 من غير ما يجرب تريليون احتمال بطريقة غبية؟ الإجابة: <strong class="hl-cyan">جدول הـ DP</strong>.
+    </div></div></div>
+
+    <!-- ═══════ DP TABLE ═══════ -->
+    <div class="section-divider" id="dp-table">السحر خطوة بخطوة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">بناء الجدول: كل خلية بتحل أزمة صغيرة<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بتتحرك قدام الجدول الكامل، وإيدك بتمر على الخلايا]</span>
+        زي ما اتعلمنا في الـ DP. الفكرة هي حل المشكلة من المشاكل الأصغر. 
+        عشان نحل المشكلة دي، بنعمل <span class="english">2D Grid</span> (جدول بصفين وعواميد).
+        <br><br>
+        الصفوف هي <strong class="hl-blue">ايه الحاجات اللي مسموحلي آخدها؟</strong> (يعني الصف التاني مثلاً مسمحلك تاخد اللابتوب بس... اللي بعده اللابتوب والجيتار).
+        <br>
+        والأعمدة هي <strong class="hl-purple">سعة الشنطة</strong> (بتبدأ من شنطة بتشيل 0 كيلو، 1، 2، 3... لحد 7 كيلو).
+        <br><br>
+        <div class="term-def">
+            <strong>القاعدة:</strong> الخلية <span class="english">dp[i][w]</span> معناها إيه الحد الأقصى للقيمة اللي أقدر أوصلها لو مسموحلي اختار من أول i أغراض.. وسعة شنطتي دلوقتي w.
+        </div>
+        <span class="vfx-cue">✨ [VFX: الخلية المضيئة في الجدول بتتحرك زي الردار وبتوريك الحسبان]</span>
+        <span class="camera-cue">🎥 [بترفع الموبايل أو بتبص في الشاشة وتشرح التطور]</span>
+        في الأول الجدول كله أصفار.
+        بعدين بتشوف، لو معايا اللابتوب بس (وزنه 3)، مش هقدر آخده في شنطة 0 ولا 1 ولا 2، بس هنفضل نحطه من أول الكيلو 3 وهيديني قيمة 4k. 
+        الصف اللي بعده بندخل معاه الجيتار. ونقارن كل خلية. 
+        <br><br>
+        لحد ما نوصل للخلية الأخيرة خالص، أسفل اليمين، اللي بتضم الـ 4 أغراض، وسعة 7... وهنلاقي النتيجة المكتوبة: <strong class="highlight">$8000</strong>.
+        
+    </div></div></div>
+
+    <!-- ═══════ RECURRENCE ═══════ -->
+    <div class="section-divider" id="recurrence">معادلة القرار</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">المعادلة السحرية المكتوبة في كل خلية<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Close-up — بتشرح المعادلة بهدوء كأنك بتعلم حد حاجة سرية]</span>
+        في أي خلية في الجدول، أنت كمبرمج أو كالخوارزمية، بتسأل نفسك سؤالين محددين جداً:
+        <br><br>
+        السؤال الأول: الغرض الجديد اللي في الصف ده.. هل وزنه أصلًا أكبر من سعة الشنطة في العمود ده؟ 
+        لو أه.. يبقى مفيش حل غير إني <strong class="hl-red">محطوش</strong>. وأخد النتيجة القديمة بتاعة الشنطة من غيره (قيمة الخلية اللي فوقي بالظبط). ده <span class="english">dp[i-1][w]</span>.
+        <br><br>
+        السؤال التاني: لو ينفع يخش الشنطة؟ 
+        هنا بتعمل حركة ذكية جداً. بتاخد الـ <span class="english">Max</span> بين حاجتين: 
+        <br>
+        1. إنك <strong class="hl-red">متاخدوش</strong> وتفضل على النتيجة القديمة اللي فوقك. 
+        <br>
+        2. أو إنك <strong class="hl-cyan">تحط الغرض ده في الشنطة</strong>. ولما تحطه هتسيب باقي المساحة للرجوع لخلايا سابقة قديمة (في الصف اللي فوق) عشان تملى الباقي بأحسن شكل ممكن بناء على خبرتك السابقة. ده الـ <span class="english">value[i] + dp[i-1][w - weight[i]]</span>.
+        <br><br>
+        المعادلة البسيطة العبقرية دي اللي بتسمح للبرنامج إنه يشوف الحل الأفضل دايماً بدون ما يعيد حسبان حاجة.
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخاتمة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">خلاصة: مشكلة بتحل مشاكلنا في البيزنس!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتبتسم وتقفل الكلام بثقة]</span>
+        <span class="sfx-cue">🔊 [SFX: موسيقى هادية ملهمة (Inspiring)]</span>
+        الـ <span class="english">Knapsack Problem</span> من أكثر المشاكل اللي بتورينا إن الـ DP مش سحر أسود.. دي مجرد داتا بتتسجل وإحنا بنمشي ونسيب أثر وندي لكل حل فرصة إنه يخدمنا في اللي جاي.
+        <br><br>
+        ودي مشكلة حقيقية فوق ما تتخيل. 
+        تخيل لو أنت مستثمر، وشنطتك اللي بـ 7 كيلو دي عبارة عن מيزانية شركتك (مثلاً 7 مليون ريال). والأغراض الموجودة هي المشاريع المتاحة وكل مشروع محتاج سيولة، ومُتوقع يديلك أرباح. استخدام نفس الجدول اللي فات ممكن يخليك توصل للتشكيلة المشاريع الأكثر ربحاً!
+        <br><br>
+        الخوارزميات مش حبر على ورق... دي حرفياً بتمثل فلوس وقرارات في عالمنا!
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: الشنطة بتتقفل وسوستتها بتتقفل، وبتطير في الجو مع اللوجو]</span>
+        <strong class="highlight">شوفكم في الدرس الجاي والأخير في الكورس: KNN. سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 4: Knapsack Problem
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>

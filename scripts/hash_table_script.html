@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سكريبت الشرح - Hash Tables</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0a0a1a,#0f1a2e,#0a1628);min-height:100vh;margin:0;padding:2rem 1rem;color:#e0e0e0;direction:rtl}
+        .container{max-width:940px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:2rem;margin-bottom:.5rem;text-shadow:0 0 30px rgba(16,185,129,.4)}
+        .subtitle{text-align:center;color:#64748b;font-size:.95rem;margin-bottom:2.5rem}
+        .section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+        .section:hover{border-color:rgba(16,185,129,.35);box-shadow:0 8px 32px rgba(16,185,129,.10);transform:translateY(-2px)}
+        .section-title{font-size:1.2rem;font-weight:700;color:#34d399;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+        .section-title::before{content:"🎬"}
+        .section-title .toggle-icon{margin-right:auto;margin-left:0;color:#64748b;font-size:.85rem;transition:transform .3s}
+        .script-body{overflow:hidden;transition:max-height .4s ease}
+        .script-text{font-size:1.12rem;line-height:2.2;color:#f0f4f8;background:rgba(0,0,0,.25);padding:1.2rem 1.5rem;border-radius:10px;border-right:4px solid #10b981}
+        .note{font-size:.92rem;color:#fbbf24;margin-top:1rem;padding:.6rem 1.1rem;background:rgba(251,191,36,.07);border-radius:8px;border-right:3px solid #fbbf24;line-height:1.8}
+        .note::before{content:"📌 ملاحظة: ";font-weight:bold}
+        .camera-cue{font-size:.85rem;color:#fca5a5;display:block;margin:.5rem 0;font-weight:bold;background:rgba(239,68,68,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #ef4444}
+        .vfx-cue{font-size:.85rem;color:#93c5fd;display:block;margin:.5rem 0;font-weight:bold;background:rgba(59,130,246,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #3b82f6}
+        .sfx-cue{font-size:.85rem;color:#d8b4fe;display:block;margin:.5rem 0;font-weight:bold;background:rgba(168,85,247,.1);padding:.3rem .5rem;border-radius:4px;border-right:2px solid #a855f7}
+        .highlight{color:#6ee7b7;font-weight:700}
+        .hl-blue{color:#60a5fa;font-weight:700}
+        .hl-amber{color:#fbbf24;font-weight:700}
+        .hl-red{color:#f87171;font-weight:700}
+        .hl-purple{color:#a78bfa;font-weight:700}
+        .hl-cyan{color:#22d3ee;font-weight:700}
+        .hl-green{color:#10b981;font-weight:700}
+        .english{direction:ltr;display:inline-block;font-family:'Segoe UI',sans-serif;color:#34d399;font-style:italic;font-weight:bold}
+        a.back-btn{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:2rem;padding:.7rem 1.4rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;color:#34d399;text-decoration:none;font-size:.9rem;transition:all .3s}
+        a.back-btn:hover{background:rgba(16,185,129,.25);color:#fff}
+        .section-divider{text-align:center;color:#475569;font-size:.8rem;margin:1rem 0 1.5rem;letter-spacing:.1em}
+        .section-divider::before,.section-divider::after{content:" ── "}
+        .term-def{background:rgba(16,185,129,.08);border-right:3px solid #10b981;padding:.5rem 1rem;border-radius:6px;margin:.5rem 0;font-size:.95rem;line-height:1.8}
+        .term-def strong{color:#a7f3d0}
+        .toc{background:rgba(15,23,42,.6);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:1.2rem 1.8rem;margin-bottom:2rem}
+        .toc h3{color:#34d399;font-size:1rem;margin-bottom:.8rem}
+        .toc a{display:block;color:#94a3b8;text-decoration:none;padding:.25rem 0;font-size:.9rem;transition:color .2s}
+        .toc a:hover{color:#34d399}
+        .toc a::before{content:"• ";color:#10b981}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../index.html" class="back-btn"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+    <h1>📜 سكريبت الشرح — Hash Tables</h1>
+    <p class="subtitle">Algorithms & Data Structures · الأسبوع الثالث · جداول التجزئة</p>
+
+    <div class="toc">
+        <h3>📋 محتويات السكريبت</h3>
+        <a href="#hook">الهوك: الساحر اللي بيعرف مكان كل حاجة</a>
+        <a href="#what-hash">إيه هي הـ Hash Table أساسًا؟</a>
+        <a href="#hash-function">الموظف العبقري: Hash Function</a>
+        <a href="#collisions">الكارثة: التصادمات (Collisions)</a>
+        <a href="#load-factor">معامل التحميل: إمتى نشتري مصنع جديد؟</a>
+        <a href="#outro">الخلاصة ليه هي الأفضل</a>
+    </div>
+
+    <!-- ═══════ HOOK ═══════ -->
+    <div class="section-divider" id="hook">الهوك</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">البحث عن إبرة في كومة قش... في خطوة واحدة!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [تصوير واسع — أنت واقف ومربع إيدك بتحدي]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت دقات ساعة سريعة]</span>
+        لو سألتك دلوقتي: هات لي رقم تليفون شخص من دليل التليفونات، هتعمل إيه؟
+        هتقولي سهلة.. هستخدم الـ <span class="english">Binary Search</span> وأقلب الصفحات للنص لحد ما ألاقي اسمه، وده هياخد <strong class="hl-amber">O(log n)</strong>.
+        <br><br>
+        <span class="camera-cue">🎥 [بتقرب من الكاميرا شوية وبتوطي صوتك]</span>
+        بس لو قولتلك إني ممكن أجيب لك الرقم ده في <strong class="hl-red">خطوة واحدة بس</strong>؟ 
+        لو الدليل فيه مليون اسم أو حتي مليار اسم... هياخدوا نفس الـ 1 خطوة بالثانية! تفتقره سحر؟
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: كلمة Hash Tables بتظهر ببريق أخضر كأنها كود ماتريكس]</span>
+        النهاردة هنتكلم عن الـ <span class="english">Hash Tables</span>. هيكل البيانات اللي بيعتبر "سرعة الضوء" في البرمجة. المفضل عند جوجل وعند أي داتا بيز ضخمة. 
+        <br>السر هنا مفيش فيه "بحث" أصلاً.. السر كله في إنك "عارف العنوان"! يلا نفهم اللعبة دي.
+    </div></div></div>
+
+    <!-- ═══════ WHAT IS HASH ═══════ -->
+    <div class="section-divider" id="what-hash">ما هى جداول التجزئة؟</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">قاموس الكمبيوتر: فكرة הـ Hash Table<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتشاور على الشاشة اللي فيها شكل القاموس]</span>
+        الـ <span class="english">Hash Table</span> (أو <span class="english">Dictionary</span> أو <span class="english">Map</span> زي ما بتسمية بعض اللغات) هو باختصار شديد: دفتر عناوين.
+        <br><br>
+        عكس الـ Array اللي بيخزن الداتا في أدراج بناءً على الترتيب (الدرج رقم 0، الدرج 1، إلخ).. الـ Hash Table بيحفظ الداتا في أدراج عليها أسامي. بنسمي الاسم ده <strong class="hl-amber">Key (المفتاح)</strong>.. واللي جوة الدرج اسمه <strong class="hl-cyan">Value (القيمة)</strong>.
+        <br><br>
+        <div class="term-def">
+            <strong>Key-Value Pair:</strong> زي "Apple" سعرها "$1.2". أنت مش بتدور على تفاحة.. أنت بتروح لدرج الـ Apple تلاقيه مكتوب الفلوس.
+        </div>
+        لكن، المشكلة اللي بتواجه الكمبيوتر.. إن الذاكرة (<span class="english">Memory</span>) مبتفهمش الحروف والكلمات (مبتفهمش يعنى إيه Apple). الذاكرة عبارة عن أرقام أدراج (0, 1, 2, 3..). 
+        <br>
+        إزاي نخلي الكمبيوتر يربط كلمة "Apple" برقم درج معين عشان يروحه علطول؟
+    </div></div></div>
+
+    <!-- ═══════ HASH FUNCTION ═══════ -->
+    <div class="section-divider" id="hash-function">دالة التجزئة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">الموظف السري العبقري: הـ Hash Function<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [إضاءة بتميل للأزرق خفيف.. بتعمل حركة بصوابعك تحاكي التلقين]</span>
+        <span class="sfx-cue">🔊 [SFX: صوت آلة حاسبة سريعة جداً]</span>
+        هنا بيجي دور الساحر بتاعنا.. الدالة اللي اسمها <strong class="hl-blue">Hash Function</strong>.
+        <br><br>
+        الـ <span class="english">Hash Function</span> دي زي موظف الأرشيف العبقري. بتديلو كلمة معينة وليكن كلمة "Apple"... بيمسك الكلمة دي ويعمل عليها شوية عمليات رياضية ويحولها لرقم درُج... مثلاً: <strong>الدرج رقم 4</strong>.
+        <br><br>
+        بكرة لو سألته تاني: "هاتلي لو سمحت Apple".. هيעمل أوتوماتيك نفس الحسبة ويقولك "روح الدرج رقم 4 على طول!". 
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: رسم توضيحي بيسحب كلمة "Apple" يدخلها في صندوق، وتخرج رقم 4]</span>
+        متخيل العظمة؟ مفيش لف ولا تدوير. إنت بتدخّله الكلمة، بيديلك العنوان بتاعها في הـ Memory. عملية الحسبة دي بتاخد <strong class="highlight">O(1)</strong> Constants Time.. يعني بتخلص فوراً مهما كان حجم الداتا.
+    </div></div></div>
+
+    <!-- ═══════ COLLISIONS ═══════ -->
+    <div class="section-divider" id="collisions">التصادمات</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">لما המوظف يغلط: مشكلة التصادمات!<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [إضاءة بتميل للأحمر خفيف (Warning) مع زوم سريع]</span>
+        بس استنى.. مفيش موظف كامل!
+        ماذا لو إدينا המوظف ده كلمة "Banana" وحولها برضه للدرج رقم 4؟ ودرج 4 ده أساساً إحنا شايلين فيه "Apple"؟ 
+        <br><br>
+        الكارثة دي اسمها في البرمجة: <strong class="hl-red">Hash Collision (التصادم)</strong>.
+        لما مفتاحين مختلفين الدالة بتاعتهم تديهم نفس العنوان! 
+        <br><br>
+        <span class="camera-cue">🎥 [بتبص يمين وشمال كأنك بتدور على حل]</span>
+        المهندسين بيحلوا المشكلة دي بطريقتين أشهرهم اسمها <strong class="hl-amber">Chaining</strong>. يعني كإنك بدل ما تحط الحاجة في الدرج وتقفله، الدرج ده بيبقى مفتوح وبيودي على قائمة (زي הـ <span class="english">Linked List</span> اللي درسناها).
+        <br>
+        لو الدرج مليان.. اربطهم ببعض. 
+        <br><br>
+        عيب الحل ده؟ إن لو فيه تصادمات كتير في الدرج ده بالذات، הـ <span class="english">Hash Table</span> بتفقد سرعتها السحرية <strong class="hl-blue">O(1)</strong> وتنحدر سرعتها وتبقى تبحث جوه القائمة واحد ورا التاني... <strong class="hl-red">O(n)</strong>!
+    </div></div></div>
+
+    <!-- ═══════ LOAD FACTOR ═══════ -->
+    <div class="section-divider" id="load-factor">معامل التحميل</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">إمتى נكسر المصنع ونبني جديد؟ (Load Factor)<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [بترجع الكاميرا خطوة للوضع الهادي الواسع]</span>
+        عشان نتجنب הـ Collisions والكوابيس دي، لازم نفضل نراقب المخزن بتاعنا فيه كام درج مليان من الإجمالي.
+        النسبة دي اسمها: <strong class="hl-cyan">Load Factor</strong> (معامل التحميل).
+        <br><br>
+        <div class="term-def">
+            <strong>Load Factor =</strong> عدد العناصر الموجودة ÷ عدد أدراج הـ Array كلها.
+        </div>
+        <br>
+        يعني لو أدراجك 10، وانت حاطط فيهم 7 حاجات.. معامل التحميل بتاعك 0.7.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عداد زى عداد البنزين بيتملي للأحمر وتقوم الشاشة موسعة]</span>
+        في الـ <span class="english">Hash Tables</span>، مجرد ما النسبة دي تقرب من 0.7، الكمبيوتر بيطلق الانذار، ويروح قالب הـ Memory وموسع المخزن (يضاعف الأدراج). عشان يدي براح ويبعد الداتا عن بعضها وميحصلش أي تصادم.
+        عملية التوسعة دي بنسميها <span class="english">Resizing</span>.
+    </div></div></div>
+
+    <!-- ═══════ OUTRO ═══════ -->
+    <div class="section-divider" id="outro">الخلاصة</div>
+    <div class="section"><div class="section-title" onclick="toggleSection(this)">دي الأقوى في الكون<span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></div><div class="script-body"><div class="script-text">
+        <span class="camera-cue">🎥 [Medium Shot، بتبتسم وتقفل الكلام بثقة]</span>
+        الـ <span class="english">Hash Table</span> هو الهيكل اللي كل لغة برمجة بتعتمده كعمود خيمتها (بيسموها Objects في جافاسكريبت، و Dict في بايثون).
+        <br><br>
+        أي حاجة محتاج تبحث عنها، تدخلها، تلغيها بسرعة قياسية غير مسبوقة <strong class="hl-green">O(1)</strong>.. الـ Hash Tables بتخلص ده.
+        <br><br>
+        <span class="vfx-cue">✨ [VFX: عنوان الدرس القادم "Graph Representation"]</span>
+        الآن وبعد ما فهمنا إزاى نحفظ הדاتا... تخيل الداتا دي بقت عبارة عن علاقات.. أصحاب على الفيس بوك! أنا صاحبك وصاحبك ده صاحب فلان... دي مش المصفوفات ومش الجداول اللي بتعبر عنها. دي عالم جديد تماماً اسمه الـ <strong class="hl-purple">Graphs (الشيكات)</strong>.
+        <br><br>
+        <strong class="highlight">شوفكم هناك! سلام!</strong>
+    </div></div></div>
+
+    <div style="text-align:center;margin-top:2rem;color:#475569;font-size:.85rem;padding-bottom:2rem">
+        Algorithms & Data Structures — الأسبوع 3: Hash Tables
+    </div>
+</div>
+<script>
+function toggleSection(t){const b=t.nextElementSibling,i=t.querySelector('.toggle-icon i'),o=b.style.maxHeight&&b.style.maxHeight!=='0px';if(o){b.style.maxHeight='0px';b.style.overflow='hidden';i.className='fas fa-chevron-left'}else{b.style.maxHeight=b.scrollHeight+500+'px';b.style.overflow='visible';i.className='fas fa-chevron-down'}}
+document.querySelectorAll('.script-body').forEach(b=>{b.style.maxHeight='none';b.style.overflow='visible'});
+document.querySelectorAll('.toc a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const target=document.querySelector(link.getAttribute('href'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'})})});
+</script>
+</body>
+</html>
